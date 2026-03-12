@@ -1,0 +1,177 @@
+\begin{onehalfspace}
+
+\section{Introduzione al Rumore Quantistico}
+
+I computer quantistici reali operano in regime \textbf{NISQ} (\textit{Noisy Intermediate-Scale Quantum}) \cite{preskill2018}: dispongono di decine o centinaia di qubit fisici, ma sono affetti da errori significativi che limitano la profondità dei circuiti eseguibili in modo affidabile. Comprendere le fonti di rumore e sviluppare strategie di mitigazione è essenziale per sfruttare appieno le potenzialità degli algoritmi quantistici su hardware corrente.
+
+Il rumore quantistico differisce fondamentalmente dal rumore nei sistemi classici: mentre un bit classico può essere protetto ridondando l'informazione, un qubit non può essere copiato (teorema del no-cloning) \cite{wootters1982}, rendendo necessarie tecniche più sofisticate.
+
+\section{Fonti di Rumore nei Computer Quantistici}
+
+\subsection{Decoerenza}
+
+La \textbf{decoerenza} è il processo per cui un qubit perde le sue proprietà quantistiche a causa dell'interazione con l'ambiente. Si distinguono due tempi caratteristici:
+
+\begin{itemize}
+    \item $T_1$ (\textit{relaxation time} o \textit{amplitude damping time}): tempo dopo cui il qubit decade dallo stato $\ket{1}$ allo stato $\ket{0}$ a causa della dissipazione energetica. Tipicamente $T_1 \sim 10$--$500\ \mu$s per qubit superconduttori.\footnote{La notazione $T_1$ e $T_2$ è mutuata dalla spettroscopia a \acl{NMR} (\ac{NMR}), dove furono introdotti da Felix Bloch nel 1946 per descrivere i tempi di rilassamento longitudinale e trasversale della magnetizzazione nucleare. Il trasferimento di questa nomenclatura alla fisica quantistica dei qubit è oggi universalmente accettato.}
+
+    \item $T_2$ (\textit{dephasing time}): tempo dopo cui la fase relativa tra $\ket{0}$ e $\ket{1}$ si randomizza, distruggendo la sovrapposizione. Vale sempre $T_2 \leq 2T_1$. Tipicamente $T_2 \sim 50$--$200\ \mu$s.
+\end{itemize}
+
+Per eseguire un circuito con successo, il tempo totale di esecuzione deve essere molto inferiore a $T_1$ e $T_2$.
+
+\subsection{Errori di Gate}
+
+Le porte quantistiche fisiche non sono perfette. L'\textbf{errore di gate} è la discrepanza tra l'operazione unitaria ideale $U$ e quella effettivamente implementata $\tilde{U}$. Si misura tramite la \textbf{gate fidelity}:
+\begin{equation}
+    F(U, \tilde{U}) = \frac{1}{d}\left|\text{Tr}(U^\dagger \tilde{U})\right|
+\end{equation}
+dove $d$ è la dimensione dello spazio di Hilbert. Valori tipici per hardware superconduttori: $F \approx 99.9\%$ per porte a singolo qubit, $F \approx 99\%$ per porte a due qubit (CNOT).
+
+\subsection{Errori di Misura (Readout Errors)}
+
+La misura finale può restituire un risultato errato: il qubit è in $\ket{0}$ ma viene letto come $1$ (o viceversa). Questo errore, chiamato \textbf{readout error} o \textit{assignment error}, è tipicamente dell'ordine del $1$--$5\%$ per qubit su hardware IBM.
+
+\subsection{Errori di Crosstalk}
+
+Il \textbf{crosstalk} è l'interferenza indesiderata tra qubit adiacenti durante l'esecuzione di operazioni parallele. Influenza particolarmente i circuiti profondi dove molte porte vengono applicate simultaneamente.
+
+\section{Modelli Matematici del Rumore}
+
+Il rumore viene descritto formalmente attraverso i \textbf{canali quantistici}: trasformazioni lineari \acf{CPTP}\footnote{Una mappa \ac{CPTP} è la descrizione più generale di una trasformazione fisica ammissibile su un sistema quantistico aperto. La rappresentazione tramite \textbf{operatori di Kraus} (da Karl Kraus, 1938--1988, fisico tedesco) afferma che ogni canale CPTP può essere scritto come $\mathcal{E}(\rho) = \sum_k K_k \rho K_k^\dagger$ con $\sum_k K_k^\dagger K_k = I$.} che agiscono sulla matrice densità $\rho$ del sistema.
+
+\subsection{Canale Bit Flip}
+
+Con probabilità $p$, il qubit subisce un'inversione di stato ($X$ error):
+\begin{equation}
+    \mathcal{E}_{BF}(\rho) = (1-p)\rho + p\, X\rho X
+\end{equation}
+
+\subsection{Canale Phase Flip}
+
+Con probabilità $p$, la fase del qubit viene invertita ($Z$ error):
+\begin{equation}
+    \mathcal{E}_{PF}(\rho) = (1-p)\rho + p\, Z\rho Z
+\end{equation}
+
+\subsection{Canale Depolarizzante}
+
+Il modello più usato per errori isotropici su singolo qubit: con probabilità $p$, viene applicato un errore casuale tra $\{X, Y, Z\}$ con uguale probabilità $p/3$:
+\begin{equation}
+    \mathcal{E}_{dep}(\rho) = \left(1-p\right)\rho + \frac{p}{3}(X\rho X + Y\rho Y + Z\rho Z)
+\end{equation}
+
+\subsection{Amplitude Damping}
+
+Modella il decadimento $T_1$: il qubit decade da $\ket{1}$ a $\ket{0}$ con probabilità $\gamma = 1 - e^{-t/T_1}$. Gli operatori di Kraus sono:
+\begin{equation}
+    K_0 = \begin{pmatrix}1 & 0 \\ 0 & \sqrt{1-\gamma}\end{pmatrix}, \qquad
+    K_1 = \begin{pmatrix}0 & \sqrt{\gamma} \\ 0 & 0\end{pmatrix}
+\end{equation}
+
+\section{Impatto del Rumore sull'Algoritmo di Shor}
+
+L'algoritmo di Shor è particolarmente vulnerabile al rumore a causa della sua elevata profondità circuitale e della dipendenza critica dalla precisione delle fasi. Le principali componenti sensibili sono:
+
+\subsection{Errori nella Quantum Fourier Transform}
+
+La \acf{QFT} è la subroutine centrale dell'algoritmo di Shor. Richiede l'applicazione di porte di rotazione di fase $R_k = \begin{pmatrix}1 & 0 \\ 0 & e^{2\pi i/2^k}\end{pmatrix}$ con angoli che diventano esponenzialmente piccoli all'aumentare di $k$. Errori anche minimi su questi gate distruggono la struttura di interferenza dalla quale dipende la corretta estrazione del periodo:
+\begin{equation}
+    \tilde{R}_k = R_k + \delta E_k, \qquad \|\delta E_k\| \sim \epsilon
+\end{equation}
+L'errore accumulato sulla stima della fase dopo $n$ gate di rotazione è dell'ordine $O(n\epsilon)$, degradando la probabilità di estrarre il periodo corretto.
+
+\subsection{Errori nella Phase Estimation}
+
+La \textit{phase estimation} richiede che i qubit del registro di controllo mantengano la coerenza per tutta la durata del circuito di modular exponentiation, che ha una profondità $O(n^3)$ per un intero a $n$ bit. Il tempo di decoerenza $T_2$ deve soddisfare:
+\begin{equation}
+    T_2 \gg \tau_{\text{gate}} \cdot O(n^3)
+\end{equation}
+Sui processori NISQ attuali, questa condizione è violata già per $n \gtrsim 10$--$15$ bit, rendendo la phase estimation estremamente fragile.
+
+\subsection{Errori nella Modular Exponentiation}
+
+La modular exponentiation $U_f\ket{x}\ket{0} = \ket{x}\ket{a^x \bmod N}$ è la componente con la maggiore profondità circuitale. Errori sui gate controllati di questo blocco propagano errori al registro di output, alterando il valore di $a^x \bmod N$ e rendendo il risultato della QFT inversa privo di senso. La probabilità di successo in presenza di rumore depolarizzante di intensità $\epsilon$ per gate si può stimare come:
+\begin{equation}
+    P_{\text{success}} \approx P_{\text{ideal}} \cdot (1-\epsilon)^{L}
+\end{equation}
+dove $L \sim O(n^3)$ è il numero totale di gate. Per $n = 15$ bit e $\epsilon = 10^{-3}$, si ottiene $(1-10^{-3})^{3375} \approx 0.034$: la probabilità di ottenere un risultato corretto crolla a meno del $4\%$ già per istanze molto piccole.
+
+\section{Correzione degli Errori Quantistici}
+
+La \textbf{Quantum Error Correction} (QEC) si basa sull'idea di codificare l'informazione di un qubit \textit{logico} in un numero maggiore di qubit \textit{fisici}, in modo che errori su un sottoinsieme di qubit fisici possano essere rilevati e corretti senza distruggere l'informazione logica.
+
+\subsection{Codice di Shor (1995)}
+
+Il primo codice di correzione degli errori quantistici \cite{shorcorrection1995}, codifica 1 qubit logico in 9 qubit fisici e corregge qualsiasi singolo errore (bit flip o phase flip):
+\begin{equation}
+    \ket{0_L} = \frac{1}{2\sqrt{2}}(\ket{000}+\ket{111})^{\otimes 3}, \qquad \ket{1_L} = \frac{1}{2\sqrt{2}}(\ket{000}-\ket{111})^{\otimes 3}
+\end{equation}
+
+\subsection{Codice di Steane (1996)}
+
+Il codice di Steane \cite{steane1996} codifica 1 qubit logico in 7 qubit fisici usando il codice classico di Hamming $[7,4,3]$, correggendo qualsiasi singolo errore con soli 7 qubit (contro i 9 di Shor).
+
+\subsection{Surface Code}
+
+Il \textbf{surface code} \cite{fowler2012} è attualmente il codice più promettente per implementazioni reali. Organizza i qubit in una griglia 2D e richiede solo interazioni locali tra qubit vicini (pratico per architetture superconduttrici). La \textit{distanza} del codice $d$ determina quanti errori possono essere corretti: correggono fino a $\lfloor(d-1)/2\rfloor$ errori. Per $d=5$, si usano 25 qubit fisici per 1 qubit logico.
+
+Il threshold del surface code ($\approx 1\%$ di tasso di errore per gate\footnote{Il valore preciso del threshold dipende dal modello di rumore adottato: per rumore depolarizzante indipendente si stima $\approx 1.1\%$, per modelli più realistici con correlazioni spaziali scende a $\approx 0.5$--$0.7\%$. I migliori processori IBM e Google raggiungono fedeltà per gate a due qubit del $99.5\%$ o superiore, avvicinandosi concretamente a questi requisiti.}) è compatibile con le performance attuali dell'hardware IBM e Google.
+
+\section{Tecniche di Mitigazione del Rumore}
+
+In assenza di QEC completo, si adottano tecniche di \textbf{noise mitigation} che riducono l'errore a livello classico post-processing, senza overhead quantistico eccessivo.
+
+\subsection{Zero-Noise Extrapolation (ZNE)}
+
+La ZNE \cite{li2017} amplifica intenzionalmente il rumore scalando il tempo delle porte di un fattore $c > 1$, osserva come la quantità d'interesse varia con $c$, e \textbf{estrapora a rumore zero}. L'ampiezza dei gate viene scalata tramite identità: ogni gate $U$ viene sostituito da $U (U^\dagger U)^{n}$ per aumentare il rumore di un fattore $2n+1$:
+
+\begin{lstlisting}[caption={Zero-Noise Extrapolation con Qiskit-Aer}]
+from mitiq import zne
+from qiskit_aer import AerSimulator
+
+# Definire il simulatore con rumore
+noisy_sim = AerSimulator(noise_model=noise_model)
+
+# Applicare ZNE con scala di rumore [1, 2, 3]
+@zne.mitigate_executor
+def execute_with_zne(circuit):
+    job = noisy_sim.run(circuit, shots=1024)
+    return job.result().get_counts()
+\end{lstlisting}
+
+\subsection{Probabilistic Error Cancellation (PEC)}
+
+La PEC \cite{temme2017} decompone il canale rumoroso $\mathcal{E}$ come combinazione lineare di operazioni implementabili con i segni, poi campiona da questa decomposizione per stimare il valore ideale. Ha un overhead statistico esponenziale nella profondità del circuito, ma è asintoticamente esatto.
+
+\subsection{Readout Error Mitigation}
+
+La mitigazione degli errori di misura si basa sulla caratterizzazione della \textbf{matrice di calibrazione} $A$, dove $A_{ij}$ è la probabilità di misurare $i$ dato che il qubit è in $j$. Il risultato mitigato $\hat{p}$ si ottiene risolvendo $A\hat{p} = p_{\text{measured}}$:
+
+\begin{lstlisting}[caption={Mitigazione degli errori di readout}]
+from qiskit.utils.mitigation import complete_meas_cal, CompleteMeasFitter
+
+# Calibrazione della matrice di misura
+cal_circuits, state_labels = complete_meas_cal(qr=qc.qregs[0])
+cal_job = simulator.run(cal_circuits, shots=8192)
+meas_fitter = CompleteMeasFitter(cal_job.result(), state_labels)
+
+# Applicare la correzione
+mitigated_counts = meas_fitter.filter.apply(noisy_counts)
+\end{lstlisting}
+
+\section{Sfide Pratiche dell'Algoritmo di Shor su Hardware NISQ}
+
+L'esecuzione dell'algoritmo di Shor su processori NISQ reali presenta sfide che vanno ben oltre quelle incontrate da algoritmi meno profondi. Le principali problematiche emerse in letteratura sono:
+
+\begin{itemize}
+    \item \textbf{Requisiti di qubit}: fattorizzare un intero a $n$ bit richiede almeno $2n$ qubit logici per il registro di phase estimation, più qubit ausiliari per la modular exponentiation. Le implementazioni ottimizzate per hardware NISQ (\textit{compiled circuits}) riducono questo numero, ma al costo di approssimazioni che introducono ulteriori errori.
+
+    \item \textbf{Profondità del circuito}: anche per $N = 15$ (il caso più semplice non banale), la profondità del circuito compilato supera le centinaia di gate a due qubit, ben oltre i limiti pratici imposti dai tempi di coerenza attuali.
+
+    \item \textbf{Soluzioni parziali}: esperimenti su IBM Quantum e IonQ hanno dimostrato la fattorizzazione di $N = 15$ con circuiti appositamente semplificati (\textit{compiled} o \textit{simplified}), ottenendo probabilità di successo del $60$--$80\%$ con tecniche di mitigazione. Tuttavia, questi circuiti non generalizzano a $N$ arbitrario.
+\end{itemize}
+
+Questi risultati motivano lo studio di approcci ibridi che integrano tecniche di intelligenza artificiale per caratterizzare il rumore specifico dell'hardware, ottimizzare i parametri circuitali e post-processare i risultati, come discusso nel Capitolo~\ref{chap:implementazioni}.
+
+\end{onehalfspace}

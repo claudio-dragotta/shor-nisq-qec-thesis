@@ -1,0 +1,226 @@
+\begin{onehalfspace}
+
+\section{Dalla Meccanica Classica alla Meccanica Quantistica}
+
+La meccanica quantistica descrive il comportamento della materia e dell'energia alle scale atomiche e subatomiche, dove i principi della fisica classica cessano di essere validi. I suoi postulati, formulati nella prima metà del Novecento da Heisenberg, Schrödinger, Dirac e Bohr, introducono concetti radicalmente diversi da quelli classici: lo stato di un sistema fisico non è determinato in modo assoluto, ma è descritto da una \textbf{funzione d'onda} la cui evoluzione è governata dall'equazione di Schrödinger.
+
+Il calcolo quantistico traduce questi principi fisici in risorse computazionali. La \textbf{sovrapposizione} consente a un bit quantistico di trovarsi in una combinazione lineare di 0 e 1 simultaneamente; l'\textbf{entanglement} crea correlazioni non classiche tra qubit distinti; l'\textbf{interferenza} permette di amplificare le soluzioni corrette e cancellare quelle errate.
+
+\section{I Postulati della Meccanica Quantistica}
+
+Il formalismo matematico della meccanica quantistica poggia su quattro postulati fondamentali, che costituiscono l'assiomatica della teoria e il punto di partenza rigoroso per la descrizione di qualsiasi sistema quantistico \cite{nielsenChuang2000}.
+
+\begin{enumerate}
+    \item \textbf{Postulato dello spazio degli stati.} Ad ogni sistema fisico isolato è associato uno \textbf{spazio di Hilbert} $\mathcal{H}$, detto \textit{spazio degli stati} del sistema. Lo stato del sistema è completamente descritto da un vettore unitario $\ket{\psi} \in \mathcal{H}$, detto \textit{vettore di stato} o \textit{ket}. Per un sistema a due livelli (qubit), $\mathcal{H} = \mathbb{C}^2$ e lo stato generale è $\ket{\psi} = \alpha\ket{0} + \beta\ket{1}$ con $|\alpha|^2 + |\beta|^2 = 1$.
+
+    \item \textbf{Postulato dell'evoluzione.} L'evoluzione di un sistema quantistico chiuso è descritta da una \textbf{trasformazione unitaria}: se lo stato del sistema all'istante $t_1$ è $\ket{\psi(t_1)}$, allora all'istante $t_2$ esso si trova nello stato
+    \begin{equation}
+        \ket{\psi(t_2)} = U(t_1, t_2)\ket{\psi(t_1)}
+    \end{equation}
+    dove $U(t_1, t_2)$ è un operatore unitario ($U^\dagger U = I$) che dipende dagli istanti $t_1$ e $t_2$. In forma differenziale, l'evoluzione è governata dall'\textbf{equazione di Schrödinger}:
+    \begin{equation}
+        i\hbar \frac{d}{dt}\ket{\psi(t)} = \hat{H}\ket{\psi(t)}
+    \end{equation}
+    dove $\hat{H}$ è l'\textbf{Hamiltoniano} del sistema --- un operatore hermitiano ($\hat{H} = \hat{H}^\dagger$) che rappresenta l'energia totale --- e $\hbar = h/(2\pi)$ è la costante di Planck ridotta.\footnote{Nel calcolo quantistico a porte, ogni porta è la realizzazione discreta di questo postulato: la matrice unitaria $U$ descrive l'evoluzione del registro di qubit in un passo computazionale. L'Hamiltoniano fisico che implementa una porta specifica dipende dall'architettura hardware (impulsi a microonde per qubit superconduttori, impulsi laser per ioni intrappolati, ecc.).}
+
+    \item \textbf{Postulato della misura.} Le misure quantistiche sono descritte da un insieme $\{M_m\}$ di \textbf{operatori di misura}, indicizzati dagli esiti $m$, soggetti alla relazione di completezza:
+    \begin{equation}
+        \sum_m M_m^\dagger M_m = I
+    \end{equation}
+    Se il sistema si trova nello stato $\ket{\psi}$ prima della misura, la probabilità di ottenere l'esito $m$ è:
+    \begin{equation}
+        p(m) = \bra{\psi} M_m^\dagger M_m \ket{\psi}
+    \end{equation}
+    e lo stato immediatamente dopo la misura con esito $m$ è il vettore normalizzato:
+    \begin{equation}
+        \ket{\psi'} = \frac{M_m\ket{\psi}}{\sqrt{p(m)}}
+    \end{equation}
+    Nel caso della \textbf{misura proiettiva in base computazionale} --- il caso standard nel calcolo quantistico --- gli operatori sono i proiettori $M_m = \ket{m}\bra{m}$, e la probabilità di ottenere $m$ si riduce alla \textbf{regola di Born}: $p(m) = |\braket{m|\psi}|^2$. La misura è un'operazione \textit{non unitaria} e \textit{irreversibile}: il collasso dello stato distrugge irrecuperabilmente le ampiezze che non corrispondono all'esito osservato.
+
+    \item \textbf{Postulato dei sistemi composti.} Lo spazio degli stati di un sistema fisico composto da $n$ sottosistemi con spazi $\mathcal{H}_1, \ldots, \mathcal{H}_n$ è il \textbf{prodotto tensoriale}:
+    \begin{equation}
+        \mathcal{H} = \mathcal{H}_1 \otimes \mathcal{H}_2 \otimes \cdots \otimes \mathcal{H}_n
+    \end{equation}
+    Se ciascun sottosistema $i$ si trova nello stato $\ket{\psi_i}$, lo stato del sistema composto è $\ket{\psi_1} \otimes \ket{\psi_2} \otimes \cdots \otimes \ket{\psi_n}$. Esistono tuttavia stati del sistema composto --- gli stati \textbf{entangled} --- che non possono essere scritti in questa forma fattorizzata per nessuna scelta degli stati individuali: la misura di un sottosistema modifica istantaneamente le probabilità degli esiti di misura sull'altro, indipendentemente dalla distanza fisica tra i due.
+\end{enumerate}
+
+Questi quattro postulati forniscono il quadro assiomatico completo entro cui si collocano tutti i concetti che seguono: il qubit (Postulato~1), le porte quantistiche come trasformazioni unitarie (Postulato~2), la misura e il collasso dello stato (Postulato~3), i registri multi-qubit e l'entanglement (Postulato~4).
+
+\section{Il Qubit}
+
+\subsection{Definizione Matematica}
+
+L'unità fondamentale del calcolo quantistico è il \textbf{qubit} (\textit{quantum bit}). Mentre un bit classico assume uno dei due valori $\{0, 1\}$, un qubit è descritto da un vettore unitario nello spazio di Hilbert bidimensionale $\mathcal{H} = \mathbb{C}^2$.\footnote{Lo \textbf{spazio di Hilbert} prende il nome dal matematico tedesco David Hilbert (1862--1943), uno dei più influenti matematici del XX secolo. In meccanica quantistica indica uno spazio vettoriale complesso dotato di prodotto interno, che fornisce il formalismo matematico per descrivere gli stati di un sistema fisico.}
+
+Introducendo la \textbf{notazione di Dirac}\footnote{La \textbf{notazione bra-ket} fu introdotta dal fisico britannico Paul Adrien Maurice Dirac (1902--1984), Premio Nobel per la Fisica nel 1933. Il simbolo $\ket{\psi}$ è detto \textit{ket}, mentre $\bra{\psi}$ è detto \textit{bra}; il prodotto interno $\braket{\phi|\psi}$ forma il \textit{bracket}, da cui il nome.}, i due stati base computazionali sono:
+\begin{equation}
+    \ket{0} = \begin{pmatrix} 1 \\ 0 \end{pmatrix}, \qquad
+    \ket{1} = \begin{pmatrix} 0 \\ 1 \end{pmatrix}
+\end{equation}
+
+Lo stato generico di un qubit è la \textbf{sovrapposizione}:
+\begin{equation}
+    \ket{\psi} = \alpha\ket{0} + \beta\ket{1}, \qquad \alpha, \beta \in \mathbb{C}, \quad |\alpha|^2 + |\beta|^2 = 1
+\end{equation}
+
+dove $|\alpha|^2$ e $|\beta|^2$ rappresentano le probabilità di ottenere rispettivamente $0$ e $1$ al momento della misura. Il vincolo di normalizzazione $|\alpha|^2 + |\beta|^2 = 1$ garantisce che le probabilità sommino a 1.
+
+\subsection{La Sfera di Bloch}
+
+Ogni stato puro di un qubit può essere visualizzato come un punto sulla superficie della \textbf{sfera di Bloch}, una sfera unitaria in $\mathbb{R}^3$.\footnote{La \textbf{sfera di Bloch} deve il suo nome al fisico svizzero-americano Felix Bloch (1905--1983), Premio Nobel per la Fisica nel 1952 (insieme a Edward Purcell) per lo sviluppo della spettroscopia a risonanza magnetica nucleare (\ac{NMR}). La stessa notazione $T_1$ e $T_2$ per i tempi di decoerenza proviene dal formalismo NMR di Bloch.} Parametrizzando le ampiezze complesse tramite angoli reali $\theta \in [0, \pi]$ e $\phi \in [0, 2\pi)$:
+\begin{equation}
+    \ket{\psi} = \cos\!\left(\frac{\theta}{2}\right)\ket{0} + e^{i\phi}\sin\!\left(\frac{\theta}{2}\right)\ket{1}
+\end{equation}
+
+I poli nord e sud corrispondono agli stati $\ket{0}$ e $\ket{1}$, mentre i punti sull'equatore rappresentano sovrapposizioni equiprobabili con fasi diverse.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{bloch_sphere.png}
+    \caption{La sfera di Bloch: ogni stato puro di un qubit corrisponde a un punto sulla superficie della sfera unitaria, parametrizzato dagli angoli $\theta \in [0,\pi]$ e $\varphi \in [0,2\pi)$. I poli nord e sud rappresentano gli stati base $\ket{0}$ e $\ket{1}$; i punti sull'equatore corrispondono a sovrapposizioni equiprobabili.}
+    \label{fig:bloch}
+\end{figure}
+
+\section{Sistemi Multi-Qubit e Prodotto Tensoriale}
+
+Un sistema di $n$ qubit è descritto da un vettore nello spazio di Hilbert $\mathcal{H}^{\otimes n} = \mathbb{C}^{2^n}$, ottenuto come prodotto tensoriale degli spazi individuali. Uno stato generico di $n$ qubit è:
+\begin{equation}
+    \ket{\psi} = \sum_{x \in \{0,1\}^n} \alpha_x \ket{x}, \qquad \sum_{x} |\alpha_x|^2 = 1
+\end{equation}
+
+La dimensione esponenziale $2^n$ dello spazio di Hilbert è la fonte del potere computazionale dei sistemi quantistici: con $n = 300$ qubit, lo spazio degli stati ha dimensione $2^{300}$, superiore al numero di atomi nell'universo osservabile.
+
+\subsection{Entanglement}
+
+Due qubit sono detti \textbf{entangled} quando il loro stato congiunto non può essere scritto come prodotto tensoriale degli stati individuali. Gli stati di Bell costituiscono la base canonica degli stati entangled a due qubit:
+\begin{align}
+    \ket{\Phi^+} &= \frac{1}{\sqrt{2}}(\ket{00} + \ket{11}) \\
+    \ket{\Phi^-} &= \frac{1}{\sqrt{2}}(\ket{00} - \ket{11}) \\
+    \ket{\Psi^+} &= \frac{1}{\sqrt{2}}(\ket{01} + \ket{10}) \\
+    \ket{\Psi^-} &= \frac{1}{\sqrt{2}}(\ket{01} - \ket{10})
+\end{align}
+
+Lo stato $\ket{\Phi^+}$ non può essere fattorizzato come $\ket{\psi_A} \otimes \ket{\psi_B}$ per nessuna scelta di $\ket{\psi_A}$ e $\ket{\psi_B}$: misurare il primo qubit come $0$ garantisce che il secondo sia $0$, indipendentemente dalla distanza fisica tra i due sistemi.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.72\textwidth]{circuit_bell.png}
+    \caption{Circuito quantistico per la preparazione dello stato di Bell $\ket{\Phi^+}$. Una porta di Hadamard $H$ posta sul qubit di controllo crea la sovrapposizione $\frac{1}{\sqrt{2}}(\ket{0}+\ket{1})$; la successiva porta CNOT introduce le correlazioni di entanglement, producendo lo stato $\frac{1}{\sqrt{2}}(\ket{00}+\ket{11})$.}
+    \label{fig:circuit_bell}
+\end{figure}
+
+\section{Porte Quantistiche}
+
+Le operazioni su qubit sono rappresentate da \textbf{matrici unitarie}: $U^\dagger U = I$. La condizione di unitarietà garantisce la reversibilità del calcolo e la conservazione della norma (delle probabilità).
+
+\subsection{Porte a Singolo Qubit}
+
+Le principali porte a singolo qubit sono:
+
+Le tre \textbf{matrici di Pauli} $X$, $Y$, $Z$ costituiscono, insieme all'identità $I$, una base per lo spazio delle matrici $2\times 2$ hermitiane a traccia nulla, e giocano un ruolo centrale sia nella descrizione degli stati del qubit sia nella caratterizzazione dei canali di rumore.
+
+\textbf{Porta di Pauli-X (NOT quantistico / Bit Flip):}
+\begin{equation}
+    X = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}, \qquad X\ket{0} = \ket{1}, \quad X\ket{1} = \ket{0}
+\end{equation}
+È l'analogo quantistico del NOT classico: inverte i valori di $\ket{0}$ e $\ket{1}$.
+
+\textbf{Porta di Pauli-Y:}
+\begin{equation}
+    Y = \begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix}, \qquad Y\ket{0} = i\ket{1}, \quad Y\ket{1} = -i\ket{0}
+\end{equation}
+Combina un bit flip e un phase flip: è equivalente (a meno di una fase globale) alla composizione $iXZ$. Compare naturalmente nella decomposizione di rotazioni generali su qubit e nella descrizione del canale di \textit{depolarizzazione}.
+
+\textbf{Porta di Pauli-Z (Phase Flip):}
+\begin{equation}
+    Z = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}, \qquad Z\ket{0} = \ket{0}, \quad Z\ket{1} = -\ket{1}
+\end{equation}
+Lascia invariato $\ket{0}$ e aggiunge una fase $-1$ a $\ket{1}$: è un \textit{phase flip}.
+
+Le tre matrici di Pauli soddisfano le seguenti relazioni algebriche fondamentali:
+\begin{align}
+    X^2 = Y^2 = Z^2 &= I \\
+    XY = iZ, \quad YZ = iX, &\quad ZX = iY \\
+    \{X, Y\} = \{Y, Z\} &= \{X, Z\} = 0
+\end{align}
+dove $\{A, B\} = AB + BA$ è l'\textbf{anticommutatore}. Le prime due relazioni mostrano che le matrici di Pauli formano l'algebra di Lie $\mathfrak{su}(2)$; la terza --- l'anticommutazione --- è alla base della struttura dei codici di correzione degli errori quantistici, dove $X$ e $Z$ rappresentano rispettivamente errori di bit flip e phase flip indipendenti.
+
+\textbf{Porta di Hadamard:}
+\begin{equation}
+    H = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}, \qquad
+    H\ket{0} = \frac{\ket{0}+\ket{1}}{\sqrt{2}} \equiv \ket{+}, \quad
+    H\ket{1} = \frac{\ket{0}-\ket{1}}{\sqrt{2}} \equiv \ket{-}
+\end{equation}
+
+La porta di Hadamard è fondamentale: applicata a $n$ qubit inizializzati in $\ket{0}^{\otimes n}$, genera la \textbf{sovrapposizione uniforme} di tutti i $2^n$ stati base:
+\begin{equation}
+    H^{\otimes n}\ket{0}^{\otimes n} = \frac{1}{\sqrt{2^n}}\sum_{x=0}^{2^n-1}\ket{x}
+\end{equation}
+
+\textbf{Porta di fase $R_\phi$:}
+\begin{equation}
+    R_\phi = \begin{pmatrix} 1 & 0 \\ 0 & e^{i\phi} \end{pmatrix}
+\end{equation}
+Casi particolari: $T = R_{\pi/4}$ (T-gate) e $S = R_{\pi/2}$ (S-gate o Phase gate).
+
+\subsection{Porte a Due Qubit}
+
+\textbf{Porta CNOT (Controlled-NOT):}
+\begin{equation}
+    \text{CNOT} = \begin{pmatrix} 1&0&0&0 \\ 0&1&0&0 \\ 0&0&0&1 \\ 0&0&1&0 \end{pmatrix}
+\end{equation}
+Applica una NOT sul qubit \textit{target} se e solo se il qubit \textit{control} è $\ket{1}$. È la porta a due qubit più comune e, insieme alle porte a singolo qubit, forma un insieme universale.
+
+\textbf{Porta Toffoli (CCNOT):} Generalizzazione a tre qubit; applica NOT sul terzo qubit solo se entrambi i qubit di controllo sono $\ket{1}$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{circuit_gates.png}
+    \caption{Simboli circuitali delle principali porte quantistiche a singolo qubit ($X$, $Y$, $Z$, $H$, $R_\phi$) e della porta CNOT a due qubit. Nella porta CNOT, il punto pieno indica il qubit di controllo $q_c$ e il cerchio con croce indica il qubit target $q_t$.}
+    \label{fig:gates}
+\end{figure}
+
+\section{Circuiti Quantistici}
+
+Un \textbf{circuito quantistico} è una sequenza ordinata di porte quantistiche applicata a un registro di qubit. I circuiti si leggono da sinistra a destra, con ogni filo orizzontale che rappresenta l'evoluzione temporale di un qubit. La composizione di porte corrisponde al prodotto matriciale degli operatori unitari associati.
+
+L'equivalente quantistico del teorema di universalità classico afferma che qualunque trasformazione unitaria su $n$ qubit può essere decomposta in un numero finito di porte da un insieme universale, tipicamente $\{H, T, \text{CNOT}\}$.
+
+\section{Misura Quantistica}
+
+La \textbf{misura} in base computazionale di uno stato $\ket{\psi} = \sum_x \alpha_x\ket{x}$ produce il risultato $x$ con probabilità $|\alpha_x|^2$, e collassa irrevocabilmente lo stato in $\ket{x}$. La misura è una operazione \textit{non unitaria} e \textit{non reversibile}: una volta effettuata, l'informazione sulle ampiezze è irreversibilmente persa.
+
+Questa caratteristica impone che gli algoritmi quantistici siano progettati per amplificare selettivamente l'ampiezza della risposta corretta prima della misura, in modo da ottenere il risultato voluto con alta probabilità.
+
+\section{Interferenza Quantistica}
+
+L'\textbf{interferenza} è il meccanismo fondamentale attraverso cui gli algoritmi quantistici realizzano il loro vantaggio computazionale. Le ampiezze quantistiche sono numeri complessi e possono combinarsi costruttivamente (quando hanno lo stesso segno/fase) o distruttivamente (quando hanno fase opposta).
+
+Un algoritmo quantistico efficiente è costruito in modo che:
+\begin{itemize}
+    \item Le ampiezze degli stati \textbf{sbagliati} si cancellino per \textbf{interferenza distruttiva};
+    \item Le ampiezze degli stati \textbf{corretti} si sommino per \textbf{interferenza costruttiva}.
+\end{itemize}
+
+Questo meccanismo è alla base sia dell'algoritmo di Grover (Capitolo~\ref{chap:grover}) sia dell'algoritmo di Shor (Capitolo~\ref{chap:shor}), dove la Quantum Fourier Transform realizza l'interferenza necessaria al ritrovamento del periodo.
+
+\section{Modello di Complessità Quantistica}
+
+La complessità di un algoritmo quantistico è misurata in termini di numero di porte (equivalente delle operazioni elementari classiche) e di profondità del circuito (numero di livelli di porte parallele). Si definiscono le classi di complessità quantistiche più rilevanti:
+
+\begin{itemize}
+    \item \textbf{BQP} (\textit{Bounded-error Quantum Polynomial time}): classe dei problemi risolvibili in tempo polinomiale con probabilità di errore al più $1/3$ da un computer quantistico. È la classe centrale del calcolo quantistico.
+
+    \item \textbf{QMA} (\textit{Quantum Merlin-Arthur}): analogo quantistico di NP; problemi la cui soluzione può essere verificata efficientemente da un computer quantistico.
+\end{itemize}
+
+Si congettura che $\mathbf{P} \subseteq \mathbf{BPP} \subseteq \mathbf{BQP} \subseteq \mathbf{PSPACE}$, ma non è ancora dimostrato che BQP strettamente contenga P o BPP, né che sia contenuto strettamente in PSPACE.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.68\textwidth]{complexity_classes.png}
+    \caption{Gerarchia congetturata delle classi di complessità nel calcolo quantistico. La classe BQP cattura i problemi efficientemente risolvibili da un computer quantistico; essa contiene P e BPP, ed è contenuta in PSPACE. Gli algoritmi di Shor e Grover risiedono in BQP ma si ritiene (senza dimostrazione) che non appartengano a P.}
+    \label{fig:complexity}
+\end{figure}
+
+\end{onehalfspace}

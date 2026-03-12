@@ -1,0 +1,117 @@
+\documentclass[oneside, 12pt]{report}
+
+\usepackage[a4paper, left=3cm, right=3cm, top=4cm, bottom=3cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{graphicx}
+\graphicspath{{figure/}}
+\usepackage{url}
+\usepackage[breaklinks, hidelinks]{hyperref}
+\usepackage{subfig}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{braket}         % Notazione di Dirac: \ket{}, \bra{}, \braket{}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{afterpage}
+\usepackage{bm}
+\usepackage{multirow}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{tikz}
+\usetikzlibrary{quantikz2}  % Circuiti quantistici
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{setspace}
+\usepackage{float}
+\usepackage[backend=biber, citestyle=numeric, sorting=none]{biblatex}
+\usepackage{acronym}          % Lista degli acronimi
+
+% Stile codice Python/Qiskit
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{orange},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    frame=single,
+    breaklines=true,
+    captionpos=b
+}
+
+% Pagina bianca
+\newcommand{\blankpage}{%
+    \null\thispagestyle{empty}\addtocounter{page}{-1}\newpage
+}
+
+\onehalfspacing
+\setlength{\skip\footins}{1cm}
+\addbibresource{Bibliografia.bib}
+
+\begin{document}
+
+\input{TITLE}
+
+\begin{titlepage}
+    \vspace*{5cm}
+    \begin{center}
+        \emph{Alla mia famiglia, \\
+        per il sostegno incondizionato e l'amore che non è mai venuto meno. \\
+        A me stesso, per la determinazione e la perseveranza con cui ho affrontato questo percorso.}
+    \end{center}
+\end{titlepage}
+
+\tableofcontents
+
+% -----------------------------------------------
+\chapter*{Elenco degli Acronimi}
+\addcontentsline{toc}{chapter}{Elenco degli Acronimi}
+\input{capitoli/Acronimi}
+
+% -----------------------------------------------
+\chapter{Introduzione}
+\label{chap:introduzione}
+\input{capitoli/Introduzione}
+
+% -----------------------------------------------
+\chapter{Obiettivi}
+\label{chap:obiettivi}
+\input{capitoli/Obiettivi}
+
+% -----------------------------------------------
+\chapter{Fondamenti del Calcolo Quantistico}
+\label{chap:fondamenti}
+\input{capitoli/Fondamenti}
+
+% -----------------------------------------------
+\chapter{L'Algoritmo di Shor}
+\label{chap:shor}
+\input{capitoli/Shor}
+
+% -----------------------------------------------
+\chapter{Rumore Quantistico e Correzione degli Errori}
+\label{chap:rumore}
+\input{capitoli/Rumore}
+
+% -----------------------------------------------
+\chapter{Implementazione di Shor e Ottimizzazione con Intelligenza Artificiale}
+\label{chap:implementazioni}
+\input{capitoli/Implementazioni}
+
+% -----------------------------------------------
+\chapter{Conclusioni e Sviluppi Futuri}
+\label{chap:conclusioni}
+\input{capitoli/Conclusioni}
+
+% -----------------------------------------------
+\printbibliography[heading=bibintoc, title={Bibliografia}]
+
+% -----------------------------------------------
+\chapter*{Ringraziamenti}
+\input{capitoli/Ringraziamenti}
+
+\end{document}
