@@ -1,0 +1,161 @@
+\begin{onehalfspace}
+
+\section{Il Problema della Ricerca Non Strutturata}
+
+Dato un database\footnote{Il termine \textit{database} è qui usato in senso astratto e generale: non si intende necessariamente una base di dati relazionale, ma qualsiasi insieme di $N$ elementi su cui sia definita una funzione oracolo $f$. L'algoritmo di Grover è applicabile a qualsiasi problema in cui la verifica di una soluzione sia computazionalmente semplice, mentre la ricerca non lo è.} di $N$ elementi, la ricerca di un elemento che soddisfi una certa proprietà richiede, nel caso classico peggiore, $O(N)$ interrogazioni: è necessario esaminare gli elementi uno per uno. Se la struttura del database non consente alcuna indicizzazione o ordinamento, questo limite è ottimale per qualsiasi algoritmo deterministico o probabilistico classico.
+
+Formalmente, il problema è definito come segue. Sia $f:\{0,1,\ldots,N-1\} \to \{0,1\}$ una funzione \textit{oracolo} tale che:
+\begin{equation}
+    f(x) = \begin{cases} 1 & \text{se } x \text{ è la soluzione (o una delle soluzioni)} \\ 0 & \text{altrimenti} \end{cases}
+\end{equation}
+
+Si assume che esista esattamente una soluzione $x^*$ con $f(x^*) = 1$ (si generalizzerà al caso di $M$ soluzioni). L'obiettivo è trovare $x^*$ con il minor numero possibile di interrogazioni a $f$.
+
+Nel 1996, Lov Grover\footnote{\textbf{Lov Kumar Grover} (nato nel 1961 in India) è un informatico teorico che lavorava, come Shor, presso i Bell Labs di AT\&T. La coincidenza è notevole: i due algoritmi quantistici più importanti della storia furono sviluppati nello stesso laboratorio a pochi anni di distanza.} dimostrò che un algoritmo quantistico può trovare $x^*$ con $O(\sqrt{N})$ interrogazioni all'oracolo \cite{grover1996}, ottenendo uno \textbf{speedup quadratico} rispetto al caso classico.
+
+\section{L'Oracolo Quantistico}
+
+L'oracolo classico $f$ viene codificato in un operatore quantistico unitario $O_f$. Esistono due formulazioni equivalenti:
+
+\subsection{Oracolo Computazionale}
+\begin{equation}
+    O_f\ket{x}\ket{b} = \ket{x}\ket{b \oplus f(x)}
+\end{equation}
+dove $\ket{b}$ è un qubit ancilla. Questa formulazione è analoga all'oracolo classico.
+
+\subsection{Oracolo di Fase (Phase Oracle)}
+Inizializzando il qubit ancilla nello stato $\ket{-} = (\ket{0}-\ket{1})/\sqrt{2}$ e sfruttando il \textit{phase kickback}:
+\begin{equation}
+    O_f\ket{x}\ket{-} = (-1)^{f(x)}\ket{x}\ket{-}
+\end{equation}
+
+Il qubit ancilla rimane invariato, ma lo stato del registro principale acquisisce una fase $-1$ se e solo se $x$ è la soluzione:
+\begin{equation}
+    O_f\ket{x} = (-1)^{f(x)}\ket{x}
+\end{equation}
+
+Questa formulazione è quella utilizzata nell'algoritmo di Grover: l'oracolo \textbf{marca} la soluzione invertendone il segno dell'ampiezza.
+
+\section{Il Meccanismo di Amplitude Amplification}
+
+L'algoritmo di Grover si basa su un operatore composto, il \textbf{Grover Iterator} $G$, che viene applicato ripetutamente per amplificare progressivamente l'ampiezza dello stato soluzione.
+
+\subsection{Inizializzazione}
+
+Si parte da $n = \lceil \log_2 N \rceil$ qubit inizializzati in $\ket{0}^{\otimes n}$. Si applica la trasformata di Hadamard per creare la sovrapposizione uniforme:
+\begin{equation}
+    \ket{s} = H^{\otimes n}\ket{0}^{\otimes n} = \frac{1}{\sqrt{N}}\sum_{x=0}^{N-1}\ket{x}
+\end{equation}
+
+Nello stato $\ket{s}$, ogni stato base ha ampiezza $1/\sqrt{N}$, corrispondente a una probabilità di misura $1/N$ per ciascuno.
+
+\subsection{Il Grover Iterator}
+
+Il Grover Iterator è definito come:
+\begin{equation}
+    G = D \cdot O_f
+\end{equation}
+
+dove:
+\begin{itemize}
+    \item $O_f$ è l'oracolo di fase (inverte il segno dell'ampiezza della soluzione);
+    \item $D$ è il \textbf{Diffusion Operator} (o Grover Diffusion Operator):
+    \begin{equation}
+        D = 2\ket{s}\bra{s} - I = H^{\otimes n}(2\ket{0}\bra{0} - I)H^{\otimes n}
+    \end{equation}
+\end{itemize}
+
+Il Diffusion Operator realizza una \textbf{riflessione attorno alla media}: ogni ampiezza $\alpha_x$ viene trasformata in $2\bar{\alpha} - \alpha_x$, dove $\bar{\alpha}$ è la media delle ampiezze. Questa operazione amplifica le ampiezze superiori alla media e attenua quelle inferiori.
+
+\subsection{Interpretazione Geometrica}
+
+L'algoritmo di Grover ammette un'elegante interpretazione geometrica. Si definiscono i due stati ortonormali:
+\begin{align}
+    \ket{w}  &= \ket{x^*} \quad \text{(la soluzione)} \\
+    \ket{s'} &= \frac{1}{\sqrt{N-1}}\sum_{x \neq x^*}\ket{x} \quad \text{(tutti gli altri stati)}
+\end{align}
+
+Lo stato iniziale $\ket{s}$ si decompone come:
+\begin{equation}
+    \ket{s} = \sin\theta\ket{w} + \cos\theta\ket{s'}, \qquad \theta = \arcsin\!\left(\frac{1}{\sqrt{N}}\right)
+\end{equation}
+
+Il Grover Iterator $G$ equivale a una rotazione di angolo $2\theta$ nel piano bidimensionale generato da $\ket{w}$ e $\ket{s'}$:
+\begin{equation}
+    G^k\ket{s} = \sin\!\left((2k+1)\theta\right)\ket{w} + \cos\!\left((2k+1)\theta\right)\ket{s'}
+\end{equation}
+
+Dopo $k$ iterazioni, la probabilità di misurare la soluzione è:
+\begin{equation}
+    P(x^*) = \sin^2\!\left((2k+1)\theta\right)
+\end{equation}
+
+\section{Numero Ottimale di Iterazioni}
+
+La probabilità di successo è massimizzata quando $(2k+1)\theta \approx \pi/2$, ovvero:
+\begin{equation}
+    k_{\text{opt}} = \left\lfloor \frac{\pi}{4\theta} \right\rfloor \approx \frac{\pi}{4}\sqrt{N}
+\end{equation}
+
+poiché per $N$ grande $\theta \approx 1/\sqrt{N}$. Il numero ottimale di iterazioni è quindi $O(\sqrt{N})$.
+
+\textbf{Attenzione:} Applicare troppe iterazioni è dannoso. Superato il massimo, la probabilità decresce: il sistema ``supera'' la soluzione. In un caso ideale, la probabilità di successo è:
+\begin{equation}
+    P_{\text{success}} = \sin^2\!\left(\left(2k_{\text{opt}}+1\right)\theta\right) \geq 1 - \frac{1}{N}
+\end{equation}
+
+che tende a 1 per $N$ grande.
+
+\subsection{Caso con $M$ Soluzioni}
+
+Se il database contiene $M$ soluzioni, l'angolo iniziale diventa $\theta = \arcsin(\sqrt{M/N})$ e il numero ottimale di iterazioni diventa:
+\begin{equation}
+    k_{\text{opt}} \approx \frac{\pi}{4}\sqrt{\frac{N}{M}}
+\end{equation}
+
+La complessità rimane $O(\sqrt{N/M})$, che converge a $O(1)$ quando $M \sim N$.
+
+\section{Schema dell'Algoritmo}
+
+\begin{algorithm}[H]
+\caption{Algoritmo di Grover}
+\begin{algorithmic}[1]
+\Require Oracolo $O_f$, numero di elementi $N = 2^n$, numero di soluzioni $M$
+\Ensure Soluzione $x^*$ con alta probabilità
+\State Inizializzare $n$ qubit: $\ket{\psi_0} = \ket{0}^{\otimes n}$
+\State Applicare $H^{\otimes n}$: $\ket{s} = \frac{1}{\sqrt{N}}\sum_{x=0}^{N-1}\ket{x}$
+\State Calcolare $k_{\text{opt}} = \lfloor\frac{\pi}{4}\sqrt{N/M}\rfloor$
+\For{$k = 1$ \textbf{to} $k_{\text{opt}}$}
+    \State Applicare $O_f$: \quad $\ket{x} \mapsto (-1)^{f(x)}\ket{x}$ \Comment{Marca la soluzione}
+    \State Applicare $D = H^{\otimes n}(2\ket{0}\bra{0}-I)H^{\otimes n}$ \Comment{Riflessione attorno alla media}
+\EndFor
+\State Misurare in base computazionale
+\State \Return il valore misurato
+\end{algorithmic}
+\end{algorithm}
+
+\section{Ottimalità e Lower Bound}
+
+L'algoritmo di Grover è \textbf{ottimale}: non esiste alcun algoritmo quantistico che risolva il problema della ricerca non strutturata in meno di $\Omega(\sqrt{N})$ interrogazioni all'oracolo. Questo risultato è stato dimostrato da Bennett et al. (1997) \cite{bennett1997} utilizzando il metodo dei polinomi e, in forma più generale, da Zalka (1999) \cite{zalka1999}.
+
+La dimostrazione si basa sul fatto che le ampiezze delle soluzioni, dopo $k$ interrogazioni, non possono crescere di una quantità superiore a $O(k/\sqrt{N})$ per iterazione, stabilendo un limite inferiore di $\Omega(\sqrt{N})$ interrogazioni.
+
+\section{Confronto con Algoritmi Classici}
+
+\begin{table}[H]
+\centering
+\caption{Confronto tra ricerca classica e algoritmo di Grover}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Approccio} & \textbf{Interrogazioni (caso medio)} & \textbf{Interrogazioni (caso peggiore)} \\
+\midrule
+Ricerca classica (deterministica)  & $N/2$          & $N$           \\
+Ricerca classica (randomizzata)    & $N/2$          & $N$           \\
+\textbf{Algoritmo di Grover}       & $O(\sqrt{N})$  & $O(\sqrt{N})$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Per $N = 10^{12}$: la ricerca classica richiede in media $5 \times 10^{11}$ passi, mentre Grover ne richiede circa $10^6$ -- sei ordini di grandezza in meno.
+
+\end{onehalfspace}
