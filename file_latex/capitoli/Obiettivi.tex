@@ -4,7 +4,7 @@
 
 Il presente lavoro si inserisce nel contesto della ricerca sugli algoritmi quantistici, con l'obiettivo di analizzare in profondità l'algoritmo di Shor per la fattorizzazione di interi -- uno tra i risultati più rilevanti e dirompenti dell'informatica quantistica -- e di affrontare il problema della sua esecuzione su hardware quantistico reale, afflitto da rumore e decoerenza.
 
-Il filo conduttore del lavoro è duplice: da un lato la comprensione del \textbf{potenziale computazionale} offerto dall'algoritmo di Shor rispetto ai migliori approcci classici noti; dall'altro lo studio delle \textbf{limitazioni pratiche} imposte dal rumore nei dispositivi NISQ attuali, e lo sviluppo di strategie di mitigazione e ottimizzazione basate su \textbf{modelli di intelligenza artificiale}.
+Il filo conduttore del lavoro è duplice: da un lato la comprensione del \textbf{potenziale computazionale} offerto dall'algoritmo di Shor rispetto ai migliori approcci classici noti; dall'altro lo studio delle \textbf{limitazioni pratiche} imposte dal rumore nei dispositivi \ac{NISQ} attuali, e lo sviluppo di strategie di mitigazione e ottimizzazione basate su \textbf{modelli di intelligenza artificiale}.
 
 \section{Obiettivi Specifici}
 
@@ -14,13 +14,13 @@ Il filo conduttore del lavoro è duplice: da un lato la comprensione del \textbf
     Fornire una trattazione rigorosa dei principi matematici e fisici su cui si basano gli algoritmi quantistici: il modello del qubit, la sovrapposizione, l'entanglement, le porte logiche quantistiche e il meccanismo di interferenza. Questo obiettivo costituisce la base teorica indispensabile per la comprensione dell'algoritmo trattato nei capitoli successivi.
 
     \item \textbf{Analisi teorica dell'algoritmo di Shor.}
-    Descrivere in dettaglio il funzionamento dell'algoritmo di Shor per la fattorizzazione di interi in tempo polinomiale, con particolare attenzione alla riduzione al problema del period-finding, alla Quantum Fourier Transform (QFT) e alla tecnica di phase estimation. Analizzare la complessità computazionale e valutare le implicazioni per la crittografia RSA e per la sicurezza informatica post-quantum.
+    Descrivere in dettaglio il funzionamento dell'algoritmo di Shor per la fattorizzazione di interi in tempo polinomiale, con particolare attenzione alla riduzione al problema del period-finding, alla Quantum Fourier Transform (\ac{QFT}) e alla tecnica di phase estimation. Analizzare la complessità computazionale e valutare le implicazioni per la crittografia \ac{RSA} e per la sicurezza informatica post-quantum.
 
     \item \textbf{Implementazione su Qiskit e analisi sperimentale.}
     Implementare l'algoritmo di Shor utilizzando il framework open-source Qiskit, costruendo i circuiti per la QFT, la modular exponentiation e il circuito completo di fattorizzazione. Verificare il comportamento del circuito su simulatore ideale e analizzare le prestazioni su istanze concrete.
 
     \item \textbf{Studio del rumore quantistico nell'algoritmo di Shor.}
-    Analizzare le principali fonti di errore che affliggono l'esecuzione dell'algoritmo di Shor su hardware reale -- decoerenza, errori di gate, readout errors -- con particolare attenzione alle componenti più sensibili al rumore: la QFT e la phase estimation. Studiare le strategie di Quantum Error Correction (QEC) e di noise mitigation disponibili (ZNE, PEC, readout mitigation), valutandone l'efficacia sull'algoritmo di Shor.
+    Analizzare le principali fonti di errore che affliggono l'esecuzione dell'algoritmo di Shor su hardware reale -- decoerenza, errori di gate, readout errors -- con particolare attenzione alle componenti più sensibili al rumore: la QFT e la phase estimation. Studiare le strategie di \ac{QEC} e di noise mitigation disponibili (\ac{ZNE}, \ac{PEC}, readout mitigation), valutandone l'efficacia sull'algoritmo di Shor.
 
     \item \textbf{Ottimizzazione mediante modelli di intelligenza artificiale.}
     Esplorare l'integrazione di modelli di machine learning per la caratterizzazione del rumore, l'ottimizzazione dei parametri circuitali e il miglioramento della fedeltà dei risultati in ambienti quantistici rumorosi. Valutare l'apporto dell'intelligenza artificiale come strumento complementare alle tecniche di mitigazione tradizionali per estendere la praticabilità dell'algoritmo di Shor su hardware NISQ.
@@ -34,7 +34,7 @@ Il lavoro adotta un approccio che integra teoria, sperimentazione e intelligenza
 \begin{itemize}
     \item La parte \textbf{teorica} si basa sullo studio della letteratura primaria (articolo originale di Shor \cite{shor1994}) e dei testi di riferimento del settore (Nielsen \& Chuang \cite{nielsenChuang2000}), con formalizzazione matematica rigorosa dei concetti chiave.
 
-    \item La parte \textbf{sperimentale} utilizza il framework Qiskit e il simulatore Aer di IBM per implementare e testare i circuiti quantistici dell'algoritmo di Shor, valutare l'impatto del rumore e confrontare le tecniche di mitigazione.
+    \item La parte \textbf{sperimentale} utilizza il framework Qiskit e il simulatore Aer di \ac{IBM} per implementare e testare i circuiti quantistici dell'algoritmo di Shor, valutare l'impatto del rumore e confrontare le tecniche di mitigazione.
 
     \item La componente di \textbf{intelligenza artificiale} integra modelli di machine learning per la caratterizzazione e la mitigazione del rumore, con l'obiettivo di ottimizzare le prestazioni dell'algoritmo in ambienti NISQ.
 \end{itemize}

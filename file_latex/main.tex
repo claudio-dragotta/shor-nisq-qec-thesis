@@ -28,7 +28,13 @@
 \usepackage[bottom]{footmisc}
 \usepackage{float}
 \usepackage[backend=biber, citestyle=numeric, sorting=none]{biblatex}
-\usepackage{acronym}          % Lista degli acronimi
+\usepackage[acronym, nopostdot, nogroupskip, toc]{glossaries}
+\makenoidxglossaries
+% Compatibilità con i comandi del vecchio pacchetto acronym
+\let\ac\gls
+\providecommand{\acf}[1]{\acrfull{#1}}
+\providecommand{\acl}[1]{\acrlong{#1}}
+\input{capitoli/Acronimi}   % definizioni acronimi nel preambolo
 
 % Stile codice Python/Qiskit
 \lstset{
@@ -69,9 +75,7 @@
 \tableofcontents
 
 % -----------------------------------------------
-\chapter*{Elenco degli Acronimi}
-\addcontentsline{toc}{chapter}{Elenco degli Acronimi}
-\input{capitoli/Acronimi}
+\printnoidxglossary[type=\acronymtype, nonumberlist, title={Elenco degli Acronimi}]
 
 % -----------------------------------------------
 \chapter{Introduzione}
@@ -89,30 +93,35 @@
 \input{capitoli/Fondamenti}
 
 % -----------------------------------------------
-\chapter{L'Algoritmo di Shor}
-\label{chap:shor}
-\input{capitoli/Shor}
+% \chapter{L'Algoritmo di Shor}
+% \label{chap:shor}
+% \input{capitoli/Shor}
 
 % -----------------------------------------------
-\chapter{Rumore Quantistico e Correzione degli Errori}
-\label{chap:rumore}
-\input{capitoli/Rumore}
+% \chapter{Rumore Quantistico e Correzione degli Errori}
+% \label{chap:rumore}
+% \input{capitoli/Rumore}
 
 % -----------------------------------------------
-\chapter{Implementazione di Shor e Ottimizzazione con Intelligenza Artificiale}
-\label{chap:implementazioni}
-\input{capitoli/Implementazioni}
+% \chapter{Strategie per la Riduzione del Rumore Quantistico}
+% \label{chap:strategie}
+% \input{capitoli/StrategieAntiRumore}
 
 % -----------------------------------------------
-\chapter{Conclusioni e Sviluppi Futuri}
-\label{chap:conclusioni}
-\input{capitoli/Conclusioni}
+% \chapter{Implementazione di Shor e Ottimizzazione con Intelligenza Artificiale}
+% \label{chap:implementazioni}
+% \input{capitoli/Implementazioni}
+
+% -----------------------------------------------
+% \chapter{Conclusioni e Sviluppi Futuri}
+% \label{chap:conclusioni}
+% \input{capitoli/Conclusioni}
 
 % -----------------------------------------------
 \printbibliography[heading=bibintoc, title={Bibliografia}]
 
 % -----------------------------------------------
-\chapter*{Ringraziamenti}
-\input{capitoli/Ringraziamenti}
+% \chapter*{Ringraziamenti}
+% \input{capitoli/Ringraziamenti}
 
 \end{document}

@@ -2,9 +2,9 @@
 
 \section{Riepilogo del Lavoro}
 
-Il presente elaborato ha affrontato lo studio e l'implementazione dell'algoritmo di Shor per la fattorizzazione di interi in tempo polinomiale, con particolare attenzione alle sfide poste dall'esecuzione su hardware quantistico NISQ e alle strategie di ottimizzazione basate su modelli di intelligenza artificiale.
+Il presente elaborato ha affrontato lo studio e l'implementazione dell'algoritmo di Shor per la fattorizzazione di interi in tempo polinomiale, con particolare attenzione alle sfide poste dall'esecuzione su hardware quantistico \ac{NISQ} e alle strategie di ottimizzazione basate su modelli di intelligenza artificiale.
 
-Partendo dai fondamenti del calcolo quantistico -- qubit, porte, circuiti, entanglement e interferenza -- si è costruito il quadro teorico necessario alla comprensione dell'algoritmo. L'algoritmo di Shor è stato analizzato nel dettaglio: dalla riduzione della fattorizzazione al periodo-finding, alla struttura della Quantum Fourier Transform, alla phase estimation, fino alle implicazioni per la crittografia RSA e per il panorama della sicurezza post-quantum.
+Partendo dai fondamenti del calcolo quantistico -- qubit, porte, circuiti, entanglement e interferenza -- si è costruito il quadro teorico necessario alla comprensione dell'algoritmo. L'algoritmo di Shor è stato analizzato nel dettaglio: dalla riduzione della fattorizzazione al periodo-finding, alla struttura della Quantum Fourier Transform, alla phase estimation, fino alle implicazioni per la crittografia \ac{RSA} e per il panorama della sicurezza post-quantum.
 
 La parte implementativa ha mostrato come costruire e simulare l'algoritmo di Shor con Qiskit, analizzandone le prestazioni su simulatore ideale e rumoroso. L'analisi del rumore ha evidenziato le componenti più vulnerabili del circuito -- QFT, phase estimation e modular exponentiation -- e le strategie di mitigazione disponibili. Infine, l'integrazione con modelli di intelligenza artificiale ha dimostrato come machine learning e reinforcement learning possano migliorare concretamente la fedeltà dei risultati su hardware NISQ.
 
@@ -32,7 +32,7 @@ I risultati di questo lavoro aprono numerose direzioni di ricerca:
 
     \item[AI per la compilazione di circuiti:] L'uso di modelli di deep learning per la compilazione ottimale del circuito di Shor su topologie hardware specifiche -- minimizzando il numero di SWAP gate e la profondità del circuito -- è un'area di ricerca in rapida crescita.
 
-    \item[Crittografia post-quantum:] I risultati di questo lavoro rafforzano la motivazione per la transizione verso standard crittografici post-quantum (CRYSTALS-Kyber, Dilithium, FALCON) già standardizzati dal NIST, evidenziando la concretezza della minaccia dell'algoritmo di Shor nel medio-lungo termine.
+    \item[Crittografia post-quantum:] I risultati di questo lavoro rafforzano la motivazione per la transizione verso standard crittografici post-quantum (CRYSTALS-Kyber, Dilithium, FALCON) già standardizzati dal \ac{NIST}, evidenziando la concretezza della minaccia dell'algoritmo di Shor nel medio-lungo termine.
 
     \item[Tecniche avanzate di mitigazione AI-assistita:] Lo sviluppo di modelli più sofisticati per la mitigazione del rumore specifici per Shor -- come reti transformer addestrate su dataset di circuiti quantistici rumorosi -- promette di estendere ulteriormente la praticabilità dell'algoritmo su hardware corrente.
 \end{description}

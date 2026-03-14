@@ -2,7 +2,7 @@
 
 \section{Introduzione al Rumore Quantistico}
 
-I computer quantistici reali operano in regime \textbf{NISQ} (\textit{Noisy Intermediate-Scale Quantum}) \cite{preskill2018}: dispongono di decine o centinaia di qubit fisici, ma sono affetti da errori significativi che limitano la profondità dei circuiti eseguibili in modo affidabile. Comprendere le fonti di rumore e sviluppare strategie di mitigazione è essenziale per sfruttare appieno le potenzialità degli algoritmi quantistici su hardware corrente.
+I computer quantistici reali operano in regime \ac{NISQ} \cite{preskill2018}: dispongono di decine o centinaia di qubit fisici, ma sono affetti da errori significativi che limitano la profondità dei circuiti eseguibili in modo affidabile. Comprendere le fonti di rumore e sviluppare strategie di mitigazione è essenziale per sfruttare appieno le potenzialità degli algoritmi quantistici su hardware corrente.
 
 Il rumore quantistico differisce fondamentalmente dal rumore nei sistemi classici: mentre un bit classico può essere protetto ridondando l'informazione, un qubit non può essere copiato (teorema del no-cloning) \cite{wootters1982}, rendendo necessarie tecniche più sofisticate.
 
@@ -99,7 +99,7 @@ dove $L \sim O(n^3)$ è il numero totale di gate. Per $n = 15$ bit e $\epsilon =
 
 \section{Correzione degli Errori Quantistici}
 
-La \textbf{Quantum Error Correction} (QEC) si basa sull'idea di codificare l'informazione di un qubit \textit{logico} in un numero maggiore di qubit \textit{fisici}, in modo che errori su un sottoinsieme di qubit fisici possano essere rilevati e corretti senza distruggere l'informazione logica.
+La \ac{QEC} si basa sull'idea di codificare l'informazione di un qubit \textit{logico} in un numero maggiore di qubit \textit{fisici}, in modo che errori su un sottoinsieme di qubit fisici possano essere rilevati e corretti senza distruggere l'informazione logica.
 
 \subsection{Codice di Shor (1995)}
 
@@ -122,9 +122,9 @@ Il threshold del surface code ($\approx 1\%$ di tasso di errore per gate\footnot
 
 In assenza di QEC completo, si adottano tecniche di \textbf{noise mitigation} che riducono l'errore a livello classico post-processing, senza overhead quantistico eccessivo.
 
-\subsection{Zero-Noise Extrapolation (ZNE)}
+\subsection{Zero-Noise Extrapolation (\ac{ZNE})}
 
-La ZNE \cite{li2017} amplifica intenzionalmente il rumore scalando il tempo delle porte di un fattore $c > 1$, osserva come la quantità d'interesse varia con $c$, e \textbf{estrapora a rumore zero}. L'ampiezza dei gate viene scalata tramite identità: ogni gate $U$ viene sostituito da $U (U^\dagger U)^{n}$ per aumentare il rumore di un fattore $2n+1$:
+La \ac{ZNE} \cite{li2017} amplifica intenzionalmente il rumore scalando il tempo delle porte di un fattore $c > 1$, osserva come la quantità d'interesse varia con $c$, e \textbf{estrapora a rumore zero}. L'ampiezza dei gate viene scalata tramite identità: ogni gate $U$ viene sostituito da $U (U^\dagger U)^{n}$ per aumentare il rumore di un fattore $2n+1$:
 
 \begin{lstlisting}[caption={Zero-Noise Extrapolation con Qiskit-Aer}]
 from mitiq import zne
@@ -140,9 +140,9 @@ def execute_with_zne(circuit):
     return job.result().get_counts()
 \end{lstlisting}
 
-\subsection{Probabilistic Error Cancellation (PEC)}
+\subsection{Probabilistic Error Cancellation (\ac{PEC})}
 
-La PEC \cite{temme2017} decompone il canale rumoroso $\mathcal{E}$ come combinazione lineare di operazioni implementabili con i segni, poi campiona da questa decomposizione per stimare il valore ideale. Ha un overhead statistico esponenziale nella profondità del circuito, ma è asintoticamente esatto.
+La \ac{PEC} \cite{temme2017} decompone il canale rumoroso $\mathcal{E}$ come combinazione lineare di operazioni implementabili con i segni, poi campiona da questa decomposizione per stimare il valore ideale. Ha un overhead statistico esponenziale nella profondità del circuito, ma è asintoticamente esatto.
 
 \subsection{Readout Error Mitigation}
 
