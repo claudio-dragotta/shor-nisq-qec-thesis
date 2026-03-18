@@ -25,6 +25,7 @@ La mitigazione degli errori opera \emph{a posteriori}: non corregge i qubit dura
 \begin{itemize}
     \item \textbf{Zero-Noise Extrapolation (ZNE)}: si eseguono circuiti a diversi livelli di rumore artificialmente amplificato e si estrapolea rumore zero;
     \item \textbf{Probabilistic Error Cancellation (PEC)}: il canale di errore è invertito probabilisticamente tramite una quasi-probability decomposition;
+    \item \textbf{Gate Twirling}: i gate del circuito vengono randomizzati applicando operatori di Pauli casuali prima e dopo ogni gate, in modo da convertire errori coerenti (che possono accumularsi costruttivamente) in errori stocastici di tipo Pauli, più facili da caratterizzare e mitigare statisticamente;
     \item \textbf{Measurement Error Mitigation}: correzione degli errori di lettura tramite calibrazione della matrice di confusione.
 \end{itemize}
 
