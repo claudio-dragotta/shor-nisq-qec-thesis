@@ -186,6 +186,17 @@ error_relax = thermal_relaxation_error(t1, t2, gate_time)
 noise_model.add_all_qubit_quantum_error(error_relax, ['h', 'x'])
 \end{lstlisting}
 
+\subsection{Tecniche di Soppressione del Rumore: Dynamical Decoupling e Gate Twirling}
+
+Oltre al modello di rumore per la simulazione, il tutorial ufficiale IBM \cite{ibm_shor_tutorial} adotta due tecniche di soppressione del rumore che possono essere applicate anche in fase di esecuzione su hardware reale o su simulatori che le supportano:
+
+\begin{itemize}
+    \item \textbf{Dynamical Decoupling (sequenza XpXm)}: sequenze di pulse $X$-$X$ applicate ai qubit inattivi durante i gate lunghi, in modo da mediare a zero l'interazione con l'ambiente. Su \texttt{ibm\_marrakesh}, questa tecnica viene abilitata tramite le opzioni di transpilazione di Qiskit Runtime;
+    \item \textbf{Gate Twirling}: randomizzazione dei gate a due qubit tramite frame casuali di Pauli, che converte errori coerenti in errori stocastici, rendendo il rumore più prevedibile e la mitigazione più efficace. Su hardware IBM, il Gate Twirling riduce la varianza degli errori di gate prima dell'applicazione di ZNE o PEC.
+\end{itemize}
+
+A titolo di riferimento, il circuito di Shor per $N=15$, $a=2$, compilato su \texttt{ibm\_marrakesh} con optimization level 2, produce una profondità di \textbf{187 gate a due qubit} e un conteggio totale di \textbf{260 gate a due qubit} -- valori che illustrano concretamente il costo circuitale di un'istanza piccola ma realistica \cite{ibm_shor_tutorial}.
+
 \subsection{Risultati su Simulatore Ideale vs.\ Rumoroso}
 
 Eseguendo il circuito di Shor per $N = 15$, $a = 7$ con $n_{\text{count}} = 8$ qubit di counting si ottengono i seguenti risultati:
