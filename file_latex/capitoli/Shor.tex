@@ -108,6 +108,13 @@ Il circuito della QFT è costruito ricorsivamente tramite porte di Hadamard e po
 
 La QFT è impiegata, all'interno dell'algoritmo di Shor, attraverso la subroutine di \textbf{Phase Estimation} (\ac{QPE}). Data una porta $U$ con autovettore $\ket{u}$ e autovalore $e^{2\pi i \theta}$, la QPE stima $\theta$ con precisione arbitraria in tempo $O(n^2)$. Nell'algoritmo di Shor, $U$ è l'operatore di moltiplicazione modulare $U\ket{x} = \ket{ax \bmod N}$, e il suo spettro di fase contiene l'informazione sul periodo $r$.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{09_QPE_circuit_N15.pdf}
+\caption{Circuito di Quantum Phase Estimation per $N=15$, $a=2$, implementato con Qiskit. Il registro di controllo ($C$, 8 qubit) viene posto in sovrapposizione uniforme, entanglato tramite gli operatori $M_2$ e $M_4$ controllati, e trasformato con la QFT$^{-1}$. La misura del registro $C$ produce una stima della fase $\theta = k/r$, da cui si ricava il periodo $r$ tramite frazioni continue.}
+\label{fig:qpe_circuit_N15_qiskit}
+\end{figure}
+
 \section{L'Algoritmo di Shor: Schema Completo}
 
 L'algoritmo si articola in tre fasi: un preprocessing classico, l'esecuzione del circuito quantistico per il \textit{period finding}, e una post-elaborazione classica per estrarre i fattori.
