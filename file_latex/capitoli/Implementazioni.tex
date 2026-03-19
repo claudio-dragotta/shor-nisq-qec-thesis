@@ -74,6 +74,17 @@ def mod_exp_15_7(power):
     return U
 \end{lstlisting}
 
+Gli operatori di moltiplicazione modulare si costruiscono efficientemente con porte SWAP, sfruttando la struttura di permutazione dell'operazione $x \mapsto ax \bmod N$. La Figura~\ref{fig:mod_circuits} mostra i circuiti per $M_2$ e $M_4$ modulo 15.
+
+\begin{figure}[H]
+\centering
+\subfloat[Operatore $M_2 \pmod{15}$]{\includegraphics[width=0.48\textwidth]{01_M2_circuit.pdf}}
+\hfill
+\subfloat[Operatore $M_4 \pmod{15}$]{\includegraphics[width=0.48\textwidth]{04_M4_circuit.pdf}}
+\caption{Circuiti degli operatori di moltiplicazione modulare per $N=15$, costruiti con porte SWAP. $M_2$ richiede 3 SWAP in cascata; $M_4$ richiede 2 SWAP paralleli. Entrambi vengono decomposti in gate CNOT per l'esecuzione su hardware reale.}
+\label{fig:mod_circuits}
+\end{figure}
+
 \subsection{Circuito Completo dell'Algoritmo di Shor}
 
 Il circuito completo dell'algoritmo di Shor per $N = 15$, $a = 7$, utilizza due registri: un registro di \textit{counting} (per la phase estimation) e un registro di \textit{lavoro} inizializzato a $\ket{1}$:
@@ -122,6 +133,15 @@ print(counts)
 # Output atteso: picchi a multipli di 2^n_count / r
 # con r=4 (periodo di 7 mod 15): picchi a 0, 64, 128, 192
 \end{lstlisting}
+
+La struttura del circuito è visibile in Figura~\ref{fig:qpe_circuit_impl}: il registro di controllo viene posto in sovrapposizione, entanglato tramite le controlled-$U$ di moltiplicazione modulare, e infine misurato dopo la QFT$^{-1}$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{09_QPE_circuit_N15.pdf}
+\caption{Circuito QPE completo per $N=15$, $a=2$, generato con Qiskit (8 qubit di controllo, 4 qubit di lavoro). I blocchi $M_2$ e $M_4$ rappresentano gli operatori di moltiplicazione modulare controllata; la QFT$^{-1}$ finale estrae l'informazione di fase dal registro di controllo.}
+\label{fig:qpe_circuit_impl}
+\end{figure}
 
 \subsection{Post-Processing: Estrazione del Fattore}
 
@@ -207,6 +227,17 @@ Eseguendo il circuito di Shor per $N = 15$, $a = 7$ con $n_{\text{count}} = 8$ q
     \item \textbf{Con ZNE}: il recupero delle misure utili sale al $65$--$75\%$.
     \item \textbf{Con ZNE + readout mitigation}: il recupero sale al $75$--$85\%$.
 \end{itemize}
+
+La Figura~\ref{fig:histograms_N15} mostra la distribuzione delle misure del registro di controllo nei due scenari: simulatore ideale e hardware reale \texttt{ibm\_marrakesh} (con dynamical decoupling e gate twirling abilitati).
+
+\begin{figure}[H]
+\centering
+\subfloat[Simulatore ideale (1024 shot)]{\includegraphics[width=0.48\textwidth]{10_histogram_simulator_N15.pdf}}
+\hfill
+\subfloat[Hardware reale \texttt{ibm\_marrakesh} (1024 shot)]{\includegraphics[width=0.48\textwidth]{11_histogram_hardware_N15.pdf}}
+\caption{Distribuzione delle misure del registro di controllo per $N=15$, $a=2$. I quattro picchi a $\{0, 64, 128, 192\}$ corrispondono alle fasi $k/r$ con $r=4$ ($k \in \{0,1,2,3\}$). Sul simulatore ideale i picchi sono netti e bilanciati; sull'hardware reale emerge un fondo di rumore che viene filtrato statisticamente con una soglia al 50\% del picco massimo.}
+\label{fig:histograms_N15}
+\end{figure}
 
 \section{Ottimizzazione mediante Modelli di Intelligenza Artificiale}
 
