@@ -1,10 +1,23 @@
 \begin{onehalfspace}
 
+\noindent
+L'\textbf{algoritmo di Shor}, proposto da Peter Shor nel 1994 \cite{shor1994}, è un algoritmo quantistico che risolve il problema della \textbf{fattorizzazione intera} di un numero $N$ in tempo \textbf{polinomiale} nel numero di bit di $N$:
+\begin{equation}
+    T_{\text{Shor}}(N) = O\!\left((\log N)^3\right)
+    \label{eq:shor_complexity}
+\end{equation}
+
+Questo risultato costituisce uno \textbf{speedup esponenziale} rispetto al miglior algoritmo classico noto -- il \ac{GNFS} -- che richiede tempo sub-esponenziale (si veda l'equazione~\eqref{eq:gnfs_complexity}), del tutto impraticabile per i numeri di grandi dimensioni usati in crittografia. È considerato il risultato algoritmico più dirompente dell'informatica quantistica, poiché la fattorizzazione è il fondamento matematico del sistema crittografico RSA, che protegge la quasi totalità delle comunicazioni digitali moderne.
+
+L'algoritmo si articola in tre fasi: un \textit{preprocessing} classico che riconduce il problema a trovare il periodo di una funzione modulare; un nucleo quantistico basato sulla \ac{QFT} e sulla \ac{QPE}, che trova quel periodo in modo esponenzialmente più efficiente di qualunque strategia classica; e una \textit{post-elaborazione} classica che estrae i fattori di $N$ tramite il calcolo del massimo comune divisore. Nelle sezioni seguenti si introduce prima il problema che l'algoritmo risolve e la sua rilevanza crittografica, per poi svilupparne nel dettaglio la struttura.
+
+\bigskip
 \section{Il Problema della Fattorizzazione Intera}
 
-La \textbf{fattorizzazione intera} consiste nel trovare i fattori primi di un numero intero $N$. Per numeri piccoli il problema è banale, ma la sua difficoltà cresce in modo impressionante all'aumentare di $N$: i migliori algoritmi classici noti, come il \textit{General Number Field Sieve} (\ac{GNFS}), richiedono un tempo sub-esponenziale ma comunque super-polinomiale:\footnote{Il \ac{GNFS} detiene il record mondiale per la fattorizzazione classica: nel 2020, un consorzio internazionale ha fattorizzato RSA-250 (829 bit, 250 cifre decimali) \cite{rsa250_2020}, impiegando l'equivalente di circa 2700 anni-core. In precedenza, nel 2009, era stato fattorizzato RSA-768 (768 bit). I numeri RSA usati in produzione sono di 2048 o 4096 bit, rendendo la fattorizzazione classica del tutto impraticabile con qualunque tecnologia convenzionale prevedibile.}
+La \textbf{fattorizzazione intera} consiste nel trovare i fattori primi di un numero intero $N$. Per numeri piccoli il problema è banale, ma la sua difficoltà cresce in modo impressionante all'aumentare di $N$: i migliori algoritmi classici noti, come il \ac{GNFS}, richiedono un tempo sub-esponenziale ma comunque super-polinomiale:\footnote{Il \ac{GNFS} detiene il record mondiale per la fattorizzazione classica: nel 2020, un consorzio internazionale ha fattorizzato RSA-250 (829 bit, 250 cifre decimali) \cite{rsa250_2020}, impiegando l'equivalente di circa 2700 anni-core. In precedenza, nel 2009, era stato fattorizzato RSA-768 (768 bit). I numeri RSA usati in produzione sono di 2048 o 4096 bit, rendendo la fattorizzazione classica del tutto impraticabile con qualunque tecnologia convenzionale prevedibile.}
 \begin{equation}
     T_{\text{classico}}(N) = O\!\left(\exp\!\left((c+o(1))(\log N)^{1/3}(\log\log N)^{2/3}\right)\right)
+    \label{eq:gnfs_complexity}
 \end{equation}
 
 Questo problema è classificato in NP ma non è noto se appartenga a P: non esiste alcun algoritmo classico polinomiale per risolverlo, e si congettura fortemente che non esista.
