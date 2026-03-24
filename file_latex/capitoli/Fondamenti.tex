@@ -147,11 +147,11 @@ Le tre matrici di Pauli soddisfano le seguenti relazioni algebriche fondamentali
 dove $\{A, B\} = AB + BA$ è l'\textbf{anticommutatore}. Le prime due relazioni mostrano che le matrici di Pauli formano l'algebra di Lie $\mathfrak{su}(2)$; la terza --- l'anticommutazione --- è alla base della struttura dei codici di correzione degli errori quantistici, dove $X$ e $Z$ rappresentano rispettivamente errori di bit flip e phase flip indipendenti.
 
 \textbf{Porta di Hadamard:}
-\begin{equation}
-    H = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}, \qquad
-    H\ket{0} = \frac{\ket{0}+\ket{1}}{\sqrt{2}} \equiv \ket{+}, \quad
+\begin{align}
+    H &= \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix} \notag \\[8pt]
+    H\ket{0} &= \frac{\ket{0}+\ket{1}}{\sqrt{2}} \equiv \ket{+}, \qquad
     H\ket{1} = \frac{\ket{0}-\ket{1}}{\sqrt{2}} \equiv \ket{-}
-\end{equation}
+\end{align}
 
 La porta di Hadamard è fondamentale: applicata a $n$ qubit inizializzati in $\ket{0}^{\otimes n}$, genera la \textbf{sovrapposizione uniforme} di tutti i $2^n$ stati base:
 \begin{equation}
