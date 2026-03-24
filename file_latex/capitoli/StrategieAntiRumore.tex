@@ -59,15 +59,30 @@ Il \ac{QML} costituisce la strategia più generale e adattiva: sfrutta modelli d
 \subsubsection{La QEC come sottocategoria del QML}
 \label{sec:qec_overview}
 
-La \ac{QEC} affronta il rumore codificando l'informazione quantistica su più qubit fisici -- il qubit \emph{logico} -- in modo che errori singoli possano essere rilevati e corretti senza misurare (e quindi distruggere) lo stato. Il paradigma classico si articola in tre fasi:
+La \ac{QEC} affronta il rumore codificando l'informazione quantistica su più qubit fisici -- il qubit \emph{logico} -- in modo che errori singoli possano essere rilevati e corretti senza misurare (e quindi distruggere) lo stato. Il paradigma si articola in tre fasi:
 
 \begin{enumerate}
-    \item \textbf{Codifica}: lo stato logico viene distribuito su un codice quantistico (es.\ codice di Shor \cite{shor1995scheme}, codice di superficie \cite{fowler2012surface});
+    \item \textbf{Codifica}: lo stato logico viene distribuito su un codice quantistico ridondante;
     \item \textbf{Sindrome}: misure ancilla non-distruttive estraggono informazione sull'errore senza rivelare il valore del qubit logico;
     \item \textbf{Decodifica e correzione}: operazioni di recupero ripristinano lo stato corretto in base alla sindrome osservata.
 \end{enumerate}
 
-Il legame con il \ac{QML} emerge nella fase di \emph{decodifica}: i decoder tradizionali (minimum-weight perfect matching, look-up table) vengono oggi sostituiti da reti neurali addestrate a inferire la correzione più probabile data la storia delle sindromi, ottenendo prestazioni superiori soprattutto in regimi di rumore realistico e non-omogeneo \cite{fowler2012surface}. In questo senso la \ac{QEC} non è una strategia indipendente, bensì una specializzazione del \ac{QML} applicata alla protezione strutturale dell'informazione quantistica.
+\textbf{Codice di Shor (1995).}
+Il primo codice di correzione degli errori quantistici \cite{shorcorrection1995} codifica 1 qubit logico in 9 qubit fisici ed è in grado di correggere qualsiasi errore singolo, sia bit flip che phase flip. La codifica è:
+\begin{equation}
+    \ket{0_L} = \frac{1}{2\sqrt{2}}\bigl(\ket{000}+\ket{111}\bigr)^{\otimes 3}, \qquad
+    \ket{1_L} = \frac{1}{2\sqrt{2}}\bigl(\ket{000}-\ket{111}\bigr)^{\otimes 3}
+\end{equation}
+L'idea è a due livelli: tre copie del qubit codificano il bit logico (protezione da bit flip), e ciascuna copia è a sua volta in una sovrapposizione di tipo GHZ (protezione da phase flip). Storicamente questo è il risultato che dimostrò per la prima volta che il teorema del no-cloning non impedisce la correzione degli errori quantistici.
+
+\textbf{Codice di Steane (1996).}
+Il codice di Steane \cite{steane1996} riduce l'overhead a 7 qubit fisici per 1 qubit logico, sfruttando la struttura del codice classico di Hamming $[7,4,3]$. Corregge qualsiasi errore singolo (bit flip, phase flip o entrambi) ed è il primo esempio di codice \ac{CSS} (Calderbank--Shor--Steane), una famiglia di costruzioni sistematiche che collegano codici classici lineari a codici quantistici.
+
+\textbf{Surface Code.}
+Il \textbf{surface code} \cite{fowler2012} è oggi il codice più promettente per implementazioni su hardware reale. Organizza i qubit fisici in una griglia 2D e richiede solo interazioni locali tra qubit vicini, un requisito compatibile con le architetture superconduttrici di IBM e Google. La sua caratteristica distintiva è il \emph{threshold}: fintanto che il tasso di errore per gate rimane al di sotto di circa $1\%$, è possibile abbassare il tasso di errore logico a valori arbitrariamente piccoli aumentando la distanza $d$ del codice.\footnote{Il valore preciso del threshold dipende dal modello di rumore: per rumore depolarizzante indipendente si stima $\approx 1.1\%$; per modelli più realistici con correlazioni spaziali scende a $\approx 0.5$--$0.7\%$. I migliori processori IBM e Google si avvicinano oggi a queste soglie.} Per una distanza $d$, il codice corregge fino a $\lfloor(d-1)/2\rfloor$ errori e richiede $d^2$ qubit fisici per rappresentare un unico qubit logico: per $d = 5$, servono 25 qubit fisici per 1 qubit logico.
+
+\bigskip
+Il legame tra \ac{QEC} e \ac{QML} emerge precisamente nella fase di \emph{decodifica}: i decoder tradizionali (minimum-weight perfect matching, look-up table) vengono oggi sostituiti da reti neurali addestrate a inferire la correzione più probabile data la storia delle sindromi, con prestazioni superiori in regimi di rumore realistico e non-omogeneo \cite{fowler2012}. In questo senso la \ac{QEC} non è una strategia indipendente, bensì una specializzazione del \ac{QML} applicata alla protezione strutturale dell'informazione quantistica: il modello apprenditivo sostituisce il decoder analitico, adattandosi dinamicamente al profilo di errore specifico del dispositivo.
 
 Nel Capitolo~\ref{chap:implementazioni} vedremo come \ac{QEC} e \ac{QML} vengano integrati nell'implementazione pratica dell'algoritmo di Shor su un simulatore rumoroso.
 
@@ -92,7 +107,7 @@ QML (incl.\ QEC)          & Ibrido           & Medio (classico)     & NISQ / FT 
 
 La scelta del \ac{QML} come strategia principale è motivata dalla sua flessibilità: senza richiedere un modello analitico completo del rumore, è in grado di adattarsi al profilo di errore reale del simulatore. La \ac{QEC}, intesa come decoder neurale integrato nel framework \ac{QML}, fornisce al contempo le garanzie strutturali di correzione necessarie per l'esecuzione affidabile dell'algoritmo di Shor.
 
-\subsection*{Motivazione pratica: classificatore ML vs analisi gaussiana}
+\subsection{Motivazione pratica: classificatore ML vs analisi gaussiana}
 
 Il vantaggio concreto dell'approccio \ac{QML} emerge chiaramente nel confronto con la strategia alternativa basata su campionamento statistico classico.
 

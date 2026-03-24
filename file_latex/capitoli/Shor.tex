@@ -1,6 +1,5 @@
 \begin{onehalfspace}
 
-\noindent
 L'\textbf{algoritmo di Shor}, proposto da Peter Shor nel 1994 \cite{shor1994}, è un algoritmo quantistico che risolve il problema della \textbf{fattorizzazione intera} di un numero $N$ in tempo \textbf{polinomiale} nel numero di bit di $N$:
 \begin{equation}
     T_{\text{Shor}}(N) = O\!\left((\log N)^3\right)
@@ -133,14 +132,14 @@ La QFT è impiegata, all'interno dell'algoritmo di Shor, attraverso la subroutin
 L'algoritmo si articola in tre fasi: un preprocessing classico, l'esecuzione del circuito quantistico per il \textit{period finding}, e una post-elaborazione classica per estrarre i fattori.
 
 \medskip
-\noindent\textbf{Fase 1 — Preprocessing classico}
+\textbf{Fase 1 — Preprocessing classico}
 \begin{enumerate}
     \item Scegliere $a \in \{2,\ldots,N-1\}$ uniformemente a caso.
     \item Calcolare $g = \gcd(a,N)$: se $g > 1$, restituire $g$ (fattore trovato direttamente).
 \end{enumerate}
 
 \medskip
-\noindent\textbf{Fase 2 — Circuito quantistico (period finding)}
+\textbf{Fase 2 — Circuito quantistico (period finding)}
 \begin{enumerate}\setcounter{enumi}{2}
     \item Inizializzare $n = 2\lceil\log_2 N\rceil$ qubit nel registro di controllo: $\ket{0}^{\otimes n}\ket{1}$.
     \item Applicare $H^{\otimes n}$ al registro di controllo, creando la sovrapposizione uniforme $\frac{1}{\sqrt{2^n}}\sum_{x=0}^{2^n-1}\ket{x}$.
@@ -151,12 +150,12 @@ L'algoritmo si articola in tre fasi: un preprocessing classico, l'esecuzione del
 \end{enumerate}
 
 \medskip
-\noindent\textbf{Fase 3 — Post-elaborazione classica}
+\textbf{Fase 3 — Post-elaborazione classica}
 \begin{enumerate}\setcounter{enumi}{8}
     \item Applicare l'algoritmo delle frazioni continue al risultato della misura per stimare il periodo $r$.
     \item Se $r$ è dispari o $a^{r/2} \equiv -1 \pmod{N}$: tornare al passo 1 con un nuovo valore di $a$.
     \item Calcolare $p = \gcd(a^{r/2}-1,N)$ e $q = \gcd(a^{r/2}+1,N)$.
-    \item Se $p$ o $q$ è un fattore non banale di $N$: restituirlo. Altrimenti: tornare al passo 1.
+    \item Se $p$ o $q$ è un fattore non banale di $N$: restituirlo. \\Altrimenti: tornare al passo 1.
 \end{enumerate}
 
 \begin{figure}[H]
@@ -226,7 +225,9 @@ Complessivamente: $T_{\text{Shor}}(N) = O\!\left((\log N)^3\right)$, a fronte de
 
 \section{Impatto sulla Crittografia e Prospettive Post-Quantum}
 
-L'algoritmo di Shor rende teoricamente vulnerabili tutti i sistemi crittografici basati sulla difficoltà della fattorizzazione (\ac{RSA}) o del logaritmo discreto (Diffie-Hellman, \ac{DSA}, \ac{ECDSA}). La \textit{Post-Quantum Cryptography} (\ac{PQC}) è il campo emergente che sviluppa algoritmi crittografici resistenti agli attacchi quantistici.
+L'algoritmo di Shor rende teoricamente vulnerabili tutti i sistemi crittografici basati sulla difficoltà della fattorizzazione (\ac{RSA}) o del logaritmo discreto (Diffie-Hellman, \ac{DSA}, \ac{ECDSA}). 
+
+La \textit{Post-Quantum Cryptography} (\ac{PQC}) è il campo emergente che sviluppa algoritmi crittografici resistenti agli attacchi quantistici.
 
 Il processo di standardizzazione \ac{PQC} del \ac{NIST}, avviato nel 2016 con una call pubblica per la raccolta di proposte algoritmiche, si è concluso con la pubblicazione formale dei primi standard federali nell'agosto 2024 \cite{nist2024pqc}:\footnote{Dopo otto anni di valutazione e quattro round di selezione pubblica con la partecipazione di crittografi di tutto il mondo, il NIST ha pubblicato nel 2024 i FIPS 203, 204 e 205. Un quarto standard, FIPS 206 (FN-DSA, basato su FALCON), è in fase di finalizzazione. I nuovi nomi riflettono le famiglie algoritmiche di appartenenza: ML-KEM (Module-Lattice Key Encapsulation), ML-DSA (Module-Lattice Digital Signature), SLH-DSA (Stateless Hash-based Digital Signature).}
 \begin{itemize}
@@ -286,7 +287,7 @@ I due algoritmi rappresentano due regimi distinti di vantaggio quantistico:
 \centering
 \small
 \caption{Confronto tra l'algoritmo di Shor e l'algoritmo di Grover}
-\begin{tabular}{@{}lp{3.9cm}p{4.1cm}@{}}
+\begin{tabular}{@{}lp{5cm}p{5cm}@{}}
 \toprule
 \textbf{Caratteristica} & \textbf{Shor} & \textbf{Grover} \\
 \midrule
@@ -301,5 +302,7 @@ Requisiti hardware       & $O(\log N)$ qubit, alta profondità & $O(\log N)$ qub
 \end{table}
 
 L'impatto sulla crittografia simmetrica di Grover è significativo ma gestibile: raddoppiare la lunghezza delle chiavi (da AES-128 a AES-256) è sufficiente a ripristinare il livello di sicurezza. Al contrario, non esiste un analogo rimedio per RSA: l'unica risposta è la migrazione verso gli standard post-quantum discussi nella sezione precedente. È per questa ragione che l'algoritmo di Shor rappresenta la minaccia quantistica più urgente e motivante per la ricerca sul calcolo quantistico applicato.
+
+Tutta l'analisi svolta in questo capitolo ha però assunto un modello di calcolo \textit{ideale}: porte unitarie perfette, coerenza illimitata, nessuna interazione con l'ambiente. Su hardware reale questi presupposti non reggono, e la distanza tra il modello teorico e l'esecuzione fisica è precisamente il nodo critico che rende ancora irraggiungibile la fattorizzazione di numeri crittograficamente rilevanti. Comprendere le origini e gli effetti del rumore quantistico è quindi il passo necessario per valutare le reali prospettive dell'algoritmo di Shor.
 
 \end{onehalfspace}
