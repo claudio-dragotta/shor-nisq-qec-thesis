@@ -1,120 +1,111 @@
 \begin{onehalfspace}
 
-In letteratura si distinguono quattro macro-strategie per fronteggiare il rumore nei sistemi quantistici. Le prime tre operano rispettivamente a livello hardware, di controllo dei gate e di post-elaborazione classica; la quarta -- il \ac{QML} -- rappresenta l'approccio più generale e comprende al suo interno la \ac{QEC} come sottocategoria specializzata. Questa tesi adotta proprio il \ac{QML}, nelle sue declinazioni di \ac{QEC} e di ottimizzazione ibrida, come strumento principale per rendere l'algoritmo di Shor robusto al rumore reale.
+Il capitolo precedente ha mostrato che il rumore quantistico non è un fastidio marginale: per l'algoritmo di Shor, già per istanze piccole come $N=15$, la probabilità di ottenere un risultato corretto crolla al di sotto del $4\%$ su hardware reale. Il problema è reale e quantificato. La domanda naturale è: \textit{come si affronta?}
+
+In letteratura si distinguono quattro macro-strategie. Questo capitolo le presenta in ordine crescente di complessità, spiega perché le prime tre non sono adatte al contesto di questa tesi, e approfondisce la quarta --- il \textbf{Quantum Machine Learning} (\ac{QML}) --- che costituisce l'approccio adottato. Al suo interno, la \textbf{Correzione degli Errori Quantistici} (\ac{QEC}) rappresenta la componente strutturale centrale, e il suo funzionamento viene spiegato nel dettaglio.
 
 % -----------------------------------------------
-\section{Panoramica delle Quattro Strategie}
+\section{Le Quattro Strategie: Panoramica e Scelta}
 
-\subsection{Soppressione del Rumore (Noise Suppression)}
-
-La soppressione del rumore agisce \emph{prima} che gli errori si manifestino, cercando di ridurre l'accoppiamento tra il sistema quantistico e l'ambiente. Le tecniche principali includono:
-
-\begin{itemize}
-    \item \textbf{Dynamical Decoupling (DD)}: sequenze di pulse progettate per mediare a zero l'interazione sistema–ambiente nel tempo;
-    \item \textbf{Ottimizzazione dei gate}: riduzione della durata dei gate per limitare l'esposizione al rumore;
-    \item \textbf{Isolamento fisico}: schermature criogeniche, elettromagnetiche e vibrazionali dell'hardware.
-\end{itemize}
-
-Questa strategia non elimina completamente gli errori ma allunga i tempi di coerenza $T_1$ e $T_2$, riducendo la probabilità di errore per gate.
-
-% -----------------------------------------------
-\subsection{Mitigazione degli Errori (Error Mitigation)}
-
-La mitigazione degli errori opera \emph{a posteriori}: non corregge i qubit durante il calcolo, bensì elabora statisticamente i risultati di molte esecuzioni per estrarne una stima più accurata dell'output ideale. Le tecniche più diffuse sono:
-
-\begin{itemize}
-    \item \textbf{Zero-Noise Extrapolation (ZNE)}: si eseguono circuiti a diversi livelli di rumore artificialmente amplificato e si estrapolea rumore zero;
-    \item \textbf{Probabilistic Error Cancellation (PEC)}: il canale di errore è invertito probabilisticamente tramite una quasi-probability decomposition;
-    \item \textbf{Gate Twirling}: i gate del circuito vengono randomizzati applicando operatori di Pauli casuali prima e dopo ogni gate, in modo da convertire errori coerenti (che possono accumularsi costruttivamente) in errori stocastici di tipo Pauli, più facili da caratterizzare e mitigare statisticamente;
-    \item \textbf{Measurement Error Mitigation}: correzione degli errori di lettura tramite calibrazione della matrice di confusione.
-\end{itemize}
-
-La mitigazione è adatta all'era \ac{NISQ}, dove i circuiti sono troppo brevi per permettere la \ac{QEC} completa, ma introduce un overhead esponenziale nel numero di campionamenti.
-
-% -----------------------------------------------
-\subsection{Tolleranza ai Guasti (Fault-Tolerant Quantum Computing)}
-
-La tolleranza ai guasti è un approccio architetturale che mira a garantire la correttezza del calcolo anche in presenza di errori, purché il tasso di errore per gate rimanga al di sotto di una soglia critica (il \emph{threshold theorem} \cite{aharonov1997fault}). Si basa su:
-
-\begin{itemize}
-    \item \textbf{Gate fault-tolerant}: operazioni progettate per non propagare errori in modo catastrofico;
-    \item \textbf{Ridondanza fisica}: impiego di molti qubit fisici per rappresentare un singolo qubit logico;
-    \item \textbf{Concatenazione di codici}: applicazione ricorsiva di codici correttori per abbassare il tasso di errore logico a valori arbitrariamente piccoli.
-\end{itemize}
-
-Questa strategia rappresenta il paradigma a lungo termine per il calcolo quantistico scalabile, ma richiede un numero di qubit fisici ancora fuori dalla portata dell'hardware attuale.
-
-% -----------------------------------------------
-\subsection{Quantum Machine Learning (QML)}
-\label{sec:qml_overview}
-
-Il \ac{QML} costituisce la strategia più generale e adattiva: sfrutta modelli di apprendimento automatico -- classici, quantistici o ibridi -- per apprendere il profilo di errore specifico dell'hardware e compensarlo dinamicamente, senza richiedere un modello analitico del canale di rumore. Le sue declinazioni principali sono:
-
-\begin{itemize}
-    \item \textbf{Ottimizzazione variazionale}: circuiti parametrici (VQE, QAOA) i cui parametri vengono ottimizzati per minimizzare l'effetto del rumore specifico del dispositivo;
-    \item \textbf{Reinforcement Learning}: agenti che imparano politiche di controllo dei gate robuste al rumore attraverso l'interazione con il simulatore;
-    \item \textbf{Correzione degli Errori Quantistici (QEC)}: sottocategoria del \ac{QML} in cui reti neurali o altri classificatori imparano a decodificare le sindromi di errore, determinando la correzione ottimale da applicare.
-\end{itemize}
-
-\subsubsection{La QEC come sottocategoria del QML}
-\label{sec:qec_overview}
-
-La \ac{QEC} affronta il rumore codificando l'informazione quantistica su più qubit fisici -- il qubit \emph{logico} -- in modo che errori singoli possano essere rilevati e corretti senza misurare (e quindi distruggere) lo stato. Il paradigma si articola in tre fasi:
+Le quattro macro-strategie per fronteggiare il rumore nei sistemi quantistici sono:
 
 \begin{enumerate}
-    \item \textbf{Codifica}: lo stato logico viene distribuito su un codice quantistico ridondante;
-    \item \textbf{Sindrome}: misure ancilla non-distruttive estraggono informazione sull'errore senza rivelare il valore del qubit logico;
-    \item \textbf{Decodifica e correzione}: operazioni di recupero ripristinano lo stato corretto in base alla sindrome osservata.
+    \item \textbf{Soppressione del rumore} (\textit{Noise Suppression}): agisce \textit{prima} che gli errori si manifestino, cercando di ridurre fisicamente l'accoppiamento tra il qubit e l'ambiente. Le tecniche principali sono il \textit{Dynamical Decoupling} --- sequenze di pulse che mediano a zero l'interazione con l'ambiente --- l'ottimizzazione della durata dei gate, e l'isolamento fisico criogenico ed elettromagnetico dell'hardware. Riduce il rumore ma non lo elimina, ed è vincolata alle possibilità dell'hardware disponibile.
+
+    \item \textbf{Mitigazione degli errori} (\textit{Error Mitigation}): opera \textit{a posteriori}, senza correggere i qubit durante il calcolo. Si eseguono molte istanze del circuito con diversi livelli di rumore o con randomizzazioni, e si combinano i risultati classicamente per stimare l'output ideale. Le tecniche più diffuse sono la \textit{Zero-Noise Extrapolation} (ZNE), il \textit{Probabilistic Error Cancellation} (PEC) e il \textit{Gate Twirling}. Il limite fondamentale è l'overhead esponenziale nel numero di campionamenti richiesti.
+
+    \item \textbf{Tolleranza ai guasti} (\textit{Fault-Tolerant Quantum Computing}): è il paradigma architetturale a lungo termine. Codifica ogni qubit \textit{logico} in molti qubit \textit{fisici} e garantisce che, fintanto che il tasso di errore per gate rimane sotto una soglia critica (\textit{threshold theorem} \cite{aharonov1997fault}), il tasso di errore logico può essere abbassato a valori arbitrariamente piccoli. Richiede però migliaia di qubit fisici per ogni qubit logico protetto --- risorse ancora fuori dalla portata dell'hardware attuale.
+
+    \item \textbf{Quantum Machine Learning} (\ac{QML}): sfrutta modelli di apprendimento automatico per apprendere il profilo di errore specifico dell'hardware e compensarlo senza richiedere un modello analitico del canale di rumore. È l'approccio più adattivo e flessibile, applicabile sia su hardware NISQ che su architetture future. Al suo interno, la \ac{QEC} è la sottocategoria che gestisce la protezione strutturale dell'informazione quantistica.
 \end{enumerate}
-
-\textbf{Codice di Shor (1995).}
-Il primo codice di correzione degli errori quantistici \cite{shorcorrection1995} codifica 1 qubit logico in 9 qubit fisici ed è in grado di correggere qualsiasi errore singolo, sia bit flip che phase flip. La codifica è:
-\begin{equation}
-    \ket{0_L} = \frac{1}{2\sqrt{2}}\bigl(\ket{000}+\ket{111}\bigr)^{\otimes 3}, \qquad
-    \ket{1_L} = \frac{1}{2\sqrt{2}}\bigl(\ket{000}-\ket{111}\bigr)^{\otimes 3}
-\end{equation}
-L'idea è a due livelli: tre copie del qubit codificano il bit logico (protezione da bit flip), e ciascuna copia è a sua volta in una sovrapposizione di tipo GHZ (protezione da phase flip). Storicamente questo è il risultato che dimostrò per la prima volta che il teorema del no-cloning non impedisce la correzione degli errori quantistici.
-
-\textbf{Codice di Steane (1996).}
-Il codice di Steane \cite{steane1996} riduce l'overhead a 7 qubit fisici per 1 qubit logico, sfruttando la struttura del codice classico di Hamming $[7,4,3]$. Corregge qualsiasi errore singolo (bit flip, phase flip o entrambi) ed è il primo esempio di codice \ac{CSS} (Calderbank--Shor--Steane), una famiglia di costruzioni sistematiche che collegano codici classici lineari a codici quantistici.
-
-\textbf{Surface Code.}
-Il \textbf{surface code} \cite{fowler2012} è oggi il codice più promettente per implementazioni su hardware reale. Organizza i qubit fisici in una griglia 2D e richiede solo interazioni locali tra qubit vicini, un requisito compatibile con le architetture superconduttrici di IBM e Google. La sua caratteristica distintiva è il \emph{threshold}: fintanto che il tasso di errore per gate rimane al di sotto di circa $1\%$, è possibile abbassare il tasso di errore logico a valori arbitrariamente piccoli aumentando la distanza $d$ del codice.\footnote{Il valore preciso del threshold dipende dal modello di rumore: per rumore depolarizzante indipendente si stima $\approx 1.1\%$; per modelli più realistici con correlazioni spaziali scende a $\approx 0.5$--$0.7\%$. I migliori processori IBM e Google si avvicinano oggi a queste soglie.} Per una distanza $d$, il codice corregge fino a $\lfloor(d-1)/2\rfloor$ errori e richiede $d^2$ qubit fisici per rappresentare un unico qubit logico: per $d = 5$, servono 25 qubit fisici per 1 qubit logico.
-
-\bigskip
-Il legame tra \ac{QEC} e \ac{QML} emerge precisamente nella fase di \emph{decodifica}: i decoder tradizionali (minimum-weight perfect matching, look-up table) vengono oggi sostituiti da reti neurali addestrate a inferire la correzione più probabile data la storia delle sindromi, con prestazioni superiori in regimi di rumore realistico e non-omogeneo \cite{fowler2012}. In questo senso la \ac{QEC} non è una strategia indipendente, bensì una specializzazione del \ac{QML} applicata alla protezione strutturale dell'informazione quantistica: il modello apprenditivo sostituisce il decoder analitico, adattandosi dinamicamente al profilo di errore specifico del dispositivo.
-
-Nel Capitolo~\ref{chap:implementazioni} vedremo come \ac{QEC} e \ac{QML} vengano integrati nell'implementazione pratica dell'algoritmo di Shor su un simulatore rumoroso.
-
-% -----------------------------------------------
-\section{Confronto e Scelta delle Strategie}
 
 \begin{table}[H]
 \centering
-\caption{Confronto sintetico delle quattro strategie anti-rumore.}
+\caption{Confronto delle quattro strategie anti-rumore per il contesto di questa tesi.}
 \label{tab:strategie_confronto}
+\small
 \begin{tabular}{@{}lllll@{}}
 \toprule
-\textbf{Strategia}        & \textbf{Fase}    & \textbf{Overhead}    & \textbf{Era}        & \textbf{Adottata} \\
+\textbf{Strategia}    & \textbf{Quando agisce} & \textbf{Overhead}       & \textbf{Era}       & \textbf{Adottata} \\
 \midrule
-Noise Suppression         & Pre-calcolo      & Basso (HW)           & NISQ / FT           & No  \\
-Error Mitigation          & Post-calcolo     & Esponenziale         & NISQ                & No  \\
-Fault-Tolerant QC         & Architetturale   & Molto alto (qubit)   & Fault-Tolerant      & No  \\
-QML (incl.\ QEC)          & Ibrido           & Medio (classico)     & NISQ / FT           & Sì  \\
+Noise Suppression     & Prima del calcolo      & Basso (hardware)        & NISQ / FT          & No \\
+Error Mitigation      & Dopo il calcolo        & Esponenziale            & NISQ               & No \\
+Fault-Tolerant QC     & Architetturale         & Molto alto (qubit)      & Futuro             & No \\
+QML (incl.\ QEC)      & Ibrido (online)        & Medio (classico)        & NISQ / FT          & \textbf{Sì} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-La scelta del \ac{QML} come strategia principale è motivata dalla sua flessibilità: senza richiedere un modello analitico completo del rumore, è in grado di adattarsi al profilo di errore reale del simulatore. La \ac{QEC}, intesa come decoder neurale integrato nel framework \ac{QML}, fornisce al contempo le garanzie strutturali di correzione necessarie per l'esecuzione affidabile dell'algoritmo di Shor.
+\textbf{Perché QML?} Le prime tre strategie presentano limitazioni che le rendono inadatte al contesto di questa tesi. La soppressione del rumore è vincolata all'hardware disponibile e non è controllabile a livello software. La mitigazione degli errori richiede un numero esponenziale di esecuzioni, incompatibile con l'obiettivo di ridurre il numero di iterazioni necessarie. La tolleranza ai guasti richiede risorse hardware ancora inesistenti. Il QML, al contrario, può essere applicato su qualunque simulatore o processore reale, si adatta al profilo di errore specifico del dispositivo senza un modello analitico, e --- come si vedrà nella sezione~\ref{sec:motivazione_ml} --- riduce drasticamente il numero di esecuzioni necessarie per ottenere un risultato affidabile.
 
-\subsection{Motivazione pratica: classificatore ML vs analisi gaussiana}
+% -----------------------------------------------
+\section{Quantum Machine Learning per la Robustezza al Rumore}
+\label{sec:qml_overview}
 
-Il vantaggio concreto dell'approccio \ac{QML} emerge chiaramente nel confronto con la strategia alternativa basata su campionamento statistico classico.
+Il \ac{QML}, nel contesto della robustezza al rumore, non si riferisce all'uso di algoritmi quantistici per fare machine learning, bensì all'uso di modelli di \textit{machine learning classici o ibridi} per compensare gli effetti del rumore su circuiti quantistici. L'idea fondamentale è semplice: invece di costruire un modello analitico del canale di rumore --- operazione complessa e spesso impossibile per hardware reale con errori correlati e non stazionari --- si lascia che un modello apprenditivo impari direttamente dalla distribuzione degli output rumorosi.
 
-\textbf{Senza ML -- approccio gaussiano}: in assenza di un modello appreso, per determinare il risultato corretto dell'algoritmo di Shor in presenza di rumore è necessario eseguire il circuito un numero elevato di volte, raccogliere la distribuzione degli output e analizzarne la forma -- tipicamente una gaussiana il cui picco individua il valore più probabile. Questo approccio richiede molte iterazioni prima di poter trarre conclusioni affidabili.
+Le tre declinazioni principali del QML nel contesto di questa tesi sono:
 
-\textbf{Con ML -- approccio adottato in questa tesi}: addestriamo un modello classificatore che, ricevuto in ingresso l'output dell'algoritmo di Shor eseguito su un simulatore rumoroso, determina se quel risultato è corretto oppure no. Grazie a questo classificatore, \textbf{bastano circa tre iterazioni} per ottenere una risposta affidabile: il modello compensa direttamente l'incertezza introdotta dal rumore senza richiedere la costruzione di una distribuzione statistica.
+\begin{itemize}
+    \item \textbf{Caratterizzazione del rumore}: un modello di regressione (Random Forest, rete neurale) apprende la relazione tra i parametri hardware ($T_1$, $T_2$, profondità del circuito) e la fedeltà dell'output, permettendo di predire la qualità del risultato prima di eseguire il circuito.
 
-Questa riduzione drastica del numero di esecuzioni necessarie è il principale vantaggio applicativo del \ac{QML} rispetto alle tecniche di mitigazione classica, e costituisce il contributo centrale della parte sperimentale di questa tesi.
+    \item \textbf{Ottimizzazione variazionale}: i parametri del circuito (decomposizione della modular exponentiation, routing dei qubit) vengono ottimizzati tramite agenti di Reinforcement Learning che massimizzano la probabilità di successo sul simulatore rumoroso, adattando il circuito al profilo di errore specifico del dispositivo.
+
+    \item \textbf{Correzione degli errori} (\ac{QEC}): una rete neurale o un classificatore impara a decodificare le sindromi di errore e a determinare la correzione ottimale. Questa è la sottocategoria strutturalmente più profonda del QML e viene approfondita nella sezione seguente.
+\end{itemize}
+
+% -----------------------------------------------
+\section{La Correzione degli Errori Quantistici come Sottocategoria del QML}
+\label{sec:qec_overview}
+
+\subsection{Il Problema Fondamentale}
+
+Come si visto nel capitolo precedente, il teorema del no-cloning impedisce di proteggere un qubit semplicemente duplicandolo, come si farebbe con un bit classico. Eppure la correzione degli errori quantistici è possibile --- e questa fu una delle scoperte più sorprendenti degli anni Novanta. Il principio è che si può \textit{distribuire} l'informazione di un qubit logico su più qubit fisici in modo tale che, misurando opportune quantità collettive (le \textbf{sindromi}), sia possibile rilevare e correggere gli errori senza mai misurare --- e quindi distruggere --- lo stato logico.
+
+\subsection{Il Paradigma in Tre Fasi}
+
+Qualunque codice di correzione degli errori quantistici funziona secondo lo stesso schema:
+
+\begin{enumerate}
+    \item \textbf{Codifica}: lo stato logico $\ket{\psi_L}$ viene distribuito su $n$ qubit fisici tramite un circuito di codifica. L'informazione è ridondante: nessun singolo qubit fisico contiene da solo l'informazione logica.
+
+    \item \textbf{Misura di sindrome}: si misurano operatori stabilizzatori --- operatori che commutano con tutti i codeword ma anticommutano con gli operatori di errore. Questi operatori forniscono informazione sull'errore avvenuto senza rivelare il valore del qubit logico. Il risultato della misura è la \textbf{sindrome}, un vettore binario che identifica quale errore (o classe di errori) si è verificato.
+
+    \item \textbf{Decodifica e correzione}: dato il vettore di sindrome, un algoritmo di decodifica determina l'operazione di recupero da applicare per ripristinare lo stato logico corretto. Questa è la fase in cui entra il \ac{QML}: i decoder tradizionali (minimum-weight perfect matching, look-up table) vengono sostituiti da reti neurali addestrate a inferire la correzione più probabile, con prestazioni superiori in regimi di rumore realistico e non-omogeneo.
+\end{enumerate}
+
+\subsection{I Principali Codici Quantistici}
+
+Nel corso degli anni sono stati sviluppati numerosi codici di correzione. I tre più rilevanti per questa tesi sono:
+
+\textbf{Codice di Shor (1995).}
+Il primo codice di correzione degli errori quantistici \cite{shorcorrection1995}, proposto dallo stesso Peter Shor dell'algoritmo di fattorizzazione, codifica 1 qubit logico in 9 qubit fisici ed è in grado di correggere qualsiasi errore singolo (bit flip, phase flip o entrambi). Lo stato logico è:
+\begin{equation}
+    \ket{0_L} = \frac{1}{2\sqrt{2}}\bigl(\ket{000}+\ket{111}\bigr)^{\otimes 3}, \qquad
+    \ket{1_L} = \frac{1}{2\sqrt{2}}\bigl(\ket{000}-\ket{111}\bigr)^{\otimes 3}
+\end{equation}
+La struttura è a due livelli: tre copie del qubit (ciascuna nella forma $\ket{000}\pm\ket{111}$) proteggono da phase flip tramite interferenza; la ripetizione delle tre copie protegge da bit flip tramite ridondanza. Questo risultato dimostrò per la prima volta che il teorema del no-cloning non impedisce la correzione degli errori quantistici.
+
+\textbf{Codice di Steane (1996).}
+Il codice di Steane \cite{steane1996} riduce l'overhead a 7 qubit fisici per 1 qubit logico, sfruttando la struttura del codice classico di Hamming $[7,4,3]$. Corregge qualsiasi errore singolo ed è il primo esempio di codice CSS (Calderbank--Shor--Steane), una famiglia sistematica di costruzioni che collegano codici classici lineari a codici quantistici.
+
+\textbf{Surface Code.}
+Il \textbf{surface code} \cite{fowler2012} è oggi il codice più promettente per implementazioni su hardware reale, ed è quello su cui IBM e Google stanno costruendo le loro architetture fault-tolerant. Organizza i qubit fisici in una griglia 2D con interazioni solo tra qubit vicini --- un requisito compatibile con le architetture superconduttrici. La sua proprietà chiave è il \textbf{threshold}: fintanto che il tasso di errore per gate rimane sotto circa $1\%$, aumentare la distanza $d$ del codice abbassa il tasso di errore logico in modo esponenziale.\footnote{Il threshold preciso dipende dal modello di rumore: $\approx 1.1\%$ per rumore depolarizzante indipendente, $\approx 0.5$--$0.7\%$ per modelli più realistici con correlazioni spaziali. I migliori processori IBM e Google si avvicinano oggi a queste soglie.} Per distanza $d$, il codice usa $d^2$ qubit fisici per 1 qubit logico e corregge fino a $\lfloor(d-1)/2\rfloor$ errori.
+
+\subsection{Perché la QEC è una Sottocategoria del QML}
+
+Il legame tra QEC e QML emerge nella fase di decodifica. I decoder tradizionali assumono un modello di rumore semplice e stazionario, ma sull'hardware reale il rumore è correlato, non uniforme e varia nel tempo. Le reti neurali non hanno bisogno di questo modello: apprendono direttamente dalla storia delle sindromi la correzione più probabile, adattandosi al profilo di errore specifico del dispositivo. In questo senso la QEC non è una strategia separata dal QML, ma la sua specializzazione più strutturata: il modello apprenditivo sostituisce il decoder analitico e ne migliora le prestazioni in condizioni reali \cite{fowler2012}.
+
+% -----------------------------------------------
+\section{Motivazione Pratica: il Contributo di questa Tesi}
+\label{sec:motivazione_ml}
+
+Chiarito il framework teorico, è importante spiegare concretamente cosa porta il QML rispetto all'alternativa più semplice.
+
+\textbf{Senza ML --- approccio statistico classico.} In assenza di un modello appreso, per determinare il risultato corretto dell'algoritmo di Shor in presenza di rumore è necessario eseguire il circuito molte volte, raccogliere la distribuzione degli output e analizzarne la forma. In condizioni ideali la distribuzione mostra picchi netti ai valori corretti (si veda la Figura~10 del Capitolo~\ref{chap:implementazioni}); in presenza di rumore i picchi si allargano e si sovrappongono al fondo, rendendo necessaria un'analisi statistica per identificare il valore più probabile. Questo approccio richiede decine o centinaia di esecuzioni prima di raggiungere una confidenza sufficiente.
+
+\textbf{Con ML --- approccio adottato in questa tesi.} Addestriamo un classificatore che, ricevuto in ingresso l'output di una singola esecuzione dell'algoritmo di Shor su simulatore rumoroso, determina se quel risultato è corretto o meno. Grazie a questo classificatore, \textbf{bastano circa tre iterazioni} per ottenere una risposta affidabile: il modello impara a distinguere i pattern di output corretto da quelli distorti dal rumore, senza richiedere la costruzione di una distribuzione statistica.
+
+Questa riduzione --- da decine di esecuzioni a circa tre --- è il contributo centrale della parte sperimentale di questa tesi. Nel Capitolo~\ref{chap:implementazioni} viene presentata l'implementazione concreta di questo approccio su simulatore Qiskit con modello di rumore realistico.
 
 \end{onehalfspace}
