@@ -112,7 +112,7 @@ Crosstalk                        & Depolarizzante (multi-qubit) & Difficile da p
 
 In pratica, il simulatore Qiskit Aer combina amplitude damping e phase flip in un unico \textbf{canale di thermal relaxation}, parametrizzato direttamente da $T_1$, $T_2$ e dal tempo di gate $\tau$, per riprodurre fedelmente il comportamento dell'hardware IBM.
 
-% -----------------------------------------------
+\clearpage
 \section{I Quattro Canali Matematici del Rumore}
 \label{sec:canali}
 
@@ -188,7 +188,7 @@ Per $t \to \infty$ ($\gamma \to 1$), qualsiasi stato converge a $\ket{0}\bra{0}$
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.92\textwidth]{14_bloch_channels.pdf}
+\includegraphics[width=0.7\textwidth]{14_bloch_channels.pdf}
 \caption{Effetto dei quattro canali di rumore sulla sfera di Bloch (sezione nel piano $xz$). La curva tratteggiata grigia rappresenta la sfera ideale; la superficie colorata è la sfera dopo l'applicazione del canale con il parametro indicato. Il Bit Flip contrae la sfera lungo $z$; il Phase Flip lungo $x$ (distrugge le coerenze equatoriali); il canale Depolarizzante contrae isotropicamente verso il centro; l'Amplitude Damping sposta la sfera verso il polo nord $\ket{0}$.}
 \label{fig:bloch_channels}
 \end{figure}
@@ -238,7 +238,7 @@ Per $n=15$ bit e $\epsilon=10^{-3}$: $(1-10^{-3})^{3375} \approx 0.034$ --- la p
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.88\textwidth]{15_psuccess_vs_n.pdf}
+\includegraphics[width=0.8\textwidth]{15_psuccess_vs_n.pdf}
 \caption{Probabilità di successo dell'algoritmo di Shor $P_{\text{success}} \approx (1-\epsilon)^{n^3}$ in funzione della dimensione dell'input $n$ (in bit), per cinque valori di intensità di rumore depolarizzante $\epsilon$. Anche con $\epsilon = 10^{-3}$ (fedeltà gate $99.9\%$), già per $n = 15$ la probabilità di ottenere un risultato corretto scende al $3.4\%$. La linee tratteggiate orizzontali evidenziano le soglie del $50\%$ e del $5\%$.}
 \label{fig:psuccess_vs_n}
 \end{figure}
