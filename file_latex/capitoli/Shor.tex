@@ -96,6 +96,8 @@ L'azione su uno stato generico $\ket{\psi} = \sum_j \alpha_j \ket{j}$ produce:
 
 dove $\hat{\alpha}_k = \frac{1}{\sqrt{2^n}}\sum_j \alpha_j e^{2\pi i jk/2^n}$ sono i coefficienti della DFT.
 
+\clearpage
+
 \subsection{Implementazione Efficiente}
 
 La DFT classica su $N = 2^n$ elementi richiede $O(N \log N)$ operazioni (con il Fast Fourier Transform). La QFT, invece, richiede solo $O(n^2) = O((\log N)^2)$ porte quantistiche, ottenendo uno speedup esponenziale.
@@ -122,7 +124,7 @@ La QFT è impiegata, all'interno dell'algoritmo di Shor, attraverso la subroutin
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{09_QPE_circuit_N15.pdf}
+\includegraphics[width=0.6\textwidth]{09_QPE_circuit_N15.pdf}
 \caption{Circuito di Quantum Phase Estimation per $N=15$, $a=2$, implementato con Qiskit. Il registro di controllo ($C$, 8 qubit) viene posto in sovrapposizione uniforme, entanglato tramite gli operatori $M_2$ e $M_4$ controllati, e trasformato con la QFT$^{-1}$. La misura del registro $C$ produce una stima della fase $\theta = k/r$, da cui si ricava il periodo $r$ tramite frazioni continue.}
 \label{fig:qpe_circuit_N15_qiskit}
 \end{figure}
@@ -211,7 +213,7 @@ L'algoritmo si articola in tre fasi: un preprocessing classico, l'esecuzione del
 \caption{Schema a due registri dell'algoritmo di Shor. Il \textbf{Registro 1} (di controllo) viene posto in sovrapposizione uniforme con $H^{\otimes n}$, entanglato con il Registro 2 tramite la moltiplicazione modulare $U_{a,N}$, quindi trasformato con la QFT$^{-1}$. La misura produce un valore $s/r$ elaborato classicamente: le frazioni continue stimano il periodo $r$, e il calcolo del MCD restituisce i fattori $p$ e $q$ di $N$.}
 \label{fig:shor_schema}
 \end{figure}
-
+\clearpage
 \section{Analisi della Complessità}
 
 La complessità dell'algoritmo di Shor è \textbf{polinomiale} nel numero di bit di $N$:
@@ -270,7 +272,7 @@ Un risultato teorico rilevante è stato pubblicato nel 2023 da Oded Regev \cite{
 Questi traguardi definiscono l'orizzonte temporale entro cui l'algoritmo di Shor potrà diventare una minaccia concreta per la crittografia RSA, motivando ulteriormente la transizione urgente verso gli standard PQC discussi nella sezione precedente.
 
 Le sfide hardware principali per l'esecuzione di Shor su istanze crittograficamente rilevanti sono analizzate in dettaglio nel Capitolo~\ref{chap:rumore}, mentre l'implementazione pratica con Qiskit e le tecniche di ottimizzazione basate su intelligenza artificiale sono presentate nel Capitolo~\ref{chap:implementazioni}.
-
+\clearpage
 \section{Contesto: Confronto con l'Algoritmo di Grover}
 
 Per collocare correttamente l'algoritmo di Shor nel panorama dell'informatica quantistica, è utile confrontarlo con l'altro grande risultato algoritmico degli anni Novanta: l'algoritmo di Grover per la ricerca non strutturata \cite{grover1996}.
