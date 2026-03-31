@@ -286,7 +286,6 @@ I due algoritmi rappresentano due regimi distinti di vantaggio quantistico:
 \begin{table}[H]
 \centering
 \small
-\caption{Confronto tra l'algoritmo di Shor e l'algoritmo di Grover}
 \begin{tabular}{@{}lp{5cm}p{5cm}@{}}
 \toprule
 \textbf{Caratteristica} & \textbf{Shor} & \textbf{Grover} \\
@@ -299,6 +298,7 @@ Impatto crittografico    & Rompe RSA, DH, ECDSA (chiave pubblica) & Dimezza sicu
 Requisiti hardware       & $O(\log N)$ qubit, alta profondità & $O(\log N)$ qubit, bassa profondità \\
 \bottomrule
 \end{tabular}
+\caption{Confronto tra l'algoritmo di Shor e l'algoritmo di Grover}
 \end{table}
 
 L'impatto sulla crittografia simmetrica di Grover è significativo ma gestibile: raddoppiare la lunghezza delle chiavi (da AES-128 a AES-256) è sufficiente a ripristinare il livello di sicurezza. Al contrario, non esiste un analogo rimedio per RSA: l'unica risposta è la migrazione verso gli standard post-quantum discussi nella sezione precedente. È per questa ragione che l'algoritmo di Shor rappresenta la minaccia quantistica più urgente e motivante per la ricerca sul calcolo quantistico applicato.

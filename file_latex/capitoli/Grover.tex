@@ -144,7 +144,6 @@ La dimostrazione si basa sul fatto che le ampiezze delle soluzioni, dopo $k$ int
 
 \begin{table}[H]
 \centering
-\caption{Confronto tra ricerca classica e algoritmo di Grover}
 \begin{tabular}{@{}lcc@{}}
 \toprule
 \textbf{Approccio} & \textbf{Interrogazioni (caso medio)} & \textbf{Interrogazioni (caso peggiore)} \\
@@ -154,6 +153,7 @@ Ricerca classica (randomizzata)    & $N/2$          & $N$           \\
 \textbf{Algoritmo di Grover}       & $O(\sqrt{N})$  & $O(\sqrt{N})$ \\
 \bottomrule
 \end{tabular}
+\caption{Confronto tra ricerca classica e algoritmo di Grover}
 \end{table}
 
 Per $N = 10^{12}$: la ricerca classica richiede in media $5 \times 10^{11}$ passi, mentre Grover ne richiede circa $10^6$ -- sei ordini di grandezza in meno.
