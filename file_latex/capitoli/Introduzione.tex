@@ -56,7 +56,9 @@ Un qubit può essere realizzato con qualunque sistema fisico a due livelli: la p
 
 Il componente chiave è la \textbf{giunzione di Josephson} \cite{josephson1962}: una sottile barriera isolante (spessa $\sim 1$--$2\,$nm) interposta tra due materiali superconduttori. Questo elemento introduce una non-linearità nell'energia del circuito che rompe la degenerazione dei livelli energetici, isolando i due stati computazionali $\ket{0}$ e $\ket{1}$ da tutti gli altri. Il risultato è il \textbf{transmon} \cite{koch2007} -- il tipo di qubit superconduttore adottato da IBM -- un oscillatore anelastico con frequenza tipica $4$--$6\,$GHz, controllato da impulsi a microonde.
 
-Per operare nel regime quantistico, questi circuiti devono essere raffreddati a temperature dell'ordine di $15\,\text{mK}$ ($-273.13\,°$C), più fredde dello spazio cosmico a $2.7\,\text{K}$, tramite refrigeratori a diluizione. A queste temperature la resistenza elettrica scompare per effetto della superconduttività, eliminando la dissipazione termica che causerebbe la distruzione dello stato quantistico. I parametri operativi tipici dei processori IBM (serie Eagle, Heron) sono:
+Per operare nel regime quantistico, questi circuiti devono essere raffreddati a temperature dell'ordine di $15\,\text{mK}$ ($-273.13\,°$C), più fredde dello spazio cosmico a $2.7\,\text{K}$, tramite refrigeratori a diluizione. A queste temperature la resistenza elettrica scompare per effetto della superconduttività, eliminando la dissipazione termica che causerebbe la distruzione dello stato quantistico. 
+\clearpage
+I parametri operativi tipici dei processori IBM (serie Eagle, Heron) sono:
 
 \begin{itemize}
     \item \textbf{Temperatura operativa}: $\sim 15\,\text{mK}$
@@ -109,6 +111,7 @@ Per $N$ a 2048 bit, questa espressione implica circa $2^{112}$ operazioni classi
 
 L'algoritmo di Shor riduce questa complessità a $O(n^3)$ -- un salto da sub-esponenziale a \textbf{polinomiale} -- rendendo la fattorizzazione di chiavi RSA-2048 un problema risolvibile in ore su un computer quantistico fault-tolerant con qualche migliaio di qubit logici. La struttura dell'algoritmo, descritta in dettaglio nel Capitolo~\ref{chap:shor}, sfrutta la Quantum Fourier Transform per trovare il periodo di una funzione modulare, problema che si riduce efficientemente alla fattorizzazione.
 
+\clearpage
 \subsection{Implicazioni Pratiche per la Sicurezza Informatica}
 
 Le conseguenze sono sistemiche. RSA-2048 e le sue varianti sono il fondamento di:
@@ -122,7 +125,7 @@ Le conseguenze sono sistemiche. RSA-2048 e le sue varianti sono il fondamento di
 
 Un computer quantistico scalabile renderebbe retroattivamente vulnerabili anche le comunicazioni \textit{storicamente registrate}, attraverso il cosiddetto attacco \textit{``harvest now, decrypt later''} (HNDL): avversari statali raccolgono oggi grandi volumi di traffico cifrato con RSA, conservandoli in attesa di poterli decifrare quando l'hardware quantistico raggiungerà la scala necessaria. Questo scenario non è teorico: rapporti di intelligence statunitensi e cinesi documentano campagne di raccolta massiva di traffico cifrato attive da almeno un decennio. Stime dell'NSA e del \ac{NIST} indicano che chiavi RSA-2048 potrebbero diventare vulnerabili entro il 2030--2035 con il proseguire dell'avanzamento tecnologico quantistico.
 
-% -----------------------------------------------
+\clearpage
 \section{Crittografia Post-Quantistica: la Risposta dell'Industria}
 
 La consapevolezza della minaccia quantistica ha spinto il \ac{NIST} a lanciare nel 2016 un processo di standardizzazione internazionale per la \textbf{crittografia post-quantistica} (\ac{PQC}) -- algoritmi crittografici resistenti agli attacchi di computer quantistici, progettati per essere eseguiti su hardware classico convenzionale e quindi immediatamente distribuibili.

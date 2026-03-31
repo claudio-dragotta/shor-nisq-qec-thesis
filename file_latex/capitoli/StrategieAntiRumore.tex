@@ -1,6 +1,6 @@
 \begin{onehalfspace}
 
-Il capitolo precedente ha mostrato che il rumore quantistico non è un fastidio marginale: per l'algoritmo di Shor, già per istanze piccole come $N=15$, la probabilità di ottenere un risultato corretto crolla al di sotto del $4\%$ su hardware reale. Il problema è reale e quantificato. La domanda naturale è: \textit{come si affronta?}
+Il capitolo precedente ha mostrato che il rumore quantistico non è un fastidio marginale: per l'algoritmo di Shor, già per istanze piccole come $N=15$, la probabilità di ottenere un risultato corretto crolla al di sotto del $4\%$ su hardware reale. Il problema è reale e quantificato, e richiede strategie concrete di mitigazione.
 
 In letteratura si distinguono quattro macro-strategie. Questo capitolo le presenta in ordine crescente di complessità, spiega perché le prime tre non sono adatte al contesto di questa tesi, e approfondisce la quarta --- il \textbf{Quantum Machine Learning} (\ac{QML}) --- che costituisce l'approccio adottato. Al suo interno, la \textbf{Correzione degli Errori Quantistici} (\ac{QEC}) rappresenta la componente strutturale centrale, e il suo funzionamento viene spiegato nel dettaglio.
 
@@ -37,7 +37,7 @@ QML (incl.\ QEC)      & Ibrido (online)        & Medio (classico)        & NISQ 
 \label{tab:strategie_confronto}
 \end{table}
 
-\textbf{Perché QML?} Le prime tre strategie presentano limitazioni che le rendono inadatte al contesto di questa tesi. La soppressione del rumore è vincolata all'hardware disponibile e non è controllabile a livello software. La mitigazione degli errori richiede un numero esponenziale di esecuzioni, incompatibile con l'obiettivo di ridurre il numero di iterazioni necessarie. La tolleranza ai guasti richiede risorse hardware ancora inesistenti. Il QML, al contrario, può essere applicato su qualunque simulatore o processore reale, si adatta al profilo di errore specifico del dispositivo senza un modello analitico, e --- come si vedrà nella sezione~\ref{sec:motivazione_ml} --- riduce drasticamente il numero di esecuzioni necessarie per ottenere un risultato affidabile.
+\textbf{Motivazione per l'approccio QML.} Le prime tre strategie presentano limitazioni che le rendono inadatte al contesto di questa tesi. La soppressione del rumore è vincolata all'hardware disponibile e non è controllabile a livello software. La mitigazione degli errori richiede un numero esponenziale di esecuzioni, incompatibile con l'obiettivo di ridurre il numero di iterazioni necessarie. La tolleranza ai guasti richiede risorse hardware ancora inesistenti. Il QML, al contrario, può essere applicato su qualunque simulatore o processore reale, si adatta al profilo di errore specifico del dispositivo senza un modello analitico, e --- come si vedrà nella sezione~\ref{sec:motivazione_ml} --- riduce drasticamente il numero di esecuzioni necessarie per ottenere un risultato affidabile.
 
 % -----------------------------------------------
 \section{Quantum Machine Learning per la Robustezza al Rumore}
@@ -56,7 +56,7 @@ Le tre declinazioni principali del QML nel contesto di questa tesi sono:
 \end{itemize}
 
 % -----------------------------------------------
-\section{La Correzione degli Errori Quantistici come Sottocategoria del QML}
+\section{La Correzione degli Errori Quantistici come \\ Sottocategoria del QML}
 \label{sec:qec_overview}
 
 \subsection{Il Problema Fondamentale}
@@ -74,6 +74,7 @@ Qualunque codice di correzione degli errori quantistici funziona secondo lo stes
 
     \item \textbf{Decodifica e correzione}: dato il vettore di sindrome, un algoritmo di decodifica determina l'operazione di recupero da applicare per ripristinare lo stato logico corretto. Questa è la fase in cui entra il \ac{QML}: i decoder tradizionali (minimum-weight perfect matching, look-up table) vengono sostituiti da reti neurali addestrate a inferire la correzione più probabile, con prestazioni superiori in regimi di rumore realistico e non-omogeneo.
 \end{enumerate}
+\clearpage
 
 \subsection{I Principali Codici Quantistici}
 
@@ -93,6 +94,7 @@ Il codice di Steane \cite{steane1996} riduce l'overhead a 7 qubit fisici per 1 q
 \textbf{Surface Code.}
 Il \textbf{surface code} \cite{fowler2012} è oggi il codice più promettente per implementazioni su hardware reale, ed è quello su cui IBM e Google stanno costruendo le loro architetture fault-tolerant. Organizza i qubit fisici in una griglia 2D con interazioni solo tra qubit vicini --- un requisito compatibile con le architetture superconduttrici. La sua proprietà chiave è il \textbf{threshold}: fintanto che il tasso di errore per gate rimane sotto circa $1\%$, aumentare la distanza $d$ del codice abbassa il tasso di errore logico in modo esponenziale.\footnote{Il threshold preciso dipende dal modello di rumore: $\approx 1.1\%$ per rumore depolarizzante indipendente, $\approx 0.5$--$0.7\%$ per modelli più realistici con correlazioni spaziali. I migliori processori IBM e Google si avvicinano oggi a queste soglie.} Per distanza $d$, il codice usa $d^2$ qubit fisici per 1 qubit logico e corregge fino a $\lfloor(d-1)/2\rfloor$ errori.
 
+\clearpage
 \subsection{Perché la QEC è una Sottocategoria del QML}
 
 Il legame tra QEC e QML emerge nella fase di decodifica. I decoder tradizionali assumono un modello di rumore semplice e stazionario, ma sull'hardware reale il rumore è correlato, non uniforme e varia nel tempo. Le reti neurali non hanno bisogno di questo modello: apprendono direttamente dalla storia delle sindromi la correzione più probabile, adattandosi al profilo di errore specifico del dispositivo. In questo senso la QEC non è una strategia separata dal QML, ma la sua specializzazione più strutturata: il modello apprenditivo sostituisce il decoder analitico e ne migliora le prestazioni in condizioni reali \cite{fowler2012}.
