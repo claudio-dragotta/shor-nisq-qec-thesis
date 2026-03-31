@@ -69,19 +69,20 @@ Il \textbf{crosstalk} è l'interferenza indesiderata tra qubit adiacenti durante
 
 \begin{table}[H]
 \centering
-\caption{Riepilogo delle quattro fonti fisiche di rumore nei processori quantistici superconduttori.}
-\label{tab:fonti_rumore}
-\small
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}llll@{}}
 \toprule
 \textbf{Fonte} & \textbf{Causa fisica} & \textbf{Parametro} & \textbf{Valore tipico IBM} \\
 \midrule
-Decoerenza     & Interazione con l'ambiente & $T_1$, $T_2$     & $50$--$500\,\mu$s \\
-Errori di gate & Imprecisione pulse / leakage & Gate infidelity & $0.03$--$1\%$ \\
-Readout errors & Risposta del rivelatore    & $e_0$, $e_1$     & $1$--$3\%$ \\
-Crosstalk      & Accoppiamento residuo      & Difficile da parametrizzare & $\sim 0.1$--$1\%$ \\
+Decoerenza     & Interazione con l'ambiente   & $T_1$, $T_2$                & $50$--$500\,\mu$s \\
+Errori di gate & Imprecisione pulse / leakage & Gate infidelity             & $0.03$--$1\%$ \\
+Readout errors & Risposta del rivelatore      & $e_0$, $e_1$                & $1$--$3\%$ \\
+Crosstalk      & Accoppiamento residuo        & Difficile da parametrizzare & $\sim 0.1$--$1\%$ \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
+\caption{Riepilogo delle quattro fonti fisiche di rumore nei processori quantistici superconduttori.}
+\label{tab:fonti_rumore}
 \end{table}
 
 % -----------------------------------------------
@@ -91,21 +92,22 @@ I quattro fenomeni fisici descritti nella sezione precedente non sono isolati: c
 
 \begin{table}[H]
 \centering
-\caption{Corrispondenza tra fonti fisiche di rumore e canali quantistici.}
-\label{tab:mapping_rumore}
-\small
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}lll@{}}
 \toprule
 \textbf{Fonte fisica} & \textbf{Canale matematico} & \textbf{Parametro chiave} \\
 \midrule
-Decadimento energetico ($T_1$)   & Amplitude Damping       & $\gamma = 1 - e^{-t/T_1}$ \\
-Perdita di fase ($T_2$)          & Phase Flip              & $p = \tfrac{1}{2}(1 - e^{-t/T_2})$ \\
-Errori di gate (isotropici)      & Depolarizzante          & $p \approx$ gate infidelity \\
-Errori di gate (asimmetrici)     & Bit Flip / Phase Flip   & $p$ dal profilo dell'errore \\
-Readout errors                   & Matrice di confusione $A$ & $e_0$, $e_1$ da calibrazione \\
+Decadimento energetico ($T_1$)   & Amplitude Damping            & $\gamma = 1 - e^{-t/T_1}$ \\
+Perdita di fase ($T_2$)          & Phase Flip                   & $p = \tfrac{1}{2}(1 - e^{-t/T_2})$ \\
+Errori di gate (isotropici)      & Depolarizzante               & $p \approx$ gate infidelity \\
+Errori di gate (asimmetrici)     & Bit Flip / Phase Flip        & $p$ dal profilo dell'errore \\
+Readout errors                   & Matrice di confusione $A$    & $e_0$, $e_1$ da calibrazione \\
 Crosstalk                        & Depolarizzante (multi-qubit) & Difficile da parametrizzare \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
+\caption{Corrispondenza tra fonti fisiche di rumore e canali quantistici.}
+\label{tab:mapping_rumore}
 \end{table}
 
 In pratica, il simulatore Qiskit Aer combina amplitude damping e phase flip in un unico \textbf{canale di thermal relaxation}, parametrizzato direttamente da $T_1$, $T_2$ e dal tempo di gate $\tau$, per riprodurre fedelmente il comportamento dell'hardware IBM.
@@ -193,19 +195,20 @@ Per $t \to \infty$ ($\gamma \to 1$), qualsiasi stato converge a $\ket{0}\bra{0}$
 
 \begin{table}[H]
 \centering
-\caption{I quattro canali matematici fondamentali del rumore quantistico \cite{nielsenChuang2000}.}
-\label{tab:canali_rumore}
-\small
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}lllll@{}}
 \toprule
 \textbf{Canale} & \textbf{Parametro} & \textbf{Effetto coerenze} & \textbf{Effetto popolazioni} & \textbf{Modella} \\
 \midrule
-Bit Flip         & $p$       & Contrae $r_y$, $r_z$    & Invariate    & Errori $X$ / leakage \\
-Phase Flip       & $p$       & Sopprime $\rho_{01}$    & Invariate    & Dephasing ($T_2$) \\
-Depolarizzante   & $p$       & Contrae isotropicamente & Verso $I/2$  & Errori di gate generici \\
-Amplitude Damping & $\gamma$ & Sopprime $\rho_{01}$    & Verso $\ket{0}$ & Decadimento $T_1$ \\
+Bit Flip          & $p$       & Contrae $r_y$, $r_z$    & Invariate       & Errori $X$ / leakage \\
+Phase Flip        & $p$       & Sopprime $\rho_{01}$    & Invariate       & Dephasing ($T_2$) \\
+Depolarizzante    & $p$       & Contrae isotropicamente & Verso $I/2$     & Errori di gate generici \\
+Amplitude Damping & $\gamma$  & Sopprime $\rho_{01}$    & Verso $\ket{0}$ & Decadimento $T_1$ \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
+\caption{I quattro canali matematici fondamentali del rumore quantistico \cite{nielsenChuang2000}.}
+\label{tab:canali_rumore}
 \end{table}
 
 % -----------------------------------------------
