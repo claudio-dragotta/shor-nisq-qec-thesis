@@ -193,4 +193,23 @@ Il contributo originale consiste nella sperimentazione diretta con il framework 
 
 L'elaborato si sviluppa seguendo un percorso che va dalle fondamenta teoriche del calcolo quantistico fino ai risultati sperimentali su simulatori rumorosi, fornendo al lettore gli strumenti concettuali e pratici necessari per comprendere sia le potenzialità che i limiti dell'algoritmo di Shor nell'era attuale, e le prospettive aperte dall'integrazione con l'intelligenza artificiale. Gli obiettivi specifici e la struttura dettagliata del lavoro sono descritti nel Capitolo~\ref{chap:obiettivi}.
 
+% -----------------------------------------------
+\section{Struttura della Tesi}
+
+L'elaborato è organizzato in otto capitoli, ciascuno dei quali affronta una fase specifica del percorso che conduce dalle fondamenta teoriche ai risultati sperimentali.
+
+Il \textbf{Capitolo~\ref{chap:obiettivi}} (\textit{Obiettivi}) definisce con precisione le domande di ricerca e i traguardi concreti del lavoro: l'implementazione dell'algoritmo di Shor su simulatori realistici, la caratterizzazione sistematica dell'impatto del rumore sulle componenti critiche del circuito e lo sviluppo di strategie di mitigazione basate su intelligenza artificiale.
+
+Il \textbf{Capitolo~\ref{chap:fondamenti}} (\textit{Fondamenti del Calcolo Quantistico}) introduce i concetti matematici e fisici indispensabili per la comprensione del resto dell'elaborato: il formalismo dei qubit e degli operatori unitari, le porte logiche quantistiche, la Quantum Fourier Transform e il modello a circuiti, con particolare attenzione ai qubit superconduttori della piattaforma IBM Quantum utilizzata nelle sperimentazioni.
+
+Il \textbf{Capitolo~\ref{chap:shor}} (\textit{L'Algoritmo di Shor}) presenta in dettaglio la struttura dell'algoritmo di Shor: la riduzione della fattorizzazione al problema del \textit{period finding}, la stima di fase quantistica (\textit{Quantum Phase Estimation}) e l'exponenziazione modulare, con un'analisi rigorosa della complessità e del numero di risorse richieste per istanze crittograficamente rilevanti.
+
+Il \textbf{Capitolo~\ref{chap:rumore}} (\textit{Rumore Quantistico e Correzione degli Errori}) analizza i meccanismi fisici di degrado dello stato quantistico -- decoerenza, rilassamento energetico, errori di gate e di misura -- e introduce i principi della Quantum Error Correction, dai codici stabilizzatori al codice superficiale, illustrando perché la correzione degli errori sia il principale collo di bottiglia verso il regime fault-tolerant.
+
+Il \textbf{Capitolo~\ref{chap:strategie}} (\textit{Strategie per la Riduzione del Rumore Quantistico}) descrive le tecniche di \textit{noise mitigation} applicabili nell'era NISQ senza overhead hardware: Zero-Noise Extrapolation, Probabilistic Error Cancellation, ottimizzazione dei transpiler e tecniche di riduzione della profondità del circuito, con un confronto delle rispettive efficacie e limitazioni.
+
+Il \textbf{Capitolo~\ref{chap:implementazioni}} (\textit{Implementazione di Shor e Ottimizzazione con Intelligenza Artificiale}) costituisce il nucleo sperimentale dell'elaborato: illustra l'implementazione dell'algoritmo di Shor in Qiskit, la costruzione di modelli di rumore realistici calibrati su processori IBM, e l'applicazione di tecniche di machine learning -- reti neurali e algoritmi di ottimizzazione -- per la caratterizzazione del rumore e il miglioramento dell'affidabilità dei risultati.
+
+Il \textbf{Capitolo~\ref{chap:conclusioni}} (\textit{Conclusioni e Sviluppi Futuri}) sintetizza i risultati ottenuti, discute i limiti dell'approccio adottato e delinea le prospettive di ricerca aperte: dall'integrazione con hardware fault-tolerant di prossima generazione allo sviluppo di strategie di ottimizzazione più sofisticate, fino alle implicazioni per la transizione crittografica globale verso standard post-quantistici.
+
 \end{onehalfspace}
