@@ -1,0 +1,54 @@
+\begin{onehalfspace}
+
+\textit{Nota: questo capitolo verrà scritto dopo la disponibilità dei risultati sperimentali del Metodo 1. Di seguito è descritta la struttura del contenuto previsto. La forma finale seguirà lo schema indicato dal relatore: ripresa del problema, enunciazione degli obiettivi, sintesi dei risultati ottenuti.}
+
+% -----------------------------------------------
+\section{Il Problema Affrontato}
+\label{sec:problema_m1}
+
+\textit{Questa sezione riprende sinteticamente il problema che motiva il Metodo 1. Non dovrà essere una ripetizione dei capitoli teorici, ma una riformulazione focalizzata sul contributo sperimentale. Andrà inserito:}
+
+\begin{itemize}
+    \item Una o due frasi che richiamino il contesto: l'algoritmo di Shor ha bisogno di molte esecuzioni per produrre un risultato affidabile in presenza di rumore. Il rumore fisico dei processori NISQ degrada la distribuzione degli output, rendendo necessaria un'analisi statistica per estrarre il segnale corretto dal fondo rumoroso.
+    \item Il riferimento al dato quantitativo già noto dalla letteratura (es. probabilità di successo $\sim 4\%$ su \texttt{ibm\_marrakesh} per $N=15$ senza mitigazione \cite{ibm_shor_tutorial}) come punto di partenza per calibrare la rilevanza del problema.
+\end{itemize}
+
+% -----------------------------------------------
+\section{Gli Obiettivi del Metodo 1}
+\label{sec:obiettivi_m1}
+
+\textit{Questa sezione enuncia gli obiettivi che il Metodo 1 si proponeva di raggiungere. Andrà inserito:}
+
+\begin{itemize}
+    \item L'obiettivo primario: costruire una baseline robusta e priva di ipotesi sul profilo di rumore, misurando sperimentalmente quante iterazioni servono per ottenere il risultato corretto in quattro configurazioni diverse.
+    \item L'obiettivo secondario: identificare come $\bar{M}_1$ scala con il livello di rumore e con la dimensione dell'istanza, per quantificare il costo dell'approccio classico al crescere della complessità del problema.
+    \item Il criterio di successo: il Metodo 1 si considera validato se i risultati sui quattro use case sono statisticamente stabili (bassa varianza su $K$ ripetizioni) e se $\bar{M}_1$ cresce in modo coerente con le previsioni teoriche al crescere del rumore e della profondità del circuito.
+\end{itemize}
+
+% -----------------------------------------------
+\section{I Risultati Ottenuti}
+\label{sec:risultati_m1_concl}
+
+\textit{Questa sezione è la sintesi dei risultati del Capitolo~\ref{chap:risultati1}. Andrà inserito:}
+
+\begin{itemize}
+    \item La tabella riassuntiva di $\bar{M}_1$ sui quattro use case (già presente nel Capitolo~\ref{chap:risultati1}, qui ripresa in forma condensata).
+    \item La risposta in prosa alla domanda: quante iterazioni servono mediamente? Il risultato è nell'ordine delle decine? Delle centinaia? Varia molto tra use case?
+    \item La conferma (o smentita) dell'attesa teorica: $\bar{M}_1$ cresce con il rumore e con la dimensione? Di quanto?
+    \item La valutazione dell'efficacia della readout mitigation: ha ridotto $\bar{M}_1$ in modo significativo?
+\end{itemize}
+
+% -----------------------------------------------
+\section{Limiti e Considerazioni Critiche}
+\label{sec:limiti_m1}
+
+\textit{Andrà inserito:}
+
+\begin{itemize}
+    \item Il principale limite del Metodo 1: dipende dalla forma della distribuzione (deve esserci almeno un picco identificabile), e si degrada rapidamente quando il rapporto segnale/rumore scende sotto una certa soglia.
+    \item La sensibilità al parametro di soglia $\tau$: diversi valori di $\tau$ danno risultati diversi. Come si è scelto $\tau$? Il risultato è robusto rispetto a variazioni di $\tau$?
+    \item Eventuali casi in cui il Metodo 1 ha fallito (non ha trovato i fattori entro $M_{\text{max}}$ iterazioni): in quale use case e per quale motivo?
+    \item Il confronto del costo computazionale totale con il Metodo 2 (quanti shot totali), come setup per la discussione nel Capitolo~\ref{chap:conclusioni2}.
+\end{itemize}
+
+\end{onehalfspace}

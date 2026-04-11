@@ -1,0 +1,97 @@
+\begin{onehalfspace}
+
+\textit{Nota: questo capitolo verrà scritto dopo l'esecuzione degli esperimenti e il completamento del training del classificatore. Di seguito è descritta in dettaglio la struttura del contenuto previsto.}
+
+% -----------------------------------------------
+\section{Setup Sperimentale}
+\label{sec:setup_m2}
+
+\textit{Questa sezione descriverà la configurazione del Metodo 2. Andrà inserito:}
+
+\begin{itemize}
+    \item Gli stessi quattro use case del Capitolo~\ref{chap:risultati1}, con le stesse condizioni di rumore, per garantire la comparabilità del confronto.
+    \item Le caratteristiche del dataset di addestramento: numero di campioni, distribuzione delle etichette (bilanciamento tra classe positiva e negativa), intervallo di variazione dei parametri di rumore usati per la generazione.
+    \item La suddivisione training/validation/test (es. 70\%/10\%/20\%).
+    \item Il modello selezionato (Random Forest, SVM, MLP) e i suoi iperparametri, con la motivazione della scelta basata sul confronto sul validation set.
+\end{itemize}
+
+% -----------------------------------------------
+\section{Valutazione del Classificatore}
+\label{sec:valutazione_clf}
+
+\textit{Questa sezione riporta le prestazioni del classificatore sul test set. Andrà inserito:}
+
+\begin{itemize}
+    \item La tabella delle metriche sul test set: accuratezza, precisione, recall, F1-score, \ac{AUC}-ROC.
+    \item La curva ROC (figura).
+    \item La matrice di confusione (figura o tabella): quanti falsi positivi (output errato classificato come corretto) e falsi negativi (output corretto classificato come errato)? I falsi positivi sono più pericolosi dei falsi negativi: un falso positivo porta il sistema ad accettare un risultato sbagliato.
+    \item L'analisi della calibrazione probabilistica: il classificatore è ben calibrato? (Reliability diagram)
+    \item Se disponibile: l'importanza delle feature (per Random Forest) o la visualizzazione dei pesi (per MLP), per comprendere quali componenti dell'output sono più informativi per la classificazione.
+\end{itemize}
+
+% -----------------------------------------------
+\section{Parametri di Error Mitigation Applicati}
+\label{sec:em_m2}
+
+\textit{Andrà inserito il confronto delle metriche del classificatore con e senza readout mitigation, per quantificare quanto la correzione del readout error migliora la qualità delle feature in ingresso al classificatore.}
+
+% -----------------------------------------------
+\section{Risultati per Ciascun Use Case}
+\label{sec:risultati_uc_m2}
+
+\textit{Per ognuno dei quattro use case andrà inserita una sottosezione con la stessa struttura del Capitolo~\ref{chap:risultati1}. Gli elementi fissi di ciascuna sottosezione sono:}
+
+\begin{itemize}
+    \item Il numero di iterazioni necessarie per il primo risultato classificato come corretto in ciascuna ripetizione, e la media $\bar{M}_2$ sulle $K$ ripetizioni.
+    \item Grafico della distribuzione del numero di iterazioni su $K$ ripetizioni (confrontato con quello del Metodo 1 per lo stesso use case, sulla stessa figura).
+    \item La percentuale di falsi positivi osservata su quel use case: quante volte il classificatore ha accettato un risultato errato?
+\end{itemize}
+
+\subsection{Use Case 1 — $N = \text{[TBD]}$, rumore basso}
+\label{sec:uc1_m2}
+
+\textit{[Contenuto da inserire dopo gli esperimenti]}
+
+\subsection{Use Case 2 — $N = \text{[TBD]}$, rumore alto}
+\label{sec:uc2_m2}
+
+\textit{[Contenuto da inserire dopo gli esperimenti]}
+
+\subsection{Use Case 3 — $N = \text{[TBD]}$, istanza più grande}
+\label{sec:uc3_m2}
+
+\textit{[Contenuto da inserire dopo gli esperimenti]}
+
+\subsection{Use Case 4 — $N = \text{[TBD]}$, istanza ancora più grande}
+\label{sec:uc4_m2}
+
+\textit{[Contenuto da inserire dopo gli esperimenti]}
+
+% -----------------------------------------------
+\section{Confronto Diretto Metodo 1 vs Metodo 2}
+\label{sec:confronto}
+
+\textit{Questa è la sezione centrale del capitolo. Andrà inserito:}
+
+\begin{itemize}
+    \item La tabella riassuntiva con $\bar{M}_1$, $\bar{M}_2$, e il fattore di riduzione $\rho = \bar{M}_1/\bar{M}_2$ per ciascuno dei quattro use case. Questa tabella è il risultato principale della tesi.
+    \item Un grafico a barre o boxplot che visualizzi $\bar{M}_1$ vs $\bar{M}_2$ sui quattro use case.
+    \item La verifica dell'ipotesi statistica: il t-test di Welch sulle distribuzioni di $M_1$ e $M_2$ conferma che la differenza è significativa (p-value $< 0.05$)?
+    \item Il confronto di $P_{\text{success},1}(M_{\text{max}})$ vs $P_{\text{success},2}(M_{\text{max}})$ per un budget fisso $M_{\text{max}}$.
+    \item Analisi del trade-off: il Metodo 2 richiede una fase di addestramento offline e un costo computazionale per generare il dataset. Quante iterazioni di risparmio in inferenza sono necessarie per ammortizzare questo costo?
+\end{itemize}
+
+% -----------------------------------------------
+\section{Discussione}
+\label{sec:discussione_m2}
+
+\textit{Andrà inserito:}
+
+\begin{itemize}
+    \item I punti di forza del Metodo 2: riduzione drastica delle iterazioni, capacità di adattarsi al profilo specifico del noise model attraverso l'addestramento.
+    \item I limiti: dipendenza dalla qualità e dalla dimensione del dataset di training; possibile degrado su configurazioni di rumore molto distanti da quelle viste durante l'addestramento (out-of-distribution generalization).
+    \item La risposta alla domanda chiave della tesi: l'ipotesi teorica $\bar{M}_2 \approx 3$ viene confermata sperimentalmente? Se sì, in quali condizioni? Se no, su quali use case il Metodo 2 performa peggio del previsto e perché?
+    \item La validità del contributo per un'eventuale pubblicazione: i quattro use case soddisfano i requisiti di validazione? I risultati sono sufficientemente solidi e riproducibili?
+\end{itemize}
+
+\end{onehalfspace}
