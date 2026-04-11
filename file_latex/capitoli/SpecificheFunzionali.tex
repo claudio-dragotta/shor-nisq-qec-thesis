@@ -83,16 +83,71 @@ Per il solo Metodo 2, vengono prodotte in aggiunta:
 \section{I Quattro Use Case}
 \label{sec:use_case}
 
-I quattro use case sono scelti per garantire che i risultati non dipendano da una singola configurazione e che coprano un intervallo rappresentativo di condizioni operative. Il criterio di selezione è il seguente:
+% TODO [AGGIORNARE DOPO I PRIMI ESPERIMENTI]
+% I parametri di rumore e i valori di n_count riportati in questa sezione sono
+% stati fissati a partire dalla letteratura e dalle specifiche di ibm_marrakesh
+% PRIMA di eseguire gli esperimenti. Una volta ottenuti i primi risultati sul
+% simulatore, verificare che:
+%   (a) i circuiti per N=21 e N=35 vengano costruiti correttamente dal repo;
+%   (b) i livelli di rumore producano tassi di successo nell'intervallo atteso
+%       (5-40% per il livello realistico, <5% per il livello degradato);
+%   (c) n_count sia sufficiente a risolvere il periodo r per ciascun caso.
+% Se necessario, aggiornare la tabella Tab. \ref{tab:use_case_params} con i
+% valori effettivamente usati durante le esecuzioni.
+
+I quattro use case sono scelti per garantire che i risultati non dipendano da una singola configurazione e che coprano un intervallo rappresentativo di condizioni operative. Il disegno sperimentale segue due assi di variazione indipendenti:
 
 \begin{itemize}
-    \item \textbf{Use Case 1 e 2}: stesso numero $N$, livelli di rumore diversi. Il confronto a parità di istanza isola l'effetto del rumore sul numero di iterazioni, indipendentemente dalla complessità circuitale. Il livello di rumore del Use Case 2 è quello del Use Case 1 aumentato di un fattore $\sim$5 sui tassi di errore, in modo da coprire sia un regime moderatamente rumoroso sia uno fortemente degradato.
-    \item \textbf{Use Case 3 e 4}: numeri $N$ diversi e di dimensione crescente, a parità di livello di rumore. Questo permette di valutare la scalabilità dei due metodi al crescere della profondità del circuito e della complessità della fattorizzazione.
+    \item \textbf{Asse rumore (Use Case 1 vs.\ 2)}: stesso numero $N = 15$, stessa base $a = 7$, stesso circuito --- livello di rumore diverso. Il confronto isola l'effetto del rumore sul numero di iterazioni necessarie, a parità di complessità circuitale. Il Use Case 2 utilizza parametri di errore circa cinque volte superiori a quelli del Use Case 1, per coprire sia un regime \textit{NISQ-realistico} sia uno \textit{NISQ-degradato}.
+
+    \item \textbf{Asse scalabilità (Use Case 1, 3, 4)}: numeri $N$ di dimensione crescente ($15 \to 21 \to 35$), stesso livello di rumore NISQ-realistico. Il confronto valuta come il numero medio di iterazioni e l'accuratezza del classificatore varino al crescere della profondità del circuito.
 \end{itemize}
 
-Come punto di riferimento iniziale si usa $N = 15$, $a = 7$, $n_{\text{count}} = 8$, in linea con le implementazioni di riferimento nella letteratura \cite{ibm_shor_tutorial, vandersypen2001}. I valori esatti di tutti i parametri per ciascun use case vengono fissati nella fase esplorativa, dopo i primi esperimenti sul simulatore.
+La scelta di quattro use case soddisfa il requisito metodologico minimo per la validazione accademica dei risultati in questo dominio \cite{shor_hpec2023}.
 
-La scelta di quattro use case soddisfa il requisito metodologico minimo per la validazione accademica dei risultati sperimentali in questo dominio: risultati replicati su almeno quattro configurazioni indipendenti sono la condizione necessaria per poter sottoporre il lavoro a una rivista di settore \cite{shor_hpec2023}.
+\subsection{Parametri dei Use Case}
+
+La Tabella~\ref{tab:use_case_params} riporta la configurazione completa dei quattro use case. I parametri di rumore del livello \textit{NISQ-realistico} sono derivati dalle specifiche di calibrazione di \texttt{ibm\_marrakesh} riportate nel tutorial ufficiale IBM \cite{ibm_shor_tutorial} e dalla metodologia di selezione dei noise model proposta in \cite{epjqt_noise2024}. Il livello \textit{NISQ-degradato} scala i tassi di errore di un fattore $5\times$ e dimezza i tempi di coerenza, simulando condizioni di hardware più antico o in stato di calibrazione peggiore.
+
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Parametro} & \textbf{UC 1} & \textbf{UC 2} & \textbf{UC 3} & \textbf{UC 4} \\
+\midrule
+$N$                          & 15  & 15  & 21  & 35  \\
+$a$                          & 7   & 7   & 2   & 6   \\
+Periodo $r$ atteso           & 4   & 4   & 6   & 2   \\
+$n_{\text{count}}$ (qubit)   & 8   & 8   & 10  & 12  \\
+$M_{\text{shots}}$           & 4096 & 4096 & 4096 & 4096 \\
+\midrule
+\textit{Livello rumore}      & NISQ-realistico & NISQ-degradato & NISQ-realistico & NISQ-realistico \\
+$\epsilon_{1q}$              & $1\times10^{-3}$ & $5\times10^{-3}$ & $1\times10^{-3}$ & $1\times10^{-3}$ \\
+$\epsilon_{2q}$              & $1\times10^{-2}$ & $5\times10^{-2}$ & $1\times10^{-2}$ & $1\times10^{-2}$ \\
+$T_1$ (ns)                   & 100\,000 & 50\,000 & 100\,000 & 100\,000 \\
+$T_2$ (ns)                   & 80\,000  & 30\,000 & 80\,000  & 80\,000  \\
+$p_{\text{ro}}$              & $2\times10^{-2}$ & $5\times10^{-2}$ & $2\times10^{-2}$ & $2\times10^{-2}$ \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Configurazione completa dei quattro use case. I parametri di rumore del livello NISQ-realistico sono derivati dalle specifiche di \texttt{ibm\_marrakesh} \cite{ibm_shor_tutorial, epjqt_noise2024}. Il livello NISQ-degradato scala i tassi di errore di $5\times$ e dimezza $T_1$ e $T_2$.}
+\label{tab:use_case_params}
+\end{table}
+
+\subsection{Razionale per la Scelta delle Istanze}
+
+\textbf{Use Case 1 --- $N=15$, NISQ-realistico.}
+È il caso di riferimento consolidato in letteratura: la prima dimostrazione sperimentale di Shor è avvenuta su $N=15$ con NMR a 7 qubit \cite{vandersypen2001}, e il tutorial ufficiale IBM riporta i dati di esecuzione per la stessa istanza su \texttt{ibm\_marrakesh} \cite{ibm_shor_tutorial}. La base $a=7$ produce un periodo $r=4$, sufficiente per estrarre i fattori $3$ e $5$ tramite l'algoritmo delle frazioni continue. Questo use case funge da baseline quantitativa per entrambi i metodi.
+
+\textbf{Use Case 2 --- $N=15$, NISQ-degradato.}
+Configurazione identica al Use Case 1 eccetto per il livello di rumore, aumentato di $5\times$ su tutti i parametri. Poiché il circuito è lo stesso, qualsiasi differenza nelle metriche $\bar{M}_1$ e $\bar{M}_2$ è attribuibile esclusivamente al rumore. Questo use case permette di valutare la \textbf{robustezza} del classificatore ML rispetto al degrado delle condizioni hardware, indipendentemente dalla complessità circuitale.
+
+\textbf{Use Case 3 --- $N=21$, NISQ-realistico.}
+$N = 21 = 3 \times 7$ è la fattorizzazione più grande dimostrata su hardware superconduttore a uso generale \cite{skosana2021}. La base $a=2$ produce un periodo $r=6$, che implica una profondità circuitale sensibilmente maggiore rispetto a $N=15$. A parità di livello di rumore con il Use Case 1, questo use case isola l'effetto della scalabilità: ci si attende un aumento di $\bar{M}_1$ per via del circuito più profondo, e si valuta se il classificatore ML mantiene un'accuratezza sufficiente nonostante la maggiore complessità.
+
+\textbf{Use Case 4 --- $N=35$, NISQ-realistico.}
+$N = 35 = 5 \times 7$ con base $a=6$ produce il periodo minimo $r=2$ (poiché $6^2 = 36 \equiv 1 \pmod{35}$), il che consente di fattorizzare direttamente con $\gcd(6-1,\, 35) = \gcd(5, 35) = 5$ e $\gcd(6+1,\, 35) = \gcd(7, 35) = 7$. La scelta di $r=2$ con $N$ maggiore permette di separare l'effetto della dimensione del registro (più qubit) dall'effetto della profondità della modular exponentiation, fornendo un punto di confronto complementare rispetto al Use Case 3.
 
 % -----------------------------------------------
 \section{Metriche di Valutazione}
