@@ -1,0 +1,390 @@
+\begin{onehalfspace}
+
+I capitoli precedenti hanno definito l'architettura del sistema e le sue specifiche funzionali. Questo capitolo descrive cosa è stato concretamente costruito: il setup dell'ambiente di esecuzione, l'integrazione dell'algoritmo di Shor con il simulatore rumoroso, e l'implementazione dei due metodi di analisi. Non vengono qui riportati i risultati degli esperimenti --- quelli sono oggetto dei Capitoli~\ref{chap:risultati1} e~\ref{chap:risultati2} --- ma le scelte implementative, il codice sviluppato e la struttura del sistema che ha prodotto quei risultati.
+
+% -----------------------------------------------
+\section{Setup dell'Ambiente di Esecuzione}
+\label{sec:setup}
+
+L'ambiente di esecuzione è stato configurato su \ac{WSL} (Ubuntu 22.04 LTS) su Windows 11, con accesso diretto alla \ac{GPU} NVIDIA RTX 4070 tramite i driver CUDA per WSL. La scelta di WSL garantisce la compatibilità con l'ecosistema Linux di Qiskit e delle librerie scientifiche Python, mantenendo al contempo l'integrazione con l'ambiente di sviluppo Windows.
+
+\subsection{Dipendenze e Virtual Environment}
+
+Tutte le dipendenze sono isolate in un virtual environment Python dedicato, per garantire la riproducibilità dell'ambiente:
+
+\begin{lstlisting}[caption={Installazione dell'ambiente Python e delle librerie necessarie}]
+# Creazione del virtual environment
+python3 -m venv ~/quantum-env
+source ~/quantum-env/bin/activate
+
+# Framework quantistico e simulatore
+pip install qiskit qiskit-aer qiskit-ibm-runtime
+
+# Simulatore con accelerazione GPU (CUDA)
+pip install qiskit-aer-gpu
+
+# Librerie scientifiche e ML
+pip install numpy scipy matplotlib
+pip install scikit-learn
+
+# Verifica
+python -c "import qiskit; print(qiskit.__version__)"
+python -c "from qiskit_aer import AerSimulator; print('Aer OK')"
+\end{lstlisting}
+
+\subsection{Verifica del Supporto GPU}
+
+L'accelerazione GPU viene verificata istanziando un simulatore con backend CUDA prima di ogni sessione di calcolo:
+
+\begin{lstlisting}[caption={Verifica dell'accelerazione GPU con Qiskit Aer}]
+from qiskit_aer import AerSimulator
+
+# Simulatore statevector su GPU
+sim_gpu = AerSimulator(method='statevector', device='GPU')
+
+# Fallback su CPU se la GPU non e' disponibile
+try:
+    sim_gpu.available_devices()
+    print("GPU disponibile:", sim_gpu.configuration().gpu_name)
+except Exception:
+    sim_gpu = AerSimulator(method='statevector', device='CPU')
+    print("Fallback su CPU")
+\end{lstlisting}
+
+% -----------------------------------------------
+\section{L'Algoritmo di Shor: Implementazione di Riferimento}
+\label{sec:impl_shor}
+
+Il circuito dell'algoritmo di Shor è tratto dal repository open-source di riferimento \cite{github_shor}. L'implementazione costruisce il circuito per un generico numero $N$ e base $a$, usando $n_{\text{count}}$ qubit per il registro di controllo e $\lceil \log_2 N \rceil$ qubit per il registro di lavoro.
+
+\subsection{La Quantum Fourier Transform}
+
+La \ac{QFT} è la subroutine centrale del circuito. Il suo circuito è implementato ricorsivamente tramite porte di Hadamard e rotazioni di fase controllate $R_k = \mathrm{diag}(1,\, e^{2\pi i / 2^k})$:
+
+\begin{lstlisting}[caption={Implementazione della Quantum Fourier Transform}]
+from qiskit import QuantumCircuit
+import numpy as np
+
+def qft_circuit(n_qubits):
+    """Quantum Fourier Transform su n_qubits qubit."""
+    qc = QuantumCircuit(n_qubits, name='QFT')
+    for j in range(n_qubits):
+        qc.h(j)
+        for k in range(j + 1, n_qubits):
+            angle = np.pi / (2 ** (k - j))
+            qc.cp(angle, k, j)
+    for i in range(n_qubits // 2):
+        qc.swap(i, n_qubits - i - 1)
+    return qc
+
+def inverse_qft(n_qubits):
+    """QFT inversa: coniugato trasposto della QFT."""
+    return qft_circuit(n_qubits).inverse()
+\end{lstlisting}
+
+\subsection{La Moltiplicazione Modulare Controllata}
+
+Il blocco di \textit{modular exponentiation} implementa l'operazione $U_f\ket{x}\ket{y} = \ket{x}\ket{y \cdot a^x \bmod N}$. Per istanze concrete, questo blocco viene compilato come sequenza di porte SWAP che realizzano la permutazione degli stati della base computazionale indotta dall'operatore $x \mapsto ax \bmod N$:
+
+\begin{lstlisting}[caption={Modular exponentiation per N=15, a=7}]
+def mod_exp_15_7(power):
+    """
+    Implementa U^power dove U|y> = |7y mod 15>.
+    Valida per power in {1, 2, 4, 8, ...}.
+    """
+    U = QuantumCircuit(4, name=f'U^{power}')
+    if power % 4 == 1:
+        U.swap(0, 1); U.swap(1, 2); U.swap(2, 3)
+        U.x(0); U.x(2)
+    elif power % 4 == 2:
+        U.swap(1, 3); U.swap(0, 2)
+    # U^4 = I (mod 15 con a=7): nessuna operazione
+    return U
+\end{lstlisting}
+
+\subsection{Circuito Completo e Post-Processing}
+
+Il circuito completo combina i componenti precedenti nell'architettura a due registri dell'algoritmo di Shor. Il post-processing classico stima il periodo $r$ tramite frazioni continue e calcola i fattori tramite il \ac{GCD}:
+
+\begin{lstlisting}[caption={Circuito completo di Shor e post-processing}]
+from qiskit import QuantumCircuit, transpile
+from qiskit_aer import AerSimulator
+from math import gcd
+from fractions import Fraction
+
+def shor_circuit(N, a, n_count):
+    """Algoritmo di Shor per N con base a e n_count qubit di controllo."""
+    n_work = N.bit_length()
+    qc = QuantumCircuit(n_count + n_work, n_count)
+    for q in range(n_count):
+        qc.h(q)
+    qc.x(n_count)                # registro di lavoro inizializzato a |1>
+    for j in range(n_count):
+        power = 2 ** j
+        ctrl_U = mod_exp_15_7(power).control(1)
+        qc.append(ctrl_U, [j] + list(range(n_count, n_count + n_work)))
+    qc.barrier()
+    qc.append(inverse_qft(n_count), range(n_count))
+    qc.measure(range(n_count), range(n_count))
+    return qc
+
+def extract_factors(measured_value, n_count, N, a):
+    """Stima il periodo r e calcola i fattori di N."""
+    if measured_value == 0:
+        return None, None
+    phase = measured_value / (2 ** n_count)
+    frac  = Fraction(phase).limit_denominator(N)
+    r     = frac.denominator
+    if r % 2 != 0:
+        return None, None
+    p = gcd(a ** (r // 2) - 1, N)
+    q = gcd(a ** (r // 2) + 1, N)
+    if 1 < p < N:
+        return p, N // p
+    if 1 < q < N:
+        return q, N // q
+    return None, None
+\end{lstlisting}
+
+% -----------------------------------------------
+\section{Configurazione del Noise Model}
+\label{sec:noise_model}
+
+Il noise model è costruito con il modulo \texttt{qiskit\_aer.noise} e include le tre principali fonti di errore presenti nei processori superconduttori NISQ, in linea con i parametri di riferimento dell'hardware \texttt{ibm\_marrakesh} riportati nel tutorial ufficiale IBM \cite{ibm_shor_tutorial}:
+
+\begin{lstlisting}[caption={Costruzione del noise model parametrizzato}]
+from qiskit_aer.noise import (NoiseModel, depolarizing_error,
+                               thermal_relaxation_error, ReadoutError)
+import numpy as np
+
+def build_noise_model(eps_1q, eps_2q, t1_ns, t2_ns,
+                      gate_time_ns=50, p_ro=0.02):
+    """
+    Costruisce un noise model con parametri configurabili.
+    eps_1q: tasso errore depolarizzante gate 1 qubit
+    eps_2q: tasso errore depolarizzante gate 2 qubit
+    t1_ns:  tempo di rilassamento in ns
+    t2_ns:  tempo di dephasing in ns
+    p_ro:   probabilita' di readout error
+    """
+    nm = NoiseModel()
+
+    # Errore depolarizzante su gate a 1 qubit
+    e1 = depolarizing_error(eps_1q, 1)
+    nm.add_all_qubit_quantum_error(e1, ['h', 'x', 'rz', 'cp'])
+
+    # Errore depolarizzante su gate a 2 qubit
+    e2 = depolarizing_error(eps_2q, 2)
+    nm.add_all_qubit_quantum_error(e2, ['cx', 'swap'])
+
+    # Rilassamento termico (T1, T2)
+    e_relax = thermal_relaxation_error(t1_ns, t2_ns, gate_time_ns)
+    nm.add_all_qubit_quantum_error(e_relax, ['h', 'x'])
+
+    # Readout error (matrice di confusione simmetrica)
+    ro_matrix = [[1 - p_ro, p_ro], [p_ro, 1 - p_ro]]
+    ro_error  = ReadoutError(ro_matrix)
+    nm.add_all_qubit_readout_error(ro_error)
+
+    return nm
+\end{lstlisting}
+
+% -----------------------------------------------
+\section{Implementazione del Metodo 1}
+\label{sec:impl_metodo1}
+
+Il Metodo 1 raccoglie la distribuzione degli output su $M$ esecuzioni e identifica i fattori di $N$ analizzando statisticamente i picchi della distribuzione. Il parametro $\tau$ controlla la soglia di filtraggio: solo i valori con frequenza superiore a $\tau \cdot \max(\text{counts})$ vengono considerati picchi.
+
+\begin{lstlisting}[caption={Pipeline completa del Metodo 1}]
+def run_method1(N, a, n_count, noise_model, shots=1024,
+                max_iter=200, threshold=0.3, seed=42):
+    """
+    Metodo 1: analisi gaussiana della distribuzione.
+    Restituisce i fattori trovati e il numero di iterazioni.
+    """
+    sim = AerSimulator(noise_model=noise_model,
+                       method='statevector', seed_simulator=seed)
+    qc  = shor_circuit(N, a, n_count)
+    qct = transpile(qc, sim, optimization_level=3)
+
+    for iteration in range(1, max_iter + 1):
+        job    = sim.run(qct, shots=shots)
+        counts = job.result().get_counts()
+
+        # Filtraggio a soglia
+        max_count = max(counts.values())
+        peaks = {k: v for k, v in counts.items()
+                 if v >= threshold * max_count}
+
+        # Tentativo di fattorizzazione per ogni picco
+        for bitstring in sorted(peaks, key=peaks.get, reverse=True):
+            meas = int(bitstring, 2)
+            p, q = extract_factors(meas, n_count, N, a)
+            if p is not None:
+                return {'factors': (p, q), 'iterations': iteration,
+                        'method': 'M1', 'success': True}
+
+    return {'factors': (None, None), 'iterations': max_iter,
+            'method': 'M1', 'success': False}
+\end{lstlisting}
+
+% -----------------------------------------------
+\section{Implementazione del Metodo 2}
+\label{sec:impl_metodo2}
+
+Il Metodo 2 si articola in due fasi distinte: la generazione del dataset e l'addestramento del classificatore (offline), e l'utilizzo del classificatore in inferenza per decidere dopo ogni singola esecuzione se il risultato è corretto (online).
+
+\subsection{Generazione del Dataset}
+
+Il dataset viene generato eseguendo migliaia di istanze del circuito con parametri di rumore variabili nell'intorno dei valori nominali di ciascun use case. Per ogni esecuzione viene calcolata l'etichetta di correttezza:
+
+\begin{lstlisting}[caption={Generazione del dataset di addestramento per il classificatore}]
+import numpy as np
+
+def generate_dataset(N, a, n_count, noise_params_range,
+                     n_samples=5000, shots=1024, seed=0):
+    """
+    Genera coppie (feature_vector, label) per l'addestramento.
+    noise_params_range: dict con (min, max) per eps_1q, eps_2q, t1, t2.
+    """
+    rng = np.random.default_rng(seed)
+    X, y = [], []
+
+    for i in range(n_samples):
+        # Campiona parametri di rumore casuali nell'intervallo specificato
+        eps_1q = rng.uniform(*noise_params_range['eps_1q'])
+        eps_2q = rng.uniform(*noise_params_range['eps_2q'])
+        t1     = rng.uniform(*noise_params_range['t1'])
+        t2     = rng.uniform(*noise_params_range['t2'])
+
+        nm = build_noise_model(eps_1q, eps_2q, t1, t2)
+        sim = AerSimulator(noise_model=nm, seed_simulator=seed + i)
+        qc  = transpile(shor_circuit(N, a, n_count), sim)
+
+        counts = sim.run(qc, shots=shots).result().get_counts()
+        meas   = int(max(counts, key=counts.get), 2)
+        p, q   = extract_factors(meas, n_count, N, a)
+        label  = 1 if (p is not None) else 0
+
+        # Feature: distribuzione normalizzata degli output
+        feature = np.zeros(2 ** n_count)
+        for k, v in counts.items():
+            feature[int(k, 2)] = v / shots
+
+        X.append(feature)
+        y.append(label)
+
+    return np.array(X), np.array(y)
+\end{lstlisting}
+
+\subsection{Addestramento e Selezione del Modello}
+
+L'addestramento utilizza scikit-learn \cite{scikit_learn} con una pipeline di confronto tra diversi classificatori. Il modello con le migliori prestazioni sul validation set viene selezionato per l'inferenza:
+
+\begin{lstlisting}[caption={Addestramento e selezione del classificatore}]
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score, accuracy_score
+
+def train_classifier(X, y, random_state=42):
+    """
+    Confronta piu' classificatori e restituisce il migliore
+    in base all'F1-score sul validation set.
+    """
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=random_state, stratify=y)
+
+    candidates = {
+        'RandomForest': RandomForestClassifier(
+            n_estimators=200, random_state=random_state),
+        'SVM':          SVC(kernel='rbf', probability=True,
+                            random_state=random_state),
+        'MLP':          MLPClassifier(hidden_layer_sizes=(256, 128),
+                                      max_iter=500,
+                                      random_state=random_state),
+    }
+    best_name, best_model, best_f1 = None, None, -1
+    for name, clf in candidates.items():
+        clf.fit(X_train, y_train)
+        f1 = f1_score(y_test, clf.predict(X_test))
+        if f1 > best_f1:
+            best_name, best_model, best_f1 = name, clf, f1
+
+    acc = accuracy_score(y_test, best_model.predict(X_test))
+    print(f"Modello selezionato: {best_name}  |  F1={best_f1:.3f}  "
+          f"Acc={acc:.3f}")
+    return best_model, X_test, y_test
+\end{lstlisting}
+
+\subsection{Inferenza: il Loop di Classificazione}
+
+In fase di inferenza, il classificatore viene invocato dopo ogni esecuzione del circuito. Il loop si interrompe al primo risultato classificato come corretto:
+
+\begin{lstlisting}[caption={Loop di inferenza del Metodo 2}]
+def run_method2(N, a, n_count, noise_model, classifier,
+                shots=1024, max_iter=50, seed=42):
+    """
+    Metodo 2: classificatore ML per la verifica del risultato.
+    Restituisce i fattori trovati e il numero di iterazioni.
+    """
+    sim = AerSimulator(noise_model=noise_model,
+                       method='statevector', seed_simulator=seed)
+    qc  = transpile(shor_circuit(N, a, n_count), sim,
+                    optimization_level=3)
+
+    for iteration in range(1, max_iter + 1):
+        counts  = sim.run(qc, shots=shots).result().get_counts()
+        meas    = int(max(counts, key=counts.get), 2)
+
+        # Feature vector: distribuzione normalizzata
+        feature = np.zeros(2 ** n_count)
+        for k, v in counts.items():
+            feature[int(k, 2)] = v / shots
+
+        label = classifier.predict([feature])[0]
+        if label == 1:
+            p, q = extract_factors(meas, n_count, N, a)
+            if p is not None:
+                return {'factors': (p, q), 'iterations': iteration,
+                        'method': 'M2', 'success': True}
+
+    return {'factors': (None, None), 'iterations': max_iter,
+            'method': 'M2', 'success': False}
+\end{lstlisting}
+
+% -----------------------------------------------
+\section{Infrastruttura di Test e Raccolta Dati}
+\label{sec:infrastruttura}
+
+Per garantire la riproducibilità e la comparabilità dei risultati, tutti e quattro i use case vengono eseguiti tramite una funzione di orchestrazione unica. I risultati vengono salvati in formato JSON con i parametri completi dell'esperimento:
+
+\begin{lstlisting}[caption={Orchestrazione degli esperimenti sui quattro use case}]
+import json, time
+from datetime import datetime
+
+def run_experiment(use_case, classifier, k_repetitions=50):
+    """
+    Esegue K ripetizioni di entrambi i metodi su un use case.
+    use_case: dict con N, a, n_count, noise_params.
+    """
+    N, a, nc = use_case['N'], use_case['a'], use_case['n_count']
+    nm = build_noise_model(**use_case['noise_params'])
+    results = {'use_case': use_case, 'M1': [], 'M2': [],
+               'timestamp': datetime.now().isoformat()}
+
+    for rep in range(k_repetitions):
+        r1 = run_method1(N, a, nc, nm, seed=rep)
+        r2 = run_method2(N, a, nc, nm, classifier, seed=rep)
+        results['M1'].append(r1)
+        results['M2'].append(r2)
+
+    # Salvataggio su disco
+    fname = f"results_N{N}_a{a}_{datetime.now():%Y%m%d_%H%M%S}.json"
+    with open(fname, 'w') as f:
+        json.dump(results, f, indent=2)
+    return results
+\end{lstlisting}
+
+\end{onehalfspace}

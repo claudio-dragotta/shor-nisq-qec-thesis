@@ -1,0 +1,105 @@
+\begin{onehalfspace}
+
+Il capitolo precedente ha concluso la parte teorica della tesi con una scelta precisa: il \ac{QML}, nella sua declinazione di classificatore addestrato per la rilevazione degli errori, è l'approccio adottato per mitigare il rumore nell'algoritmo di Shor. È stato mostrato che questo approccio riduce il numero di esecuzioni necessarie per ottenere un risultato affidabile da decine di iterazioni a circa tre. Ciò che resta da definire è come questa scelta si traduce concretamente in un sistema sperimentale funzionante.
+
+Questo capitolo ha questo scopo. Vengono descritte l'architettura del pipeline, le tecnologie adottate e la struttura dei due metodi che verranno confrontati nella parte sperimentale. Non si entra ancora nella descrizione del codice né dei risultati: quelli sono oggetto dei capitoli successivi. Qui si stabilisce il \textit{perché} di ciascuna scelta progettuale e il \textit{come} i componenti si raccordano tra loro.
+
+% -----------------------------------------------
+\section{Obiettivi della Parte Sperimentale}
+\label{sec:obiettivi_sperimentali}
+
+La parte sperimentale di questa tesi ha due obiettivi distinti ma complementari, che corrispondono ai due metodi sviluppati.
+
+Il primo obiettivo è costruire una \textbf{baseline affidabile}: una misura quantitativa del numero di esecuzioni che l'approccio classico, privo di qualunque modello appreso, richiede per ricavare il risultato corretto dell'algoritmo di Shor in presenza di rumore. Questo primo metodo --- chiamato nel seguito \textbf{Metodo 1} --- opera raccogliendo la distribuzione statistica degli output su molte esecuzioni, identificando i picchi della distribuzione e stimando il periodo $r$ dal valore più probabile. Il Metodo 1 non introduce ipotesi sul profilo di errore del sistema: funziona su qualunque noise model e non richiede dati di addestramento. È il punto di partenza naturale e il termine di paragone contro cui misurare il miglioramento.
+
+Il secondo obiettivo è dimostrare che un \textbf{classificatore addestrato} può sostituire l'accumulazione statistica con una decisione informata basata su una singola esecuzione. Questo secondo metodo --- chiamato \textbf{Metodo 2} --- apprende la firma degli output corretti e di quelli distorti dal rumore, e decide dopo ogni esecuzione se il risultato è affidabile o meno. L'ipotesi, motivata teoricamente nel Capitolo~\ref{chap:strategie} e corroborata dalla letteratura recente sull'uso del \ac{ML} per la mitigazione degli errori quantistici \cite{ml_mitigation2023}, è che bastino poche iterazioni --- tipicamente dell'ordine di tre --- per convergere.
+
+Entrambi i metodi vengono valutati su \textbf{quattro use case} indipendenti, scelti per coprire diverse configurazioni di istanza e livello di rumore. La scelta di almeno quattro configurazioni risponde a un requisito metodologico consolidato per la validazione accademica dei risultati sperimentali in questo dominio \cite{shor_hpec2023}.
+
+% -----------------------------------------------
+\section{Architettura del Pipeline Sperimentale}
+\label{sec:architettura}
+
+Il sistema è strutturato come un pipeline a tre stadi sequenziali, illustrato in Figura~\ref{fig:pipeline_architettura}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    box/.style     = {rectangle, draw, rounded corners=4pt,
+                      minimum width=3.0cm, minimum height=0.95cm,
+                      align=center, font=\small},
+    arrow/.style   = {->, thick, >=stealth},
+    lbl/.style     = {font=\footnotesize\itshape, text=gray}
+]
+% Nodi
+\node[box, fill=blue!12]   (shor)  at (0,    0)   {Algoritmo di Shor\\{\footnotesize circuito ideale}};
+\node[box, fill=orange!18] (noise) at (5.0,  0)   {Simulatore Rumoroso\\{\footnotesize Qiskit Aer}};
+\node[box, fill=green!15]  (m1)    at (10.0, 1.2) {Metodo 1\\{\footnotesize analisi gaussiana}};
+\node[box, fill=green!15]  (m2)    at (10.0,-1.2) {Metodo 2\\{\footnotesize classificatore ML}};
+\node[box, fill=gray!12]   (out)   at (14.2, 0)   {Risultati\\{\footnotesize fattori + metriche}};
+% Frecce
+\draw[arrow] (shor)  -- node[above, lbl]{circuito}          (noise);
+\draw[arrow] (noise) -- node[above left,  lbl]{output rumoroso} (m1);
+\draw[arrow] (noise) -- node[below left,  lbl]{output rumoroso} (m2);
+\draw[arrow] (m1)    -- (out);
+\draw[arrow] (m2)    -- (out);
+\end{tikzpicture}
+\caption{Pipeline sperimentale. Il circuito ideale dell'algoritmo di Shor viene eseguito sul simulatore rumoroso \texttt{AerSimulator} di Qiskit. L'output è elaborato in parallelo dal Metodo 1 (analisi della distribuzione statistica) e dal Metodo 2 (classificatore ML). Entrambi producono i fattori di $N$ e le metriche di confronto.}
+\label{fig:pipeline_architettura}
+\end{figure}
+
+\textbf{Stadio 1 — Il circuito di Shor.} Il circuito dell'algoritmo di Shor è tratto dall'implementazione open-source di riferimento disponibile su GitHub \cite{github_shor}. Si tratta di un'implementazione ideale, costruita per un simulatore privo di rumore: in assenza di errori produce sempre la fattorizzazione corretta. Questo punto di partenza è una scelta deliberata. L'obiettivo della tesi non è modificare l'algoritmo, bensì studiare il suo comportamento su un simulatore realistico e sviluppare strumenti per recuperare l'informazione corretta nonostante la degradazione introdotta dal rumore.
+
+\textbf{Stadio 2 — La simulazione rumorosa.} Il circuito ideale viene eseguito tramite il simulatore \texttt{AerSimulator} di Qiskit con un modello di rumore che replica le caratteristiche fisiche di un processore superconduttore \ac{NISQ}. La scelta di un simulatore --- anziché di un processore reale --- consente di controllare con precisione i parametri di rumore, garantisce la riproducibilità degli esperimenti e permette di generare grandi dataset di addestramento per il classificatore del Metodo 2 senza i vincoli di accesso e costo tipici dell'hardware IBM Quantum. Il modello di rumore adottato è descritto in dettaglio nel Capitolo~\ref{chap:specifiche}; la sua configurazione segue la metodologia proposta in \cite{epjqt_noise2024} per la selezione e il calibrazione dei parametri di emulazione rispetto a backend reali.
+
+\textbf{Stadio 3 — L'analisi.} L'output del simulatore viene elaborato indipendentemente dai due metodi. I risultati prodotti da entrambi vengono confrontati sulle stesse metriche e sugli stessi use case, garantendo la comparabilità del confronto.
+
+% -----------------------------------------------
+\section{Il Metodo 1: Approccio Statistico Classico}
+\label{sec:metodo1}
+
+Il Metodo 1 è l'approccio di riferimento: non richiede alcun addestramento, non assume nulla sul profilo specifico del rumore e si basa esclusivamente sulla struttura probabilistica degli output dell'algoritmo di Shor.
+
+In condizioni ideali, la distribuzione degli output del registro di controllo presenta picchi netti a multipli di $2^{n_{\text{count}}}/r$, dove $r$ è il periodo della funzione modulare. Il rumore appiattisce questi picchi, allarga la loro base e introduce un fondo uniforme di misure errate. Il metodo recupera il risultato attraverso i seguenti passi:
+
+\begin{enumerate}
+    \item Eseguire il circuito per $M$ shot, raccogliendo il conteggio di frequenza di ogni stringa di output del registro di controllo.
+    \item Identificare le cime della distribuzione attraverso un filtraggio a soglia: si mantengono solo i valori con frequenza superiore a una percentuale del massimo osservato.
+    \item Verificare se i valori rimanenti sono compatibili con la struttura attesa $k \cdot 2^{n_{\text{count}}}/r$ per qualche intero $k$ e $r < N$.
+    \item Stimare $r$ tramite l'algoritmo delle frazioni continue applicato al rapporto $y / 2^{n_{\text{count}}}$, dove $y$ è il valore al picco.
+    \item Calcolare $p = \gcd(a^{r/2} - 1,\, N)$ e $q = \gcd(a^{r/2} + 1,\, N)$ e verificare che siano fattori non banali di $N$.
+\end{enumerate}
+
+Il numero di esecuzioni $M$ necessarie per raggiungere una risposta con confidenza sufficiente cresce al crescere del livello di rumore e, per ambienti fortemente rumorosi, può raggiungere le centinaia. Questa quantità --- misurata sperimentalmente per ciascun use case --- costituisce la baseline del confronto.
+
+% -----------------------------------------------
+\section{Il Metodo 2: Classificatore ML}
+\label{sec:metodo2}
+
+Il Metodo 2 adotta un approccio radicalmente diverso: invece di costruire una distribuzione statistica, addestra un modello che impara a distinguere gli output corretti da quelli compromessi dal rumore, e lo usa per decidere dopo \textit{ogni singola} esecuzione se il risultato è affidabile.
+
+L'idea è coerente con la direzione più recente della letteratura sull'utilizzo del \ac{ML} per la mitigazione del rumore quantistico. Lavori come \cite{ml_mitigation2023} hanno mostrato che classificatori classici --- in particolare Random Forest e reti neurali multistrato --- possono apprendere la struttura degli errori su circuiti \ac{NISQ} con prestazioni superiori agli approcci tradizionali, e con un overhead computazionale significativamente minore rispetto a tecniche come la Zero-Noise Extrapolation. Nel dominio della correzione degli errori quantistici, decoder basati su reti neurali --- tra cui il recente AlphaQubit di Google DeepMind \cite{alphaqubit2024} --- hanno dimostrato che i modelli appresi possono superare i decoder analitici classici in presenza di rumore realistico e non omogeneo.
+
+Il classificatore sviluppato in questa tesi opera su un problema più semplice: non decodifica sindromi di un codice topologico, ma decide se l'output di una singola esecuzione dell'algoritmo di Shor è corretto. Questo lo rende addestrable con risorse moderate, il che è compatibile con l'ambiente \ac{NISQ} in cui si lavora.
+
+\textbf{Input del classificatore.} Il vettore di feature è costruito a partire dalla misurazione del registro di controllo: i valori dei $n_{\text{count}}$ qubit e caratteristiche derivate, come la distanza dai picchi teorici attesi e l'entropia della distribuzione locale osservata nelle ultime esecuzioni.
+
+\textbf{Output del classificatore.} Un'etichetta binaria: $1$ se il risultato è corretto (ovvero se i fattori estratti tramite frazioni continue e \ac{GCD} sono fattori non banali di $N$), $0$ altrimenti.
+
+\textbf{Fase di addestramento.} Il dataset viene generato interamente dal simulatore rumoroso: si eseguono migliaia di istanze del circuito con parametri di rumore variabili nell'intorno dei valori dei use case, si calcolano le etichette di correttezza e si addestra il classificatore con una divisione standard training/validation/test. La libreria adottata per l'addestramento è scikit-learn \cite{scikit_learn}, che offre un'interfaccia unificata per confrontare diversi classificatori --- Random Forest, \ac{SVM}, \ac{MLP} --- sullo stesso dataset, facilitando la selezione del modello migliore.
+
+\textbf{Utilizzo in inferenza.} A regime, il classificatore viene invocato dopo ogni esecuzione. Non appena restituisce l'etichetta $1$, il risultato viene accettato e il processo si interrompe. Il numero di invocazioni prima del primo $1$ corretto è la quantità misurata e confrontata con $\bar{M}_1$.
+
+% -----------------------------------------------
+\section{Scelte Tecnologiche}
+\label{sec:scelte_tecnologiche}
+
+Le scelte tecnologiche adottate in questa tesi non sono arbitrarie: ciascuna risponde a un vincolo preciso o a una decisione presa nel corso del lavoro.
+
+\textbf{Qiskit come framework quantistico.} La scelta di Qiskit è stata formalizzata nell'incontro con il relatore del 18 marzo 2026, in seguito all'analisi del tutorial ufficiale IBM per l'algoritmo di Shor \cite{ibm_shor_tutorial}. Qiskit è il framework di riferimento per i processori superconduttori IBM, dispone del simulatore \texttt{AerSimulator} per la simulazione rumorosa e del modulo \texttt{qiskit-ibm-runtime} per l'esecuzione su hardware reale. L'uso di Qiskit garantisce inoltre la coerenza con la letteratura sperimentale più recente sull'implementazione di Shor \cite{skosana2021, ibm_shor_tutorial}.
+
+\textbf{scikit-learn come libreria ML.} La scelta di scikit-learn \cite{scikit_learn} come libreria per il classificatore è motivata dalla semplicità dell'interfaccia, dalla disponibilità di numerosi modelli comparabili in modo uniforme e dalla sua consolidata affidabilità nella ricerca scientifica. La scelta del modello specifico --- Random Forest, \ac{SVM} o rete neurale --- verrà determinata sperimentalmente, selezionando quello con le migliori prestazioni sul dataset generato dai use case.
+
+\textbf{WSL con GPU NVIDIA come ambiente di esecuzione.} Le simulazioni vengono eseguite in ambiente Linux tramite \ac{WSL} su Windows, con accesso alla \ac{GPU} NVIDIA RTX 4070 attraverso la libreria \texttt{qiskit-aer-gpu}.\footnote{Il supporto GPU per Qiskit Aer sfrutta CUDA per accelerare la simulazione statevector e density matrix. Su un sistema con RTX 4070 (12 GB di memoria VRAM), è possibile simulare circuiti fino a circa 30 qubit in modo efficiente, rispetto ai 25--26 qubit tipicamente accessibili in modalità CPU. Questo margine è sufficiente per i circuiti di Shor utilizzati nei quattro use case.} L'accelerazione GPU riduce i tempi di simulazione di un fattore nell'ordine di 10--20x rispetto alla simulazione CPU per circuiti con un numero elevato di shot, rendendo praticabile la generazione del dataset di addestramento in tempi accettabili.
+
+\end{onehalfspace}

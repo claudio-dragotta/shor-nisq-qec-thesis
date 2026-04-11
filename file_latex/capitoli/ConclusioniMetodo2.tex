@@ -1,0 +1,55 @@
+\begin{onehalfspace}
+
+\textit{Nota: questo capitolo verrà scritto dopo la disponibilità dei risultati sperimentali del Metodo 2 e del confronto con il Metodo 1. Di seguito è descritta la struttura del contenuto previsto.}
+
+% -----------------------------------------------
+\section{Il Problema Affrontato}
+\label{sec:problema_m2}
+
+\textit{Questa sezione riprende il problema partendo dal limite del Metodo 1 come punto di partenza. Andrà inserito:}
+
+\begin{itemize}
+    \item Una o due frasi che richiamino il risultato centrale del Metodo 1: l'approccio statistico classico richiede mediamente $\bar{M}_1$ iterazioni (dato da riempire con i risultati). Questo numero è accettabile in un contesto sperimentale controllato, ma è troppo costoso per un utilizzo sistematico su istanze più grandi o su hardware reale dove ogni esecuzione ha un costo in termini di tempo di accesso e di decoerenza.
+    \item La motivazione del Metodo 2: si può fare meglio sfruttando l'informazione che il classificatore ha appreso dalla struttura degli output rumorosi?
+\end{itemize}
+
+% -----------------------------------------------
+\section{Gli Obiettivi del Metodo 2}
+\label{sec:obiettivi_m2}
+
+\textit{Andrà inserito:}
+
+\begin{itemize}
+    \item L'obiettivo primario: ridurre $\bar{M}_2$ rispetto a $\bar{M}_1$ in modo statisticamente significativo sui quattro use case, dimostrando che il classificatore ML aggiunge un vantaggio concreto rispetto all'approccio di baseline.
+    \item L'obiettivo secondario: verificare la robustezza del classificatore al variare del livello di rumore e della dimensione dell'istanza --- in particolare, il vantaggio deve mantenersi su tutti e quattro i use case, non solo su quello per cui il classificatore è stato ottimizzato.
+    \item Il criterio di successo quantitativo: il Metodo 2 si considera validato se $\rho = \bar{M}_1/\bar{M}_2 > 1$ in modo statisticamente significativo (test $t$ di Welch, p-value $< 0.05$) su almeno tre dei quattro use case, e se il numero medio di falsi positivi rimane sotto una soglia accettabile.
+\end{itemize}
+
+% -----------------------------------------------
+\section{I Risultati Ottenuti}
+\label{sec:risultati_m2_concl}
+
+\textit{Questa sezione è la sintesi dei risultati del Capitolo~\ref{chap:risultati2}. Andrà inserito:}
+
+\begin{itemize}
+    \item La risposta diretta alla domanda principale: l'ipotesi $\bar{M}_2 \approx 3$ è confermata? In quali use case si avvicina, in quali si discosta?
+    \item Il fattore di riduzione $\rho$ per ciascun use case: il Metodo 2 è effettivamente migliore? Di quanto?
+    \item Le prestazioni del classificatore sul test set (F1-score, AUC) e il loro impatto sul numero di falsi positivi in inferenza.
+    \item La significatività statistica del confronto M1 vs M2.
+    \item Una frase di sintesi sul contributo: il sistema sviluppato riduce il numero di iterazioni necessarie da $[\bar{M}_1$ medio sui 4 use case] a $[\bar{M}_2$ medio], con un fattore di riduzione medio $\rho \approx [\text{valore}]$.
+\end{itemize}
+
+% -----------------------------------------------
+\section{Validità del Contributo e Prospettive di Pubblicazione}
+\label{sec:validita}
+
+\textit{Andrà inserito:}
+
+\begin{itemize}
+    \item La valutazione della solidità dei risultati: i quattro use case coprono una gamma sufficiente di condizioni? I risultati sono riproducibili (seed fissato, parametri esplicitati)?
+    \item La confrontabilità con la letteratura: i risultati del Metodo 1 sono coerenti con i riferimenti noti (es. tutorial IBM \cite{ibm_shor_tutorial})? Il miglioramento del Metodo 2 è nell'ordine di grandezza delle riduzioni riportate da \cite{ml_mitigation2023} per approcci ML analoghi?
+    \item Le condizioni necessarie per la pubblicazione: i quattro use case soddisfano il requisito minimo di validazione? Quali integrazioni sarebbero necessarie per portare il lavoro a una conferenza di settore (es. HPEC \cite{shor_hpec2023}) o a una rivista?
+    \item Una frase conclusiva che chiuda il percorso della tesi: dal problema teorico (Shor vulnerabile al rumore), alla strategia scelta (ML per ridurre le iterazioni), all'evidenza sperimentale (i quattro use case validano l'approccio con un fattore di riduzione $\rho \approx [\text{valore}]$).
+\end{itemize}
+
+\end{onehalfspace}
