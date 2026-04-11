@@ -1,0 +1,91 @@
+\begin{onehalfspace}
+
+\textit{Nota: questo capitolo verrà scritto dopo l'esecuzione degli esperimenti sui quattro use case. Di seguito è descritta in dettaglio la struttura del contenuto previsto, con le informazioni che dovranno essere inserite in ciascuna sezione.}
+
+% -----------------------------------------------
+\section{Setup Sperimentale}
+\label{sec:setup_m1}
+
+\textit{Questa sezione descriverà la configurazione esatta usata per il Metodo 1. Andrà inserito:}
+
+\begin{itemize}
+    \item La tabella dei quattro use case con i valori precisi di $N$, $a$, $n_{\text{count}}$ e i parametri di rumore ($\epsilon_{1q}$, $\epsilon_{2q}$, $T_1$, $T_2$, $p_{\text{ro}}$) per ciascuno.
+    \item Il numero di shot per esecuzione ($M_{\text{shots}}$) e il numero di ripetizioni $K$ usate per stimare le metriche statistiche.
+    \item Il valore della soglia di filtraggio $\tau$ selezionato per ciascun use case (con motivazione del criterio di scelta).
+    \item Informazioni sull'hardware: nome del sistema, versione di Qiskit Aer, seed usato.
+\end{itemize}
+
+% -----------------------------------------------
+\section{Parametri di Error Mitigation Applicati}
+\label{sec:em_m1}
+
+\textit{Questa sezione descriverà le tecniche di error mitigation applicate al Metodo 1. Andrà inserito:}
+
+\begin{itemize}
+    \item La procedura di calibrazione del readout error: quanti circuiti di calibrazione, come è stata stimata la matrice di confusione.
+    \item L'effetto quantitativo della readout mitigation: confronto tra le distribuzioni di frequenza con e senza correzione per almeno uno dei use case (con figura).
+    \item Eventuali altre tecniche applicate e loro motivazione.
+\end{itemize}
+
+% -----------------------------------------------
+\section{Risultati per Ciascun Use Case}
+\label{sec:risultati_uc_m1}
+
+\textit{Per ognuno dei quattro use case andrà inserita una sottosezione con la stessa struttura. Gli elementi fissi di ciascuna sottosezione sono:}
+
+\begin{itemize}
+    \item Un istogramma della distribuzione degli output del registro di controllo su $M_{\text{shots}}$ shot (figura). L'istogramma deve mostrare chiaramente la posizione dei picchi rispetto ai valori teorici attesi $k \cdot 2^{n_{\text{count}}}/r$.
+    \item La tabella delle frequenze ai picchi identificati dopo il filtraggio a soglia.
+    \item Il valore di $r$ stimato tramite frazioni continue, e verifica che $\gcd(a^{r/2} \pm 1, N)$ produca i fattori corretti.
+    \item Il numero di iterazioni necessarie per ottenere il primo risultato corretto in quella specifica ripetizione, e la media $\bar{M}_1$ sulle $K$ ripetizioni.
+    \item Un grafico della distribuzione del numero di iterazioni su $K$ ripetizioni (istogramma o boxplot).
+\end{itemize}
+
+\subsection{Use Case 1 — $N = \text{[TBD]}$, rumore basso}
+\label{sec:uc1_m1}
+
+\textit{[Contenuto da inserire dopo gli esperimenti]}
+
+\subsection{Use Case 2 — $N = \text{[TBD]}$, rumore alto}
+\label{sec:uc2_m1}
+
+\textit{[Contenuto da inserire dopo gli esperimenti]}
+
+\subsection{Use Case 3 — $N = \text{[TBD]}$, istanza più grande}
+\label{sec:uc3_m1}
+
+\textit{[Contenuto da inserire dopo gli esperimenti]}
+
+\subsection{Use Case 4 — $N = \text{[TBD]}$, istanza ancora più grande}
+\label{sec:uc4_m1}
+
+\textit{[Contenuto da inserire dopo gli esperimenti]}
+
+% -----------------------------------------------
+\section{Analisi dei Risultati}
+\label{sec:analisi_m1}
+
+\textit{Questa è la sezione di analisi trasversale sui quattro use case. Andrà inserito:}
+
+\begin{itemize}
+    \item La tabella riassuntiva delle metriche sui quattro use case: $\bar{M}_1$, $\sigma_{M_1}$, $P_{\text{success},1}(M_{\text{max}})$, tasso di errore del fattore estratto.
+    \item L'analisi della dipendenza di $\bar{M}_1$ dal livello di rumore: confronto Use Case 1 vs Use Case 2 (stesso $N$, rumore diverso). Ci si attende che $\bar{M}_1$ cresca significativamente con il rumore: quantificare di quanto.
+    \item L'analisi della dipendenza di $\bar{M}_1$ dalla dimensione dell'istanza: confronto Use Case 1 vs Use Case 3 vs Use Case 4 (stesso livello di rumore, $N$ crescente). Ci si attende che $\bar{M}_1$ cresca con la profondità del circuito.
+    \item Discussione della validità statistica: il numero $K$ di ripetizioni è sufficiente a rendere stabile la stima di $\bar{M}_1}$? Mostrare la curva di convergenza di $\bar{M}_1$ al crescere di $K$.
+    \item Eventuale confronto qualitativo con i dati del tutorial IBM \cite{ibm_shor_tutorial} (tasso di successo $\sim 4\%$ su hardware reale per $N=15$): i risultati su simulatore sono coerenti con quel riferimento?
+\end{itemize}
+
+% -----------------------------------------------
+\section{Discussione}
+\label{sec:discussione_m1}
+
+\textit{Questa sezione interpreta i risultati in modo critico. Andrà inserito:}
+
+\begin{itemize}
+    \item I punti di forza del Metodo 1: semplicità, assenza di fase di addestramento, applicabilità immediata a qualunque configurazione di rumore.
+    \item I limiti principali: crescita del numero di iterazioni necessarie al crescere del rumore e della profondità del circuito; sensibilità alla scelta del parametro di soglia $\tau$.
+    \item Una stima del costo computazionale totale del Metodo 1 nei quattro use case (numero totale di shot eseguiti), come base per il confronto con il Metodo 2.
+    \item Osservazioni su eventuali anomalie o comportamenti inattesi osservati nei dati.
+\end{itemize}
+
+\end{onehalfspace}
