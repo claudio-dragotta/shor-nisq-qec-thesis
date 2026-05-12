@@ -79,7 +79,7 @@ I poli nord e sud corrispondono agli stati $\ket{0}$ e $\ket{1}$, mentre i punti
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.45\textwidth]{bloch_sphere.png}
-    \caption{La sfera di Bloch: ogni stato puro di un qubit corrisponde a un punto sulla superficie della sfera unitaria, parametrizzato dagli angoli $\theta \in [0,\pi]$ e $\varphi \in [0,2\pi)$. I poli nord e sud rappresentano gli stati base $\ket{0}$ e $\ket{1}$; i punti sull'equatore corrispondono a sovrapposizioni equiprobabili.}
+    \caption[La sfera di Bloch]{La sfera di Bloch: ogni stato puro di un qubit corrisponde a un punto sulla superficie della sfera unitaria, parametrizzato dagli angoli $\theta \in [0,\pi]$ e $\varphi \in [0,2\pi)$. I poli nord e sud rappresentano gli stati base $\ket{0}$ e $\ket{1}$; i punti sull'equatore corrispondono a sovrapposizioni equiprobabili.}
     \label{fig:bloch}
 \end{figure}
 
@@ -107,7 +107,7 @@ Lo stato $\ket{\Phi^+}$ non può essere fattorizzato come $\ket{\psi_A} \otimes 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.72\textwidth]{circuit_bell.png}
-    \caption{Circuito quantistico per la preparazione dello stato di Bell $\ket{\Phi^+}$. Una porta di Hadamard $H$ posta sul qubit di controllo crea la sovrapposizione $\frac{1}{\sqrt{2}}(\ket{0}+\ket{1})$; la successiva porta CNOT introduce le correlazioni di entanglement, producendo lo stato $\frac{1}{\sqrt{2}}(\ket{00}+\ket{11})$.}
+    \caption[Circuito per lo stato di Bell $\ket{\Phi^+}$]{Circuito quantistico per la preparazione dello stato di Bell $\ket{\Phi^+}$. Una porta di Hadamard $H$ posta sul qubit di controllo crea la sovrapposizione $\frac{1}{\sqrt{2}}(\ket{0}+\ket{1})$; la successiva porta CNOT introduce le correlazioni di entanglement, producendo lo stato $\frac{1}{\sqrt{2}}(\ket{00}+\ket{11})$.}
     \label{fig:circuit_bell}
 \end{figure}
 
@@ -178,7 +178,7 @@ Applica una NOT sul qubit \textit{target} se e solo se il qubit \textit{control}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.88\textwidth]{circuit_gates.png}
-    \caption{Simboli circuitali delle principali porte quantistiche a singolo qubit ($X$, $Y$, $Z$, $H$, $R_\phi$) e della porta CNOT a due qubit. Nella porta CNOT, il punto pieno indica il qubit di controllo $q_c$ e il cerchio con croce indica il qubit target $q_t$.}
+    \caption[Porte quantistiche a singolo e due qubit]{Simboli circuitali delle principali porte quantistiche a singolo qubit ($X$, $Y$, $Z$, $H$, $R_\phi$) e della porta CNOT a due qubit. Nella porta CNOT, il punto pieno indica il qubit di controllo $q_c$ e il cerchio con croce indica il qubit target $q_t$.}
     \label{fig:gates}
 \end{figure}
 
@@ -221,7 +221,7 @@ Si congettura che $\mathbf{P} \subseteq \mathbf{BPP} \subseteq \mathbf{BQP} \sub
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.68\textwidth]{complexity_classes.png}
-    \caption{Gerarchia congetturata delle classi di complessità nel calcolo quantistico. La classe BQP cattura i problemi efficientemente risolvibili da un computer quantistico; essa contiene P e BPP, ed è contenuta in PSPACE. Gli algoritmi di Shor e Grover risiedono in BQP ma si ritiene (senza dimostrazione) che non appartengano a P.}
+    \caption[Gerarchia delle classi di complessità quantistica]{Gerarchia congetturata delle classi di complessità nel calcolo quantistico. La classe BQP cattura i problemi efficientemente risolvibili da un computer quantistico; essa contiene P e BPP, ed è contenuta in PSPACE. Gli algoritmi di Shor e Grover risiedono in BQP ma si ritiene (senza dimostrazione) che non appartengano a P.}
     \label{fig:complexity}
 \end{figure}
 
