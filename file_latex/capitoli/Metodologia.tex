@@ -90,16 +90,5 @@ Il classificatore sviluppato in questa tesi opera su un problema più semplice: 
 
 \textbf{Utilizzo in inferenza.} A regime, il classificatore viene invocato dopo ogni esecuzione. Non appena restituisce l'etichetta $1$, il risultato viene accettato e il processo si interrompe. Il numero di invocazioni prima del primo $1$ corretto è la quantità misurata e confrontata con $\bar{M}_1$.
 
-% -----------------------------------------------
-\section{Scelte Tecnologiche}
-\label{sec:scelte_tecnologiche}
-
-Le scelte tecnologiche adottate in questa tesi non sono arbitrarie: ciascuna risponde a un vincolo preciso o a una decisione presa nel corso del lavoro.
-
-\textbf{Qiskit come framework quantistico.} La scelta di Qiskit è stata formalizzata nell'incontro con il relatore del 18 marzo 2026, in seguito all'analisi del tutorial ufficiale IBM per l'algoritmo di Shor \cite{ibm_shor_tutorial}. Qiskit è il framework di riferimento per i processori superconduttori IBM, dispone del simulatore \texttt{AerSimulator} per la simulazione rumorosa e del modulo \texttt{qiskit-ibm-runtime} per l'esecuzione su hardware reale. L'uso di Qiskit garantisce inoltre la coerenza con la letteratura sperimentale più recente sull'implementazione di Shor \cite{skosana2021, ibm_shor_tutorial}.
-
-\textbf{scikit-learn come libreria ML.} La scelta di scikit-learn \cite{scikit_learn} come libreria per il classificatore è motivata dalla semplicità dell'interfaccia, dalla disponibilità di numerosi modelli comparabili in modo uniforme e dalla sua consolidata affidabilità nella ricerca scientifica. La scelta del modello specifico --- Random Forest, \ac{SVM} o rete neurale --- verrà determinata sperimentalmente, selezionando quello con le migliori prestazioni sul dataset generato dai use case.
-
-\textbf{WSL con GPU NVIDIA come ambiente di esecuzione.} Le simulazioni vengono eseguite in ambiente Linux tramite \ac{WSL} su Windows, con accesso alla \ac{GPU} NVIDIA RTX 4070 attraverso la libreria \texttt{qiskit-aer-gpu}.\footnote{Il supporto GPU per Qiskit Aer sfrutta CUDA per accelerare la simulazione statevector e density matrix. Su un sistema con RTX 4070 (12 GB di memoria VRAM), è possibile simulare circuiti fino a circa 30 qubit in modo efficiente, rispetto ai 25--26 qubit tipicamente accessibili in modalità CPU. Questo margine è sufficiente per i circuiti di Shor utilizzati nei quattro use case.} L'accelerazione GPU riduce i tempi di simulazione di un fattore nell'ordine di 10--20x rispetto alla simulazione CPU per circuiti con un numero elevato di shot, rendendo praticabile la generazione del dataset di addestramento in tempi accettabili.
 
 \end{onehalfspace}
