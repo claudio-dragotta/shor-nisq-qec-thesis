@@ -74,7 +74,7 @@ Con alta probabilità, almeno uno di questi due valori è un fattore non banale 
     node[midway, above, font=\small] {$r = 4$};
 \end{axis}
 \end{tikzpicture}
-\caption{La funzione $f(x) = 7^x \bmod 15$ è periodica con periodo $r = 4$. La periodicità è evidente dai valori che si ripetono: $1, 7, 4, 13, 1, 7, 4, 13, \ldots$ Trovare $r$ permette di calcolare $\gcd(7^2 - 1, 15) = \gcd(48, 15) = 3$ e $\gcd(7^2 + 1, 15) = \gcd(50, 15) = 5$, ottenendo la fattorizzazione $15 = 3 \times 5$.}
+\caption[Periodicità di $f(x)=7^x \bmod 15$]{La funzione $f(x) = 7^x \bmod 15$ è periodica con periodo $r = 4$. La periodicità è evidente dai valori che si ripetono: $1, 7, 4, 13, 1, 7, 4, 13, \ldots$ Trovare $r$ permette di calcolare $\gcd(7^2 - 1, 15) = \gcd(48, 15) = 3$ e $\gcd(7^2 + 1, 15) = \gcd(50, 15) = 5$, ottenendo la fattorizzazione $15 = 3 \times 5$.}
 \label{fig:period_finding}
 \end{figure}
 
@@ -114,7 +114,7 @@ Il circuito della QFT è costruito ricorsivamente tramite porte di Hadamard e po
 \lstick{$\ket{j_2}$} & \qw      & \ctrl{-1}  & \qw        & \gate{H}   & \gate{R_2} & \qw      & \qw       & \qw & \rstick{$\ket{\tilde{j}_2}$} \\
 \lstick{$\ket{j_3}$} & \qw      & \qw        & \ctrl{-2}  & \qw        & \ctrl{-1}  & \gate{H} & \targX{}  & \qw & \rstick{$\ket{\tilde{j}_1}$}
 \end{quantikz}
-\caption{Circuito della QFT su $n = 3$ qubit. Ogni qubit riceve una porta di Hadamard $H$ seguita da porte di fase controllate $R_k = \mathrm{diag}(1, e^{2\pi i/2^k})$: la rotazione applicata al qubit $j$ dipende dai qubit successivi. Lo SWAP finale riordina i qubit nell'ordine corretto. La struttura si generalizza a $n$ qubit richiedendo $O(n^2)$ porte.}
+\caption[Circuito della QFT su 3 qubit]{Circuito della QFT su $n = 3$ qubit. Ogni qubit riceve una porta di Hadamard $H$ seguita da porte di fase controllate $R_k = \mathrm{diag}(1, e^{2\pi i/2^k})$: la rotazione applicata al qubit $j$ dipende dai qubit successivi. Lo SWAP finale riordina i qubit nell'ordine corretto. La struttura si generalizza a $n$ qubit richiedendo $O(n^2)$ porte.}
 \label{fig:qft_circuit}
 \end{figure}
 
@@ -125,7 +125,7 @@ La QFT è impiegata, all'interno dell'algoritmo di Shor, attraverso la subroutin
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.6\textwidth]{09_QPE_circuit_N15.pdf}
-\caption{Circuito di Quantum Phase Estimation per $N=15$, $a=2$, implementato con Qiskit. Il registro di controllo ($C$, 8 qubit) viene posto in sovrapposizione uniforme, entanglato tramite gli operatori $M_2$ e $M_4$ controllati, e trasformato con la QFT$^{-1}$. La misura del registro $C$ produce una stima della fase $\theta = k/r$, da cui si ricava il periodo $r$ tramite frazioni continue.}
+\caption[Circuito QPE per $N=15$, $a=2$]{Circuito di Quantum Phase Estimation per $N=15$, $a=2$, implementato con Qiskit. Il registro di controllo ($C$, 8 qubit) viene posto in sovrapposizione uniforme, entanglato tramite gli operatori $M_2$ e $M_4$ controllati, e trasformato con la QFT$^{-1}$. La misura del registro $C$ produce una stima della fase $\theta = k/r$, da cui si ricava il periodo $r$ tramite frazioni continue.}
 \label{fig:qpe_circuit_N15_qiskit}
 \end{figure}
 
@@ -210,7 +210,7 @@ L'algoritmo si articola in tre fasi: un preprocessing classico, l'esecuzione del
 
 \end{tikzpicture}%
 }
-\caption{Schema a due registri dell'algoritmo di Shor. Il \textbf{Registro 1} (di controllo) viene posto in sovrapposizione uniforme con $H^{\otimes n}$, entanglato con il Registro 2 tramite la moltiplicazione modulare $U_{a,N}$, quindi trasformato con la QFT$^{-1}$. La misura produce un valore $s/r$ elaborato classicamente: le frazioni continue stimano il periodo $r$, e il calcolo del MCD restituisce i fattori $p$ e $q$ di $N$.}
+\caption[Schema a due registri dell'algoritmo di Shor]{Schema a due registri dell'algoritmo di Shor. Il \textbf{Registro 1} (di controllo) viene posto in sovrapposizione uniforme con $H^{\otimes n}$, entanglato con il Registro 2 tramite la moltiplicazione modulare $U_{a,N}$, quindi trasformato con la QFT$^{-1}$. La misura produce un valore $s/r$ elaborato classicamente: le frazioni continue stimano il periodo $r$, e il calcolo del MCD restituisce i fattori $p$ e $q$ di $N$.}
 \label{fig:shor_schema}
 \end{figure}
 \clearpage
