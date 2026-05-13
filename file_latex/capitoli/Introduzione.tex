@@ -42,7 +42,7 @@ Quando due o più qubit interagiscono tramite porte quantistiche opportune, poss
     \ket{\Phi^+} = \frac{1}{\sqrt{2}}\bigl(\ket{00} + \ket{11}\bigr)
     \label{eq:bell_state}
 \end{equation}
-In questo stato, misurare il primo qubit in $\ket{0}$ collassa istantaneamente il secondo in $\ket{0}$, e viceversa per $\ket{1}$, indipendentemente dalla distanza fisica tra i due qubit. L'entanglement crea correlazioni impossibili da replicare con qualunque modello classico a variabili nascoste locali, come dimostrato teoricamente da Bell nel 1964 \cite{bell1964} e verificato sperimentalmente con crescente precisione negli anni successivi. Nel contesto del calcolo quantistico, l'entanglement è la risorsa che permette agli algoritmi di elaborare esponenzialmente più informazione rispetto ai circuiti classici: un registro di $n$ qubit entangled descrive uno stato nello spazio $\mathbb{C}^{2^n}$, inaccessibile a qualunque rappresentazione classica di dimensione polinomiale in $n$.
+In questo stato, misurare il primo qubit in $\ket{0}$ collassa istantaneamente il secondo in $\ket{0}$, e viceversa per $\ket{1}$, indipendentemente dalla distanza fisica tra i due qubit. L'entanglement crea correlazioni impossibili da replicare con qualunque modello classico a variabili nascoste locali, come dimostrato teoricamente da Bell nel 1964 \cite{bell1964} e verificato sperimentalmente con crescente precisione negli anni successivi \cite{aspect1982}. Nel contesto del calcolo quantistico, l'entanglement è la risorsa che permette agli algoritmi di elaborare esponenzialmente più informazione rispetto ai circuiti classici: un registro di $n$ qubit entangled descrive uno stato nello spazio $\mathbb{C}^{2^n}$, inaccessibile a qualunque rappresentazione classica di dimensione polinomiale in $n$.
 
 \subsection{L'Interferenza Quantistica}
 
@@ -123,7 +123,7 @@ Le conseguenze sono sistemiche. RSA-2048 e le sue varianti sono il fondamento di
     \item \textbf{Firme digitali}: documenti legali, transazioni finanziarie, aggiornamenti software firmati.
 \end{itemize}
 
-Un computer quantistico scalabile renderebbe retroattivamente vulnerabili anche le comunicazioni \textit{storicamente registrate}, attraverso il cosiddetto attacco \textit{``harvest now, decrypt later''} (HNDL): avversari statali raccolgono oggi grandi volumi di traffico cifrato con RSA, conservandoli in attesa di poterli decifrare quando l'hardware quantistico raggiungerà la scala necessaria. Questo scenario non è teorico: rapporti di intelligence statunitensi e cinesi documentano campagne di raccolta massiva di traffico cifrato attive da almeno un decennio. Stime dell'NSA e del \ac{NIST} indicano che chiavi RSA-2048 potrebbero diventare vulnerabili entro il 2030--2035 con il proseguire dell'avanzamento tecnologico quantistico.
+Un computer quantistico scalabile renderebbe retroattivamente vulnerabili anche le comunicazioni \textit{storicamente registrate}, attraverso il cosiddetto attacco \textit{``harvest now, decrypt later''} (HNDL): avversari statali raccolgono oggi grandi volumi di traffico cifrato con RSA, conservandoli in attesa di poterli decifrare quando l'hardware quantistico raggiungerà la scala necessaria. Questo scenario non è teorico: rapporti di intelligence statunitensi e cinesi documentano campagne di raccolta massiva di traffico cifrato attive da almeno un decennio. Stime dell'NSA e del \ac{NIST} indicano che chiavi RSA-2048 potrebbero diventare vulnerabili entro il 2030--2035 con il proseguire dell'avanzamento tecnologico quantistico \cite{nsa_cnsa2022}.
 
 \clearpage
 \section{Crittografia Post-Quantistica: la Risposta dell'Industria}
@@ -154,7 +154,7 @@ La transizione verso la crittografia post-quantistica è un'operazione di ingegn
     \item \textbf{Migrazione a doppio binario}: nella fase transitoria, molte implementazioni adottano schemi \textit{ibridi} (classico + post-quantistico in parallelo) per mantenere compatibilità con sistemi non aggiornati.
 \end{itemize}
 
-Aziende come Google (Chrome 131), Apple (iMessage PQ3) e Cloudflare hanno già avviato implementazioni ibride nei loro protocolli di produzione. La coesistenza di questa transizione con la ricerca attiva su algoritmi quantistici come Shor definisce il contesto strategico in cui si inserisce il presente lavoro: comprendere i limiti reali di Shor su hardware NISQ è rilevante non solo teoricamente, ma anche per calibrare con maggiore precisione le tempistiche e le priorità della transizione crittografica globale.
+Aziende come Google (Chrome 131), Apple (iMessage PQ3) \cite{apple_pq3_2024} e Cloudflare hanno già avviato implementazioni ibride nei loro protocolli di produzione. La coesistenza di questa transizione con la ricerca attiva su algoritmi quantistici come Shor definisce il contesto strategico in cui si inserisce il presente lavoro: comprendere i limiti reali di Shor su hardware NISQ è rilevante non solo teoricamente, ma anche per calibrare con maggiore precisione le tempistiche e le priorità della transizione crittografica globale.
 
 % -----------------------------------------------
 \section{Lo Stato dell'Arte: dall'Era NISQ ai Computer Fault-Tolerant}

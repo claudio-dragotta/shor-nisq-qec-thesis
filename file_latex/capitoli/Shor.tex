@@ -219,7 +219,7 @@ L'algoritmo si articola in tre fasi: un preprocessing classico, l'esecuzione del
 La complessità dell'algoritmo di Shor è \textbf{polinomiale} nel numero di bit di $N$:
 \begin{itemize}
     \item Il circuito quantistico richiede $O((\log N)^2 \log\log N)$ porte elementari;
-    \item Il numero di qubit necessari è $O(\log N)$;
+    \item Il numero di qubit necessari è $O(\log N)$; l'implementazione ottimizzata di Beauregard \cite{beauregard2002} riduce questo a $2n+3$ qubit tramite addizione modulare in-place;
     \item Il numero atteso di iterazioni (con basi $a$ diverse) prima del successo è $O(1)$.
 \end{itemize}
 
