@@ -1,8 +1,56 @@
 \begin{onehalfspace}
 
+\section{Motivazione: La Minaccia Quantistica alla Crittografia Attuale}
+\label{sec:motivazione_shor}
+
+Comprendere perché lo studio dell'algoritmo di Shor sia urgente e rilevante richiede un passo indietro: occorre osservare su quali fondamenti matematici si regge la sicurezza delle comunicazioni digitali odierne, e perché questi fondamenti diventino fragili nell'era quantistica.
+
+\subsection{La Crittografia Asimmetrica e i Suoi Presupposti}
+
+Tutta la crittografia a chiave pubblica oggi in uso -- RSA, Diffie-Hellman, e i sistemi basati su curve ellittiche (ECC) -- fonda la propria sicurezza su problemi matematici che si ritengono \textit{computazionalmente intrattabili} per qualsiasi calcolatore classico:
+
+\begin{itemize}
+    \item \textbf{RSA} si basa sulla difficoltà di \textbf{fattorizzare} un intero $N = p \cdot q$ prodotto di due grandi primi: dato $N$, trovare $p$ e $q$ con algoritmi classici richiede un tempo sub-esponenziale ma super-polinomiale, del tutto impraticabile per chiavi di 2048 o 4096 bit.
+    \item \textbf{Diffie-Hellman} e \textbf{DSA} si basano sulla difficoltà del \textbf{logaritmo discreto} in $\mathbb{Z}_p^*$: dato $g$ e $g^x \bmod p$, recuperare $x$ è computazionalmente proibitivo per parametri sufficientemente grandi.
+    \item \textbf{ECDSA} e \textbf{ECDH} spostano lo stesso problema sulle curve ellittiche, riducendo la dimensione delle chiavi a parità di sicurezza, ma la struttura del problema -- il logaritmo discreto ellittico -- rimane la stessa.
+\end{itemize}
+
+Questi tre sistemi proteggono oggi la quasi totalità delle comunicazioni digitali: il protocollo \ac{TLS} (e quindi \ac{HTTPS}), \ac{SSH}, la firma digitale di software e documenti, le transazioni bancarie, le infrastrutture \ac{PKI}. La sicurezza dell'intera economia digitale globale dipende dall'assunzione che tali problemi non abbiano soluzioni efficienti.
+
+\subsection{Il Cambiamento di Paradigma Quantistico}
+
+Un calcolatore quantistico sufficientemente grande e affidabile rompe questa assunzione in modo radicale. L'algoritmo di Shor (1994) risolve sia il problema della fattorizzazione sia quello del logaritmo discreto (su $\mathbb{Z}_p^*$ e sulle curve ellittiche) in tempo \textbf{polinomiale}:
+
+\begin{equation}
+    T_{\text{Shor}}(N) = O\!\left((\log N)^3\right)
+\end{equation}
+
+rispetto al tempo sub-esponenziale $O\!\left(\exp\!\left(c(\log N)^{1/3}(\log\log N)^{2/3}\right)\right)$ dei migliori algoritmi classici. Questo significa che RSA-2048, oggi inviolabile con qualsiasi supercalcolatore classico in un tempo paragonabile all'età dell'universo, sarebbe fattorizzabile in poche ore da un computer quantistico con qualche migliaio di qubit \textit{logici} e fault-tolerant.
+
+Non si tratta di un miglioramento marginale: è uno \textbf{speedup esponenziale} che invalida strutturalmente tutti i sistemi basati su fattorizzazione e logaritmo discreto, indipendentemente dalla lunghezza della chiave. Raddoppiare la chiave RSA da 2048 a 4096 bit non offre alcuna protezione reale contro Shor: al più raddoppia il tempo di fattorizzazione quantistica, che rimane comunque polinomiale.
+
+\subsection{L'Urgenza: Harvest Now, Decrypt Later}
+
+La minaccia non è puramente futura. Il fenomeno noto come \textit{harvest now, decrypt later} (HNDL) descrive una strategia già in atto: attori ostili -- stati nazionali, organizzazioni con risorse significative -- raccolgono oggi grandi quantità di traffico cifrato con RSA e ECC, archiviandolo in attesa che computer quantistici fault-tolerant siano disponibili per decifrarlo retroattivamente. Dati con un orizzonte di riservatezza lungo (segreti di stato, proprietà intellettuale, comunicazioni diplomatiche, dati sanitari) sono già a rischio, anche se il quantum fault-tolerant non esiste ancora.
+
+Questo scenario ha spinto il \ac{NIST} ad avviare nel 2016 un processo di standardizzazione della \textit{Post-Quantum Cryptography} (\ac{PQC}), conclusosi nell'agosto 2024 con la pubblicazione dei primi standard federali resistenti agli attacchi quantistici (FIPS 203, 204, 205). La transizione verso questi nuovi standard è urgente proprio perché i dati cifrati oggi potrebbero essere decifrati domani.
+
+\subsection{Perché Studiare Shor}
+
+È in questo contesto che si colloca la scelta dell'algoritmo di Shor come oggetto del presente lavoro. Comprendere Shor in profondità -- la sua struttura matematica, i requisiti hardware, le limitazioni pratiche sui dispositivi NISQ attuali -- è essenziale per:
+
+\begin{enumerate}
+    \item valutare \textit{quando} e \textit{a quali condizioni} la minaccia diventerà concreta, distinguendo la solidità teorica dall'eseguibilità pratica;
+    \item studiare le strategie di mitigazione del rumore che potrebbero avvicinare l'esecuzione su hardware reale alle istanze crittograficamente rilevanti;
+    \item contribuire alla comprensione dei limiti attuali dei dispositivi NISQ e delle direzioni di sviluppo più promettenti verso il calcolo fault-tolerant.
+\end{enumerate}
+
+L'algoritmo di Shor non è quindi solo un risultato algoritmico di interesse teorico: è il principale \textit{driver} dell'intera ricerca sul calcolo quantistico applicato alla sicurezza informatica, e la ragione per cui governi, aziende tecnologiche e istituti di ricerca stanno investendo risorse senza precedenti nello sviluppo di hardware quantistico e nella migrazione verso la crittografia post-quantum.
+
+\clearpage
 \section{Obiettivi Generali}
 
-Il presente lavoro si inserisce nel contesto della ricerca sugli algoritmi quantistici, con l'obiettivo di analizzare in profondità l'algoritmo di Shor per la fattorizzazione di interi -- uno tra i risultati più rilevanti e dirompenti dell'informatica quantistica -- e di affrontare il problema della sua esecuzione su hardware quantistico reale, afflitto da rumore e decoerenza.
+Partendo dal contesto delineato, il presente lavoro si propone di analizzare in profondità l'algoritmo di Shor per la fattorizzazione di interi e di affrontare il problema della sua esecuzione su hardware quantistico reale, afflitto da rumore e decoerenza.
 
 Il filo conduttore del lavoro è duplice: da un lato la comprensione del \textbf{potenziale computazionale} offerto dall'algoritmo di Shor rispetto ai migliori approcci classici noti; dall'altro lo studio delle \textbf{limitazioni pratiche} imposte dal rumore nei dispositivi \ac{NISQ} attuali, e lo sviluppo di strategie di mitigazione e ottimizzazione basate su \textbf{modelli di intelligenza artificiale}.
 
@@ -26,7 +74,7 @@ Il filo conduttore del lavoro è duplice: da un lato la comprensione del \textbf
     Esplorare l'integrazione di modelli di machine learning per la caratterizzazione del rumore, l'ottimizzazione dei parametri circuitali e il miglioramento della fedeltà dei risultati in ambienti quantistici rumorosi. Valutare l'apporto dell'intelligenza artificiale come strumento complementare alle tecniche di mitigazione tradizionali per estendere la praticabilità dell'algoritmo di Shor su hardware NISQ.
 
 \end{enumerate}
-\clearpage
+
 \section{Approccio Metodologico}
 
 Il lavoro integra tre componenti --- una parte teorica, una sperimentale e una basata sull'intelligenza artificiale --- che si sviluppano in sequenza lungo l'elaborato. L'architettura dettagliata del sistema sperimentale, le scelte tecnologiche adottate e la struttura dei due metodi sviluppati sono descritte nel Capitolo~\ref{chap:metodologia}.
