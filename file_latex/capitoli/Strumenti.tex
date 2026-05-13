@@ -116,4 +116,6 @@ Le simulazioni vengono eseguite in ambiente Linux tramite \ac{WSL} (versione 2) 
 
 \ac{WSL} 2 esegue un kernel Linux completo in una macchina virtuale leggera, con accesso diretto alle \ac{GPU} NVIDIA tramite i driver \texttt{cuda-wsl-ubuntu}. L'ambiente Python è isolato in un virtual environment dedicato (Ubuntu 22.04 LTS, Python 3.11), garantendo la riproducibilità delle dipendenze e la compatibilità delle versioni tra le librerie usate.
 
+Con l'ambiente così definito, il Capitolo~\ref{chap:metodologia} descrive come Qiskit, Aer e scikit-learn si integrano nell'architettura del pipeline sperimentale: dalla costruzione del circuito di Shor alla generazione del dataset di addestramento, fino all'inferenza del classificatore sui quattro use case.
+
 \end{onehalfspace}
