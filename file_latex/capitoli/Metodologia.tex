@@ -80,7 +80,7 @@ Il Metodo 2 adotta un approccio radicalmente diverso: invece di costruire una di
 
 L'idea è coerente con la direzione più recente della letteratura sull'utilizzo del \ac{ML} per la mitigazione del rumore quantistico. Lavori come \cite{ml_mitigation2023} hanno mostrato che classificatori classici --- in particolare Random Forest e reti neurali multistrato --- possono apprendere la struttura degli errori su circuiti \ac{NISQ} con prestazioni superiori agli approcci tradizionali, e con un overhead computazionale significativamente minore rispetto a tecniche come la Zero-Noise Extrapolation. Nel dominio della correzione degli errori quantistici, decoder basati su reti neurali --- tra cui il recente AlphaQubit di Google DeepMind \cite{alphaqubit2024} --- hanno dimostrato che i modelli appresi possono superare i decoder analitici classici in presenza di rumore realistico e non omogeneo.
 
-Il classificatore sviluppato in questa tesi opera su un problema più semplice: non decodifica sindromi di un codice topologico, ma decide se l'output di una singola esecuzione dell'algoritmo di Shor è corretto. Questo lo rende addestrable con risorse moderate, il che è compatibile con l'ambiente \ac{NISQ} in cui si lavora.
+Il classificatore sviluppato in questa tesi opera su un problema più semplice: non decodifica sindromi di un codice topologico, ma decide se l'output di una singola esecuzione dell'algoritmo di Shor è corretto. Questo lo rende addestrabile con risorse moderate, il che è compatibile con l'ambiente \ac{NISQ} in cui si lavora.
 
 \textbf{Input del classificatore.} Il vettore di feature è costruito a partire dalla misurazione del registro di controllo: i valori dei $n_{\text{count}}$ qubit e caratteristiche derivate, come la distanza dai picchi teorici attesi e l'entropia della distribuzione locale osservata nelle ultime esecuzioni.
 
@@ -90,5 +90,6 @@ Il classificatore sviluppato in questa tesi opera su un problema più semplice: 
 
 \textbf{Utilizzo in inferenza.} A regime, il classificatore viene invocato dopo ogni esecuzione. Non appena restituisce l'etichetta $1$, il risultato viene accettato e il processo si interrompe. Il numero di invocazioni prima del primo $1$ corretto è la quantità misurata e confrontata con $\bar{M}_1$.
 
+Le specifiche funzionali complete del sistema --- i parametri di input e output, la struttura dei quattro use case e le metriche di valutazione quantitativa --- sono formalizzate nel Capitolo~\ref{chap:specifiche}, che definisce il contratto sperimentale che l'implementazione deve rispettare.
 
 \end{onehalfspace}
