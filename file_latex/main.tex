@@ -73,6 +73,7 @@
     \end{center}
 \end{titlepage}
 
+\pagenumbering{roman}
 \tableofcontents
 
 % -----------------------------------------------
@@ -87,6 +88,7 @@
 \printnoidxglossary[type=\acronymtype, nonumberlist, title={Elenco degli Acronimi}]
 
 % -----------------------------------------------
+\pagenumbering{arabic}
 \chapter{Introduzione}
 \label{chap:introduzione}
 \input{capitoli/Introduzione}
@@ -102,21 +104,25 @@
 \input{capitoli/Fondamenti}
 
 % -----------------------------------------------
+\addtocontents{lot}{\protect\addvspace{10\p@}}
 \chapter{L'Algoritmo di Shor}
 \label{chap:shor}
 \input{capitoli/Shor}
 
 % -----------------------------------------------
+\addtocontents{lot}{\protect\addvspace{10\p@}}
 \chapter{Rumore Quantistico nei Sistemi NISQ}
 \label{chap:rumore}
 \input{capitoli/Rumore}
 
 % -----------------------------------------------
+\addtocontents{lot}{\protect\addvspace{10\p@}}
 \chapter{Strategie per la Riduzione del Rumore Quantistico}
 \label{chap:strategie}
 \input{capitoli/StrategieAntiRumore}
 
 % -----------------------------------------------
+\addtocontents{lot}{\protect\addvspace{10\p@}}
 \chapter{Strumenti e Ambiente di Simulazione}
 \label{chap:strumenti}
 \input{capitoli/Strumenti}
@@ -127,6 +133,7 @@
 \input{capitoli/Metodologia}
 
 % -----------------------------------------------
+\addtocontents{lot}{\protect\addvspace{10\p@}}
 \chapter{Specifiche Funzionali del Software}
 \label{chap:specifiche}
 \input{capitoli/SpecificheFunzionali}
