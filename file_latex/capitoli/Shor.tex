@@ -213,6 +213,29 @@ L'algoritmo si articola in tre fasi: un preprocessing classico, l'esecuzione del
 \caption[Schema a due registri dell'algoritmo di Shor]{Schema a due registri dell'algoritmo di Shor. Il \textbf{Registro 1} (di controllo) viene posto in sovrapposizione uniforme con $H^{\otimes n}$, entanglato con il Registro 2 tramite la moltiplicazione modulare $U_{a,N}$, quindi trasformato con la QFT$^{-1}$. La misura produce un valore $s/r$ elaborato classicamente: le frazioni continue stimano il periodo $r$, e il calcolo del MCD restituisce i fattori $p$ e $q$ di $N$.}
 \label{fig:shor_schema}
 \end{figure}
+\subsection{Il Ruolo dell'Entanglement nel Period Finding}
+\label{sec:entanglement_shor}
+
+Il collasso descritto al passo~6 dello schema non è un effetto arbitrario: è la conseguenza diretta dell'\textbf{entanglement} creato al passo~5. Vale la pena rendere esplicito questo meccanismo, che è il cuore quantistico dell'intero algoritmo.
+
+Dopo l'applicazione della moltiplicazione modulare controllata, i due registri si trovano nello stato entangled:
+\begin{equation}
+    |\Psi\rangle = \frac{1}{\sqrt{2^n}} \sum_{x=0}^{2^n-1} |x\rangle \otimes |a^x \bmod N\rangle
+    \label{eq:stato_entangled_shor}
+\end{equation}
+Questo stato \textbf{non è separabile}: il valore del registro di lavoro è correlato in modo univoco al valore del registro di controllo. I due registri formano un unico sistema entangled, esattamente come accade in uno stato di Bell --- dove misurare un qubit determina istantaneamente l'esito dell'altro.
+
+Se a questo punto si misurasse il registro di lavoro e si ottenesse un valore $v = a^{x_0} \bmod N$, il registro di controllo collasserebbe \textit{istantaneamente} nell'unica sovrapposizione compatibile con $v$: quella di tutti i valori $x$ per cui $a^x \equiv v \pmod{N}$, ovvero
+\begin{equation}
+    |x_0\rangle + |x_0 + r\rangle + |x_0 + 2r\rangle + \cdots
+    \label{eq:collasso_periodico}
+\end{equation}
+La correlazione tra i due registri è \textbf{bidirezionale}: conoscere il valore del registro di lavoro vincola il registro di controllo a una sovrapposizione periodica di passo esattamente $r$. Questa è la ``versione inversa'' propria dell'entanglement: misurare uno dei due sottosistemi determina (o in questo caso, restringe) lo stato dell'altro.
+
+In pratica il circuito di Shor non misura esplicitamente il registro di lavoro: la sola creazione dell'entanglement è sufficiente. Applicando la QFT$^{-1}$ al registro di controllo prima della misura, si trasforma la periodicità nascosta dell'equazione~\eqref{eq:collasso_periodico} in picchi netti alle frequenze $k/r$, con $k \in \{0,\ldots,r-1\}$. La misura finale del registro di controllo restituisce allora, con alta probabilità, un valore da cui le frazioni continue estraggono $r$.
+
+In sintesi: l'entanglement tra i due registri è il meccanismo che \textit{trasferisce} la periodicità della funzione $f(x) = a^x \bmod N$ --- che esiste nel registro di lavoro --- verso il registro di controllo, dove la QFT la rende misurabile. Senza entanglement, questa trasmissione di informazione tra i due registri sarebbe impossibile, e l'intero speedup esponenziale di Shor verrebbe meno.
+
 \clearpage
 \section{Analisi della Complessità}
 

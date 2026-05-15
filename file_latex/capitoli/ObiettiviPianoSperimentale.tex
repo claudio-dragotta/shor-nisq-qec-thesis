@@ -1,10 +1,88 @@
 \begin{onehalfspace}
 
-Il capitolo precedente ha descritto l'architettura del sistema e la logica dei due metodi. Prima di entrare nell'implementazione, è necessario fissare con precisione cosa il sistema deve fare, quali grandezze prende in ingresso, quali produce in uscita e come si giudica se un risultato è valido. Questo capitolo ha questo scopo: fornisce le specifiche funzionali del sistema sperimentale, definisce i quattro use case su cui vengono condotti gli esperimenti e stabilisce le metriche con cui vengono valutati e confrontati i due metodi.
+Il Capitolo~\ref{chap:introduzione} ha inquadrato il contesto storico e tecnologico del calcolo quantistico. Il presente capitolo costruisce su quel fondamento e svolge una funzione duplice: da un lato motiva e definisce gli obiettivi scientifici del lavoro; dall'altro stabilisce il contratto sperimentale completo --- requisiti, parametri, use case e metriche --- che guiderà tutta la parte implementativa. Il lettore che avrà letto questo capitolo avrà una visione completa di \textit{perché} il lavoro esiste, \textit{cosa} si propone di dimostrare e \textit{come} intende farlo.
 
-% -----------------------------------------------
+\section{Motivazione: la Vulnerabilità della Crittografia Attuale}
+\label{sec:motivazione}
+
+La quasi totalità delle comunicazioni digitali sicure --- dalle transazioni bancarie alle connessioni \ac{HTTPS}, dai protocolli \ac{SSH} ai certificati digitali --- è protetta da sistemi crittografici la cui sicurezza si fonda su un presupposto computazionale: la difficoltà di fattorizzare il prodotto di due grandi numeri primi. Il sistema \ac{RSA}, ad esempio, costruisce la propria chiave pubblica come $N = p \cdot q$, dove $p$ e $q$ sono primi di centinaia o migliaia di bit. Finché non esiste un algoritmo classico efficiente per recuperare $p$ e $q$ a partire da $N$, la chiave privata rimane al sicuro.
+
+Per comprendere perché i sistemi crittografici attuali siano strutturalmente vulnerabili all'algoritmo di Shor, è necessario mettere a confronto le complessità computazionali in gioco. Il miglior algoritmo classico per la fattorizzazione, il \ac{GNFS}, richiede un tempo:
+\begin{equation}
+    T_{\text{classico}}(N) = O\!\left(\exp\!\left((c+o(1))(\log N)^{1/3}(\log\log N)^{2/3}\right)\right)
+    \label{eq:gnfs_obiettivi}
+\end{equation}
+che, pur crescendo più lentamente di un esponenziale puro, rimane del tutto impraticabile per i valori di $N$ usati in crittografia. A titolo di esempio, fattorizzare un numero RSA a 2048 bit con algoritmi classici richiederebbe un tempo stimato superiore all'età dell'universo, anche impiegando l'intera potenza di calcolo disponibile sul pianeta.
+
+Nel 1994, Peter Shor dimostrò che un computer quantistico è in grado di eseguire la stessa operazione in tempo \textbf{polinomiale}~\cite{shor1994}:
+\begin{equation}
+    T_{\text{Shor}}(N) = O\!\left((\log N)^3\right)
+    \label{eq:shor_obiettivi}
+\end{equation}
+Lo scarto tra le due espressioni non è una differenza di grado, ma una differenza di \textit{natura}: il tempo classico cresce in modo super-polinomiale con la lunghezza della chiave, mentre il tempo quantistico cresce polinomialmente. Ciò significa che \textbf{aumentare la lunghezza della chiave RSA non è una contromisura efficace} contro Shor: raddoppiare $n$ (i bit di $N$) porta il tempo classico da impraticabile a ancora più impraticabile, ma porta il tempo quantistico da $O(n^3)$ a $O((2n)^3) = 8\,O(n^3)$ --- un fattore costante, del tutto gestibile. La sicurezza di RSA è quindi \textbf{irrecuperabilmente compromessa} dalla disponibilità di un computer quantistico fault-tolerant, indipendentemente dalla lunghezza della chiave scelta. La stessa rottura si estende a tutti i sistemi basati sul logaritmo discreto (Diffie-Hellman, \ac{ECDSA}), per i quali Shor fornisce un algoritmo analogamente efficiente.
+
+La minaccia non è futura in senso astratto. Il fenomeno del \textit{harvest now, decrypt later} --- già documentato in ambito di intelligence --- consiste nel raccogliere oggi grandi quantità di dati cifrati con RSA, conservarli, e decifrarli non appena sarà disponibile un computer quantistico fault-tolerant. I dati cifrati oggi con chiavi RSA-2048 potrebbero quindi diventare leggibili in un orizzonte di dieci-quindici anni, secondo le roadmap pubblicate da \ac{IBM} e da altri produttori di hardware quantistico~\cite{ibm_roadmap2025}.
+
+Il problema pratico che impedisce questa minaccia di materializzarsi oggi è il \textbf{rumore}. I processori quantistici attuali operano in regime \ac{NISQ}: dispongono di decine o centinaia di qubit fisici, ma sono affetti da decoerenza, errori di gate e readout error che degradano l'output dell'algoritmo di Shor fino a renderlo inaffidabile senza un numero elevato di ripetizioni. Comprendere questo limite e sviluppare strategie per superarlo --- anche parzialmente, tramite modelli di machine learning --- è la ragione d'essere del presente lavoro.
+
+\section{Obiettivi Generali}
+
+Partendo dal contesto delineato, il presente lavoro si propone di analizzare in profondità l'algoritmo di Shor per la fattorizzazione di interi e di affrontare il problema della sua esecuzione su hardware quantistico reale, afflitto da rumore e decoerenza.
+
+Il filo conduttore del lavoro è duplice: da un lato la comprensione del \textbf{potenziale computazionale} offerto dall'algoritmo di Shor rispetto ai migliori approcci classici noti; dall'altro lo studio delle \textbf{limitazioni pratiche} imposte dal rumore nei dispositivi \ac{NISQ} attuali, e lo sviluppo di strategie di mitigazione e ottimizzazione basate su \textbf{modelli di intelligenza artificiale}.
+
+\section{Obiettivi Specifici}
+
+\begin{enumerate}
+
+    \item \textbf{Fondamenti del calcolo quantistico.}
+    Fornire una trattazione rigorosa dei principi matematici e fisici su cui si basano gli algoritmi quantistici: il modello del qubit, la sovrapposizione, l'entanglement, le porte logiche quantistiche e il meccanismo di interferenza. Questo obiettivo costituisce la base teorica indispensabile per la comprensione dell'algoritmo trattato nei capitoli successivi.
+
+    \item \textbf{Analisi teorica dell'algoritmo di Shor.}
+    Descrivere in dettaglio il funzionamento dell'algoritmo di Shor per la fattorizzazione di interi in tempo polinomiale, con particolare attenzione alla riduzione al problema del period-finding, alla Quantum Fourier Transform (\ac{QFT}) e alla tecnica di phase estimation. Analizzare la complessità computazionale e valutare le implicazioni per la crittografia \ac{RSA} e per la sicurezza informatica post-quantum.
+
+    \item \textbf{Implementazione su Qiskit e analisi sperimentale.}
+    Implementare l'algoritmo di Shor utilizzando il framework open-source Qiskit, costruendo i circuiti per la QFT, la modular exponentiation e il circuito completo di fattorizzazione. Verificare il comportamento del circuito su simulatore ideale e analizzare le prestazioni su istanze concrete.
+
+    \item \textbf{Studio del rumore quantistico nell'algoritmo di Shor.}
+    Analizzare le principali fonti di errore che affliggono l'esecuzione dell'algoritmo di Shor su hardware reale -- decoerenza, errori di gate, readout errors -- con particolare attenzione alle componenti più sensibili al rumore: la QFT e la phase estimation. Studiare le strategie di \ac{QEC} e di noise mitigation disponibili (\ac{ZNE}, \ac{PEC}, readout mitigation), valutandone l'efficacia sull'algoritmo di Shor.
+
+    \item \textbf{Ottimizzazione mediante modelli di intelligenza artificiale.}
+    Esplorare l'integrazione di modelli di machine learning per la caratterizzazione del rumore, l'ottimizzazione dei parametri circuitali e il miglioramento della fedeltà dei risultati in ambienti quantistici rumorosi. Valutare l'apporto dell'intelligenza artificiale come strumento complementare alle tecniche di mitigazione tradizionali per estendere la praticabilità dell'algoritmo di Shor su hardware NISQ.
+
+\end{enumerate}
+
+\section{Ipotesi di Lavoro}
+\label{sec:ipotesi}
+
+Il contributo sperimentale della tesi è strutturato attorno a un'ipotesi principale e a due ipotesi secondarie, formulate prima dell'esecuzione degli esperimenti e verificate quantitativamente sui dati raccolti.
+
+\textbf{Ipotesi principale.} L'integrazione di un classificatore ML nella pipeline di analisi riduce significativamente il numero medio di iterazioni necessarie per ottenere un risultato corretto dall'algoritmo di Shor su simulatore rumoroso. In termini formali, il fattore di riduzione
+\begin{equation}
+    \rho = \frac{\bar{M}_1}{\bar{M}_2} \gg 1
+    \label{eq:ipotesi_rho}
+\end{equation}
+dove $\bar{M}_1$ e $\bar{M}_2$ sono rispettivamente il numero medio di iterazioni del Metodo 1 (baseline classico) e del Metodo 2 (classificatore ML). La verifica statistica avviene tramite il test di Welch sull'ipotesi nulla $H_0\colon \bar{M}_1 = \bar{M}_2$, con soglia di significatività $\alpha = 0.05$.
+
+\textbf{Ipotesi secondaria 1.} Il classificatore ML raggiunge prestazioni sufficienti a distinguere esecuzioni corrette da errate anche in presenza di rumore variabile: F1\,$>\,0.85$ e AUC\,$>\,0.90$ sul test set.
+
+\textbf{Ipotesi secondaria 2.} Il vantaggio del Metodo 2 si mantiene al crescere della dimensione dell'istanza ($N = 15 \to 21 \to 35$) e al peggiorare del livello di rumore, confermando la generalizzabilità dell'approccio oltre il caso baseline.
+
+\section{Contributo Originale}
+\label{sec:contributo_originale}
+
+Rispetto alla letteratura esistente sull'algoritmo di Shor e sulla mitigazione del rumore nei sistemi NISQ, questo lavoro apporta i seguenti contributi originali.
+
+\textbf{Confronto sistematico tra approccio statistico classico e classificatore ML.} La maggioranza degli studi di mitigazione del rumore sull'algoritmo di Shor si concentra su tecniche strutturali (Zero-Noise Extrapolation, Probabilistic Error Cancellation, Dynamical Decoupling) applicate al circuito prima della misura. Il presente lavoro adotta invece un approccio \textit{post-processing}: un classificatore binario addestrato sugli output rumorosi del simulatore decide, dopo ogni singola esecuzione, se il risultato è affidabile o meno. Questo paradigma non richiede modifiche al circuito né accesso al modello di rumore dell'hardware, ed è quindi applicabile in modo agnostico rispetto alla piattaforma.
+
+\textbf{Quantificazione empirica del fattore di riduzione $\rho$.} La letteratura fornisce stime teoriche del numero di iterazioni necessarie a ottenere un risultato corretto da Shor in presenza di rumore, ma raramente misure sperimentali sistematiche su più configurazioni. Il presente lavoro si propone di misurare $\bar{M}_1$ e $\bar{M}_2$ su quattro use case distinti --- due livelli di rumore per $N=15$, e due istanze di dimensione crescente ($N=21$, $N=35$) --- producendo una stima empirica di $\rho$ validata statisticamente.
+
+\textbf{Analisi del ruolo dell'entanglement e del tempo di coerenza $T_2$.} Il lavoro collega esplicitamente la degradazione delle prestazioni dell'algoritmo alla perdita di coerenza dell'entanglement tra i registri di controllo e di lavoro, mettendo in relazione i parametri fisici $T_1$ e $T_2$ del simulatore con il numero di iterazioni osservato. Questo collegamento --- spesso assente nelle trattazioni puramente algoritmiche --- fornisce una motivazione fisica al vantaggio del Metodo 2: il classificatore ML impara implicitamente a riconoscere le signature di output associato a circuiti che hanno mantenuto la coerenza sufficiente, senza che questo vincolo sia codificato esplicitamente nelle feature.
+
 \section{Requisiti Funzionali}
 \label{sec:requisiti}
+
+Definiti gli obiettivi e il contributo originale, è possibile formalizzare cosa il sistema sperimentale deve concretamente fare. I requisiti seguenti traducono le ipotesi di ricerca in vincoli tecnici verificabili, e costituiscono il riferimento rispetto al quale l'implementazione descritta nel Capitolo~\ref{chap:sviluppo} verrà valutata.
 
 Il sistema sperimentale deve soddisfare i seguenti requisiti funzionali:
 
@@ -82,18 +160,6 @@ Per il solo Metodo 2, vengono prodotte in aggiunta:
 % -----------------------------------------------
 \section{I Quattro Use Case}
 \label{sec:use_case}
-
-% TODO [AGGIORNARE DOPO I PRIMI ESPERIMENTI]
-% I parametri di rumore e i valori di n_count riportati in questa sezione sono
-% stati fissati a partire dalla letteratura e dalle specifiche di ibm_marrakesh
-% PRIMA di eseguire gli esperimenti. Una volta ottenuti i primi risultati sul
-% simulatore, verificare che:
-%   (a) i circuiti per N=21 e N=35 vengano costruiti correttamente dal repo;
-%   (b) i livelli di rumore producano tassi di successo nell'intervallo atteso
-%       (5-40% per il livello realistico, <5% per il livello degradato);
-%   (c) n_count sia sufficiente a risolvere il periodo r per ciascun caso.
-% Se necessario, aggiornare la tabella Tab. \ref{tab:use_case_params} con i
-% valori effettivamente usati durante le esecuzioni.
 
 I quattro use case sono scelti per garantire che i risultati non dipendano da una singola configurazione e che coprano un intervallo rappresentativo di condizioni operative. Il disegno sperimentale segue due assi di variazione indipendenti:
 
@@ -191,6 +257,8 @@ Per entrambi i metodi, durante la simulazione vengono applicati i seguenti strum
 
 L'effetto di ciascun parametro di mitigazione viene riportato nei capitoli dei risultati, confrontando le metriche ottenute con e senza la mitigazione attiva.
 
-Con il contratto sperimentale così definito, il Capitolo~\ref{chap:sviluppo} traduce queste specifiche in codice: presenta l'implementazione concreta del circuito di Shor, del modello di rumore e dei due metodi di analisi per ciascun use case.
+\section{Approccio Metodologico}
+
+Il lavoro integra tre componenti --- una parte teorica, una sperimentale e una basata sull'intelligenza artificiale --- che si sviluppano in sequenza lungo l'elaborato. L'architettura dettagliata del sistema sperimentale, le scelte tecnologiche adottate e la struttura dei due metodi sviluppati sono descritte nel Capitolo~\ref{chap:metodologia}.
 
 \end{onehalfspace}

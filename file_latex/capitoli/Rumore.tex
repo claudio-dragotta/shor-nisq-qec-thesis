@@ -40,6 +40,8 @@ La condizione necessaria per eseguire correttamente un circuito è:
 \end{equation}
 Poiché l'algoritmo di Shor per un intero a $n$ bit richiede una profondità $O(n^3)$ gate, e ogni gate a due qubit su hardware IBM dura $\sim 300$--$500\,$ns, questa condizione è violata già per $n \gtrsim 10$--$15$ bit sui processori NISQ attuali.
 
+\textbf{Connessione con l'entanglement.} $T_2$ ha un'interpretazione diretta in termini di entanglement: esso misura per quanto tempo i qubit del registro di controllo riescono a mantenere la coerenza di fase necessaria a sostenere lo stato entangled con il registro di lavoro. Nella phase estimation dell'algoritmo di Shor, ogni qubit di controllo $q_j$ viene preparato in sovrapposizione $\frac{1}{\sqrt{2}}(\ket{0}+\ket{1})$ e deve restare coerente per tutta la durata del blocco di modular exponentiation controllato da $q_j$. Se $T_2$ è inferiore a questo intervallo, la fase relativa si randomizza: l'entanglement con il registro di lavoro decade, le ampiezze di interferenza nella QFT si riducono, e il periodo $r$ non è più estraibile in modo affidabile. Su \texttt{ibm\_marrakesh}, con $T_2 \approx 80\,\mu$s e un tempo di gate a due qubit di circa $400\,$ns, il numero massimo di gate a due qubit eseguibili entro $T_2$ è dell'ordine di $T_2/\tau_{\text{gate}} \approx 200$: una soglia che il circuito di Shor per $N=15$ sfiora già in condizioni ideali di compilazione~\cite{ibm_shor_tutorial}.
+
 % ---
 \subsection{Errori di Gate}
 
