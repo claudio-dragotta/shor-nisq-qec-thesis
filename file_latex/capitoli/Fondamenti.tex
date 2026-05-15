@@ -111,6 +111,15 @@ Lo stato $\ket{\Phi^+}$ non può essere fattorizzato come $\ket{\psi_A} \otimes 
     \label{fig:circuit_bell}
 \end{figure}
 
+\subsection{L'Entanglement come Risorsa Fisica Fragile}
+\label{sec:entanglement_fragile}
+
+L'entanglement non è soltanto una proprietà astratta degli stati quantistici: è la \textbf{risorsa fisica} che gli algoritmi quantistici consumano per ottenere il loro vantaggio computazionale. Nell'algoritmo di Shor, il registro di controllo e il registro di lavoro devono restare entangled per tutta la durata della phase estimation affinché la Quantum Fourier Transform possa estrarre il periodo corretto. La perdita anche parziale di questa correlazione è sufficiente a degradare il risultato.
+
+La fragilitá dell'entanglement ha un'origine fisica precisa. Un sistema quantistico reale non è mai perfettamente isolato dall'ambiente che lo circonda: campi elettromagnetici residui, vibrazioni termiche del reticolo cristallino e fluttuazioni di carica si accoppiano continuamente ai qubit. Quando questo accoppiamento avviene, il sistema entra in uno stato entangled \textit{con l'ambiente}, trasferendo ad esso parte dell'informazione di fase. Dal punto di vista del solo sistema, le ampiezze di interferenza si riducono: il qubit non è più in una sovrapposizione pura $\alpha\ket{0}+\beta\ket{1}$, ma in un \textbf{miscuglio statistico} in cui la fase relativa tra $\ket{0}$ e $\ket{1}$ è persa. Questo processo prende il nome di \textbf{decoerenza}~\cite{zurek2003}.
+
+Il tempo caratteristico entro cui questa perdita di fase diventa apprezzabile è $T_2$, il \textbf{tempo di coerenza di fase} (\textit{dephasing time}). Esso misura per quanto tempo un qubit riesce a mantenere la propria sovrapposizione coerente prima che l'interazione con l'ambiente la distrugga. Sui processori superconduttori attuali, $T_2$ è tipicamente nell'intervallo $50$--$200\,\mu$s; ogni singola porta a due qubit dura circa $300$--$500\,$ns. Un calcolo diretto rivela che l'algoritmo di Shor, la cui profondità cresce come $O(n^3)$ nel numero di bit dell'intero da fattorizzare, supera il limite imposto da $T_2$ già per $n \gtrsim 10$--$15$ bit. La trattazione quantitativa di questi tempi caratteristici e del loro impatto sull'algoritmo è oggetto del Capitolo~\ref{chap:rumore}.
+
 \section{Porte Quantistiche}
 
 Le operazioni su qubit sono rappresentate da \textbf{matrici unitarie}: $U^\dagger U = I$. La condizione di unitarietà garantisce la reversibilità del calcolo e la conservazione della norma (delle probabilità).

@@ -4,6 +4,16 @@
 
 ---
 
+## ⚠ REGOLA PERMANENTE: aggiorna Struttura della Tesi dopo ogni modifica
+
+**Ogni volta che modifichi, aggiungi o elimini un capitolo**, aggiorna obbligatoriamente:
+1. La sezione `\section{Struttura della Tesi}` in `file_latex/capitoli/Introduzione.tex` (cerca il commento `% ⚠ SYNC-STRUTTURA`)
+2. La tabella "Struttura della tesi" in questo `CLAUDE.md`
+
+Questa è una regola standing: non aspettare che l'utente te lo chieda.
+
+---
+
 ## Prima di fare qualsiasi cosa: leggi il diario
 
 Il file `diario_relatore.md` nella root di questa directory contiene tutte le decisioni prese con il professore, in ordine cronologico. Leggilo prima di suggerire modifiche strutturali alla tesi.
@@ -38,45 +48,64 @@ L'algoritmo di Shor fattorizza interi in tempo polinomiale, ma su hardware NISQ 
 
 ## Struttura della tesi (14 capitoli)
 
-### Parte teorica — COMPLETATA (approvata dal relatore)
+### Parte introduttiva e raccordo
 
 | # | File | Titolo | Stato |
 |---|---|---|---|
 | 1 | `Introduzione.tex` | Introduzione | ✅ Completo |
-| 2 | `Obiettivi.tex` | Obiettivi | ✅ Completo |
+| 2 | `ObiettiviPianoSperimentale.tex` | Obiettivi e Piano Sperimentale | ✅ Completo — include ex-Cap.8 (SpecificheFunzionali) |
+
+### Parte teorica — COMPLETATA (approvata dal relatore)
+
+| # | File | Titolo | Stato |
+|---|---|---|---|
 | 3 | `Fondamenti.tex` | Fondamenti del Calcolo Quantistico | ✅ Completo |
 | 4 | `Shor.tex` | L'Algoritmo di Shor | ✅ Completo |
-| 5 | `Rumore.tex` | Rumore Quantistico e Correzione degli Errori | ✅ Completo |
+| 5 | `Rumore.tex` | Rumore Quantistico nei Sistemi NISQ | ✅ Completo |
 | 6 | `StrategieAntiRumore.tex` | Strategie per la Riduzione del Rumore Quantistico | ✅ Completo |
 
 ### Parte sperimentale — IN CORSO
 
 | # | File | Titolo | Stato |
 |---|---|---|---|
-| 7 | `Metodologia.tex` | Metodologia e Architettura | ✅ Scritto |
-| 8 | `SpecificheFunzionali.tex` | Specifiche Funzionali del Software | ✅ Scritto |
+| 7 | `Strumenti.tex` | Strumenti e Ambiente di Simulazione | ✅ Completo |
+| 8 | `Metodologia.tex` | Metodologia e Architettura | ✅ Scritto |
 | 9 | `Sviluppo.tex` | Sviluppo e Implementazione | ✅ Scritto (manca: scelta ML finale dopo test) |
-| 10 | `RisultatiMetodo1.tex` | Risultati — Metodo 1 | 🔲 Skeleton dettagliato — aspetta test |
-| 11 | `RisultatiMetodo2.tex` | Risultati — Metodo 2 | 🔲 Skeleton dettagliato — aspetta test |
-| 12 | `ConclusioniMetodo1.tex` | Conclusioni — Metodo 1 | 🔲 Skeleton dettagliato — aspetta test |
-| 13 | `ConclusioniMetodo2.tex` | Conclusioni — Metodo 2 | 🔲 Skeleton dettagliato — aspetta test |
+| 10 | `RisultatiMetodo1.tex` | Risultati — Metodo 1 | 🔲 Skeleton — aspetta test WSL |
+| 11 | `RisultatiMetodo2.tex` | Risultati — Metodo 2 | 🔲 Skeleton — aspetta test WSL |
+| 12 | `ConclusioniMetodo1.tex` | Conclusioni — Metodo 1 | 🔲 Skeleton — aspetta test WSL |
+| 13 | `ConclusioniMetodo2.tex` | Conclusioni — Metodo 2 | 🔲 Skeleton — aspetta test WSL |
 | 14 | `SviluppiFuturi.tex` | Sviluppi Futuri | ✅ Scritto |
+
+> `SpecificheFunzionali.tex` ELIMINATO il 2026-05-15 — contenuto integrato in Cap.2.
 
 I file skeleton contengono in italiano la descrizione precisa di cosa va inserito in ogni sezione — leggili prima di scrivere quei capitoli.
 
 ---
 
-## I quattro use case (da fissare con i test)
+## I quattro use case (parametri derivati dalla letteratura — da validare sperimentalmente)
 
 Servono 4 use case per la validazione accademica (requisito per eventuale pubblicazione).
+**Attenzione**: i parametri sotto sono le ipotesi di partenza formalizzate in Cap.2 (tab:use_case_params), derivati da ibm_marrakesh e dalla letteratura. Non sono ancora stati validati sperimentalmente — i test WSL potrebbero portare ad aggiustamenti.
 
-**Criterio di selezione:**
-- Use Case 1 e 2: stesso N, livello di rumore diverso (basso vs alto)
-- Use Case 3 e 4: N crescente, stesso livello di rumore
+**Asse rumore**: UC1 vs UC2 — stesso circuito N=15, livello di rumore diverso (isola l'effetto del rumore)
+**Asse scalabilità**: UC1, UC3, UC4 — N crescente (15→21→35), stesso rumore NISQ-realistico
 
-**Punto di partenza**: N=15, a=7, n_count=8 (dal tutorial IBM)
+| Parametro | UC 1 | UC 2 | UC 3 | UC 4 |
+|---|---|---|---|---|
+| N | 15 | 15 | 21 | 35 |
+| a | 7 | 7 | 2 | 6 |
+| periodo r atteso | 4 | 4 | 6 | 2 |
+| n_count (qubit) | 8 | 8 | 10 | 12 |
+| M_shots | 4096 | 4096 | 4096 | 4096 |
+| Livello rumore | NISQ-realistico | NISQ-degradato | NISQ-realistico | NISQ-realistico |
+| ε_1q | 1e-3 | 5e-3 | 1e-3 | 1e-3 |
+| ε_2q | 1e-2 | 5e-2 | 1e-2 | 1e-2 |
+| T1 (ns) | 100_000 | 50_000 | 100_000 | 100_000 |
+| T2 (ns) | 80_000 | 30_000 | 80_000 | 80_000 |
+| p_ro | 0.02 | 0.05 | 0.02 | 0.02 |
 
-I valori esatti vengono fissati durante la fase esplorativa iniziale.
+NISQ-degradato = tassi errore ×5, T1/T2 dimezzati rispetto al realistico.
 
 ---
 

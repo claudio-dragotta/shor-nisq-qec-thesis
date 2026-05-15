@@ -1,6 +1,6 @@
 \begin{onehalfspace}
 
-I capitoli precedenti hanno definito l'architettura del sistema e le sue specifiche funzionali. Questo capitolo descrive cosa è stato concretamente costruito: il setup dell'ambiente di esecuzione, l'integrazione dell'algoritmo di Shor con il simulatore rumoroso, e l'implementazione dei due metodi di analisi. Non vengono qui riportati i risultati degli esperimenti --- quelli sono oggetto dei Capitoli~\ref{chap:risultati1} e~\ref{chap:risultati2} --- ma le scelte implementative, il codice sviluppato e la struttura del sistema che ha prodotto quei risultati.
+Il Capitolo~\ref{chap:obiettivi} ha formalizzato il contratto sperimentale: quattro use case, i parametri di rumore ipotizzati e le metriche di confronto. Il Capitolo~\ref{chap:metodologia} ha definito l'architettura del pipeline a tre stadi. Questo capitolo descrive cosa è stato concretamente costruito: il setup dell'ambiente di esecuzione, l'integrazione dell'algoritmo di Shor con il simulatore rumoroso, e l'implementazione dei due metodi di analisi. Non vengono qui riportati i risultati degli esperimenti --- quelli sono oggetto dei Capitoli~\ref{chap:risultati1} e~\ref{chap:risultati2} --- ma le scelte implementative, il codice sviluppato e la struttura del sistema che ha prodotto quei risultati.
 
 % -----------------------------------------------
 \section{Setup dell'Ambiente di Esecuzione}
@@ -101,6 +101,12 @@ def mod_exp_15_7(power):
     # U^4 = I (mod 15 con a=7): nessuna operazione
     return U
 \end{lstlisting}
+
+% TODO (dopo i test WSL): aggiungere qui le implementazioni analoghe per gli altri use case:
+%   - mod_exp_21_2(power)  per UC3: N=21, a=2, r=6, n_work=5 qubit
+%   - mod_exp_35_6(power)  per UC4: N=35, a=6, r=2, n_work=6 qubit
+% I circuiti si ricavano dalla decomposizione della permutazione x -> ax mod N
+% in sequenze di SWAP gate, seguendo la stessa metodologia di mod_exp_15_7.
 
 \subsection{Circuito Completo e Post-Processing}
 
