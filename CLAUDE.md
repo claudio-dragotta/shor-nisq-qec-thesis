@@ -70,11 +70,11 @@ L'algoritmo di Shor fattorizza interi in tempo polinomiale, ma su hardware NISQ 
 |---|---|---|---|
 | 7 | `Strumenti.tex` | Strumenti e Ambiente di Simulazione | ✅ Completo |
 | 8 | `Metodologia.tex` | Metodologia e Architettura | ✅ Scritto |
-| 9 | `Sviluppo.tex` | Sviluppo e Implementazione | ✅ Scritto (manca: scelta ML finale dopo test) |
-| 10 | `RisultatiMetodo1.tex` | Risultati — Metodo 1 | 🔲 Skeleton — aspetta test WSL |
-| 11 | `RisultatiMetodo2.tex` | Risultati — Metodo 2 | 🔲 Skeleton — aspetta test WSL |
-| 12 | `ConclusioniMetodo1.tex` | Conclusioni — Metodo 1 | 🔲 Skeleton — aspetta test WSL |
-| 13 | `ConclusioniMetodo2.tex` | Conclusioni — Metodo 2 | 🔲 Skeleton — aspetta test WSL |
+| 9 | `Sviluppo.tex` | Sviluppo e Implementazione | ✅ Scritto — include tabella selezione classificatore (RF/SVM/MLP) con metriche reali |
+| 10 | `RisultatiMetodo1.tex` | Risultati — Metodo 1 | ✅ Scritto — dati sperimentali completi (UC1/UC2/UC3/UC4) |
+| 11 | `RisultatiMetodo2.tex` | Risultati — Metodo 2 | ✅ Scritto — confronto M1 vs M2, ρ=6.43 UC1, ρ=0.73 UC2 |
+| 12 | `ConclusioniMetodo1.tex` | Conclusioni — Metodo 1 | ✅ Scritto — dati sperimentali completi |
+| 13 | `ConclusioniMetodo2.tex` | Conclusioni — Metodo 2 | ✅ Scritto — analisi ρ, regime di applicabilità |
 | 14 | `SviluppiFuturi.tex` | Sviluppi Futuri | ✅ Scritto |
 
 > `SpecificheFunzionali.tex` ELIMINATO il 2026-05-15 — contenuto integrato in Cap.2.

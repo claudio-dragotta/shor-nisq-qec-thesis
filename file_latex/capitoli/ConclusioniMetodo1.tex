@@ -1,54 +1,66 @@
 \begin{onehalfspace}
 
-\textit{Nota: questo capitolo verrà scritto dopo la disponibilità dei risultati sperimentali del Metodo 1. Di seguito è descritta la struttura del contenuto previsto. La forma finale seguirà lo schema indicato dal relatore: ripresa del problema, enunciazione degli obiettivi, sintesi dei risultati ottenuti.}
+Il Capitolo~\ref{chap:risultati1} ha presentato i risultati sperimentali del Metodo 1 sui quattro use case. Questo capitolo ne sintetizza il significato, valuta il raggiungimento degli obiettivi e identifica i limiti che motivano l'introduzione del Metodo 2.
 
 % -----------------------------------------------
 \section{Il Problema Affrontato}
 \label{sec:problema_m1}
 
-\textit{Questa sezione riprende sinteticamente il problema che motiva il Metodo 1. Non dovrà essere una ripetizione dei capitoli teorici, ma una riformulazione focalizzata sul contributo sperimentale. Andrà inserito:}
+L'algoritmo di Shor richiede, in assenza di rumore, un numero costante di esecuzioni del circuito quantistico per ottenere i fattori di $N$. Su processori \ac{NISQ}, il rumore degrada la distribuzione degli output: la misura più frequente nell'istogramma non corrisponde necessariamente alla fase corretta, costringendo a ripetere l'esecuzione fino a ottenere un risultato valido.
 
-\begin{itemize}
-    \item Una o due frasi che richiamino il contesto: l'algoritmo di Shor ha bisogno di molte esecuzioni per produrre un risultato affidabile in presenza di rumore. Il rumore fisico dei processori NISQ degrada la distribuzione degli output, rendendo necessaria un'analisi statistica per estrarre il segnale corretto dal fondo rumoroso.
-    \item Il riferimento al dato quantitativo già noto dalla letteratura (es. probabilità di successo $\sim 4\%$ su \texttt{ibm\_marrakesh} per $N=15$ senza mitigazione \cite{ibm_shor_tutorial}) come punto di partenza per calibrare la rilevanza del problema.
-\end{itemize}
+Il tutorial IBM per $N=15$ su \texttt{ibm\_marrakesh} riporta un tasso di successo per singola esecuzione di circa $4\%$~\cite{ibm_shor_tutorial}, il che implica $\bar{M}_1 \approx 25$ iterazioni. La simulazione in questa tesi, con un noise model calibrato su \texttt{ibm\_marrakesh} ma con parametri leggermente più favorevoli ($\epsilon_{2q} = 10^{-2}$, $T_1 = 100\,\mu\text{s}$), produce $\bar{M}_1 \approx 6.4$ per UC1. Lo scarto con il dato hardware reale è spiegabile con: (i) l'assenza di errori di \textit{crosstalk} e gate imperfetti nelle porte elementari del simulatore; (ii) la natura della simulazione statevector, che non soffre delle fluttuazioni lente del rumore (\textit{drift}) tipiche dei processori fisici.
 
 % -----------------------------------------------
 \section{Gli Obiettivi del Metodo 1}
 \label{sec:obiettivi_m1}
 
-\textit{Questa sezione enuncia gli obiettivi che il Metodo 1 si proponeva di raggiungere. Andrà inserito:}
+Il Metodo 1 si poneva due obiettivi. Il primo era costruire una \textbf{baseline robusta} per il confronto con il Metodo 2: una misura sperimentale di $\bar{M}_1$ in condizioni di rumore controllate e riproducibili. Il secondo era quantificare come $\bar{M}_1$ scala con il livello di rumore ($\epsilon_{2q}$) e con la dimensione dell'istanza ($N$), per identificare i regimi operativi del metodo classico.
 
-\begin{itemize}
-    \item L'obiettivo primario: costruire una baseline robusta e priva di ipotesi sul profilo di rumore, misurando sperimentalmente quante iterazioni servono per ottenere il risultato corretto in quattro configurazioni diverse.
-    \item L'obiettivo secondario: identificare come $\bar{M}_1$ scala con il livello di rumore e con la dimensione dell'istanza, per quantificare il costo dell'approccio classico al crescere della complessità del problema.
-    \item Il criterio di successo: il Metodo 1 si considera validato se i risultati sui quattro use case sono statisticamente stabili (bassa varianza su $K$ ripetizioni) e se $\bar{M}_1$ cresce in modo coerente con le previsioni teoriche al crescere del rumore e della profondità del circuito.
-\end{itemize}
+Il criterio di validazione era: risultati statisticamente stabili su $K=30$ ripetizioni e crescita di $\bar{M}_1$ coerente con le attese teoriche.
 
 % -----------------------------------------------
 \section{I Risultati Ottenuti}
 \label{sec:risultati_m1_concl}
 
-\textit{Questa sezione è la sintesi dei risultati del Capitolo~\ref{chap:risultati1}. Andrà inserito:}
+\begin{table}[H]
+\centering
+\caption{Riepilogo dei risultati del Metodo 1}
+\label{tab:riepilogo_m1_concl}
+\begin{tabular}{lccc}
+\hline
+\textbf{Use Case} & \textbf{$P_{\text{succ}}$} & \textbf{$\bar{M}_1$} & \textbf{$\sigma_{M_1}$} \\
+\hline
+UC1 ($N=15$, $\epsilon_{2q}=10^{-2}$) & 76.7\% & 6.43 & 12.32 \\
+UC2 ($N=15$, $\epsilon_{2q}=5\times10^{-2}$) & 80.0\% & 2.42 & 6.79 \\
+UC3 ($N=21$) & 0\% & N/A & --- \\
+UC4 ($N=35$) & 0\% & N/A & --- \\
+\hline
+\end{tabular}
+\end{table}
 
-\begin{itemize}
-    \item La tabella riassuntiva di $\bar{M}_1$ sui quattro use case (già presente nel Capitolo~\ref{chap:risultati1}, qui ripresa in forma condensata).
-    \item La risposta in prosa alla domanda: quante iterazioni servono mediamente? Il risultato è nell'ordine delle decine? Delle centinaia? Varia molto tra use case?
-    \item La conferma (o smentita) dell'attesa teorica: $\bar{M}_1$ cresce con il rumore e con la dimensione? Di quanto?
-    \item La valutazione dell'efficacia della readout mitigation: ha ridotto $\bar{M}_1$ in modo significativo?
-\end{itemize}
+\paragraph{Risposta quantitativa.}
+Per UC1, il Metodo 1 richiede mediamente $\bar{M}_1 = 6.43$ iterazioni per ottenere i fattori corretti, con un tasso di successo del 76.7\% entro il budget $M_{\text{max}} = 50$. Questo è nell'ordine della singola cifra, un valore già non trascurabile per applicazioni su hardware reale dove ogni esecuzione comporta un tempo di accodamento e un costo in coerenza.
+
+\paragraph{Dipendenza dal rumore (UC1 vs UC2).}
+Il risultato sperimentale rivela un comportamento controintuitivo: UC2 ($\epsilon_{2q}=5\times10^{-2}$) produce $\bar{M}_1 = 2.42$, inferiore al valore $\bar{M}_1 = 6.43$ di UC1 nonostante il rumore cinque volte più elevato. Come discusso nella Sezione~\ref{sec:analisi_m1}, questo è spiegabile con l'allargamento della banda di accettazione di \texttt{extract\_factors} (che usa \texttt{Fraction.limit\_denominator}) e con la natura bimodale della distribuzione per seed: i seed che convergono lo fanno rapidamente ($\bar{M}_1=2.42$ per i 24 run riusciti), mentre i seed che non convergono producono istogrammi piatti senza nessun segnale QPE recuperabile. Il confronto M1 vs M2 per entrambi i use case è discusso nel Capitolo~\ref{chap:risultati2}.
+
+\paragraph{Barriera di scalabilità (UC3, UC4).}
+Il Metodo 1 non converge mai per $N=21$ e $N=35$ con l'implementazione via \texttt{UnitaryGate}: $P_{\text{succ}} = 0\%$ su tutte le ripetizioni. Questo non è un limite del metodo in sé, ma della decomposizione del circuito: la sintesi universale di operatori unitari genera circuiti con profondità esponenziale in $\log_2 N$, incompatibile con la coerenza dei dispositivi NISQ attuali.
 
 % -----------------------------------------------
 \section{Limiti e Considerazioni Critiche}
 \label{sec:limiti_m1}
 
-\textit{Andrà inserito:}
+\paragraph{Sfruttamento parziale dell'istogramma.}
+La strategia TOP-1 utilizza una sola informazione dall'istogramma (la misura più frequente) e scarta tutto il resto. Nelle iterazioni in cui la misura più frequente non corrisponde a una fase valida, ma la seconda o terza misura sì, il Metodo 1 fallisce e deve ripetere l'intera esecuzione. Questo spreco informativo è il principale motivatore del Metodo 2.
 
-\begin{itemize}
-    \item Il principale limite del Metodo 1: dipende dalla forma della distribuzione (deve esserci almeno un picco identificabile), e si degrada rapidamente quando il rapporto segnale/rumore scende sotto una certa soglia.
-    \item La sensibilità al parametro di soglia $\tau$: diversi valori di $\tau$ danno risultati diversi. Come si è scelto $\tau$? Il risultato è robusto rispetto a variazioni di $\tau$?
-    \item Eventuali casi in cui il Metodo 1 ha fallito (non ha trovato i fattori entro $M_{\text{max}}$ iterazioni): in quale use case e per quale motivo?
-    \item Il confronto del costo computazionale totale con il Metodo 2 (quanti shot totali), come setup per la discussione nel Capitolo~\ref{chap:conclusioni2}.
-\end{itemize}
+\paragraph{Alta varianza.}
+La distribuzione del numero di iterazioni è approssimativamente geometrica con parametro $p_{\text{iter}} \approx 1/\bar{M}_1$. La deviazione standard $\sigma_{M_1} \approx 12.3$ è quasi il doppio della media $\bar{M}_1 \approx 6.4$: una sessione di fattorizzazione potrebbe terminare in 1 iterazione oppure richiederne 46, rendendo difficile prevedere il costo computazionale a priori.
+
+\paragraph{Dipendenza dal seed.}
+I risultati mostrano una sensibilità significativa alla realizzazione specifica del rumore (identificata dal seed del simulatore). Alcune realizzazioni producono istogrammi favorevoli (misura corretta = moda) quasi sistematicamente, mentre altre no. Questo comportamento è un artefatto della simulazione con noise model fisso e seed deterministici; su hardware reale, la variabilità è continua e meno prevedibile.
+
+\paragraph{Costo computazionale.}
+Per UC1, i 23 run riusciti richiedono $23 \times 6.43 \times 1024 \approx 151\,000$ shot; i 7 run falliti $7 \times 50 \times 1024 \approx 358\,000$ shot, per un totale di $\approx 509\,000$ shot. Per UC2, i 24 run riusciti richiedono $24 \times 2.42 \times 1024 \approx 59\,400$ shot; i 6 run falliti $6 \times 50 \times 1024 \approx 307\,200$ shot, per un totale di $\approx 367\,000$ shot. Questi budget di riferimento permettono di valutare il risparmio computazionale offerto dal Metodo 2 nel Capitolo~\ref{chap:risultati2}.
 
 \end{onehalfspace}
