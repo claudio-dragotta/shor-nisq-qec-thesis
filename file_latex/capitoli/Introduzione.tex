@@ -222,12 +222,14 @@ Il \textbf{Capitolo~\ref{chap:strumenti}} (\textit{Strumenti e Ambiente di Simul
 
 Il \textbf{Capitolo~\ref{chap:metodologia}} (\textit{Metodologia e Architettura}) descrive la pipeline sperimentale a tre stadi: circuito ideale, simulatore rumoroso, analisi con Metodo 1 (baseline statistico) e Metodo 2 (classificatore ML). Motiva le scelte architetturali e il flusso di dati tra i componenti.
 
-Il \textbf{Capitolo~\ref{chap:sviluppo}} (\textit{Sviluppo e Implementazione}) presenta il codice sviluppato: il setup dell'ambiente WSL2 con GPU NVIDIA, l'implementazione della QFT, del circuito di Shor, del noise model e delle pipeline di entrambi i metodi.
+Il \textbf{Capitolo~\ref{chap:sviluppo}} (\textit{Sviluppo e Implementazione}) presenta il codice sviluppato: l'ambiente di simulazione WSL2 con \texttt{AerSimulator} in modalità statevector, l'implementazione della \ac{QFT} inversa, del circuito di Shor, del noise model parametrizzato e delle pipeline di entrambi i metodi, con particolare attenzione alla procedura di traspilosizione critica (\texttt{optimization\_level=2} con noise model nel costruttore) necessaria per la corretta decomposizione delle porte Toffoli.
 
-I \textbf{Capitoli~\ref{chap:risultati1}} e~\textbf{\ref{chap:risultati2}} (\textit{Risultati --- Metodo 1} e \textit{Metodo 2}) riportano i risultati sperimentali sui quattro use case per ciascuno dei due metodi, con istogrammi, analisi statistiche e confronto diretto tramite il fattore $\rho$.
+Il \textbf{Capitolo~\ref{chap:risultati1}} (\textit{Risultati --- Metodo 1}) riporta i risultati della baseline sperimentale sui quattro use case: $\bar{M}_1 = 6.43$ iterazioni per UC1 ($N=15$, NISQ-realistico) e $\bar{M}_1 = 2.42$ per UC2 ($N=15$, NISQ-degradato). Per UC3 ($N=21$) e UC4 ($N=35$) il circuito risulta inutilizzabile in regime NISQ a causa dell'elevata profondità delle porte CX ($>10\,000$ porte) prodotta dalla decomposizione tramite \texttt{UnitaryGate}.
 
-I \textbf{Capitoli~\ref{chap:conclusioni1}} e~\textbf{\ref{chap:conclusioni2}} (\textit{Conclusioni --- Metodo 1} e \textit{Metodo 2}) interpretano i risultati di ciascun metodo, ne discutono i limiti e valutano la validità del contributo ai fini della pubblicazione.
+Il \textbf{Capitolo~\ref{chap:risultati2}} (\textit{Risultati --- Metodo 2}) confronta il Metodo ML-assistito con la baseline: per UC1 il fattore di riduzione $\rho = \bar{M}_1/\bar{M}_2 = 6.44$ ($p = 0.046$, statisticamente significativo), con $\bar{M}_2 = 1.00$ iterazione. Per UC2 il metodo non produce miglioramenti significativi ($\rho = 0.731$, $p = 0.697$), evidenziando un limite del classificatore in regime ad alto rumore.
 
-Il \textbf{Capitolo~\ref{chap:sviluppi}} (\textit{Sviluppi Futuri}) delinea cinque direzioni di ricerca aperte: test su hardware reale, generalizzazione ad altri algoritmi NISQ, evoluzione del classificatore, integrazione con la QEC strutturale e scalabilità a istanze di maggiori dimensioni.
+I \textbf{Capitoli~\ref{chap:conclusioni1}} e~\textbf{\ref{chap:conclusioni2}} (\textit{Conclusioni --- Metodo 1} e \textit{Metodo 2}) sintetizzano il significato dei risultati ottenuti, valutano il raggiungimento degli obiettivi, discutono i limiti e identificano il regime di applicabilità ottimale del Metodo 2.
+
+Il \textbf{Capitolo~\ref{chap:sviluppi}} (\textit{Sviluppi Futuri}) delinea le principali direzioni di ricerca aperte: test su hardware reale, decomposizioni efficienti per la moltiplicazione modulare (approccio Beauregard), classificatore adattivo per regimi ad alto rumore, generalizzazione ad altri algoritmi NISQ e integrazione con la \ac{QEC} strutturale.
 
 \end{onehalfspace}

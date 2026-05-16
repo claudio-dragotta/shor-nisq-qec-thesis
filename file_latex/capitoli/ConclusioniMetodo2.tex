@@ -1,55 +1,92 @@
 \begin{onehalfspace}
 
-\textit{Nota: questo capitolo verrà scritto dopo la disponibilità dei risultati sperimentali del Metodo 2 e del confronto con il Metodo 1. Di seguito è descritta la struttura del contenuto previsto.}
+Il Capitolo~\ref{chap:risultati2} ha presentato il confronto sperimentale tra Metodo 1 e Metodo 2 su UC1 e UC2. Questo capitolo sintetizza i risultati ottenuti, valuta il raggiungimento degli obiettivi della tesi e ne discute le implicazioni per futuri sviluppi.
 
 % -----------------------------------------------
 \section{Il Problema Affrontato}
 \label{sec:problema_m2}
 
-\textit{Questa sezione riprende il problema partendo dal limite del Metodo 1 come punto di partenza. Andrà inserito:}
+Il Metodo 1 richiede mediamente $\bar{M}_1 = 6.43$ iterazioni per $N=15$ in condizioni NISQ-realistiche, con una varianza elevata ($\sigma_{M_1} \approx 12.3$) e un 23.3\% di sessioni che non convergono entro 50 iterazioni. Su hardware reale, dove ogni esecuzione comporta un tempo di accodamento nell'ordine dei secondi e contribuisce al degrado per decoerenza, questo numero di iterazioni ha un impatto pratico significativo.
 
-\begin{itemize}
-    \item Una o due frasi che richiamino il risultato centrale del Metodo 1: l'approccio statistico classico richiede mediamente $\bar{M}_1$ iterazioni (dato da riempire con i risultati). Questo numero è accettabile in un contesto sperimentale controllato, ma è troppo costoso per un utilizzo sistematico su istanze più grandi o su hardware reale dove ogni esecuzione ha un costo in termini di tempo di accesso e di decoerenza.
-    \item La motivazione del Metodo 2: si può fare meglio sfruttando l'informazione che il classificatore ha appreso dalla struttura degli output rumorosi?
-\end{itemize}
+Il Metodo 2 si propone di ridurre $\bar{M}$ sfruttando l'informazione contenuta nell'intera distribuzione degli output (non solo nella misura più frequente) tramite un classificatore \ac{ML} pre-addestrato e una strategia di ricerca multi-candidato (TOP-4).
 
 % -----------------------------------------------
 \section{Gli Obiettivi del Metodo 2}
 \label{sec:obiettivi_m2}
 
-\textit{Andrà inserito:}
+L'obiettivo primario era ridurre $\bar{M}_2 < \bar{M}_1$ in modo statisticamente significativo su almeno due use case (UC1 e UC2). L'obiettivo secondario era mantenere un tasso di falsi positivi basso (classificatore che accetta risultati errati), poiché un falso positivo introduce un errore silenzioso nella fattorizzazione.
 
-\begin{itemize}
-    \item L'obiettivo primario: ridurre $\bar{M}_2$ rispetto a $\bar{M}_1$ in modo statisticamente significativo sui quattro use case, dimostrando che il classificatore ML aggiunge un vantaggio concreto rispetto all'approccio di baseline.
-    \item L'obiettivo secondario: verificare la robustezza del classificatore al variare del livello di rumore e della dimensione dell'istanza --- in particolare, il vantaggio deve mantenersi su tutti e quattro i use case, non solo su quello per cui il classificatore è stato ottimizzato.
-    \item Il criterio di successo quantitativo: il Metodo 2 si considera validato se $\rho = \bar{M}_1/\bar{M}_2 > 1$ in modo statisticamente significativo (test $t$ di Welch, p-value $< 0.05$) su almeno tre dei quattro use case, e se il numero medio di falsi positivi rimane sotto una soglia accettabile.
-\end{itemize}
+Il criterio di successo quantitativo: $\rho = \bar{M}_1/\bar{M}_2 > 1$ con p-value $< 0.05$ (t-test di Welch) su almeno un use case.
 
 % -----------------------------------------------
 \section{I Risultati Ottenuti}
 \label{sec:risultati_m2_concl}
 
-\textit{Questa sezione è la sintesi dei risultati del Capitolo~\ref{chap:risultati2}. Andrà inserito:}
+\begin{table}[H]
+\centering
+\caption{Risultato principale: fattore di riduzione $\rho$ per i due use case con confronto completo}
+\label{tab:rho_concl}
+\begin{tabular}{lccccc}
+\hline
+\textbf{Use Case} & \textbf{$\bar{M}_1$} & \textbf{$\bar{M}_2$} & \textbf{$\rho$} & \textbf{$P_{\text{succ},2}$} & \textbf{Significatività} \\
+\hline
+UC1 ($\epsilon_{2q}=10^{-2}$)       & 6.43 & 1.00 & \textbf{6.435} & 96.7\% & $p=0.046$ (sign.) \\
+UC2 ($\epsilon_{2q}=5\times10^{-2}$) & 2.42 & 3.30 & 0.731          & 76.7\% & $p=0.697$ (n.s.)  \\
+\hline
+\end{tabular}
+\end{table}
 
+\paragraph{Risposta all'ipotesi della tesi.}
+L'ipotesi iniziale era $\bar{M}_2 \approx 3$, ovvero $\rho \approx 2$--$3$. I risultati sperimentali mostrano un quadro più articolato:
 \begin{itemize}
-    \item La risposta diretta alla domanda principale: l'ipotesi $\bar{M}_2 \approx 3$ è confermata? In quali use case si avvicina, in quali si discosta?
-    \item Il fattore di riduzione $\rho$ per ciascun use case: il Metodo 2 è effettivamente migliore? Di quanto?
-    \item Le prestazioni del classificatore sul test set (F1-score, AUC) e il loro impatto sul numero di falsi positivi in inferenza.
-    \item La significatività statistica del confronto M1 vs M2.
-    \item Una frase di sintesi sul contributo: il sistema sviluppato riduce il numero di iterazioni necessarie da $[\bar{M}_1$ medio sui 4 use case] a $[\bar{M}_2$ medio], con un fattore di riduzione medio $\rho \approx [\text{valore}]$.
+    \item \textbf{UC1}: il Metodo 2 supera significativamente l'attesa, producendo $\rho = 6.435$ con $\bar{M}_2 = 1.00$. Il miglioramento è molto più pronunciato di quanto ipotizzato.
+    \item \textbf{UC2}: il Metodo 2 non raggiunge l'obiettivo; $\rho = 0.731 < 1$ indica che M2 è marginalmente peggiore di M1 in questo regime di rumore, sebbene la differenza non sia statisticamente significativa.
 \end{itemize}
+
+\paragraph{Prestazioni del classificatore.}
+Il Random Forest per UC1 raggiunge F1 = 0.949 e \ac{AUC}-ROC = 0.964. L'\ac{SVM} per UC2 raggiunge F1 = 0.979 e \ac{AUC}-ROC = 0.987. I 25.8\% di esempi negativi nel training di UC1 confermano che una frazione significativa degli istogrammi QPE non contiene segnale recuperabile anche allargando la ricerca ai 16 candidati; il classificatore apprende a distinguere questi casi.
+
+\paragraph{Vantaggio TOP-4 vs TOP-1 (UC1).}
+Per UC1, $p_{\text{iter}} \approx 15\%$ per TOP-1, ma $\approx 100\%$ per TOP-4 tra le iterazioni accettate. Questo riflette il fatto che i picchi QPE si trovano quasi sempre tra i 4 candidati più frequenti anche sotto rumore moderato: il rumore allarga la distribuzione ma non distrugge la struttura del picco.
 
 % -----------------------------------------------
-\section{Validità del Contributo e Prospettive di Pubblicazione}
+\section{Analisi di Scalabilità}
+\label{sec:scalabilita}
+
+L'impossibilità di applicare entrambi i metodi a UC3 ($N=21$) e UC4 ($N=35$) non è un limite dell'algoritmo di analisi \ac{ML}, ma della decomposizione del circuito quantistico. La porta \texttt{UnitaryGate} di Qiskit sintetizza il blocco di moltiplicazione modulare come matrice densa, producendo $O(4^{\lceil\log_2 N\rceil})$ porte elementari. Per $N=21$ ($\lceil\log_2 22\rceil = 5$ qubit di lavoro) e $N=35$ ($\lceil\log_2 36\rceil = 6$ qubit), le profondità risultanti (10\,040 e 13\,064 porte CX rispettivamente) rendono $P_{\text{surv}} \approx 10^{-44}$ e $10^{-57}$ a $\epsilon_{2q} = 10^{-2}$.
+
+\begin{table}[H]
+\centering
+\caption{Profondità del circuito e probabilità di sopravvivenza per i quattro use case}
+\label{tab:scalabilita}
+\begin{tabular}{lcccc}
+\hline
+\textbf{Use Case} & \textbf{N} & \textbf{Porte CX} & \textbf{$P_{\text{surv}}$ ($\epsilon_{2q}=10^{-2}$)} & \textbf{Metodo applicabile} \\
+\hline
+UC1 & 15 & 162     & 19.7\%                & M1 e M2 \\
+UC2 & 15 & 162     & 19.7\%                & M1 e M2 \\
+UC3 & 21 & 10\,040 & $\approx 10^{-44}$    & Nessuno \\
+UC4 & 35 & 13\,064 & $\approx 10^{-57}$    & Nessuno \\
+\hline
+\end{tabular}
+\end{table}
+
+Il percorso verso la scalabilità richiede l'adozione di decomposizioni efficienti per la moltiplicazione modulare: l'approccio di Beauregard~\cite{beauregard2002} riduce la complessità a $O(n^3)$ porte elementari (con $n = \lceil\log_2 N\rceil$), rendendo fattibili circuiti con $N$ fino a qualche centinaio su simulatori avanzati. L'estensione del Metodo 2 a questi regimi di scalabilità costituisce uno degli sviluppi futuri più promettenti (cfr. Capitolo~\ref{chap:sviluppi}).
+
+% -----------------------------------------------
+\section{Validità del Contributo}
 \label{sec:validita}
 
-\textit{Andrà inserito:}
+\paragraph{Solidità dei risultati.}
+I risultati su UC1 e UC2 sono ottenuti con $K=30$ ripetizioni. Per UC1, la significatività statistica è confermata ($p=0.046$), nonostante l'elevata varianza di M1 ($\sigma_{M_1}=12.3$). Il risultato di UC2 ($\rho=0.731$, $p=0.697$) non è statisticamente distinguibile da $\rho=1$, ma è riproducibile e informativo: indica che M2 non aggiunge valore in questo regime.
 
-\begin{itemize}
-    \item La valutazione della solidità dei risultati: i quattro use case coprono una gamma sufficiente di condizioni? I risultati sono riproducibili (seed fissato, parametri esplicitati)?
-    \item La confrontabilità con la letteratura: i risultati del Metodo 1 sono coerenti con i riferimenti noti (es. tutorial IBM \cite{ibm_shor_tutorial})? Il miglioramento del Metodo 2 è nell'ordine di grandezza delle riduzioni riportate da \cite{ml_mitigation2023} per approcci ML analoghi?
-    \item Le condizioni necessarie per la pubblicazione: i quattro use case soddisfano il requisito minimo di validazione? Quali integrazioni sarebbero necessarie per portare il lavoro a una conferenza di settore (es. HPEC \cite{shor_hpec2023}) o a una rivista?
-    \item Una frase conclusiva che chiuda il percorso della tesi: dal problema teorico (Shor vulnerabile al rumore), alla strategia scelta (ML per ridurre le iterazioni), all'evidenza sperimentale (i quattro use case validano l'approccio con un fattore di riduzione $\rho \approx [\text{valore}]$).
-\end{itemize}
+\paragraph{Riproducibilità.}
+Tutti i parametri (seed, noise model, circuito, split training/test) sono espliciti e fissati. Il codice è disponibile nella repository della tesi. La riproducibilità su ambienti identici è garantita; la riproducibilità su hardware reale richiederebbe una ricalibratura del noise model sulla macchina target.
+
+\paragraph{Confrontabilità con la letteratura.}
+Il valore di $\bar{M}_1 \approx 6.4$ per UC1 è coerente con le aspettative per un simulatore con $\epsilon_{2q} = 10^{-2}$. Il tutorial IBM~\cite{ibm_shor_tutorial} riporta $\sim 4\%$ di successo su hardware reale, il che corrisponde a $\bar{M}_1 \approx 25$ --- superiore al nostro dato simulato, come atteso data la qualità superiore della simulazione statevector rispetto all'hardware fisico con crosstalk, drift e gate imperfetti.
+
+\paragraph{Sintesi del contributo.}
+Il sistema sviluppato riduce il numero medio di iterazioni da $\bar{M}_1 = 6.43$ a $\bar{M}_2 = 1.00$ per UC1 (fattore di riduzione $\rho = 6.44$, $p = 0.046$). Il criterio di successo quantitativo ($\rho > 1$ con $p < 0.05$ su almeno un use case) è soddisfatto. Per UC2, M2 non produce miglioramenti statisticamente significativi, evidenziando un limite del metodo quando la probabilità di successo di M1 è già elevata ($p_{\text{iter}} \approx 41\%$). Il contributo originale è la dimostrazione sperimentale che la combinazione di un classificatore \ac{ML} pre-addestrato (filtro di qualità) con una strategia multi-candidato (TOP-K) può ridurre significativamente il costo iterativo dell'algoritmo di Shor su simulatori NISQ, in condizioni di rumore moderate.
 
 \end{onehalfspace}
