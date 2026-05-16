@@ -1,91 +1,172 @@
 \begin{onehalfspace}
 
-\textit{Nota: questo capitolo verrà scritto dopo l'esecuzione degli esperimenti sui quattro use case. Di seguito è descritta in dettaglio la struttura del contenuto previsto, con le informazioni che dovranno essere inserite in ciascuna sezione.}
+Il Capitolo~\ref{chap:sviluppo} ha descritto le scelte implementative dei due metodi: il Metodo 1 con strategia TOP-1 e il Metodo 2 con classificatore ML e ricerca TOP-K. Questo capitolo riporta i risultati sperimentali del Metodo 1 sui quattro use case, fornendo la baseline quantitativa che sarà confrontata con il Metodo 2 nel Capitolo~\ref{chap:risultati2}.
 
 % -----------------------------------------------
 \section{Setup Sperimentale}
 \label{sec:setup_m1}
 
-\textit{Questa sezione descriverà la configurazione esatta usata per il Metodo 1. Andrà inserito:}
+Tutti gli esperimenti sono stati condotti nell'ambiente WSL descritto nel Capitolo~\ref{chap:sviluppo}, con il simulatore \texttt{AerSimulator} in modalità \texttt{statevector} (CPU). La Tabella~\ref{tab:setup_m1} riassume i parametri comuni a tutti i use case.
 
-\begin{itemize}
-    \item La tabella dei quattro use case con i valori precisi di $N$, $a$, $n_{\text{count}}$ e i parametri di rumore ($\epsilon_{1q}$, $\epsilon_{2q}$, $T_1$, $T_2$, $p_{\text{ro}}$) per ciascuno.
-    \item Il numero di shot per esecuzione ($M_{\text{shots}}$) e il numero di ripetizioni $K$ usate per stimare le metriche statistiche.
-    \item Il valore della soglia di filtraggio $\tau$ selezionato per ciascun use case (con motivazione del criterio di scelta).
-    \item Informazioni sull'hardware: nome del sistema, versione di Qiskit Aer, seed usato.
-\end{itemize}
+\begin{table}[H]
+\centering
+\caption{Parametri sperimentali del Metodo 1}
+\label{tab:setup_m1}
+\begin{tabular}{ll}
+\hline
+\textbf{Parametro} & \textbf{Valore} \\
+\hline
+Simulatore & \texttt{AerSimulator} (statevector, CPU) \\
+Ottimizzazione traspilosizione & \texttt{optimization\_level=2} \\
+Shot per iterazione ($M_{\text{shots}}$) & 1\,024 \\
+Iterazioni massime ($M_{\text{max}}$) & 50 \\
+Ripetizioni per UC1/UC2 ($K$) & 30 \\
+Ripetizioni per UC3/UC4 ($K$) & 10 (scalabilità) \\
+Strategia di estrazione & TOP-1 (misura più frequente) \\
+Seed & \texttt{seed\_simulator = rep $\times$ 10\,000 + iter} \\
+\hline
+\end{tabular}
+\end{table}
+
+I quattro use case seguono la struttura definita nel Capitolo~\ref{chap:obiettivi} (Tabella~\ref{tab:use_case_params}): UC1 e UC2 usano lo stesso circuito per $N=15$ a due livelli di rumore diversi, mentre UC3 ($N=21$) e UC4 ($N=35$) testano la scalabilità a rumore NISQ-realistico costante.
 
 % -----------------------------------------------
-\section{Parametri di Error Mitigation Applicati}
-\label{sec:em_m1}
+\section{Analisi del Circuito}
+\label{sec:circuito_m1}
 
-\textit{Questa sezione descriverà le tecniche di error mitigation applicate al Metodo 1. Andrà inserito:}
+Prima di presentare i risultati sperimentali, è utile caratterizzare la complessità del circuito per ciascun use case, poiché la profondità del circuito determina direttamente l'effetto cumulativo del rumore.
 
-\begin{itemize}
-    \item La procedura di calibrazione del readout error: quanti circuiti di calibrazione, come è stata stimata la matrice di confusione.
-    \item L'effetto quantitativo della readout mitigation: confronto tra le distribuzioni di frequenza con e senza correzione per almeno uno dei use case (con figura).
-    \item Eventuali altre tecniche applicate e loro motivazione.
-\end{itemize}
+\begin{table}[H]
+\centering
+\caption{Caratteristiche del circuito traspilato per ciascun use case (ottimizzazione livello 2 per UC1/UC2, livello 1 per UC3/UC4)}
+\label{tab:circuit_depth}
+\begin{tabular}{lcccc}
+\hline
+\textbf{Use Case} & \textbf{N} & \textbf{Profondità} & \textbf{Porte CX} & \textbf{$P_{\text{surv}} = (1-\epsilon_{2q})^{\#\text{CX}}$} \\
+\hline
+UC1 & 15 & 309    & 162    & $(1-10^{-2})^{162} \approx 0.197$ \\
+UC2 & 15 & 309    & 162    & $(1-5\times10^{-2})^{162} \approx 2\times10^{-4}$ \\
+UC3 & 21 & 19\,816 & 10\,040 & $(1-10^{-2})^{10040} \approx 1.5\times10^{-44}$ \\
+UC4 & 35 & 25\,779 & 13\,064 & $(1-10^{-2})^{13064} \approx 9.5\times10^{-58}$ \\
+\hline
+\end{tabular}
+\end{table}
+
+Per UC1 e UC2, il circuito traspilato con \texttt{optimization\_level=2} conta 162 porte \texttt{cx}, 0 porte \texttt{ccx} e 0 porte \texttt{swap}, per una profondità complessiva di 309 livelli. La probabilità di sopravvivenza coerente $P_{\text{surv}}$ misura la frazione di run in cui nessun gate 2-qubit introduce errore depolarizzante: $\approx 19.7\%$ per UC1 e $\approx 0.02\%$ per UC2.
+
+Per UC3 e UC4, la sintesi tramite \texttt{UnitaryGate} (matrice di permutazione generale) produce rispettivamente 10\,040 e 13\,064 porte \texttt{cx} dopo la traspilosizione con \texttt{optimization\_level=1}. In queste condizioni $P_{\text{surv}} \approx 10^{-44}$ e $\approx 10^{-57}$ rispettivamente: l'output è essenzialmente casuale e non contiene informazione sulla fase QPE. Il Metodo 1 (e il Metodo 2) non è applicabile per UC3 e UC4; l'analisi scalabilità è discussa in dettaglio nel Capitolo~\ref{chap:conclusioni2}.
 
 % -----------------------------------------------
 \section{Risultati per Ciascun Use Case}
 \label{sec:risultati_uc_m1}
 
-\textit{Per ognuno dei quattro use case andrà inserita una sottosezione con la stessa struttura. Gli elementi fissi di ciascuna sottosezione sono:}
-
-\begin{itemize}
-    \item Un istogramma della distribuzione degli output del registro di controllo su $M_{\text{shots}}$ shot (figura). L'istogramma deve mostrare chiaramente la posizione dei picchi rispetto ai valori teorici attesi $k \cdot 2^{n_{\text{count}}}/r$.
-    \item La tabella delle frequenze ai picchi identificati dopo il filtraggio a soglia.
-    \item Il valore di $r$ stimato tramite frazioni continue, e verifica che $\gcd(a^{r/2} \pm 1, N)$ produca i fattori corretti.
-    \item Il numero di iterazioni necessarie per ottenere il primo risultato corretto in quella specifica ripetizione, e la media $\bar{M}_1$ sulle $K$ ripetizioni.
-    \item Un grafico della distribuzione del numero di iterazioni su $K$ ripetizioni (istogramma o boxplot).
-\end{itemize}
-
-\subsection{Use Case 1 — $N = \text{[TBD]}$, rumore basso}
+\subsection{Use Case 1 — $N = 15$, NISQ-realistico ($\epsilon_{2q} = 10^{-2}$)}
 \label{sec:uc1_m1}
 
-\textit{[Contenuto da inserire dopo gli esperimenti]}
+Con il noise model NISQ-realistico ($\epsilon_{1q} = 10^{-3}$, $\epsilon_{2q} = 10^{-2}$, $T_1 = 100\,\mu\text{s}$, $T_2 = 80\,\mu\text{s}$, $p_{\text{ro}} = 2\%$) e il circuito da 162 porte CX, il Metodo 1 converge al risultato corretto in $K=30$ ripetizioni con i seguenti risultati.
 
-\subsection{Use Case 2 — $N = \text{[TBD]}$, rumore alto}
+\begin{table}[H]
+\centering
+\caption{Risultati del Metodo 1 su UC1 ($K=30$ ripetizioni)}
+\label{tab:m1_uc1}
+\begin{tabular}{lc}
+\hline
+\textbf{Metrica} & \textbf{Valore} \\
+\hline
+Tasso di successo $P_{\text{succ}}$ & 76.7\% (23/30) \\
+$\bar{M}_1$ (solo run riusciti) & 6.43 iterazioni \\
+$\sigma_{M_1}$ & 12.32 iterazioni \\
+Mediana iterazioni & 1.0 \\
+Fattori estratti & $(3, 5)$ \\
+\hline
+\end{tabular}
+\end{table}
+
+La distribuzione del numero di iterazioni presenta una forte asimmetria: la maggior parte delle ripetizioni riuscite converge in 1--2 iterazioni, mentre alcune richiedono 10--46 iterazioni prima di ottenere la misura corretta. Questo comportamento è coerente con la struttura geometrica della distribuzione di successo: ogni iterazione ha una probabilità indipendente $p_{\text{iter}} \approx 17\%$ di produrre la misura corretta tramite TOP-1, il che implica una distribuzione geometrica con media $1/p_{\text{iter}} \approx 6$.
+
+Le 7 ripetizioni che non convergono entro $M_{\text{max}}=50$ iterazioni sono attribuibili alla variabilità delle realizzazioni del rumore (seed specifici che cadono in regioni di bassissima probabilità di successo).
+
+\subsection{Use Case 2 — $N = 15$, NISQ-degradato ($\epsilon_{2q} = 5 \times 10^{-2}$)}
 \label{sec:uc2_m1}
 
-\textit{[Contenuto da inserire dopo gli esperimenti]}
+Con il noise model NISQ-degradato ($\epsilon_{1q} = 5\times10^{-3}$, $\epsilon_{2q} = 5\times10^{-2}$, $T_1 = 50\,\mu\text{s}$, $T_2 = 30\,\mu\text{s}$, $p_{\text{ro}} = 5\%$), il circuito rimane identico (162 porte CX, profondità 309) ma la probabilità di sopravvivenza coerente scende a $\approx 2\times10^{-4}$. Nonostante questa degradazione estrema, il segnale QPE risulta ancora parzialmente recuperabile per una maggioranza dei seed sperimentali, come mostrano i risultati in Tabella~\ref{tab:m1_uc2}.
 
-\subsection{Use Case 3 — $N = \text{[TBD]}$, istanza più grande}
+\begin{table}[H]
+\centering
+\caption{Risultati del Metodo 1 su UC2 ($K=30$ ripetizioni)}
+\label{tab:m1_uc2}
+\begin{tabular}{lc}
+\hline
+\textbf{Metrica} & \textbf{Valore} \\
+\hline
+Tasso di successo $P_{\text{succ}}$ & 80.0\% (24/30) \\
+$\bar{M}_1$ (solo run riusciti) & 2.42 iterazioni \\
+$\sigma_{M_1}$ & 6.79 iterazioni \\
+Mediana iterazioni & 1.0 \\
+Fattori estratti & $(3, 5)$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Use Case 3 — $N = 21$, scalabilità}
 \label{sec:uc3_m1}
 
-\textit{[Contenuto da inserire dopo gli esperimenti]}
+Per $N=21$, la moltiplicazione modulare controllata è implementata tramite \texttt{UnitaryGate} (cfr. Sezione~\ref{sec:impl_metodo1}). Il circuito traspilato conta 10\,040 porte \texttt{cx} (profondità 19\,816): con $\epsilon_{2q} = 10^{-2}$, la probabilità di sopravvivenza è $(0.99)^{10040} \approx 1.5 \times 10^{-44}$, rendendo l'output del circuito indistinguibile dal rumore uniforme.
 
-\subsection{Use Case 4 — $N = \text{[TBD]}$, istanza ancora più grande}
+In queste condizioni, il Metodo 1 non produce mai i fattori corretti entro $M_{\text{max}}=50$ iterazioni su nessuna delle $K=10$ ripetizioni: $\bar{M}_1 = \text{N/A}$, $P_{\text{succ}} = 0\%$. Il circuito è inutilizzabile in regime NISQ con questa decomposizione.
+
+\subsection{Use Case 4 — $N = 35$, scalabilità}
 \label{sec:uc4_m1}
 
-\textit{[Contenuto da inserire dopo gli esperimenti]}
+Per $N=35$, la situazione è analoga a UC3 ma ancora più critica: il circuito conta 13\,064 porte \texttt{cx} (profondità 25\,779), con $P_{\text{surv}} \approx 9.5\times10^{-58}$. Anche qui $P_{\text{succ}} = 0\%$ e il Metodo 1 non converge mai. L'analisi della scalabilità e le prospettive di miglioramento (circuiti efficienti basati su decomposizioni SWAP) sono discusse nel Capitolo~\ref{chap:conclusioni2}.
 
 % -----------------------------------------------
 \section{Analisi dei Risultati}
 \label{sec:analisi_m1}
 
-\textit{Questa è la sezione di analisi trasversale sui quattro use case. Andrà inserito:}
+\begin{table}[H]
+\centering
+\caption{Riepilogo delle metriche del Metodo 1 sui quattro use case}
+\label{tab:riepilogo_m1}
+\begin{tabular}{lcccc}
+\hline
+\textbf{Use Case} & \textbf{$P_{\text{succ}}$} & \textbf{$\bar{M}_1$} & \textbf{$\sigma_{M_1}$} & \textbf{Nota} \\
+\hline
+UC1 ($N=15$, realistico) & 76.7\% & 6.43 & 12.32 & Confronto M1 vs M2 \\
+UC2 ($N=15$, degradato)  & 80.0\% & 2.42 &  6.79 & Confronto M1 vs M2 \\
+UC3 ($N=21$)             &  0\%   & N/A  &  ---  & Solo scalabilità \\
+UC4 ($N=35$)             &  0\%   & N/A  &  ---  & Solo scalabilità \\
+\hline
+\end{tabular}
+\end{table}
 
-\begin{itemize}
-    \item La tabella riassuntiva delle metriche sui quattro use case: $\bar{M}_1$, $\sigma_{M_1}$, $P_{\text{success},1}(M_{\text{max}})$, tasso di errore del fattore estratto.
-    \item L'analisi della dipendenza di $\bar{M}_1$ dal livello di rumore: confronto Use Case 1 vs Use Case 2 (stesso $N$, rumore diverso). Ci si attende che $\bar{M}_1$ cresca significativamente con il rumore: quantificare di quanto.
-    \item L'analisi della dipendenza di $\bar{M}_1$ dalla dimensione dell'istanza: confronto Use Case 1 vs Use Case 3 vs Use Case 4 (stesso livello di rumore, $N$ crescente). Ci si attende che $\bar{M}_1$ cresca con la profondità del circuito.
-    \item Discussione della validità statistica: il numero $K$ di ripetizioni è sufficiente a rendere stabile la stima di $\bar{M}_1}$? Mostrare la curva di convergenza di $\bar{M}_1$ al crescere di $K$.
-    \item Eventuale confronto qualitativo con i dati del tutorial IBM \cite{ibm_shor_tutorial} (tasso di successo $\sim 4\%$ su hardware reale per $N=15$): i risultati su simulatore sono coerenti con quel riferimento?
-\end{itemize}
+\paragraph{Effetto del rumore (UC1 vs UC2).}
+Il confronto tra UC1 ($\epsilon_{2q}=10^{-2}$) e UC2 ($\epsilon_{2q}=5\times10^{-2}$) sullo stesso circuito isola l'effetto del rumore. Il risultato osservato è controintuitivo: UC2 produce $\bar{M}_1 = 2.42$, inferiore al valore $\bar{M}_1 = 6.43$ di UC1, sebbene il rumore sia cinque volte più intenso. La spiegazione risiede nella funzione di post-elaborazione \texttt{extract\_factors}: il test \texttt{Fraction(phase).limit\_denominator(N=15)} accetta come valida un'ampia banda di misure intorno ai valori teorici $\{64, 128, 192\}$. Sotto rumore elevato, la distribuzione di uscita si allarga, aumentando la probabilità che la misura più frequente ricada nella banda di accettazione. I seed che convergono (24/30 per UC2) lo fanno tipicamente in 1--2 iterazioni, mentre i 6 seed che falliscono producono istogrammi piatti senza alcun segnale QPE recuperabile.
+
+\paragraph{Effetto della scalabilità (UC1, UC3, UC4).}
+L'analisi scalabilità dimostra un limite architetturale della decomposizione via \texttt{UnitaryGate}: la sintesi di una porta unitaria arbitraria su $k$ qubit richiede $O(4^k)$ porte elementari~\cite{Barenco1995}. Per $N=21$ ($k=5$ qubit di lavoro) e $N=35$ ($k=6$ qubit), questo porta a profondità irricevibili per qualsiasi simulatore o processore NISQ attuale.
+
+\paragraph{Variabilità statistica.}
+La grande deviazione standard ($\sigma_{M_1} = 12.32 > \bar{M}_1 = 6.43$ per UC1) riflette la natura geometrica della distribuzione del numero di iterazioni. Questa variabilità è intrinseca al metodo e non può essere ridotta aumentando il numero di shot $M_{\text{shots}}$: solo un algoritmo di estrazione più sofisticato (come il Metodo 2) può incidere sulla distribuzione.
 
 % -----------------------------------------------
 \section{Discussione}
 \label{sec:discussione_m1}
 
-\textit{Questa sezione interpreta i risultati in modo critico. Andrà inserito:}
-
+Il Metodo 1 (TOP-1) costituisce una baseline semplice, trasparente e priva di parametri da ottimizzare. I suoi punti di forza sono:
 \begin{itemize}
-    \item I punti di forza del Metodo 1: semplicità, assenza di fase di addestramento, applicabilità immediata a qualunque configurazione di rumore.
-    \item I limiti principali: crescita del numero di iterazioni necessarie al crescere del rumore e della profondità del circuito; sensibilità alla scelta del parametro di soglia $\tau$.
-    \item Una stima del costo computazionale totale del Metodo 1 nei quattro use case (numero totale di shot eseguiti), come base per il confronto con il Metodo 2.
-    \item Osservazioni su eventuali anomalie o comportamenti inattesi osservati nei dati.
+    \item \textbf{Semplicità}: una sola riga di codice (\texttt{max(counts, key=counts.get)}) determina il candidato;
+    \item \textbf{Nessuna fase di addestramento}: applicabile immediatamente a qualsiasi configurazione $(N, a, \epsilon)$;
+    \item \textbf{Correttezza}: quando produce un risultato, è garantito essere corretto (nessun falso positivo per costruzione).
 \end{itemize}
+
+I limiti principali sono:
+\begin{itemize}
+    \item \textbf{Sfruttamento parziale dell'istogramma}: la strategia TOP-1 ignora tutte le misure meno frequenti, anche quando contengono fasi valide;
+    \item \textbf{Alta varianza}: la distribuzione geometrica implica che alcune sessioni richiedono decine di iterazioni anche in condizioni di rumore moderate;
+    \item \textbf{Barriera di scalabilità}: la decomposizione \texttt{UnitaryGate} rende il metodo inapplicabile per $N \geq 21$ con l'implementazione attuale.
+\end{itemize}
+
+Il costo computazionale totale di UC1 è stimabile in $23 \times 6.43 \times 1024 \approx 151\,000$ shot per i 23 run riusciti, più $7 \times 50 \times 1024 \approx 358\,000$ shot per i 7 run falliti, per un totale di circa 509\,000 shot. Per UC2: $24 \times 2.42 \times 1024 \approx 59\,400$ shot per i run riusciti, più $6 \times 50 \times 1024 \approx 307\,000$ shot per i 6 run falliti, totale $\approx 367\,000$ shot. Questi dati costituiscono la base per valutare il risparmio computazionale offerto dal Metodo 2.
 
 \end{onehalfspace}

@@ -6,7 +6,7 @@ Il Capitolo~\ref{chap:obiettivi} ha formalizzato il contratto sperimentale: quat
 \section{Setup dell'Ambiente di Esecuzione}
 \label{sec:setup}
 
-L'ambiente di esecuzione è stato configurato su \ac{WSL} (Ubuntu 22.04 LTS) su Windows 11, con accesso diretto alla \ac{GPU} NVIDIA RTX 4070 tramite i driver CUDA per WSL. La scelta di WSL garantisce la compatibilità con l'ecosistema Linux di Qiskit e delle librerie scientifiche Python, mantenendo al contempo l'integrazione con l'ambiente di sviluppo Windows.
+L'ambiente di esecuzione è stato configurato su \ac{WSL} (Ubuntu 22.04 LTS) su Windows 11. La scelta di WSL garantisce la compatibilità con l'ecosistema Linux di Qiskit e delle librerie scientifiche Python, mantenendo al contempo l'integrazione con l'ambiente di sviluppo Windows. Sebbene il sistema disponga di una \ac{GPU} NVIDIA RTX 4070, questa non è risultata utilizzabile per la simulazione quantistica in ambiente WSL2 (cfr. Sezione~\ref{sec:gpu_limit}); tutti gli esperimenti sono stati eseguiti su \ac{CPU}.
 
 \subsection{Dipendenze e Virtual Environment}
 
@@ -32,24 +32,16 @@ python -c "import qiskit; print(qiskit.__version__)"
 python -c "from qiskit_aer import AerSimulator; print('Aer OK')"
 \end{lstlisting}
 
-\subsection{Verifica del Supporto GPU}
+\subsection{Accelerazione GPU: Tentativo e Limitazione WSL}
+\label{sec:gpu_limit}
 
-L'accelerazione GPU viene verificata istanziando un simulatore con backend CUDA prima di ogni sessione di calcolo:
+Il piano originale prevedeva l'uso di \texttt{qiskit-aer-gpu} con la scheda NVIDIA RTX 4070 per ridurre i tempi di simulazione di 10--20$\times$. Sebbene il driver CUDA per WSL rilevi correttamente la GPU (\texttt{AerSimulator.available\_devices()} restituisce \texttt{['GPU']}), il backend C++ di Qiskit Aer lancia un \texttt{RuntimeError} a runtime quando si tenta di eseguire un circuito con \texttt{device='GPU'}:
 
-\begin{lstlisting}[caption={Verifica dell'accelerazione GPU con Qiskit Aer}]
-from qiskit_aer import AerSimulator
-
-# Simulatore statevector su GPU
-sim_gpu = AerSimulator(method='statevector', device='GPU')
-
-# Fallback su CPU se la GPU non e' disponibile
-try:
-    sim_gpu.available_devices()
-    print("GPU disponibile:", sim_gpu.configuration().gpu_name)
-except Exception:
-    sim_gpu = AerSimulator(method='statevector', device='CPU')
-    print("Fallback su CPU")
+\begin{lstlisting}[caption={Errore GPU su WSL durante i test}]
+RuntimeError: Simulation device "GPU" is not supported on this system
 \end{lstlisting}
+
+Questa limitazione è nota nell'ecosistema WSL: la modalità di accesso alla GPU tramite CUDA for WSL 2 non è ancora pienamente supportata dal backend \texttt{statevector} di Qiskit Aer nella versione installata. Tutti gli esperimenti sono stati eseguiti su CPU (modalità \texttt{statevector}), con un throughput medio di $\approx 0.19$\,s per campione su 12 qubit.
 
 % -----------------------------------------------
 \section{L'Algoritmo di Shor: Implementazione di Riferimento}
@@ -102,11 +94,9 @@ def mod_exp_15_7(power):
     return U
 \end{lstlisting}
 
-% TODO (dopo i test WSL): aggiungere qui le implementazioni analoghe per gli altri use case:
-%   - mod_exp_21_2(power)  per UC3: N=21, a=2, r=6, n_work=5 qubit
-%   - mod_exp_35_6(power)  per UC4: N=35, a=6, r=2, n_work=6 qubit
-% I circuiti si ricavano dalla decomposizione della permutazione x -> ax mod N
-% in sequenze di SWAP gate, seguendo la stessa metodologia di mod_exp_15_7.
+% Per UC3 (N=21) e UC4 (N=35) si usa c_amod() con UnitaryGate (matrice di
+% permutazione generale). La sintesi produce >8000 porte CX dopo traspilosizione,
+% rendendo entrambi i use case inutilizzabili in regime NISQ (cfr. Sec. sec:impl_metodo1).
 
 \subsection{Circuito Completo e Post-Processing}
 
@@ -199,198 +189,183 @@ def build_noise_model(eps_1q, eps_2q, t1_ns, t2_ns,
 \section{Implementazione del Metodo 1}
 \label{sec:impl_metodo1}
 
-Il Metodo 1 raccoglie la distribuzione degli output su $M$ esecuzioni e identifica i fattori di $N$ analizzando statisticamente i picchi della distribuzione. Il parametro $\tau$ controlla la soglia di filtraggio: solo i valori con frequenza superiore a $\tau \cdot \max(\text{counts})$ vengono considerati picchi.
+Il Metodo 1 adotta la strategia \textit{TOP-1}: ad ogni iterazione esegue il circuito, identifica la misura più frequente nell'istogramma degli output e tenta la fattorizzazione tramite il post-processing classico. Il loop si interrompe non appena viene trovata una coppia di fattori non banali.
 
-\begin{lstlisting}[caption={Pipeline completa del Metodo 1}]
+Una scelta critica di implementazione riguarda la traspilosizione del circuito. Affinché il noise model sia applicato correttamente a \emph{tutti} i gate, il simulatore deve essere istanziato con il noise model nel costruttore prima della traspilosizione, e il livello di ottimizzazione deve essere pari a 2:
+
+\begin{lstlisting}[caption={Pipeline del Metodo 1 (TOP-1, ottimizzazione corretta)}]
 def run_method1(N, a, n_count, noise_model, shots=1024,
-                max_iter=200, threshold=0.3, seed=42):
-    """
-    Metodo 1: analisi gaussiana della distribuzione.
-    Restituisce i fattori trovati e il numero di iterazioni.
-    """
-    sim = AerSimulator(noise_model=noise_model,
-                       method='statevector', seed_simulator=seed)
-    qc  = shor_circuit(N, a, n_count)
-    qct = transpile(qc, sim, optimization_level=3)
+                max_iter=50, seed=42):
+    base_qc = shor_circuit(N, a, n_count)
+    # CRITICO: NM nel costruttore + opt=2 decompone CCX -> CX
+    # garantendo che il noise model si applichi a tutti i gate
+    sim = AerSimulator(noise_model=noise_model, method='statevector')
+    transpiled = transpile(base_qc, sim, optimization_level=2)
 
     for iteration in range(1, max_iter + 1):
-        job    = sim.run(qct, shots=shots)
-        counts = job.result().get_counts()
-
-        # Filtraggio a soglia
-        max_count = max(counts.values())
-        peaks = {k: v for k, v in counts.items()
-                 if v >= threshold * max_count}
-
-        # Tentativo di fattorizzazione per ogni picco
-        for bitstring in sorted(peaks, key=peaks.get, reverse=True):
-            meas = int(bitstring, 2)
-            p, q = extract_factors(meas, n_count, N, a)
-            if p is not None:
-                return {'factors': (p, q), 'iterations': iteration,
-                        'method': 'M1', 'success': True}
+        counts = sim.run(transpiled, shots=shots,
+                         seed_simulator=seed * 10000 + iteration
+                         ).result().get_counts()
+        # TOP-1: misura piu' frequente nell'istogramma
+        meas = int(max(counts, key=counts.get), 2)
+        p, q = extract_factors(meas, n_count, N, a)
+        if p is not None:
+            return {'factors': (p, q), 'iterations': iteration,
+                    'success': True, 'counts': counts}
 
     return {'factors': (None, None), 'iterations': max_iter,
-            'method': 'M1', 'success': False}
+            'success': False, 'counts': {}}
 \end{lstlisting}
+
+Senza il noise model nel costruttore, Qiskit Aer non decompone le porte Toffoli (\texttt{CCX}) presenti nell'espansione di \texttt{.control()}: le 27 porte \texttt{CCX} del circuito per $N=15$ rimangono nella netlist finale come gate non rumorosi, rendendo la simulazione non fisicamente accurata. Con \texttt{optimization\_level=2} e il noise model nel costruttore, il circuito traspilato contiene esclusivamente porte elementari: per $N=15$, $a=7$, $n_{\text{count}}=8$ si ottengono 162 porte \texttt{cx}, 0 \texttt{ccx}, 0 \texttt{swap}, per una profondità complessiva di 309.
+
+\paragraph{Limite di scalabilità per UC3 e UC4.}
+Per $N=21$ e $N=35$, il blocco di moltiplicazione modulare viene implementato tramite \texttt{UnitaryGate} (matrice di permutazione) anzichè la decomposizione textbook valida solo per $N=15$. La sintesi di \texttt{UnitaryGate} da parte di Qiskit produce tuttavia circuiti con $>8000$ porte \texttt{cx} dopo la traspilosizione, rendendo la probabilità di sopravvivenza coerente $(1 - \epsilon_{2q})^{8000} \approx 0$ già a $\epsilon_{2q} = 10^{-2}$. Entrambi i metodi risultano quindi inutilizzabili per UC3 e UC4 in regime NISQ: l'analisi scalabilità è discussa nel Capitolo~\ref{chap:conclusioni2}.
 
 % -----------------------------------------------
 \section{Implementazione del Metodo 2}
 \label{sec:impl_metodo2}
 
-Il Metodo 2 si articola in due fasi distinte: la generazione del dataset e l'addestramento del classificatore (offline), e l'utilizzo del classificatore in inferenza per decidere dopo ogni singola esecuzione se il risultato è corretto (online).
+Il Metodo 2 si articola in due fasi: la generazione del dataset e l'addestramento del classificatore (fase offline), e l'uso del classificatore con ricerca \textit{TOP-K} per identificare i fattori corretti (fase online).
 
-\subsection{Generazione del Dataset}
+\subsection{Generazione del Dataset e Definizione dell'Etichetta}
 
-Il dataset viene generato eseguendo migliaia di istanze del circuito con parametri di rumore variabili nell'intorno dei valori nominali di ciascun use case. Per ogni esecuzione viene calcolata l'etichetta di correttezza:
+Il dataset viene generato eseguendo il circuito con parametri di rumore variabili nell'intorno dei valori nominali (fattore di variazione $\pm 50\%$). La stessa traspilosizione con \texttt{optimization\_level=2} è usata per tutti i campioni, variando solo il noise model a run-time per efficienza.
 
-\begin{lstlisting}[caption={Generazione del dataset di addestramento per il classificatore}]
-import numpy as np
+L'etichetta di un campione vale 1 se \emph{almeno uno} dei \textsc{TOP\_K=16} misure più frequenti nell'istogramma corrisponde a fattori non banali. Questa definizione è coerente con la strategia di inferenza del Metodo 2: il classificatore impara a riconoscere gli istogrammi che ``contengono segnale QPE utile'', indipendentemente da quale specifica misura sia la moda.
 
-def generate_dataset(N, a, n_count, noise_params_range,
-                     n_samples=5000, shots=1024, seed=0):
-    """
-    Genera coppie (feature_vector, label) per l'addestramento.
-    noise_params_range: dict con (min, max) per eps_1q, eps_2q, t1, t2.
-    """
+\begin{lstlisting}[caption={Generazione del dataset con etichetta TOP-K}]
+def generate_dataset(N, a, n_count, noise_base, noise_factor=0.5,
+                     n_samples=2000, shots=1024, seed=0):
     rng = np.random.default_rng(seed)
     X, y = [], []
+    TOP_K = 16
+
+    # Traspilosizione unica con noise model di riferimento
+    nm_ref = build_noise_model(**noise_base)
+    sim_tp = AerSimulator(noise_model=nm_ref, method='statevector')
+    tqc = transpile(shor_circuit(N, a, n_count), sim_tp,
+                    optimization_level=2)
+
+    # Simulatore senza NM fisso: noise model varia a run-time
+    sim = AerSimulator(method='statevector')
 
     for i in range(n_samples):
-        # Campiona parametri di rumore casuali nell'intervallo specificato
-        eps_1q = rng.uniform(*noise_params_range['eps_1q'])
-        eps_2q = rng.uniform(*noise_params_range['eps_2q'])
-        t1     = rng.uniform(*noise_params_range['t1'])
-        t2     = rng.uniform(*noise_params_range['t2'])
+        # Variazione casuale dei parametri di rumore
+        f = 1.0 + rng.uniform(-noise_factor, noise_factor)
+        eps_2q = np.clip(noise_base['eps_2q'] * f, 1e-3, 0.3)
+        # ...altri parametri analogamente...
+        nm = build_noise_model(eps_1q, eps_2q, t1_ns, t2_ns,
+                               p_ro=noise_base['p_ro'])
+        counts = sim.run(tqc, noise_model=nm, shots=shots,
+                         seed_simulator=seed + i).result().get_counts()
 
-        nm = build_noise_model(eps_1q, eps_2q, t1, t2)
-        sim = AerSimulator(noise_model=nm, seed_simulator=seed + i)
-        qc  = transpile(shor_circuit(N, a, n_count), sim)
+        # Etichetta TOP-K: 1 se almeno una delle top-16 misure
+        # piu' frequenti produce fattori validi
+        sorted_meas = sorted(counts.items(),
+                             key=lambda x: x[1], reverse=True)
+        found = any(
+            extract_factors(int(ms, 2), n_count, N, a)[0] is not None
+            for ms, _ in sorted_meas[:TOP_K]
+        )
+        label = 1 if found else 0
 
-        counts = sim.run(qc, shots=shots).result().get_counts()
-        meas   = int(max(counts, key=counts.get), 2)
-        p, q   = extract_factors(meas, n_count, N, a)
-        label  = 1 if (p is not None) else 0
-
-        # Feature: distribuzione normalizzata degli output
         feature = np.zeros(2 ** n_count)
         for k, v in counts.items():
             feature[int(k, 2)] = v / shots
-
-        X.append(feature)
-        y.append(label)
+        X.append(feature); y.append(label)
 
     return np.array(X), np.array(y)
 \end{lstlisting}
 
 \subsection{Addestramento e Selezione del Modello}
 
-L'addestramento utilizza scikit-learn \cite{scikit_learn} con una pipeline di confronto tra diversi classificatori. Il modello con le migliori prestazioni sul validation set viene selezionato per l'inferenza:
+L'addestramento confronta tre architetture con scikit-learn \cite{scikit_learn}: \textbf{Random Forest} (200 alberi), \textbf{\ac{SVM}} con kernel RBF e \textbf{\ac{MLP}} con architettura $(256, 128)$. Il modello con F1-score più elevato sul test set (suddivisione 80/20 stratificata) viene serializzato per l'inferenza tramite \texttt{joblib}.
 
-\begin{lstlisting}[caption={Addestramento e selezione del classificatore}]
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
-from sklearn.neural_network import MLPClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score, accuracy_score
+I risultati della selezione del modello, eseguita su 2000 campioni per ciascun use case, sono riportati in Tabella~\ref{tab:clf_sel}.
 
-def train_classifier(X, y, random_state=42):
-    """
-    Confronta piu' classificatori e restituisce il migliore
-    in base all'F1-score sul validation set.
-    """
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=random_state, stratify=y)
+\begin{table}[H]
+\centering
+\caption{Selezione del classificatore per i due use case (test set 20\%, $n=400$ campioni)}
+\label{tab:clf_sel}
+\begin{tabular}{llccc}
+\hline
+\textbf{Use Case} & \textbf{Modello} & \textbf{F1} & \textbf{Accuratezza} & \textbf{\acs{AUC}-ROC} \\
+\hline
+\multirow{3}{*}{UC1 ($\epsilon_{2q}=10^{-2}$)} & \textbf{Random Forest} & \textbf{0.949} & \textbf{0.922} & \textbf{0.964} \\
+                                                 & \ac{SVM}               & 0.855          & 0.748          & 0.929 \\
+                                                 & \ac{MLP}               & 0.919          & 0.885          & 0.952 \\
+\hline
+\multirow{3}{*}{UC2 ($\epsilon_{2q}=5\times10^{-2}$)} & \textbf{\ac{SVM}}  & \textbf{0.979} & \textbf{0.965} & \textbf{0.987} \\
+                                                        & Random Forest      & 0.976          & 0.960          & 0.982 \\
+                                                        & \ac{MLP}           & 0.977          & 0.963          & 0.987 \\
+\hline
+\end{tabular}
+\end{table}
 
-    candidates = {
-        'RandomForest': RandomForestClassifier(
-            n_estimators=200, random_state=random_state),
-        'SVM':          SVC(kernel='rbf', probability=True,
-                            random_state=random_state),
-        'MLP':          MLPClassifier(hidden_layer_sizes=(256, 128),
-                                      max_iter=500,
-                                      random_state=random_state),
-    }
-    best_name, best_model, best_f1 = None, None, -1
-    for name, clf in candidates.items():
-        clf.fit(X_train, y_train)
-        f1 = f1_score(y_test, clf.predict(X_test))
-        if f1 > best_f1:
-            best_name, best_model, best_f1 = name, clf, f1
+Il \textbf{Random Forest} è il modello ottimale per UC1 (F1=0.949, \ac{AUC}=0.964), dove la maggiore variabilità dell'istogramma — il dataset ha il 25.8\% di esempi negativi — favorisce un classificatore ensemble capace di catturare relazioni non lineari tra le feature. Per UC2, tutti e tre i modelli raggiungono prestazioni quasi identiche (F1 $>$ 0.97): la scelta ricade sull'\textbf{\ac{SVM}} per il margine minimo di F1-score. In entrambi i casi, i valori di \ac{AUC}-ROC $>$ 0.96 indicano una buona separabilità delle classi nello spazio delle feature istogramma.
 
-    acc = accuracy_score(y_test, best_model.predict(X_test))
-    print(f"Modello selezionato: {best_name}  |  F1={best_f1:.3f}  "
-          f"Acc={acc:.3f}")
-    return best_model, X_test, y_test
-\end{lstlisting}
+\subsection{Inferenza: Classificatore + Ricerca TOP-K}
 
-\subsection{Inferenza: il Loop di Classificazione}
+In fase di inferenza il Metodo 2 adotta un design a due livelli. Il classificatore agisce da \textbf{gate di qualità} (primo livello): decide se l'istogramma corrente ``contiene segnale QPE'' (label positiva per TOP\_K=16) oppure è dominato dal rumore. Se il classificatore accetta l'istogramma, la \textbf{ricerca TOP-4} (secondo livello) tenta i 4 candidati più frequenti in ordine decrescente, restituendo il primo che produce fattori non banali.
 
-In fase di inferenza, il classificatore viene invocato dopo ogni esecuzione del circuito. Il loop si interrompe al primo risultato classificato come corretto:
+L'asimmetria tra TOP\_K=16 per le etichette di training e top\_k=4 per l'inferenza è intenzionale: il classificatore impara a rilevare la presenza di segnale QPE su una finestra ampia, mentre la ricerca usa una finestra stretta per limitare i tentativi per iterazione. Rispetto al Metodo 1, questa strategia trova la fase corretta anche quando il picco è stato spostato dal rumore: se la moda è $65$ invece di $64$, il Metodo 1 fallisce, ma il Metodo 2 trova $64$ tra i top-4 candidati.
 
-\begin{lstlisting}[caption={Loop di inferenza del Metodo 2}]
+\begin{lstlisting}[caption={Loop di inferenza del Metodo 2 (classificatore + TOP-K)}]
 def run_method2(N, a, n_count, noise_model, classifier,
-                shots=1024, max_iter=50, seed=42):
-    """
-    Metodo 2: classificatore ML per la verifica del risultato.
-    Restituisce i fattori trovati e il numero di iterazioni.
-    """
-    sim = AerSimulator(noise_model=noise_model,
-                       method='statevector', seed_simulator=seed)
-    qc  = transpile(shor_circuit(N, a, n_count), sim,
-                    optimization_level=3)
+                shots=1024, max_iter=50, seed=42, top_k=4):
+    base_qc = shor_circuit(N, a, n_count)
+    sim = AerSimulator(noise_model=noise_model, method='statevector')
+    transpiled = transpile(base_qc, sim, optimization_level=2)
 
     for iteration in range(1, max_iter + 1):
-        counts  = sim.run(qc, shots=shots).result().get_counts()
-        meas    = int(max(counts, key=counts.get), 2)
+        counts = sim.run(transpiled, shots=shots,
+                         seed_simulator=seed * 10000 + iteration
+                         ).result().get_counts()
 
-        # Feature vector: distribuzione normalizzata
+        # Feature: istogramma normalizzato a 2^n_count dimensioni
         feature = np.zeros(2 ** n_count)
         for k, v in counts.items():
             feature[int(k, 2)] = v / shots
 
-        label = classifier.predict([feature])[0]
-        if label == 1:
-            p, q = extract_factors(meas, n_count, N, a)
+        # Porta del classificatore: salta se l'istogramma e' troppo rumoroso
+        if classifier.predict([feature])[0] == 0:
+            continue
+
+        # Ricerca TOP-K: prova i candidati piu' frequenti in ordine
+        sorted_meas = sorted(counts.items(),
+                             key=lambda x: x[1], reverse=True)
+        for meas_str, _ in sorted_meas[:top_k]:
+            p, q = extract_factors(int(meas_str, 2), n_count, N, a)
             if p is not None:
                 return {'factors': (p, q), 'iterations': iteration,
-                        'method': 'M2', 'success': True}
+                        'success': True}
 
     return {'factors': (None, None), 'iterations': max_iter,
-            'method': 'M2', 'success': False}
+            'success': False}
 \end{lstlisting}
 
 % -----------------------------------------------
 \section{Infrastruttura di Test e Raccolta Dati}
 \label{sec:infrastruttura}
 
-Per garantire la riproducibilità e la comparabilità dei risultati, tutti e quattro i use case vengono eseguiti tramite una funzione di orchestrazione unica. I risultati vengono salvati in formato JSON con i parametri completi dell'esperimento:
+Per garantire la riproducibilità e la comparabilità dei risultati, tutti i use case vengono eseguiti tramite uno script di orchestrazione (\texttt{run\_experiments.py}). Per UC1 e UC2 vengono eseguite $K=30$ ripetizioni di entrambi i metodi; per UC3 e UC4, dove solo il Metodo 1 è applicabile a causa della profondità del circuito, $K=10$ ripetizioni con analisi esclusiva della scalabilità. I risultati vengono salvati in formato JSON con timestamp e parametri completi, per consentire l'analisi a posteriori:
 
-\begin{lstlisting}[caption={Orchestrazione degli esperimenti sui quattro use case}]
-import json, time
-from datetime import datetime
-
-def run_experiment(use_case, classifier, k_repetitions=50):
-    """
-    Esegue K ripetizioni di entrambi i metodi su un use case.
-    use_case: dict con N, a, n_count, noise_params.
-    """
-    N, a, nc = use_case['N'], use_case['a'], use_case['n_count']
-    nm = build_noise_model(**use_case['noise_params'])
-    results = {'use_case': use_case, 'M1': [], 'M2': [],
-               'timestamp': datetime.now().isoformat()}
-
-    for rep in range(k_repetitions):
-        r1 = run_method1(N, a, nc, nm, seed=rep)
-        r2 = run_method2(N, a, nc, nm, classifier, seed=rep)
-        results['M1'].append(r1)
-        results['M2'].append(r2)
-
-    # Salvataggio su disco
-    fname = f"results_N{N}_a{a}_{datetime.now():%Y%m%d_%H%M%S}.json"
-    with open(fname, 'w') as f:
-        json.dump(results, f, indent=2)
-    return results
+\begin{lstlisting}[caption={Schema di orchestrazione degli esperimenti}]
+USE_CASES = [
+    {'name': 'UC1', 'N': 15, 'a': 7, 'n_count': 8,
+     'noise': NOISE_REALISTIC, 'has_m2': True},
+    {'name': 'UC2', 'N': 15, 'a': 7, 'n_count': 8,
+     'noise': NOISE_DEGRADED,  'has_m2': True},
+    {'name': 'UC3', 'N': 21, 'a': 2, 'n_count': 10,
+     'noise': NOISE_REALISTIC, 'has_m2': False},  # scalabilita' solo
+    {'name': 'UC4', 'N': 35, 'a': 6, 'n_count': 12,
+     'noise': NOISE_REALISTIC, 'has_m2': False},  # scalabilita' solo
+]
+K_REPETITIONS = 30   # UC1/UC2: stima statistica di M_bar
+K_SCALABILITY = 10   # UC3/UC4: analisi profondita' circuito
 \end{lstlisting}
+
+Il seed di ogni ripetizione viene calcolato come \texttt{seed = rep} e propagato al simulatore come \texttt{seed\_simulator = rep * 10000 + iteration}, garantendo che ogni ripetizione e ogni iterazione interna abbiano realizzazioni di rumore indipendenti e riproducibili.
 
 \end{onehalfspace}

@@ -4,6 +4,8 @@ Ogni lavoro sperimentale su una tecnologia emergente porta con sé, oltre ai ris
 
 Le direzioni presentate sono ordinate per crescente dipendenza dall'evoluzione hardware: si parte da sviluppi realizzabili già oggi con l'infrastruttura software esistente, si passa attraverso l'integrazione con hardware reale e la costruzione di modelli ML più sofisticati, e si conclude con scenari che dipendono dall'avanzamento dell'hardware verso il regime fault-tolerant.
 
+I risultati sperimentali della tesi evidenziano tre aperture concrete: (i) il Metodo 2 produce un fattore di riduzione $\rho = 6.4$ per UC1 (rumore moderato), ma $\rho < 1$ per UC2 (rumore elevato), suggerendo un classificatore adattivo capace di regolare la propria strategia in funzione del regime; (ii) la barriera di scalabilità per $N \geq 21$ è interamente attribuibile alla decomposizione \texttt{UnitaryGate} ($>10\,000$ porte CX), risolvibile con circuiti efficienti già disponibili in letteratura; (iii) il simulation gap tra il simulatore statevector e l'hardware reale rimane da quantificare sperimentalmente.
+
 % -----------------------------------------------
 \section{Test e Validazione su Hardware Quantistico Reale}
 \label{sec:hw_reale}
@@ -42,6 +44,8 @@ Il classificatore sviluppato in questa tesi è un modello a singola istanza: pre
 
 \textbf{Transfer learning tra noise model diversi.} Un classificatore addestrato su un noise model specifico (es. \texttt{ibm\_marrakesh}) potrebbe essere adattato a un hardware diverso (es. \texttt{ibm\_kyoto}) attraverso una fase di fine-tuning su un piccolo dataset del nuovo dispositivo, senza riaddestrare da zero. Questa tecnica, ispirata al transfer learning del deep learning classico, ridurrebbe significativamente il costo di portare il sistema su nuovi hardware.
 
+\textbf{Classificatore adattivo al regime di rumore.} Il risultato di UC2 ($\rho = 0.731 < 1$) ha evidenziato che, quando la probabilità di successo per iterazione del Metodo 1 è già alta ($p_{\text{iter}} \approx 41\%$), il filtraggio del classificatore ha un effetto netto negativo. Una soluzione naturale è un classificatore che stima direttamente $p_{\text{iter}}$ dall'istogramma e decide dinamicamente la strategia ottimale: ricerca TOP-1 (equivalente al Metodo 1) quando $p_{\text{iter}}$ stimata è alta, ricerca TOP-K con gating del classificatore quando $p_{\text{iter}}$ stimata è bassa. Questo adattamento al regime richiederebbe un modello di regressione (invece di classificazione binaria) o un sistema a due stadi con una soglia di commutazione calibrata sul noise model corrente.
+
 % -----------------------------------------------
 \section{Integrazione con la Quantum Error Correction Strutturale}
 \label{sec:qec_integrazione}
@@ -58,8 +62,12 @@ In questo scenario, il classificatore non dovrebbe più correggere per il rumore
 
 I quattro use case di questa tesi utilizzano numeri $N$ di piccola dimensione. Questa scelta è dettata dai limiti computazionali del simulatore: la simulazione statevector di un circuito di Shor richiede una memoria proporzionale a $2^{n_{\text{tot}}}$, dove $n_{\text{tot}} = n_{\text{count}} + \lceil \log_2 N \rceil$ è il numero totale di qubit. Per $N = 15$ con $n_{\text{count}} = 8$, si hanno 12 qubit e $2^{12} = 4096$ ampiezze complesse --- perfettamente gestibile. Per $N = 2048$ bit (rilevante crittograficamente), servirebbero $\sim 4000$ qubit logici, del tutto fuori dalla portata sia dei simulatori che dell'hardware attuale.
 
-La direzione di sviluppo più realistica a breve termine è lavorare su istanze di dimensione intermedia: $N$ a 20--30 bit, corrispondenti a circuiti con 40--60 qubit, al limite superiore di ciò che i simulatori GPU possono gestire in tempi accettabili. Su questi circuiti, il Metodo 1 richiede un numero di iterazioni ancora maggiore (la distribuzione ha più picchi sovrapposti e il rumore è più devastante per la maggiore profondità del circuito), rendendo il Metodo 2 potenzialmente ancora più vantaggioso.
+Il principale collo di bottiglia identificato dagli esperimenti non è il numero di qubit ma la \textbf{profondità del circuito}: la decomposizione tramite \texttt{UnitaryGate} genera 10\,040 porte CX per $N=21$ e 13\,064 per $N=35$, rendendo $P_{\text{surv}} \approx 10^{-44}$ e $10^{-57}$ rispettivamente --- valori per cui entrambi i metodi di analisi falliscono sistematicamente. Questo limite non è fondamentale: è un artefatto della decomposizione scelta.
 
-Un'ulteriore direzione è l'integrazione con simulatori MPS (\textit{Matrix Product States}), disponibili in Qiskit Aer, che permettono di simulare circuiti con molti qubit ma scarso entanglement in modo efficiente. Poiché i circuiti di Shor hanno struttura modulare con entanglement prevalentemente localizzato, la simulazione MPS potrebbe estendere la portata sperimentale a istanze significativamente più grandi di quelle accessibili con la simulazione statevector completa.
+La soluzione disponibile in letteratura è l'implementazione di Beauregard~\cite{beauregard2002}, che riduce il circuito di moltiplicazione modulare a $O(n^3)$ porte elementari usando registri ausiliari e l'addizionatore di Draper. Per $N=21$ ($n=5$ qubit), questo produrrebbe $O(125)$ porte invece di $10\,040$: una riduzione di due ordini di grandezza che renderebbe fattibile la simulazione anche sotto rumore NISQ-realistico. L'adozione di questa decomposizione consentirebbe di estendere il confronto M1 vs M2 a UC3 e UC4, e di verificare se il vantaggio $\rho \approx 6$ osservato per UC1 scala con la dimensione del problema.
+
+La direzione di sviluppo più realistica a breve termine è quindi: (i) integrare la decomposizione Beauregard in \texttt{shor\_core.py} per $N=21$ e $N=35$; (ii) rigenerare il dataset di addestramento per UC3 e UC4 con il nuovo circuito efficiente; (iii) rieseguire il confronto M1 vs M2 per questi use case.
+
+Un'ulteriore direzione complementare è l'integrazione con simulatori MPS (\textit{Matrix Product States}), disponibili in Qiskit Aer, che permettono di simulare circuiti con molti qubit ma scarso entanglement in modo efficiente. Poiché i circuiti di Shor hanno struttura modulare con entanglement prevalentemente localizzato tra i due registri, la simulazione MPS potrebbe estendere la portata sperimentale a istanze con $N$ a 20--30 bit senza richiedere la simulazione statevector completa.
 
 \end{onehalfspace}

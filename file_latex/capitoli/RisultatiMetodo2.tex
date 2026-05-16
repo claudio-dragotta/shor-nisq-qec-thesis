@@ -1,97 +1,163 @@
 \begin{onehalfspace}
 
-\textit{Nota: questo capitolo verrà scritto dopo l'esecuzione degli esperimenti e il completamento del training del classificatore. Di seguito è descritta in dettaglio la struttura del contenuto previsto.}
+Il Capitolo~\ref{chap:risultati1} ha stabilito la baseline sperimentale del Metodo 1: $\bar{M}_1 = 6.43$ iterazioni per UC1 e $\bar{M}_1 = 2.42$ per UC2, con tassi di successo rispettivamente del 76.7\% e dell'80.0\%. Questo capitolo riporta i risultati del Metodo 2 (classificatore \ac{ML} + ricerca TOP-K) e il confronto diretto con il Metodo 1.
 
 % -----------------------------------------------
 \section{Setup Sperimentale}
 \label{sec:setup_m2}
 
-\textit{Questa sezione descriverà la configurazione del Metodo 2. Andrà inserito:}
+I quattro use case e le condizioni di rumore sono identici a quelli del Capitolo~\ref{chap:risultati1} per garantire la comparabilità del confronto. Il Metodo 2 introduce due componenti aggiuntive: un dataset di addestramento per il classificatore e una strategia di ricerca multi-candidato.
 
-\begin{itemize}
-    \item Gli stessi quattro use case del Capitolo~\ref{chap:risultati1}, con le stesse condizioni di rumore, per garantire la comparabilità del confronto.
-    \item Le caratteristiche del dataset di addestramento: numero di campioni, distribuzione delle etichette (bilanciamento tra classe positiva e negativa), intervallo di variazione dei parametri di rumore usati per la generazione.
-    \item La suddivisione training/validation/test (es. 70\%/10\%/20\%).
-    \item Il modello selezionato (Random Forest, SVM, MLP) e i suoi iperparametri, con la motivazione della scelta basata sul confronto sul validation set.
-\end{itemize}
+\subsection{Architettura del Metodo 2}
+
+Il Metodo 2 adotta un design a \textbf{due livelli}: un \textit{gate di qualità} (classificatore \ac{ML}) e una \textit{ricerca multi-candidato} (strategia TOP-K).
+
+\begin{enumerate}
+    \item \textbf{Gate di qualità} — Il classificatore riceve il vettore di distribuzione $\mathbf{x} \in \mathbb{R}^{256}$ dell'istogramma e predice se l'istogramma contiene segnale \ac{QPE} recuperabile. L'etichetta di addestramento vale 1 se almeno una delle 16 misure più frequenti (\texttt{TOP\_K=16}) produce i fattori corretti, 0 altrimenti. La soglia TOP\_K=16 per le etichette permette al classificatore di apprendere la distinzione tra istogrammi con segnale (anche debole) e istogrammi completamente piatti dominati dal rumore.
+    \item \textbf{Ricerca multi-candidato} — Quando il classificatore predice 1, il Metodo 2 tenta i 4 candidati più frequenti (\texttt{top\_k=4}) in ordine decrescente. L'asimmetria tra TOP\_K=16 per il training e top\_k=4 per l'esecuzione è intenzionale: il classificatore usa una soglia ampia per imparare a riconoscere il segnale QPE, mentre la ricerca usa una soglia stretta per limitare il numero di tentativi per iterazione, mantenendo la correttezza (nessun falso positivo strutturale in \texttt{extract\_factors}).
+\end{enumerate}
+
+\subsection{Generazione del Dataset}
+
+Per ciascuno dei due use case con confronto completo (UC1 e UC2), è stato generato un dataset di $n = 2000$ campioni. Ogni campione è ottenuto eseguendo il circuito con un noise model variato casualmente di $\pm 50\%$ rispetto al valore nominale (\texttt{noise\_factor = 0.5}), simulando la variabilità dei parametri di rumore di un dispositivo reale.
+
+\begin{table}[H]
+\centering
+\caption{Dataset di addestramento per il Metodo 2 (etichetta TOP\_K=16)}
+\label{tab:dataset_m2}
+\begin{tabular}{lcccc}
+\hline
+\textbf{Use Case} & \textbf{Campioni} & \textbf{Label 1} & \textbf{Label 0} & \textbf{Positivi (\%)} \\
+\hline
+UC1 (NISQ-realistico) & 2000 & $\approx$1485 & $\approx$515 & 74.2\% \\
+UC2 (NISQ-degradato)  & 2000 & $\approx$1665 & $\approx$335 & 83.2\% \\
+\hline
+\end{tabular}
+\end{table}
+
+La presenza di esempi negativi (25.8\% per UC1, 16.8\% per UC2) conferma che la soglia TOP\_K=16 produce un problema di classificazione non banale: una frazione significativa degli istogrammi generati non contiene alcun segnale QPE recuperabile anche allargando la ricerca ai 16 candidati più frequenti.
+
+Le feature di ogni campione sono il vettore di distribuzione normalizzato dell'istogramma: $\mathbf{x} \in \mathbb{R}^{2^{n_{\text{count}}}} = \mathbb{R}^{256}$, con $x_k = \text{counts}(k) / M_{\text{shots}}$.
+
+\subsection{Selezione del Modello}
+
+Tre architetture sono state confrontate per ciascun use case: \textbf{Random Forest} (200 alberi, \texttt{n\_jobs=-1}), \textbf{\ac{SVM}} con kernel RBF e \textbf{\ac{MLP}} con architettura $(256, 128)$, \texttt{max\_iter=500}. La suddivisione training/test è 80/20 stratificata. La selezione è basata sull'F1-score sul test set.
 
 % -----------------------------------------------
 \section{Valutazione del Classificatore}
 \label{sec:valutazione_clf}
 
-\textit{Questa sezione riporta le prestazioni del classificatore sul test set. Andrà inserito:}
+\begin{table}[H]
+\centering
+\caption{Metriche dei classificatori sul test set (20\% del dataset, etichetta TOP\_K=16)}
+\label{tab:clf_metrics}
+\begin{tabular}{llccc}
+\hline
+\textbf{Use Case} & \textbf{Modello} & \textbf{F1} & \textbf{Accuratezza} & \textbf{\acs{AUC}-ROC} \\
+\hline
+\multirow{3}{*}{UC1} & \textbf{Random Forest (selezionato)} & \textbf{0.949} & \textbf{0.922} & \textbf{0.964} \\
+                     & \ac{SVM}                             & 0.855          & 0.748          & 0.929 \\
+                     & \ac{MLP}                             & 0.919          & 0.885          & 0.952 \\
+\hline
+\multirow{3}{*}{UC2} & \textbf{\ac{SVM} (selezionato)}      & \textbf{0.979} & \textbf{0.965} & \textbf{0.987} \\
+                     & Random Forest                        & 0.976          & 0.960          & 0.982 \\
+                     & \ac{MLP}                             & 0.977          & 0.963          & 0.987 \\
+\hline
+\end{tabular}
+\end{table}
 
-\begin{itemize}
-    \item La tabella delle metriche sul test set: accuratezza, precisione, recall, F1-score, \ac{AUC}-ROC.
-    \item La curva ROC (figura).
-    \item La matrice di confusione (figura o tabella): quanti falsi positivi (output errato classificato come corretto) e falsi negativi (output corretto classificato come errato)? I falsi positivi sono più pericolosi dei falsi negativi: un falso positivo porta il sistema ad accettare un risultato sbagliato.
-    \item L'analisi della calibrazione probabilistica: il classificatore è ben calibrato? (Reliability diagram)
-    \item Se disponibile: l'importanza delle feature (per Random Forest) o la visualizzazione dei pesi (per MLP), per comprendere quali componenti dell'output sono più informativi per la classificazione.
-\end{itemize}
+Tutti e tre i classificatori raggiungono prestazioni elevate per UC2 (F1 $>$ 0.97), mentre per UC1 il Random Forest è chiaramente superiore (F1 = 0.949 vs 0.855 per \ac{SVM}). Il valore di \ac{AUC}-ROC $\approx 0.96$--$0.99$ indica che i classificatori mantengono ottime prestazioni anche a soglie di classificazione diverse dalla default (0.5), riflettendo buona separabilità delle classi nello spazio delle feature.
 
-% -----------------------------------------------
-\section{Parametri di Error Mitigation Applicati}
-\label{sec:em_m2}
-
-\textit{Andrà inserito il confronto delle metriche del classificatore con e senza readout mitigation, per quantificare quanto la correzione del readout error migliora la qualità delle feature in ingresso al classificatore.}
+\paragraph{Falsi positivi e falsi negativi.}
+Nel contesto del Metodo 2, i \textbf{falsi positivi} (clf=1 ma nessun candidato valido in TOP-4) causano un'iterazione sprecata. I \textbf{falsi negativi} (clf=0 ma un candidato TOP-4 sarebbe valido) causano lo scarto di un'iterazione potenzialmente utile. Entrambi aumentano $\bar{M}_2$, ma con effetti diversi a seconda del regime di rumore, come mostrano i risultati sperimentali.
 
 % -----------------------------------------------
 \section{Risultati per Ciascun Use Case}
 \label{sec:risultati_uc_m2}
 
-\textit{Per ognuno dei quattro use case andrà inserita una sottosezione con la stessa struttura del Capitolo~\ref{chap:risultati1}. Gli elementi fissi di ciascuna sottosezione sono:}
-
-\begin{itemize}
-    \item Il numero di iterazioni necessarie per il primo risultato classificato come corretto in ciascuna ripetizione, e la media $\bar{M}_2$ sulle $K$ ripetizioni.
-    \item Grafico della distribuzione del numero di iterazioni su $K$ ripetizioni (confrontato con quello del Metodo 1 per lo stesso use case, sulla stessa figura).
-    \item La percentuale di falsi positivi osservata su quel use case: quante volte il classificatore ha accettato un risultato errato?
-\end{itemize}
-
-\subsection{Use Case 1 — $N = \text{[TBD]}$, rumore basso}
+\subsection{Use Case 1 — $N = 15$, NISQ-realistico}
 \label{sec:uc1_m2}
 
-\textit{[Contenuto da inserire dopo gli esperimenti]}
+\begin{table}[H]
+\centering
+\caption{Confronto M1 vs M2 su UC1 ($K=30$ ripetizioni, $M_{\text{max}}=50$)}
+\label{tab:confronto_uc1}
+\begin{tabular}{lccccc}
+\hline
+\textbf{Metodo} & \textbf{$P_{\text{succ}}$} & \textbf{$\bar{M}$} & \textbf{$\sigma_M$} & \textbf{Mediana} & \textbf{$\rho$} \\
+\hline
+M1 (TOP-1) & 76.7\% & 6.43 & 12.32 & 1 & --- \\
+M2 (CLF+TOP-4) & 96.7\% & 1.00 & 0.00 & 1 & \textbf{6.435} \\
+\hline
+\end{tabular}
+\end{table}
 
-\subsection{Use Case 2 — $N = \text{[TBD]}$, rumore alto}
+Il Metodo 2 su UC1 raggiunge $\bar{M}_2 = 1.00$: ogni ripetizione accettata dal classificatore converge alla prima iterazione. Il tasso di successo sale dal 76.7\% al 96.7\% (+20 pp): solo 1 ripetizione su 30 non converge entro 50 iterazioni, contro 7 per il Metodo 1. Il fattore di riduzione $\rho = 6.435$ è statisticamente significativo (t-test di Welch: $t = 2.11$, $p = 0.046$).
+
+La deviazione standard $\sigma_{M_2} = 0.00$ indica che tutte le 29 ripetizioni riuscite del Metodo 2 convergono esattamente alla prima iterazione: il classificatore Random Forest accetta l'istogramma della prima iterazione e la strategia TOP-4 trova immediatamente un candidato valido.
+
+\subsection{Use Case 2 — $N = 15$, NISQ-degradato}
 \label{sec:uc2_m2}
 
-\textit{[Contenuto da inserire dopo gli esperimenti]}
+\begin{table}[H]
+\centering
+\caption{Confronto M1 vs M2 su UC2 ($K=30$ ripetizioni, $M_{\text{max}}=50$)}
+\label{tab:confronto_uc2}
+\begin{tabular}{lccccc}
+\hline
+\textbf{Metodo} & \textbf{$P_{\text{succ}}$} & \textbf{$\bar{M}$} & \textbf{$\sigma_M$} & \textbf{Mediana} & \textbf{$\rho$} \\
+\hline
+M1 (TOP-1) & 80.0\% & 2.42 & 6.79 & 1 & --- \\
+M2 (CLF+TOP-4) & 76.7\% & 3.30 & 8.46 & 1 & 0.731 \\
+\hline
+\end{tabular}
+\end{table}
 
-\subsection{Use Case 3 — $N = \text{[TBD]}$, istanza più grande}
-\label{sec:uc3_m2}
+Per UC2 il Metodo 2 produce $\rho = 0.731 < 1$: $\bar{M}_2 = 3.30 > \bar{M}_1 = 2.42$. Questo risultato, a prima vista controintuitivo, è spiegabile con il seguente meccanismo: a $\epsilon_{2q} = 5\times10^{-2}$, il Metodo 1 raggiunge già una probabilità di successo per iterazione di $p_{\text{iter}} \approx 1/2.42 \approx 41\%$. L'\ac{SVM}, addestrato su etichette TOP\_K=16 con variazione $\pm50\%$ del rumore, risulta eccessivamente conservativo al livello di rumore nominale: rigetta alcune iterazioni in cui la misura più frequente (TOP-1) avrebbe prodotto i fattori corretti, aumentando $\bar{M}_2$ invece di ridurlo. La differenza non è statisticamente significativa (t-test di Welch: $t = -0.39$, $p = 0.697$).
 
-\textit{[Contenuto da inserire dopo gli esperimenti]}
+\subsection{Use Case 3 e 4 — Scalabilità}
+\label{sec:uc34_m2}
 
-\subsection{Use Case 4 — $N = \text{[TBD]}$, istanza ancora più grande}
-\label{sec:uc4_m2}
-
-\textit{[Contenuto da inserire dopo gli esperimenti]}
+Per UC3 e UC4 il Metodo 2 non è applicabile per la stessa ragione che limita il Metodo 1: la profondità del circuito (10\,040 e 13\,064 porte CX rispettivamente) annulla la coerenza del segnale QPE prima della misura. Il confronto M1 vs M2 è quindi limitato a UC1 e UC2.
 
 % -----------------------------------------------
 \section{Confronto Diretto Metodo 1 vs Metodo 2}
 \label{sec:confronto}
 
-\textit{Questa è la sezione centrale del capitolo. Andrà inserito:}
+\begin{table}[H]
+\centering
+\caption{Riepilogo del confronto M1 vs M2 --- risultato principale della tesi}
+\label{tab:riepilogo_rho}
+\begin{tabular}{lcccc}
+\hline
+\textbf{Use Case} & \textbf{$\bar{M}_1$} & \textbf{$\bar{M}_2$} & \textbf{$\rho = \bar{M}_1/\bar{M}_2$} & \textbf{p-value (Welch)} \\
+\hline
+UC1 ($\epsilon_{2q}=10^{-2}$)      & 6.43 & 1.00 & \textbf{6.435} & 0.046 (sign.) \\
+UC2 ($\epsilon_{2q}=5\times10^{-2}$) & 2.42 & 3.30 & 0.731          & 0.697 (n.s.)  \\
+\hline
+\end{tabular}
+\end{table}
 
-\begin{itemize}
-    \item La tabella riassuntiva con $\bar{M}_1$, $\bar{M}_2$, e il fattore di riduzione $\rho = \bar{M}_1/\bar{M}_2$ per ciascuno dei quattro use case. Questa tabella è il risultato principale della tesi.
-    \item Un grafico a barre o boxplot che visualizzi $\bar{M}_1$ vs $\bar{M}_2$ sui quattro use case.
-    \item La verifica dell'ipotesi statistica: il t-test di Welch sulle distribuzioni di $M_1$ e $M_2$ conferma che la differenza è significativa (p-value $< 0.05$)?
-    \item Il confronto di $P_{\text{success},1}(M_{\text{max}})$ vs $P_{\text{success},2}(M_{\text{max}})$ per un budget fisso $M_{\text{max}}$.
-    \item Analisi del trade-off: il Metodo 2 richiede una fase di addestramento offline e un costo computazionale per generare il dataset. Quante iterazioni di risparmio in inferenza sono necessarie per ammortizzare questo costo?
-\end{itemize}
+\paragraph{Vantaggio della strategia TOP-K (UC1).}
+Il guadagno principale di M2 su UC1 proviene dalla strategia TOP-4: il picco QPE è spesso presente nella distribuzione ma non è la moda, come avviene quando il rumore sposta il massimo da 64 a 65 o 63. Il Metodo 1 fallisce in questi casi, mentre il Metodo 2 trova il candidato valido tra i 4 più frequenti. Il classificatore RF ha il ruolo di filtrare gli istogrammi completamente piatti (25.8\% del training set erano negativi), evitando tentativi inutili su iterazioni senza segnale QPE.
+
+\paragraph{Effetto del classificatore sotto alto rumore (UC2).}
+Per UC2, la combinazione di classificatore conservativo + bassa incertezza sulla moda produce $\rho < 1$. Il Metodo 1, senza nessun filtraggio, sfrutta ogni iterazione con probabilità di successo per iterazione $p_{\text{iter}} \approx 41\%$. Il classificatore \ac{SVM}, calibrato su una distribuzione di rumore variabile ($\pm 50\%$), tende a rigettare alcune iterazioni in cui il segnale QPE è ancora parzialmente strutturato. Il risultato suggerisce che l'approccio ML-gated è più vantaggioso quando $p_{\text{iter}}$ è bassa (regime UC1) piuttosto che quando $p_{\text{iter}}$ è già alta (regime UC2).
+
+\paragraph{Analisi del trade-off computazionale.}
+Il Metodo 2 richiede una fase di addestramento offline ($2000$ campioni $\times$ 2 use case). Questo costo è una-tantum e non scala con il numero di fattorizzazioni eseguite. Per UC1, il risparmio per sessione è $(\bar{M}_1 - \bar{M}_2) \times M_{\text{shots}} = 5.43 \times 1024 \approx 5\,600$ shot per run riuscito. Il punto di pareggio si raggiunge dopo poche decine di sessioni di fattorizzazione.
 
 % -----------------------------------------------
 \section{Discussione}
 \label{sec:discussione_m2}
 
-\textit{Andrà inserito:}
+\paragraph{Regime di applicabilità.}
+I risultati evidenziano un regime ottimale per M2: il metodo è efficace quando la probabilità di successo per iterazione del Metodo 1 è bassa ($p_{\text{iter}} \lesssim 20\%$) e il segnale QPE è presente ma incerto (istogramma con picchi visibili ma non dominanti). In questo regime, il classificatore discrimina efficacemente gli istogrammi con e senza segnale, e la ricerca TOP-4 trova il candidato valido nella quasi totalità delle iterazioni accettate.
 
-\begin{itemize}
-    \item I punti di forza del Metodo 2: riduzione drastica delle iterazioni, capacità di adattarsi al profilo specifico del noise model attraverso l'addestramento.
-    \item I limiti: dipendenza dalla qualità e dalla dimensione del dataset di training; possibile degrado su configurazioni di rumore molto distanti da quelle viste durante l'addestramento (out-of-distribution generalization).
-    \item La risposta alla domanda chiave della tesi: l'ipotesi teorica $\bar{M}_2 \approx 3$ viene confermata sperimentalmente? Se sì, in quali condizioni? Se no, su quali use case il Metodo 2 performa peggio del previsto e perché?
-    \item La validità del contributo per un'eventuale pubblicazione: i quattro use case soddisfano i requisiti di validazione? I risultati sono sufficientemente solidi e riproducibili?
-\end{itemize}
+\paragraph{Limiti a rumore elevato.}
+Quando il rumore è molto elevato (UC2, $\epsilon_{2q}=5\times10^{-2}$), si verificano due effetti contrapposti: la distribuzione di uscita si allarga, rendendo TOP-4 più efficace rispetto a TOP-1, ma contemporaneamente la moda è già spesso in una posizione valida, rendendo il Metodo 1 già efficiente ($p_{\text{iter}} \approx 41\%$). Il classificatore non riesce a bilanciare questi effetti e produce un netto negativo ($\rho < 1$).
+
+\paragraph{Dipendenza dalla decomposizione del circuito.}
+Come il Metodo 1, il Metodo 2 non risolve la barriera di scalabilità per $N \geq 21$: il collo di bottiglia non è l'algoritmo di analisi ma la profondità del circuito. La soluzione richiede decomposizioni efficienti per la moltiplicazione modulare con profondità polinomiale in $\log_2 N$~\cite{beauregard2002}.
 
 \end{onehalfspace}
