@@ -92,7 +92,7 @@ M2 (CLF+TOP-4) & 96.7\% & 1.00 & 0.00 & 1 & \textbf{6.435} \\
 \end{tabular}
 \end{table}
 
-Il Metodo 2 su UC1 raggiunge $\bar{M}_2 = 1.00$: ogni ripetizione accettata dal classificatore converge alla prima iterazione. Il tasso di successo sale dal 76.7\% al 96.7\% (+20 pp): solo 1 ripetizione su 30 non converge entro 50 iterazioni, contro 7 per il Metodo 1. Il fattore di riduzione $\rho = 6.435$ è statisticamente significativo (t-test di Welch: $t = 2.11$, $p = 0.046$).
+Il Metodo 2 su UC1 raggiunge $\bar{M}_2 = 1.00$: ogni ripetizione accettata dal classificatore converge alla prima iterazione. Il tasso di successo sale dal 76.7\% al 96.7\% (+20 pp): solo 1 ripetizione su 30 non converge entro 50 iterazioni, contro 7 per il Metodo 1. Il fattore di riduzione $\rho = 6.435$ è statisticamente significativo (Mann-Whitney U: $U = 627$, $p = 0.0002$).
 
 La deviazione standard $\sigma_{M_2} = 0.00$ indica che tutte le 29 ripetizioni riuscite del Metodo 2 convergono esattamente alla prima iterazione: il classificatore Random Forest accetta l'istogramma della prima iterazione e la strategia TOP-4 trova immediatamente un candidato valido.
 
@@ -113,7 +113,7 @@ M2 (CLF+TOP-4) & 76.7\% & 3.30 & 8.46 & 1 & 0.731 \\
 \end{tabular}
 \end{table}
 
-Per UC2 il Metodo 2 produce $\rho = 0.731 < 1$: $\bar{M}_2 = 3.30 > \bar{M}_1 = 2.42$. Questo risultato, a prima vista controintuitivo, è spiegabile con il seguente meccanismo: a $\epsilon_{2q} = 5\times10^{-2}$, il Metodo 1 raggiunge già una probabilità di successo per iterazione di $p_{\text{iter}} \approx 1/2.42 \approx 41\%$. L'\ac{SVM}, addestrato su etichette TOP\_K=16 con variazione $\pm50\%$ del rumore, risulta eccessivamente conservativo al livello di rumore nominale: rigetta alcune iterazioni in cui la misura più frequente (TOP-1) avrebbe prodotto i fattori corretti, aumentando $\bar{M}_2$ invece di ridurlo. La differenza non è statisticamente significativa (t-test di Welch: $t = -0.39$, $p = 0.697$).
+Per UC2 il Metodo 2 produce $\rho = 0.731 < 1$: $\bar{M}_2 = 3.30 > \bar{M}_1 = 2.42$. Questo risultato, a prima vista controintuitivo, è spiegabile con il seguente meccanismo: a $\epsilon_{2q} = 5\times10^{-2}$, il Metodo 1 raggiunge già una probabilità di successo per iterazione di $p_{\text{iter}} \approx 1/2.42 \approx 41\%$. L'\ac{SVM}, addestrato su etichette TOP\_K=16 con variazione $\pm50\%$ del rumore, risulta eccessivamente conservativo al livello di rumore nominale: rigetta alcune iterazioni in cui la misura più frequente (TOP-1) avrebbe prodotto i fattori corretti, aumentando $\bar{M}_2$ invece di ridurlo. La differenza non è statisticamente significativa (Mann-Whitney U: $U = 422$, $p = 0.704$).
 
 \subsection{Use Case 3 e 4 — Scalabilità}
 \label{sec:uc34_m2}
@@ -130,10 +130,10 @@ Per UC3 e UC4 il Metodo 2 non è applicabile per la stessa ragione che limita il
 \label{tab:riepilogo_rho}
 \begin{tabular}{lcccc}
 \hline
-\textbf{Use Case} & \textbf{$\bar{M}_1$} & \textbf{$\bar{M}_2$} & \textbf{$\rho = \bar{M}_1/\bar{M}_2$} & \textbf{p-value (Welch)} \\
+\textbf{Use Case} & \textbf{$\bar{M}_1$} & \textbf{$\bar{M}_2$} & \textbf{$\rho = \bar{M}_1/\bar{M}_2$} & \textbf{p-value (Mann-Whitney)} \\
 \hline
-UC1 ($\epsilon_{2q}=10^{-2}$)      & 6.43 & 1.00 & \textbf{6.435} & 0.046 (sign.) \\
-UC2 ($\epsilon_{2q}=5\times10^{-2}$) & 2.42 & 3.30 & 0.731          & 0.697 (n.s.)  \\
+UC1 ($\epsilon_{2q}=10^{-2}$)      & 6.43 & 1.00 & \textbf{6.435} & 0.0002 (sign.) \\
+UC2 ($\epsilon_{2q}=5\times10^{-2}$) & 2.42 & 3.30 & 0.731          & 0.704 (n.s.)   \\
 \hline
 \end{tabular}
 \end{table}
