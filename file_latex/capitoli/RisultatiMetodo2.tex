@@ -93,15 +93,14 @@ Nel contesto del Metodo 2, i \textbf{falsi positivi} (clf=1 ma nessun candidato 
 \hline
 \textbf{Metodo} & \textbf{$P_{\text{succ}}$} & \textbf{$\bar{M}$} & \textbf{$\sigma_M$} & \textbf{Mediana} & \textbf{$\rho$} \\
 \hline
-M1 (TOP-1) & 76.7\% & 6.43 & 12.32 & 1 & --- \\
-M2 (CLF+TOP-4) & 96.7\% & 1.00 & 0.00 & 1 & \textbf{6.435} \\
+M1 (TOP-1)                  & 76.7\% & 6.43 & 12.32 & 1 & --- \\
+$M_{\text{TOP4}}$ (no clf)  & 100\%  & 1.00 & 0.00  & 1 & \textbf{6.435} \\
+M2 (CLF+TOP-4)              & 96.7\% & 1.00 & 0.00  & 1 & \textbf{6.435} \\
 \hline
 \end{tabular}
 \end{table}
 
-Il Metodo 2 su UC1 raggiunge $\bar{M}_2 = 1.00$: ogni ripetizione accettata dal classificatore converge alla prima iterazione. Il tasso di successo sale dal 76.7\% al 96.7\% (+20 pp): solo 1 ripetizione su 30 non converge entro 50 iterazioni, contro 7 per il Metodo 1. Il fattore di riduzione $\rho = 6.435$ è statisticamente significativo (Mann-Whitney U: $U = 627$, $p = 0.0002$).
-
-La deviazione standard $\sigma_{M_2} = 0.00$ indica che tutte le 29 ripetizioni riuscite del Metodo 2 convergono esattamente alla prima iterazione: il classificatore Random Forest accetta l'istogramma della prima iterazione e la strategia TOP-4 trova immediatamente un candidato valido.
+Il Metodo 2 su UC1 raggiunge $\bar{M}_2 = 1{,}00$, con fattore di riduzione $\rho = 6{,}435$ statisticamente significativo (Mann-Whitney $U = 627$, $p = 0.0002$). L'analisi di ablazione rivela che la variante $M_{\text{TOP4}}$ --- strategia TOP-4 \emph{senza} classificatore --- ottiene lo stesso risultato con tasso di successo del 100\%. Il confronto $M_{\text{TOP4}}$ vs M2 non è significativo ($U = 435$, $p = 0.849$): il guadagno $\rho = 6{,}435$ è interamente attribuibile alla strategia di ricerca multi-candidato, non al classificatore Random Forest.
 
 \subsection{Use Case 2 — $N = 15$, NISQ-degradato}
 \label{sec:uc2_m2}
@@ -114,13 +113,14 @@ La deviazione standard $\sigma_{M_2} = 0.00$ indica che tutte le 29 ripetizioni 
 \hline
 \textbf{Metodo} & \textbf{$P_{\text{succ}}$} & \textbf{$\bar{M}$} & \textbf{$\sigma_M$} & \textbf{Mediana} & \textbf{$\rho$} \\
 \hline
-M1 (TOP-1) & 80.0\% & 2.42 & 6.79 & 1 & --- \\
-M2 (CLF+TOP-4) & 76.7\% & 3.30 & 8.46 & 1 & 0.731 \\
+M1 (TOP-1)                  & 80.0\% & 2.42 & 6.79 & 1 & --- \\
+$M_{\text{TOP4}}$ (no clf)  & 100\%  & 1.00 & 0.00 & 1 & \textbf{2.417} \\
+M2 (CLF+TOP-4)              & 76.7\% & 3.30 & 8.46 & 1 & 0.731 \\
 \hline
 \end{tabular}
 \end{table}
 
-Per UC2 il Metodo 2 produce $\rho = 0.731 < 1$: $\bar{M}_2 = 3.30 > \bar{M}_1 = 2.42$. Questo risultato, a prima vista controintuitivo, è spiegabile con il seguente meccanismo: a $\epsilon_{2q} = 5\times10^{-2}$, il Metodo 1 raggiunge già una probabilità di successo per iterazione di $p_{\text{iter}} \approx 1/2.42 \approx 41\%$. L'\ac{SVM}, addestrato su etichette TOP\_K=16 con variazione $\pm50\%$ del rumore, risulta eccessivamente conservativo al livello di rumore nominale: rigetta alcune iterazioni in cui la misura più frequente (TOP-1) avrebbe prodotto i fattori corretti, aumentando $\bar{M}_2$ invece di ridurlo. La differenza non è statisticamente significativa (Mann-Whitney U: $U = 422$, $p = 0.704$).
+Per UC2 il Metodo 2 produce $\rho = 0{,}731 < 1$ ($\bar{M}_2 = 3{,}30$), non significativo ($U = 422$, $p = 0.704$). L'analisi di ablazione chiarisce il quadro: $M_{\text{TOP4}}$ raggiunge $\bar{M}_{\text{TOP4}} = 1{,}00$ con successo al 100\% e $\rho = 2{,}417$ significativo ($U = 555$, $p = 0.003$). Il classificatore \ac{SVM} degrada quindi le prestazioni della ricerca multi-candidato: addestrato con variazione $\pm50\%$ del rumore, risulta eccessivamente conservativo al rumore nominale di UC2 e rigetta iterazioni in cui la struttura QPE è ancora parzialmente preservata. Il confronto diretto $M_{\text{TOP4}}$ vs M2 è significativo a favore di $M_{\text{TOP4}}$ ($p < 0.001$).
 
 \subsection{Use Case 3 e 4 — Scalabilità}
 \label{sec:uc34_m2}
@@ -133,23 +133,31 @@ Per UC3 e UC4 il Metodo 2 non è applicabile per la stessa ragione che limita il
 
 \begin{table}[H]
 \centering
-\caption{Riepilogo del confronto M1 vs M2 --- risultato principale della tesi}
+\caption{Riepilogo comparativo M1, $M_{\text{TOP4}}$ e M2 --- risultato principale con analisi di ablazione}
 \label{tab:riepilogo_rho}
-\begin{tabular}{lcccc}
+\begin{tabular}{llcccc}
 \hline
-\textbf{Use Case} & \textbf{$\bar{M}_1$} & \textbf{$\bar{M}_2$} & \textbf{$\rho = \bar{M}_1/\bar{M}_2$} & \textbf{p-value (Mann-Whitney)} \\
+\textbf{UC} & \textbf{Variante} & \textbf{$P_{\text{succ}}$} & \textbf{$\bar{M}$} & \textbf{$\rho$ vs M1} & \textbf{p-value (vs M1)} \\
 \hline
-UC1 ($\epsilon_{2q}=10^{-2}$)      & 6.43 & 1.00 & \textbf{6.435} & 0.0002 (sign.) \\
-UC2 ($\epsilon_{2q}=5\times10^{-2}$) & 2.42 & 3.30 & 0.731          & 0.704 (n.s.)   \\
+\multirow{3}{*}{UC1} & M1 (TOP-1)                 & 76.7\% & 6.43 & ---            & --- \\
+                     & $M_{\text{TOP4}}$ (no clf) & 100\%  & 1.00 & \textbf{6.435} & ${<}0.001$ (sign.) \\
+                     & M2 (CLF+TOP-4)             & 96.7\% & 1.00 & \textbf{6.435} & $0.0002$ (sign.) \\
+\hline
+\multirow{3}{*}{UC2} & M1 (TOP-1)                 & 80.0\% & 2.42 & ---            & --- \\
+                     & $M_{\text{TOP4}}$ (no clf) & 100\%  & 1.00 & \textbf{2.417} & $0.003$ (sign.) \\
+                     & M2 (CLF+TOP-4)             & 76.7\% & 3.30 & 0.731          & $0.704$ (n.s.) \\
 \hline
 \end{tabular}
+
+\smallskip
+{\footnotesize Ablazione $M_{\text{TOP4}}$ vs M2 (Mann-Whitney): UC1 $p = 0.849$ (n.s.); UC2 $p < 0.001$ (M2 peggiore di $M_{\text{TOP4}}$).}
 \end{table}
 
-\paragraph{Vantaggio della strategia TOP-K (UC1).}
-Il guadagno principale di M2 su UC1 proviene dalla strategia TOP-4: il picco QPE è spesso presente nella distribuzione ma non è la moda, come avviene quando il rumore sposta il massimo da 64 a 65 o 63. Il Metodo 1 fallisce in questi casi, mentre il Metodo 2 trova il candidato valido tra i 4 più frequenti. Il classificatore RF ha il ruolo di filtrare gli istogrammi completamente piatti (25.8\% del training set erano negativi), evitando tentativi inutili su iterazioni senza segnale QPE.
+\paragraph{Analisi di ablazione: il ruolo del classificatore.}
+Il confronto tra M2 e $M_{\text{TOP4}}$ isola il contributo del classificatore ML da quello della ricerca multi-candidato. Per UC1, $M_{\text{TOP4}}$ e M2 sono statisticamente indistinguibili ($p = 0.849$): il guadagno $\rho = 6{,}435$ è attribuibile interamente alla strategia TOP-4. Il picco QPE è quasi sempre tra i 4 candidati più frequenti anche sotto rumore moderato --- il rumore allarga la distribuzione ma non distrugge la struttura del picco --- rendendo superfluo il filtraggio ML. Per UC2, $M_{\text{TOP4}}$ ottiene $\bar{M} = 1{,}00$ con successo al 100\%, mentre M2 si ferma a $\bar{M} = 3{,}30$ (76.7\% di successo): il classificatore \ac{SVM} peggiora attivamente le prestazioni di TOP-4, scartando iterazioni con segnale QPE parziale che la sola ricerca multi-candidato avrebbe risolto.
 
-\paragraph{Effetto del classificatore sotto alto rumore (UC2).}
-Per UC2, la combinazione di classificatore conservativo + bassa incertezza sulla moda produce $\rho < 1$. Il Metodo 1, senza nessun filtraggio, sfrutta ogni iterazione con probabilità di successo per iterazione $p_{\text{iter}} \approx 41\%$. Il classificatore \ac{SVM}, calibrato su una distribuzione di rumore variabile ($\pm 50\%$), tende a rigettare alcune iterazioni in cui il segnale QPE è ancora parzialmente strutturato. Il risultato suggerisce che l'approccio ML-gated è più vantaggioso quando $p_{\text{iter}}$ è bassa (regime UC1) piuttosto che quando $p_{\text{iter}}$ è già alta (regime UC2).
+\paragraph{Regime di applicabilità del classificatore.}
+L'analisi di ablazione definisce con precisione il contributo del filtro ML: nullo per UC1, negativo per UC2. Il limite dell'\ac{SVM} in UC2 risiede nella distribuzione del training set: la variazione simulata del rumore ($\pm50\%$) non cattura sufficientemente la struttura degli istogrammi al rumore nominale di UC2 ($\epsilon_{2q} = 5\times10^{-2}$), producendo un classificatore eccessivamente conservativo. Questi risultati indicano che il componente attivo del miglioramento è la \textbf{strategia di ricerca TOP-4}, non il filtro statistico.
 
 \paragraph{Distribuzione delle iterazioni.}
 La Figura~\ref{fig:iterazioni_m1_m2} visualizza la distribuzione del numero di iterazioni per M1 e M2 su UC1. Il box plot mostra l'asimmetria caratteristica di M1 (coda lunga fino a 46 iterazioni, mediana=1 ma media=6.43) contrapposta alla concentrazione di M2 in $\bar{M}_2=1.00$ (tutte le 29 ripetizioni riuscite convergono alla prima iterazione).
