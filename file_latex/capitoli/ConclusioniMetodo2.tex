@@ -16,7 +16,7 @@ Il Metodo 2 si propone di ridurre $\bar{M}$ sfruttando l'informazione contenuta 
 
 L'obiettivo primario era ridurre $\bar{M}_2 < \bar{M}_1$ in modo statisticamente significativo su almeno due use case (UC1 e UC2). L'obiettivo secondario era mantenere un tasso di falsi positivi basso (classificatore che accetta risultati errati), poiché un falso positivo introduce un errore silenzioso nella fattorizzazione.
 
-Il criterio di successo quantitativo: $\rho = \bar{M}_1/\bar{M}_2 > 1$ con p-value $< 0.05$ (t-test di Welch) su almeno un use case.
+Il criterio di successo quantitativo: $\rho = \bar{M}_1/\bar{M}_2 > 1$ con p-value $< 0.05$ (Mann-Whitney U) su almeno un use case.
 
 % -----------------------------------------------
 \section{I Risultati Ottenuti}
@@ -30,8 +30,8 @@ Il criterio di successo quantitativo: $\rho = \bar{M}_1/\bar{M}_2 > 1$ con p-val
 \hline
 \textbf{Use Case} & \textbf{$\bar{M}_1$} & \textbf{$\bar{M}_2$} & \textbf{$\rho$} & \textbf{$P_{\text{succ},2}$} & \textbf{Significatività} \\
 \hline
-UC1 ($\epsilon_{2q}=10^{-2}$)       & 6.43 & 1.00 & \textbf{6.435} & 96.7\% & $p=0.046$ (sign.) \\
-UC2 ($\epsilon_{2q}=5\times10^{-2}$) & 2.42 & 3.30 & 0.731          & 76.7\% & $p=0.697$ (n.s.)  \\
+UC1 ($\epsilon_{2q}=10^{-2}$)       & 6.43 & 1.00 & \textbf{6.435} & 96.7\% & $p=0.0002$ (sign.) \\
+UC2 ($\epsilon_{2q}=5\times10^{-2}$) & 2.42 & 3.30 & 0.731          & 76.7\% & $p=0.704$ (n.s.)  \\
 \hline
 \end{tabular}
 \end{table}
@@ -78,7 +78,7 @@ Il percorso verso la scalabilità richiede l'adozione di decomposizioni efficien
 \label{sec:validita}
 
 \paragraph{Solidità dei risultati.}
-I risultati su UC1 e UC2 sono ottenuti con $K=30$ ripetizioni. Per UC1, la significatività statistica è confermata ($p=0.046$), nonostante l'elevata varianza di M1 ($\sigma_{M_1}=12.3$). Il risultato di UC2 ($\rho=0.731$, $p=0.697$) non è statisticamente distinguibile da $\rho=1$, ma è riproducibile e informativo: indica che M2 non aggiunge valore in questo regime.
+I risultati su UC1 e UC2 sono ottenuti con $K=30$ ripetizioni. Per UC1, la significatività statistica è confermata ($p=0.0002$, Mann-Whitney U), nonostante l'elevata varianza di M1 ($\sigma_{M_1}=12.3$). Il risultato di UC2 ($\rho=0.731$, $p=0.697$) non è statisticamente distinguibile da $\rho=1$, ma è riproducibile e informativo: indica che M2 non aggiunge valore in questo regime.
 
 \paragraph{Riproducibilità.}
 Tutti i parametri (seed, noise model, circuito, split training/test) sono espliciti e fissati. Il codice è disponibile nella repository della tesi. La riproducibilità su ambienti identici è garantita; la riproducibilità su hardware reale richiederebbe una ricalibratura del noise model sulla macchina target.

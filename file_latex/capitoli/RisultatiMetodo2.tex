@@ -68,6 +68,13 @@ Tre architetture sono state confrontate per ciascun use case: \textbf{Random For
 
 Tutti e tre i classificatori raggiungono prestazioni elevate per UC2 (F1 $>$ 0.97), mentre per UC1 il Random Forest è chiaramente superiore (F1 = 0.949 vs 0.855 per \ac{SVM}). Il valore di \ac{AUC}-ROC $\approx 0.96$--$0.99$ indica che i classificatori mantengono ottime prestazioni anche a soglie di classificazione diverse dalla default (0.5), riflettendo buona separabilità delle classi nello spazio delle feature.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{fig_roc_curve.pdf}
+    \caption{Curve ROC dei classificatori selezionati: Random Forest per UC1 (\acs{AUC}=0.964) e \acs{SVM} per UC2 (\acs{AUC}=0.987). La linea tratteggiata rappresenta il classificatore casuale (\acs{AUC}=0.5).}
+    \label{fig:roc_curve}
+\end{figure}
+
 \paragraph{Falsi positivi e falsi negativi.}
 Nel contesto del Metodo 2, i \textbf{falsi positivi} (clf=1 ma nessun candidato valido in TOP-4) causano un'iterazione sprecata. I \textbf{falsi negativi} (clf=0 ma un candidato TOP-4 sarebbe valido) causano lo scarto di un'iterazione potenzialmente utile. Entrambi aumentano $\bar{M}_2$, ma con effetti diversi a seconda del regime di rumore, come mostrano i risultati sperimentali.
 
@@ -143,6 +150,16 @@ Il guadagno principale di M2 su UC1 proviene dalla strategia TOP-4: il picco QPE
 
 \paragraph{Effetto del classificatore sotto alto rumore (UC2).}
 Per UC2, la combinazione di classificatore conservativo + bassa incertezza sulla moda produce $\rho < 1$. Il Metodo 1, senza nessun filtraggio, sfrutta ogni iterazione con probabilità di successo per iterazione $p_{\text{iter}} \approx 41\%$. Il classificatore \ac{SVM}, calibrato su una distribuzione di rumore variabile ($\pm 50\%$), tende a rigettare alcune iterazioni in cui il segnale QPE è ancora parzialmente strutturato. Il risultato suggerisce che l'approccio ML-gated è più vantaggioso quando $p_{\text{iter}}$ è bassa (regime UC1) piuttosto che quando $p_{\text{iter}}$ è già alta (regime UC2).
+
+\paragraph{Distribuzione delle iterazioni.}
+La Figura~\ref{fig:iterazioni_m1_m2} visualizza la distribuzione del numero di iterazioni per M1 e M2 su UC1. Il box plot mostra l'asimmetria caratteristica di M1 (coda lunga fino a 46 iterazioni, mediana=1 ma media=6.43) contrapposta alla concentrazione di M2 in $\bar{M}_2=1.00$ (tutte le 29 ripetizioni riuscite convergono alla prima iterazione).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{fig_iterazioni_m1_m2.pdf}
+    \caption{Distribuzione del numero di iterazioni per Metodo 1 e Metodo 2 su UC1 ($K=30$ ripetizioni, $M_{\text{max}}=50$). I run non convergenti sono censurati a $M_{\text{max}}=50$.}
+    \label{fig:iterazioni_m1_m2}
+\end{figure}
 
 \paragraph{Analisi del trade-off computazionale.}
 Il Metodo 2 richiede una fase di addestramento offline ($2000$ campioni $\times$ 2 use case). Questo costo è una-tantum e non scala con il numero di fattorizzazioni eseguite. Per UC1, il risparmio per sessione è $(\bar{M}_1 - \bar{M}_2) \times M_{\text{shots}} = 5.43 \times 1024 \approx 5\,600$ shot per run riuscito. Il punto di pareggio si raggiunge dopo poche decine di sessioni di fattorizzazione.
