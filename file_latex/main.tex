@@ -23,6 +23,7 @@
 \usepackage{tikz}
 \usetikzlibrary{quantikz2}  % Circuiti quantistici
 \usepackage{listings}
+\usepackage{microtype}
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{setspace}
@@ -44,9 +45,8 @@
     keywordstyle=\color{blue}\bfseries,
     commentstyle=\color{gray}\itshape,
     stringstyle=\color{orange},
-    numbers=left,
-    numberstyle=\tiny\color{gray},
-    frame=single,
+    showstringspaces=false,
+    frame=none,
     breaklines=true,
     captionpos=b
 }
@@ -105,25 +105,21 @@
 \input{capitoli/Fondamenti}
 
 % -----------------------------------------------
-\addtocontents{lot}{\protect\addvspace{10\p@}}
 \chapter{L'Algoritmo di Shor}
 \label{chap:shor}
 \input{capitoli/Shor}
 
 % -----------------------------------------------
-\addtocontents{lot}{\protect\addvspace{10\p@}}
 \chapter{Rumore Quantistico nei Sistemi NISQ}
 \label{chap:rumore}
 \input{capitoli/Rumore}
 
 % -----------------------------------------------
-\addtocontents{lot}{\protect\addvspace{10\p@}}
 \chapter{Strategie per la Riduzione del Rumore Quantistico}
 \label{chap:strategie}
 \input{capitoli/StrategieAntiRumore}
 
 % -----------------------------------------------
-\addtocontents{lot}{\protect\addvspace{10\p@}}
 \chapter{Strumenti e Ambiente di Simulazione}
 \label{chap:strumenti}
 \input{capitoli/Strumenti}
