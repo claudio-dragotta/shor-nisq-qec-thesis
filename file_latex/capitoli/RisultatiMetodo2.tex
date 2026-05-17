@@ -165,7 +165,7 @@ La Figura~\ref{fig:iterazioni_m1_m2} visualizza la distribuzione del numero di i
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.75\textwidth]{fig_iterazioni_m1_m2.pdf}
-    \caption[Distribuzione iterazioni Metodo 1 vs Metodo 2 su UC1 ($K=30$)]{Distribuzione del numero di iterazioni per Metodo 1 e Metodo 2 su UC1 ($K=30$ ripetizioni, $M_{\text{max}}=50$). I run non convergenti sono censurati a $M_{\text{max}}=50$.}
+    \caption[Analisi di ablazione: M1, $M_{\text{TOP4}}$ e M2 su UC1 ($K=30$)]{Analisi di ablazione su UC1 ($K=30$, $M_{\text{max}}=50$): confronto tra M1 (TOP-1), $M_{\text{TOP4}}$ (TOP-4 senza classificatore) e M2 (CLF+TOP-4). $M_{\text{TOP4}}$ è statisticamente indistinguibile da M2 ($p=0.849$), indicando che il guadagno è attribuibile alla strategia TOP-4, non al classificatore.}
     \label{fig:iterazioni_m1_m2}
 \end{figure}
 
@@ -176,11 +176,11 @@ Il Metodo 2 richiede una fase di addestramento offline ($2000$ campioni $\times$
 \section{Discussione}
 \label{sec:discussione_m2}
 
-\paragraph{Regime di applicabilità.}
-I risultati evidenziano un regime ottimale per M2: il metodo è efficace quando la probabilità di successo per iterazione del Metodo 1 è bassa ($p_{\text{iter}} \lesssim 20\%$) e il segnale QPE è presente ma incerto (istogramma con picchi visibili ma non dominanti). In questo regime, il classificatore discrimina efficacemente gli istogrammi con e senza segnale, e la ricerca TOP-4 trova il candidato valido nella quasi totalità delle iterazioni accettate.
+\paragraph{Regime di applicabilità della strategia TOP-4.}
+L'analisi di ablazione chiarisce che il componente attivo del miglioramento è la \textbf{strategia di ricerca multi-candidato TOP-4}, non il classificatore. $M_{\text{TOP4}}$ (TOP-4 senza filtro ML) è statisticamente indistinguibile da M2 per UC1 ($p = 0.849$) e significativamente migliore per UC2 ($\rho = 2.42$ vs $\rho = 0.731$, $p < 0.001$). La strategia TOP-4 è efficace in entrambi i regimi di rumore: il picco QPE si trova quasi sempre tra i 4 candidati più frequenti anche sotto rumore elevato, perché il rumore allarga la distribuzione ma non distrugge la struttura del picco.
 
-\paragraph{Limiti a rumore elevato.}
-Quando il rumore è molto elevato (UC2, $\epsilon_{2q}=5\times10^{-2}$), si verificano due effetti contrapposti: la distribuzione di uscita si allarga, rendendo TOP-4 più efficace rispetto a TOP-1, ma contemporaneamente la moda è già spesso in una posizione valida, rendendo il Metodo 1 già efficiente ($p_{\text{iter}} \approx 41\%$). Il classificatore non riesce a bilanciare questi effetti e produce un netto negativo ($\rho < 1$).
+\paragraph{Limiti del classificatore ML.}
+Il classificatore, addestrato con variazione simulata del rumore $\pm50\%$, non cattura sufficientemente la struttura degli istogrammi al rumore nominale di UC2, producendo un filtro eccessivamente conservativo che scarta iterazioni con segnale QPE parziale. Per UC1, dove il filtraggio sarebbe in linea di principio utile (25.8\% di istogrammi senza segnale nel training set), il classificatore è neutro: le iterazioni rifiutate sono già recuperabili da TOP-4, rendendo il filtro superfluo ma non dannoso.
 
 \paragraph{Dipendenza dalla decomposizione del circuito.}
 Come il Metodo 1, il Metodo 2 non risolve la barriera di scalabilità per $N \geq 21$: il collo di bottiglia non è l'algoritmo di analisi ma la profondità del circuito. La soluzione richiede decomposizioni efficienti per la moltiplicazione modulare con profondità polinomiale in $\log_2 N$~\cite{beauregard2002}.
