@@ -24,30 +24,39 @@ Il criterio di successo quantitativo: $\rho = \bar{M}_1/\bar{M}_2 > 1$ con p-val
 
 \begin{table}[H]
 \centering
-\caption{Risultato principale: fattore di riduzione $\rho$ per i due use case con confronto completo}
+\caption{Analisi comparativa con ablazione: M1, $M_{\text{TOP4}}$ e M2 ($K=30$, $M_{\text{max}}=50$)}
 \label{tab:rho_concl}
-\begin{tabular}{lccccc}
+\begin{tabular}{llcccc}
 \hline
-\textbf{Use Case} & \textbf{$\bar{M}_1$} & \textbf{$\bar{M}_2$} & \textbf{$\rho$} & \textbf{$P_{\text{succ},2}$} & \textbf{Significatività} \\
+\textbf{UC} & \textbf{Variante} & \textbf{$P_{\text{succ}}$} & \textbf{$\bar{M}$} & \textbf{$\rho$ vs M1} & \textbf{p-value (vs M1)} \\
 \hline
-UC1 ($\epsilon_{2q}=10^{-2}$)       & 6.43 & 1.00 & \textbf{6.435} & 96.7\% & $p=0.0002$ (sign.) \\
-UC2 ($\epsilon_{2q}=5\times10^{-2}$) & 2.42 & 3.30 & 0.731          & 76.7\% & $p=0.704$ (n.s.)  \\
+\multirow{3}{*}{UC1} & M1 (TOP-1)                 & 76.7\% & 6.43 & ---            & --- \\
+                     & $M_{\text{TOP4}}$ (no clf) & 100\%  & 1.00 & \textbf{6.435} & ${<}0.001$ (sign.) \\
+                     & M2 (CLF+TOP-4)             & 96.7\% & 1.00 & \textbf{6.435} & $0.0002$ (sign.) \\
+\hline
+\multirow{3}{*}{UC2} & M1 (TOP-1)                 & 80.0\% & 2.42 & ---            & --- \\
+                     & $M_{\text{TOP4}}$ (no clf) & 100\%  & 1.00 & \textbf{2.417} & $0.003$ (sign.) \\
+                     & M2 (CLF+TOP-4)             & 76.7\% & 3.30 & 0.731          & $0.704$ (n.s.) \\
 \hline
 \end{tabular}
+
+\smallskip
+{\footnotesize Ablazione $M_{\text{TOP4}}$ vs M2: UC1 $p = 0.849$ (n.s.); UC2 $p < 0.001$ (M2 peggiore di $M_{\text{TOP4}}$).}
 \end{table}
 
 \paragraph{Risposta all'ipotesi della tesi.}
-L'ipotesi iniziale era $\bar{M}_2 \approx 3$, ovvero $\rho \approx 2$--$3$. I risultati sperimentali mostrano un quadro più articolato:
+L'ipotesi iniziale era $\bar{M}_2 \approx 3$, ovvero $\rho \approx 2$--$3$ grazie al contributo congiunto del classificatore e della ricerca multi-candidato. L'analisi di ablazione fornisce una risposta più precisa:
 \begin{itemize}
-    \item \textbf{UC1}: il Metodo 2 supera significativamente l'attesa, producendo $\rho = 6.435$ con $\bar{M}_2 = 1.00$. Il miglioramento è molto più pronunciato di quanto ipotizzato.
-    \item \textbf{UC2}: il Metodo 2 non raggiunge l'obiettivo; $\rho = 0.731 < 1$ indica che M2 è marginalmente peggiore di M1 in questo regime di rumore, sebbene la differenza non sia statisticamente significativa.
+    \item \textbf{UC1}: $\rho = 6{,}435$, statisticamente significativo ($p = 0.0002$). L'ipotesi numerica è superata. Tuttavia, $M_{\text{TOP4}}$ (TOP-4 senza classificatore) ottiene lo stesso $\rho = 6{,}435$, e il confronto $M_{\text{TOP4}}$ vs M2 non è significativo ($p = 0.849$). Il classificatore non aggiunge valore rispetto alla sola ricerca multi-candidato.
+    \item \textbf{UC2}: $\rho_{\text{M2}} = 0{,}731 < 1$, non significativo ($p = 0.704$). $M_{\text{TOP4}}$ ottiene invece $\rho = 2{,}417$ ($p = 0.003$, significativo). Il classificatore peggiora le prestazioni della ricerca TOP-4 in questo regime.
 \end{itemize}
+Il risultato qualitativo dell'ipotesi --- che un approccio multi-candidato riduca $\bar{M}$ rispetto a TOP-1 --- è confermato per entrambi gli use case tramite $M_{\text{TOP4}}$. Il componente responsabile è la \emph{strategia di ricerca}, non il classificatore ML.
 
 \paragraph{Prestazioni del classificatore.}
-Il Random Forest per UC1 raggiunge F1 = 0.949 e \ac{AUC}-ROC = 0.964. L'\ac{SVM} per UC2 raggiunge F1 = 0.979 e \ac{AUC}-ROC = 0.987. I 25.8\% di esempi negativi nel training di UC1 confermano che una frazione significativa degli istogrammi QPE non contiene segnale recuperabile anche allargando la ricerca ai 16 candidati; il classificatore apprende a distinguere questi casi.
+Il Random Forest per UC1 raggiunge F1 = 0.949 e \ac{AUC}-ROC = 0.964. L'\ac{SVM} per UC2 raggiunge F1 = 0.979 e \ac{AUC}-ROC = 0.987. Le metriche sul test set sono elevate, ma non si traducono in un guadagno operativo: per UC1 la strategia TOP-4 rende il filtraggio superfluo (le iterazioni rifiutate dal classificatore sono già recuperabili da TOP-4), mentre per UC2 il classificatore scarta iterazioni che $M_{\text{TOP4}}$ risolverebbe correttamente. Il disallineamento tra la distribuzione di training (rumore variato $\pm50\%$) e il regime operativo nominale di UC2 è la causa principale di questo comportamento.
 
-\paragraph{Vantaggio TOP-4 vs TOP-1 (UC1).}
-Per UC1, $p_{\text{iter}} \approx 15\%$ per TOP-1, ma $\approx 100\%$ per TOP-4 tra le iterazioni accettate. Questo riflette il fatto che i picchi QPE si trovano quasi sempre tra i 4 candidati più frequenti anche sotto rumore moderato: il rumore allarga la distribuzione ma non distrugge la struttura del picco.
+\paragraph{Analisi di ablazione: TOP-4 senza classificatore.}
+La variante $M_{\text{TOP4}}$ isola il contributo della sola ricerca multi-candidato. Su UC1, $M_{\text{TOP4}}$ raggiunge $\bar{M} = 1{,}00$ con successo al 100\% ($\rho = 6{,}435$, $p < 0.001$), indistinguibile da M2 ($p = 0.849$). Su UC2, $M_{\text{TOP4}}$ ottiene $\bar{M} = 1{,}00$ con successo al 100\% ($\rho = 2{,}417$, $p = 0.003$), nettamente migliore di M2. I picchi QPE si trovano quasi sempre tra i 4 candidati più frequenti anche sotto rumore elevato: il rumore allarga la distribuzione ma non distrugge la struttura del picco, rendendo la sola strategia multi-candidato sufficiente a recuperare il risultato corretto.
 
 % -----------------------------------------------
 \section{Analisi di Scalabilità}
@@ -78,7 +87,7 @@ Il percorso verso la scalabilità richiede l'adozione di decomposizioni efficien
 \label{sec:validita}
 
 \paragraph{Solidità dei risultati.}
-I risultati su UC1 e UC2 sono ottenuti con $K=30$ ripetizioni. Per UC1, la significatività statistica è confermata ($p=0.0002$, Mann-Whitney U), nonostante l'elevata varianza di M1 ($\sigma_{M_1}=12.3$). Il risultato di UC2 ($\rho=0.731$, $p=0.697$) non è statisticamente distinguibile da $\rho=1$, ma è riproducibile e informativo: indica che M2 non aggiunge valore in questo regime.
+I risultati su UC1 e UC2 sono ottenuti con $K=30$ ripetizioni. Per UC1, la significatività statistica di M2 vs M1 è confermata ($p=0.0002$, Mann-Whitney), e l'analisi di ablazione attribuisce il guadagno alla strategia TOP-4 ($M_{\text{TOP4}}$ vs M1: $p<0.001$; $M_{\text{TOP4}}$ vs M2: $p=0.849$). Per UC2, il confronto M1 vs M2 non è significativo ($p=0.704$), ma $M_{\text{TOP4}}$ vs M1 lo è ($p=0.003$): la ricerca multi-candidato funziona, il classificatore non aggiunge e anzi degrada.
 
 \paragraph{Riproducibilità.}
 Tutti i parametri (seed, noise model, circuito, split training/test) sono espliciti e fissati. Il codice è disponibile nella repository della tesi. La riproducibilità su ambienti identici è garantita; la riproducibilità su hardware reale richiederebbe una ricalibratura del noise model sulla macchina target.
@@ -87,6 +96,8 @@ Tutti i parametri (seed, noise model, circuito, split training/test) sono esplic
 Il valore di $\bar{M}_1 \approx 6.4$ per UC1 è coerente con le aspettative per un simulatore con $\epsilon_{2q} = 10^{-2}$. Il tutorial IBM~\cite{ibm_shor_tutorial} riporta $\sim 4\%$ di successo su hardware reale, il che corrisponde a $\bar{M}_1 \approx 25$ --- superiore al nostro dato simulato, come atteso data la qualità superiore della simulazione statevector rispetto all'hardware fisico con crosstalk, drift e gate imperfetti.
 
 \paragraph{Sintesi del contributo.}
-Il sistema sviluppato riduce il numero medio di iterazioni da $\bar{M}_1 = 6.43$ a $\bar{M}_2 = 1.00$ per UC1 (fattore di riduzione $\rho = 6.44$, $p = 0.046$). Il criterio di successo quantitativo ($\rho > 1$ con $p < 0.05$ su almeno un use case) è soddisfatto. Per UC2, M2 non produce miglioramenti statisticamente significativi, evidenziando un limite del metodo quando la probabilità di successo di M1 è già elevata ($p_{\text{iter}} \approx 41\%$). Il contributo originale è la dimostrazione sperimentale che la combinazione di un classificatore \ac{ML} pre-addestrato (filtro di qualità) con una strategia multi-candidato (TOP-K) può ridurre significativamente il costo iterativo dell'algoritmo di Shor su simulatori NISQ, in condizioni di rumore moderate.
+Il criterio di successo quantitativo ($\rho > 1$ con $p < 0.05$) è soddisfatto per UC1 ($\rho = 6{,}435$, $p = 0.0002$) e, tramite $M_{\text{TOP4}}$, anche per UC2 ($\rho = 2{,}417$, $p = 0.003$). L'analisi di ablazione attribuisce questo guadagno interamente alla \textbf{strategia di ricerca multi-candidato TOP-4}: la variante senza classificatore è statisticamente equivalente a M2 in UC1 ($p = 0.849$) e significativamente migliore in UC2 ($p < 0.001$).
+
+Il contributo originale di questa tesi è duplice: (\textit{i}) la dimostrazione sperimentale che la ricerca multi-candidato TOP-4 riduce $\bar{M}$ in modo significativo in regime di rumore moderato, da $\bar{M}_1 = 6{,}43$ a $\bar{M} = 1{,}00$; (\textit{ii}) l'isolamento del contributo del classificatore ML tramite ablazione, che identifica la strategia di ricerca --- e non il filtro statistico --- come componente attivo del miglioramento. Questo risultato orienta gli sviluppi futuri verso il perfezionamento della strategia TOP-K e del criterio di stop, più che verso l'ottimizzazione del classificatore.
 
 \end{onehalfspace}
