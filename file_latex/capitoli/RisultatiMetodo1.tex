@@ -63,6 +63,15 @@ Per UC3 e UC4, la sintesi tramite \texttt{UnitaryGate} (matrice di permutazione 
 \subsection{Use Case 1 — $N = 15$, NISQ-realistico ($\epsilon_{2q} = 10^{-2}$)}
 \label{sec:uc1_m1}
 
+La Figura~\ref{fig:istogrammi_qpe} mostra due istogrammi rappresentativi ottenuti dal circuito QPE di UC1: un'iterazione con segnale QPE chiaramente strutturato (picchi intorno ai valori teorici $\{64, 128, 192\}$) e un'iterazione in cui il rumore rende l'output quasi uniforme. Il Metodo 1 esamina solo la misura più frequente in ogni istogramma; il Metodo 2 usa un classificatore per distinguere i due casi prima di procedere.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{fig_istogrammi_qpe.pdf}
+    \caption{Confronto tra un istogramma QPE con segnale strutturato (sinistra) e uno dominato dal rumore (destra) per UC1 ($N=15$, NISQ-realistico). I valori teorici attesi per $r=4$ sono $\{64, 128, 192\}$ su $2^8 = 256$ stati.}
+    \label{fig:istogrammi_qpe}
+\end{figure}
+
 Con il noise model NISQ-realistico ($\epsilon_{1q} = 10^{-3}$, $\epsilon_{2q} = 10^{-2}$, $T_1 = 100\,\mu\text{s}$, $T_2 = 80\,\mu\text{s}$, $p_{\text{ro}} = 2\%$) e il circuito da 162 porte CX, il Metodo 1 converge al risultato corretto in $K=30$ ripetizioni con i seguenti risultati.
 
 \begin{table}[H]
@@ -167,6 +176,6 @@ I limiti principali sono:
     \item \textbf{Barriera di scalabilità}: la decomposizione \texttt{UnitaryGate} rende il metodo inapplicabile per $N \geq 21$ con l'implementazione attuale.
 \end{itemize}
 
-Il costo computazionale totale di UC1 è stimabile in $23 \times 6.43 \times 1024 \approx 151\,000$ shot per i 23 run riusciti, più $7 \times 50 \times 1024 \approx 358\,000$ shot per i 7 run falliti, per un totale di circa 509\,000 shot. Per UC2: $24 \times 2.42 \times 1024 \approx 59\,400$ shot per i run riusciti, più $6 \times 50 \times 1024 \approx 307\,000$ shot per i 6 run falliti, totale $\approx 367\,000$ shot. Questi dati costituiscono la base per valutare il risparmio computazionale offerto dal Metodo 2.
+Il costo computazionale totale per i due use case (shot per run riusciti e run falliti) è quantificato nel Capitolo~\ref{chap:conclusioni1}, dove costituisce la base di riferimento per valutare il risparmio offerto dal Metodo 2.
 
 \end{onehalfspace}
