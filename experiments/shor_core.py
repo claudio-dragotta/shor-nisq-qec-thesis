@@ -1,0 +1,188 @@
+"""
+shor_core.py — Funzioni core per la tesi di Claudio Dragotta.
+QPE per l'algoritmo di Shor: N=15 (c_amod15 textbook), N=21, N=35 (generale).
+"""
+import numpy as np
+from math import gcd, ceil, log2
+from fractions import Fraction
+from qiskit import QuantumCircuit, transpile
+from qiskit.circuit.library import UnitaryGate
+from qiskit_aer import AerSimulator
+from qiskit_aer.noise import (
+    NoiseModel, depolarizing_error, thermal_relaxation_error, ReadoutError
+)
+
+
+# --- Inverse QFT (textbook convention) ---
+def inverse_qft(n_qubits):
+    qc = QuantumCircuit(n_qubits, name='QFT†')
+    for qubit in range(n_qubits // 2):
+        qc.swap(qubit, n_qubits - qubit - 1)
+    for j in range(n_qubits):
+        for m in range(j):
+            qc.cp(-np.pi / float(2 ** (j - m)), m, j)
+        qc.h(j)
+    return qc
+
+
+# --- Controlled modular exponentiation (textbook loop-based, N=15 only) ---
+def c_amod15(a, power):
+    if a not in [2, 7, 8, 11, 13]:
+        raise ValueError(f"a={a} non supportato per N=15.")
+    U = QuantumCircuit(4)
+    for _ in range(power):
+        if a in [2, 13]:
+            U.swap(0, 1); U.swap(1, 2); U.swap(2, 3)
+        if a in [7, 8]:
+            U.swap(2, 3); U.swap(1, 2); U.swap(0, 1)
+        if a in [11, 13]:
+            U.x([0, 1, 2, 3])
+        if a in [7, 11]:
+            U.x([0, 2])
+    U.name = f'{a}^{power} mod 15'
+    return U.control()
+
+
+# --- Controlled modular exponentiation (generale, per N qualsiasi) ---
+def c_amod(a, N, power):
+    """
+    Gate controllato U|x⟩ = |a^power·x mod N⟩ via matrice di permutazione.
+    Usa UnitaryGate: corretto per qualsiasi N,a con gcd(a,N)=1.
+    """
+    n_work = ceil(log2(N + 1))
+    size = 2 ** n_work
+    a_pow = pow(a, power, N)
+    # Matrice di permutazione: mat[y,x]=1 iff y = a_pow*x mod N
+    mat = np.zeros((size, size), dtype=complex)
+    for x in range(size):
+        if x == 0 or x >= N:
+            mat[x, x] = 1.0  # identità per 0 e fuori range
+        else:
+            y = (a_pow * x) % N
+            mat[y, x] = 1.0
+    gate = UnitaryGate(mat, label=f'{a}^{power} mod {N}')
+    return gate.control(1)
+
+
+# --- Shor circuit (QPE per N=15, N=21, N=35) ---
+def shor_circuit(N, a, n_count):
+    """
+    Costruisce il circuito QPE per l'algoritmo di Shor.
+    N=15: usa c_amod15 (loop-based, efficiente).
+    N=21, N=35: usa c_amod (matrice di permutazione generale).
+    """
+    if N == 15:
+        n_work = 4
+        qc = QuantumCircuit(n_count + n_work, n_count)
+        for q in range(n_count):
+            qc.h(q)
+        qc.x(n_count + 3)  # |1⟩ nella convenzione textbook (qubit MSB=1 → stato 8)
+        for j in range(n_count):
+            if 2 ** j % 4 != 0:
+                qc.append(c_amod15(a, 2 ** j),
+                           [j] + list(range(n_count, n_count + n_work)))
+    else:
+        if N not in [21, 35]:
+            raise NotImplementedError(f"N={N} non supportato. Usa N in {{15, 21, 35}}.")
+        n_work = ceil(log2(N + 1))
+        qc = QuantumCircuit(n_count + n_work, n_count)
+        for q in range(n_count):
+            qc.h(q)
+        # Inizializza registro lavoro a |2^(n_work-1)⟩ (qubit MSB del registro)
+        # Questo stato è sempre in un'orbita non banale per a,N scelti
+        qc.x(n_count + n_work - 1)
+        for j in range(n_count):
+            power = 2 ** j
+            # Salta se U^power = identità (a^power ≡ 1 mod N)
+            if pow(a, power, N) != 1:
+                qc.append(c_amod(a, N, power),
+                           [j] + list(range(n_count, n_count + n_work)))
+
+    qc.barrier()
+    qc.append(inverse_qft(n_count), range(n_count))
+    qc.measure(range(n_count), range(n_count))
+    return qc
+
+
+# --- Post-processing ---
+def extract_factors(measured_value, n_count, N, a):
+    if measured_value == 0:
+        return None, None
+    phase = measured_value / (2 ** n_count)
+    frac = Fraction(phase).limit_denominator(N)
+    r = frac.denominator
+    if r % 2 != 0:
+        return None, None
+    p = gcd(a ** (r // 2) - 1, N)
+    q = gcd(a ** (r // 2) + 1, N)
+    if 1 < p < N:
+        return p, N // p
+    if 1 < q < N:
+        return q, N // q
+    return None, None
+
+
+# --- Noise model ---
+def build_noise_model(eps_1q, eps_2q, t1_ns, t2_ns, gate_time_ns=50, p_ro=0.02):
+    nm = NoiseModel()
+    nm.add_all_qubit_quantum_error(depolarizing_error(eps_1q, 1), ['h', 'x', 'rz'])
+    nm.add_all_qubit_quantum_error(depolarizing_error(eps_2q, 2), ['cx', 'swap', 'cp'])
+    nm.add_all_qubit_quantum_error(
+        thermal_relaxation_error(t1_ns, t2_ns, gate_time_ns), ['h', 'x'])
+    nm.add_all_qubit_readout_error(
+        ReadoutError([[1 - p_ro, p_ro], [p_ro, 1 - p_ro]]))
+    return nm
+
+
+def _sim(noise_model=None):
+    """AerSimulator statevector (CPU)."""
+    kw = {'method': 'statevector'}
+    return AerSimulator(noise_model=noise_model, **kw) if noise_model else AerSimulator(**kw)
+
+
+# --- Metodo 1 (TOP-1: picco più frequente per iterazione) ---
+def run_method1(N, a, n_count, noise_model, shots=1024,
+                max_iter=50, seed=42):
+    base_qc = shor_circuit(N, a, n_count)
+    # opt=2: elimina SWAP residui dall'IQFT e decompone CCX → CX (corretto per noise model)
+    sim = _sim(noise_model)
+    transpiled = transpile(base_qc, sim, optimization_level=2)
+    for iteration in range(1, max_iter + 1):
+        counts = sim.run(transpiled, shots=shots,
+                         seed_simulator=seed * 10000 + iteration).result().get_counts()
+        meas = int(max(counts, key=counts.get), 2)
+        p, q = extract_factors(meas, n_count, N, a)
+        if p is not None:
+            return {'factors': (p, q), 'iterations': iteration, 'success': True,
+                    'counts': counts}
+    return {'factors': (None, None), 'iterations': max_iter, 'success': False,
+            'counts': {}}
+
+
+# --- Metodo 2 — classificatore ML + ricerca TOP-K ---
+def run_method2(N, a, n_count, noise_model, classifier,
+                shots=1024, max_iter=50, seed=42, top_k=4):
+    """
+    M2: il classificatore decide se l'istogramma ha segnale QPE recuperabile (top_k=4).
+    Se clf=1, prova i top_k candidati più frequenti in ordine decrescente — cattura picchi
+    QPE spostati dal rumore (es. mode=65 invece di 64). Se clf=0, l'istogramma è piatto:
+    nessun candidato sarebbe affidabile, si salta l'iterazione.
+    """
+    base_qc = shor_circuit(N, a, n_count)
+    sim = _sim(noise_model)
+    transpiled = transpile(base_qc, sim, optimization_level=2)
+    for iteration in range(1, max_iter + 1):
+        counts = sim.run(transpiled, shots=shots,
+                         seed_simulator=seed * 10000 + iteration).result().get_counts()
+        feature = np.zeros(2 ** n_count)
+        for k, v in counts.items():
+            feature[int(k, 2)] = v / shots
+        if classifier.predict([feature])[0] == 0:
+            continue  # Istogramma troppo rumoroso: salta iterazione
+        # Prova i top_k candidati più frequenti
+        sorted_meas = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+        for meas_str, _ in sorted_meas[:top_k]:
+            p, q = extract_factors(int(meas_str, 2), n_count, N, a)
+            if p is not None:
+                return {'factors': (p, q), 'iterations': iteration, 'success': True}
+    return {'factors': (None, None), 'iterations': max_iter, 'success': False}
