@@ -58,7 +58,7 @@ In questo scenario, il classificatore non dovrebbe più correggere per il rumore
 
 % -----------------------------------------------
 \section{Scalabilità a Istanze di Maggiore Dimensione}
-\label{sec:scalabilita}
+\label{sec:scalabilita_futura}
 
 I quattro use case di questa tesi utilizzano numeri $N$ di piccola dimensione. Questa scelta è dettata dai limiti computazionali del simulatore: la simulazione statevector di un circuito di Shor richiede una memoria proporzionale a $2^{n_{\text{tot}}}$, dove $n_{\text{tot}} = n_{\text{count}} + \lceil \log_2 N \rceil$ è il numero totale di qubit. Per $N = 15$ con $n_{\text{count}} = 8$, si hanno 12 qubit e $2^{12} = 4096$ ampiezze complesse --- perfettamente gestibile. Per $N = 2048$ bit (rilevante crittograficamente), servirebbero $\sim 4000$ qubit logici, del tutto fuori dalla portata sia dei simulatori che dell'hardware attuale.
 

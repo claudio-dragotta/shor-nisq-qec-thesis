@@ -183,7 +183,7 @@ Il backend è **biber** (non bibtex). Usa sempre `pdflatex + biber + pdflatex x2
 
 ## Acronimi già definiti
 
-BHT, BQP, CCNOT, CDR, CNF, CNOT, CPTP, DFT, DSA, ECDSA, GNFS, HTTPS, IBM, MIT, NIST, NISQ, NMR, PEC, PQC, QEC, QFT, QML, QMA, QPE, RSA, SAT, SSH, TLS, TSP, ZNE, **AUC, GCD, GPU, MLP, SVM, WSL** (ultimi 6 aggiunti il 2026-04-10)
+BHT, BQP, CCNOT, CDR, CNF, CNOT, CPTP, DFT, DSA, ECDSA, GNFS, HTTPS, IBM, MIT, NIST, NISQ, NMR, PEC, PQC, QEC, QFT, QML, QMA, QPE, RSA, SAT, SSH, TLS, TSP, ZNE, AUC, GCD, GPU, MLP, SVM, WSL, SDK, API, CPU, **ML, LSTM** (ultimi 2 aggiunti il 2026-05-17)
 
 ---
 
