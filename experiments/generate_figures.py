@@ -158,7 +158,7 @@ def fig_iterazioni_m1_m2():
 
     bp = ax.boxplot(
         [m1, m2],
-        labels=['Metodo 1\n(TOP-1)', 'Metodo 2\n(CLF+TOP-4)'],
+        tick_labels=['Metodo 1\n(TOP-1)', 'Metodo 2\n(CLF+TOP-4)'],
         patch_artist=True,
         medianprops=dict(color='black', linewidth=2),
         flierprops=dict(marker='o', markerfacecolor='gray', markersize=5, alpha=0.5),
