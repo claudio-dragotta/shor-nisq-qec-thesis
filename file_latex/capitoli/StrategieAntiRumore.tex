@@ -27,7 +27,7 @@ Le quattro macro-strategie per fronteggiare il rumore nei sistemi quantistici so
 \textbf{Strategia}    & \textbf{Quando agisce} & \textbf{Overhead}       & \textbf{Era}       & \textbf{Adottata} \\
 \midrule
 Noise Suppression     & Prima del calcolo      & Basso (hardware)        & NISQ / FT          & No \\
-Error Mitigation      & Dopo il calcolo        & Esponenziale            & NISQ               & No \\
+Error Mitigation      & Dopo il calcolo        & Esponenziale            & NISQ               & No$^*$ \\
 Fault-Tolerant QC     & Architetturale         & Molto alto (qubit)      & Futuro             & No \\
 QML (incl.\ QEC)      & Ibrido (online)        & Medio (classico)        & NISQ / FT          & \textbf{Sì} \\
 \bottomrule
@@ -35,6 +35,9 @@ QML (incl.\ QEC)      & Ibrido (online)        & Medio (classico)        & NISQ 
 }
 \caption{Confronto delle quattro strategie anti-rumore per il contesto di questa tesi.}
 \label{tab:strategie_confronto}
+
+\smallskip
+{\footnotesize $^*$La ZNE non è adottata come strategia principale, ma viene confrontata \textit{a posteriori} con $M_{\text{TOP4}}$ nel Capitolo~\ref{chap:conclusioni2}: ZNE-2 e ZNE-3 abbassano il tasso di successo dal 76.7\% al 60\% con un costo di 11\,776 shot contro 1\,024 per $M_{\text{TOP4}}$ (p-value non significativo vs M1).}
 \end{table}
 
 \textbf{Motivazione per l'approccio QML.} Le prime tre strategie presentano limitazioni che le rendono inadatte al contesto di questa tesi. La soppressione del rumore è vincolata all'hardware disponibile e non è controllabile a livello software. La mitigazione degli errori richiede un numero esponenziale di esecuzioni, incompatibile con l'obiettivo di ridurre il numero di iterazioni necessarie. La tolleranza ai guasti richiede risorse hardware ancora inesistenti. Il QML, al contrario, può essere applicato su qualunque simulatore o processore reale, si adatta al profilo di errore specifico del dispositivo senza un modello analitico, e --- come si vedrà nella sezione~\ref{sec:motivazione_ml} --- riduce drasticamente il numero di esecuzioni necessarie per ottenere un risultato affidabile.

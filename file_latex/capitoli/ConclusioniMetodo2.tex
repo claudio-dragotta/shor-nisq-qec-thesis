@@ -11,12 +11,12 @@ Il Metodo 1 richiede mediamente $\bar{M}_1 = 6.43$ iterazioni per $N=15$ in cond
 Il Metodo 2 si propone di ridurre $\bar{M}$ sfruttando l'informazione contenuta nell'intera distribuzione degli output (non solo nella misura più frequente) tramite un classificatore \ac{ML} pre-addestrato e una strategia di ricerca multi-candidato (TOP-4).
 
 % -----------------------------------------------
-\section{Gli Obiettivi del Metodo 2}
+\section{Gli Obiettivi e il Meccanismo Attivo}
 \label{sec:obiettivi_m2}
 
-L'obiettivo primario era ridurre $\bar{M}_2 < \bar{M}_1$ in modo statisticamente significativo su almeno due use case (UC1 e UC2). L'obiettivo secondario era mantenere un tasso di falsi positivi basso (classificatore che accetta risultati errati), poiché un falso positivo introduce un errore silenzioso nella fattorizzazione.
+L'obiettivo primario era ridurre $\bar{M} < \bar{M}_1$ in modo statisticamente significativo su almeno due use case (UC1 e UC2). Il criterio di successo quantitativo: $\rho = \bar{M}_1/\bar{M} > 1$ con p-value $< 0.05$ (Mann-Whitney U) su almeno un use case.
 
-Il criterio di successo quantitativo: $\rho = \bar{M}_1/\bar{M}_2 > 1$ con p-value $< 0.05$ (Mann-Whitney U) su almeno un use case.
+L'analisi di ablazione rivela che il meccanismo attivo è la \textbf{strategia di ricerca TOP-K}, non il classificatore ML. $M_{\text{TOP4}}$ --- la variante senza classificatore --- ottiene lo stesso fattore di riduzione di M2 su UC1 e risultati significativamente migliori su UC2. Il contributo del classificatore è nullo o negativo nelle condizioni operative testate.
 
 % -----------------------------------------------
 \section{I Risultati Ottenuti}
@@ -51,6 +51,11 @@ L'ipotesi iniziale era $\bar{M}_2 \approx 3$, ovvero $\rho \approx 2$--$3$ grazi
     \item \textbf{UC2}: $\rho_{\text{M2}} = 0{,}731 < 1$, non significativo ($p = 0.704$). $M_{\text{TOP4}}$ ottiene invece $\rho = 2{,}417$ ($p = 0.003$, significativo). Il classificatore peggiora le prestazioni della ricerca TOP-4 in questo regime.
 \end{itemize}
 Il risultato qualitativo dell'ipotesi --- che un approccio multi-candidato riduca $\bar{M}$ rispetto a TOP-1 --- è confermato per entrambi gli use case tramite $M_{\text{TOP4}}$. Il componente responsabile è la \emph{strategia di ricerca}, non il classificatore ML.
+
+\paragraph{Risposta alle ipotesi secondarie.}
+\textbf{Ipotesi secondaria 1} (F1\,$>\,0.85$, AUC\,$>\,0.90$): \emph{confermata}. Il Random Forest per UC1 raggiunge F1\,=\,0.949 e AUC-ROC\,=\,0.964; l'SVM per UC2 raggiunge F1\,=\,0.979 e AUC-ROC\,=\,0.987. Le metriche di classificazione sono elevate, ma l'ablazione dimostra che questo non si traduce in un guadagno operativo: il classificatore discrimina correttamente in training, ma diventa una strozzatura nella pipeline in regime operativo reale.
+
+\textbf{Ipotesi secondaria 2} (vantaggio che si mantiene al crescere di $N$ e al peggiorare del rumore): \emph{parzialmente non verificabile}. UC3 ($N=21$) e UC4 ($N=35$) risultano inaccessibili per il limite di profondità del circuito (\texttt{UnitaryGate}: 10\,040 e 13\,064 porte CX), non per un limite dell'analisi. All'interno del regime accessibile, la campagna parametrica mostra che $M_{\text{TOP4}}$ mantiene $\bar{M}=1{,}00$ su un ampio intervallo di $K$, $\epsilon_{2q}$, $T_1/T_2$ e $p_{\text{ro}}$, confermando la robustezza della strategia entro i limiti sperimentali raggiunti. La verifica a istanze maggiori rimane aperta e costituisce la direzione prioritaria degli sviluppi futuri (Capitolo~\ref{chap:sviluppi}).
 
 \paragraph{Prestazioni del classificatore.}
 Il Random Forest per UC1 raggiunge F1 = 0.949 e \ac{AUC}-ROC = 0.964. L'\ac{SVM} per UC2 raggiunge F1 = 0.979 e \ac{AUC}-ROC = 0.987. Le metriche sul test set sono elevate, ma non si traducono in un guadagno operativo: per UC1 la strategia TOP-4 rende il filtraggio superfluo (le iterazioni rifiutate dal classificatore sono già recuperabili da TOP-4), mentre per UC2 il classificatore scarta iterazioni che $M_{\text{TOP4}}$ risolverebbe correttamente. Il disallineamento tra la distribuzione di training (rumore variato $\pm50\%$) e il regime operativo nominale di UC2 è la causa principale di questo comportamento.
