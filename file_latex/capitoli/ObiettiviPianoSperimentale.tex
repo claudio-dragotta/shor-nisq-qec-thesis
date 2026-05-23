@@ -62,7 +62,7 @@ Il contributo sperimentale della tesi è strutturato attorno a un'ipotesi princi
     \rho = \frac{\bar{M}_1}{\bar{M}_2} \gg 1
     \label{eq:ipotesi_rho}
 \end{equation}
-dove $\bar{M}_1$ e $\bar{M}_2$ sono rispettivamente il numero medio di iterazioni del Metodo 1 (baseline classico) e del Metodo 2 (classificatore ML). La verifica statistica avviene tramite il test di Welch sull'ipotesi nulla $H_0\colon \bar{M}_1 = \bar{M}_2$, con soglia di significatività $\alpha = 0.05$.
+dove $\bar{M}_1$ e $\bar{M}_2$ sono rispettivamente il numero medio di iterazioni del Metodo 1 (baseline classico) e del Metodo 2 (classificatore ML). La verifica statistica avviene tramite il test di Mann-Whitney U (non parametrico, unilaterale) sull'ipotesi nulla $H_0\colon \bar{M}_1 = \bar{M}_2$, con soglia di significatività $\alpha = 0.05$.
 
 \textbf{Ipotesi secondaria 1.} Il classificatore ML raggiunge prestazioni sufficienti a distinguere esecuzioni corrette da errate anche in presenza di rumore variabile: F1\,$>\,0.85$ e AUC\,$>\,0.90$ sul test set.
 
@@ -186,7 +186,7 @@ $N$                          & 15  & 15  & 21  & 35  \\
 $a$                          & 7   & 7   & 2   & 6   \\
 Periodo $r$ atteso           & 4   & 4   & 6   & 2   \\
 $n_{\text{count}}$ (qubit)   & 8   & 8   & 10  & 12  \\
-$M_{\text{shots}}$           & 4096 & 4096 & 4096 & 4096 \\
+$M_{\text{shots}}$           & 1024 & 1024 & 1024 & 1024 \\
 \midrule
 \textit{Livello rumore}      & NISQ-realistico & NISQ-degradato & NISQ-realistico & NISQ-realistico \\
 $\epsilon_{1q}$              & $1\times10^{-3}$ & $5\times10^{-3}$ & $1\times10^{-3}$ & $1\times10^{-3}$ \\
@@ -222,7 +222,7 @@ $N = 35 = 5 \times 7$ con base $a=6$ produce il periodo minimo $r=2$ (poiché $6
 \subsection{Metriche del Metodo 1}
 
 \begin{itemize}
-    \item $\bar{M}_1$: numero medio di esecuzioni necessarie per ottenere il primo risultato corretto, calcolato su $K = 50$ ripetizioni indipendenti dello stesso esperimento.
+    \item $\bar{M}_1$: numero medio di esecuzioni necessarie per ottenere il primo risultato corretto, calcolato su $K = 30$ ripetizioni indipendenti dello stesso esperimento.
     \item $\sigma_{M_1}$: deviazione standard del numero di esecuzioni, a indicare la variabilità del metodo.
     \item $P_{\text{success},1}(M_{\text{max}})$: probabilità di successo entro un budget fisso di $M_{\text{max}}$ esecuzioni, dove $M_{\text{max}}$ verrà fissato in base ai primi risultati sperimentali.
 \end{itemize}
@@ -244,18 +244,13 @@ La metrica principale per il confronto tra i due metodi è il \textbf{fattore di
     \rho = \frac{\bar{M}_1}{\bar{M}_2}
     \label{eq:fattore_riduzione}
 \end{equation}
-Un valore $\rho > 1$ indica che il Metodo 2 converge più rapidamente del Metodo 1. L'ipotesi sperimentale, motivata nel Capitolo~\ref{chap:strategie}, è $\rho \gg 1$, con $\bar{M}_2 \approx 3$. La significatività statistica del risultato verrà valutata tramite un test $t$ di Welch sulle distribuzioni di $M_1$ e $M_2$.
+Un valore $\rho > 1$ indica che il Metodo 2 converge più rapidamente del Metodo 1. L'ipotesi sperimentale, motivata nel Capitolo~\ref{chap:strategie}, è $\rho \gg 1$, con $\bar{M}_2 \approx 3$. La significatività statistica del risultato viene valutata tramite il test di Mann-Whitney U (non parametrico, unilaterale $M_1 > M_2$) sulle distribuzioni di $M_1$ e $M_2$.
 
 \subsection{Parametri di Error Mitigation Applicati}
 
-Per entrambi i metodi, durante la simulazione vengono applicati i seguenti strumenti di error mitigation:
+Il noise model incorpora il readout error come matrice di confusione simmetrica (parametro $p_{\text{ro}}$) direttamente nel simulatore. Non viene applicata una correzione post-hoc tramite matrice di calibrazione: la robustezza dei metodi al readout error viene invece verificata sperimentalmente nella campagna parametrica (Sezione~\ref{subsec:sweep_secondari} del Capitolo~\ref{chap:conclusioni2}), che mostra invarianza di $M_{\text{TOP4}}$ fino a $p_{\text{ro}} = 20\%$.
 
-\begin{itemize}
-    \item \textbf{Readout mitigation}: correzione delle probabilità di misura tramite matrice di calibrazione stimata su circuiti dedicati. Riduce la componente sistematica degli errori di lettura senza aggiungere overhead circuitale.
-    \item \textbf{Filtraggio a soglia} (Metodo 1): i valori con frequenza inferiore a una percentuale $\tau$ del massimo osservato vengono scartati prima dell'analisi dei picchi. Il valore ottimale di $\tau$ viene selezionato sperimentalmente per ciascun use case.
-\end{itemize}
-
-L'effetto di ciascun parametro di mitigazione viene riportato nei capitoli dei risultati, confrontando le metriche ottenute con e senza la mitigazione attiva.
+Il Metodo 1 identifica i candidati per la fattorizzazione selezionando le misure più frequenti dall'istogramma senza sogliatura preliminare: la funzione \texttt{extract\_factors} è applicata direttamente alle misure ordinate per frequenza decrescente. Questo approccio è sufficiente in presenza del noise model adottato, come confermato dai risultati sperimentali.
 
 \section{Approccio Metodologico}
 
