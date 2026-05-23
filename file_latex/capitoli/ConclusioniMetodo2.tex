@@ -127,20 +127,22 @@ Si è eseguita la strategia TOP-K per $K \in \{1, 2, 3, 4, 6, 8\}$, con rumore f
 $K$ & $P_{\text{succ}}$ & $\bar{M}$ & $\sigma_M$ & $\rho$ vs M1 & p-value (vs M1) \\
 \hline
 1 (= M1)  & \multicolumn{5}{c}{\textit{baseline: $\bar{M}_1 = 6.43$, $P_{\text{succ}} = 76.7\%$}} \\
-2         & & & & & \\
-3         & & & & & \\
+2         & 100\% & 1.00 & 0.00 & 6.430 & $0.003$ \\
+3         & 100\% & 1.00 & 0.00 & 6.430 & $0.003$ \\
 4 (= $M_{\text{TOP4}}$) & 100\% & 1.00 & 0.00 & 6.435 & ${<}0.001$ \\
-6         & & & & & \\
-8         & & & & & \\
+6         & 100\% & 1.00 & 0.00 & 6.430 & $0.003$ \\
+8         & 100\% & 1.00 & 0.00 & 6.430 & $0.003$ \\
 \hline
 \end{tabular}
 \end{table}
+
+Il risultato è sorprendente rispetto alla previsione teorica: $K=2$ è già sufficiente a ottenere $\bar{M}=1.00$ con successo al 100\% ($\rho=6.43$, $p=0.003$). Il valore atteso $K=r=4$ non costituisce una soglia: già con due candidati il picco QPE corretto rientra sistematicamente tra i più frequenti. Al contrario, $K=1$ è equivalente a M1 ($\rho \approx 1$, $p=0.89$, n.s.): senza multi-candidato non vi è alcun vantaggio.
 
 % -----------------------------------------------
 \subsection{Variazione di $\varepsilon_{2q}$ (tasso di errore a due qubit)}
 \label{subsec:sweep_eps}
 
-Il tasso di errore a due qubit è il parametro di rumore dominante: la probabilità di sopravvivenza del segnale QPE scala come $P_{\text{surv}} = (1-\varepsilon_{2q})^{162}$. L'obiettivo è determinare la \textbf{soglia critica} di $\varepsilon_{2q}$ oltre la quale $M_{\text{TOP4}}$ cessa di migliorare rispetto a M1. I valori esplorati coprono tre ordini di grandezza, da un regime quasi ideale ($\varepsilon_{2q}=10^{-3}$) al limite del regime NISQ degradato ($\varepsilon_{2q}=10^{-1}$).
+Il tasso di errore a due qubit è il parametro di rumore dominante: la probabilità di sopravvivenza del segnale QPE scala come $P_{\text{surv}} = (1-\varepsilon_{2q})^{162}$. L'obiettivo è determinare se esiste una \textbf{soglia critica} di $\varepsilon_{2q}$ oltre la quale $M_{\text{TOP4}}$ cessa di migliorare rispetto a M1. I valori esplorati coprono tre ordini di grandezza, da un regime quasi ideale ($\varepsilon_{2q}=10^{-3}$) al limite del regime NISQ degradato ($\varepsilon_{2q}=10^{-1}$), con $P_{\text{surv}}$ che varia da 85\% a $10^{-8}$.
 
 \begin{table}[H]
 \centering
@@ -150,15 +152,17 @@ Il tasso di errore a due qubit è il parametro di rumore dominante: la probabili
 \hline
 $\varepsilon_{2q}$ & $P_{\text{surv}}$ & $\bar{M}_1$ & $\bar{M}_{\text{TOP4}}$ & $\rho$ & p-value & $P_{\text{succ}}$ \\
 \hline
-$10^{-3}$ & 85.1\% & & & & & \\
-$5\times10^{-3}$ & 44.5\% & & & & & \\
-$10^{-2}$ (UC1) & 19.7\% & 6.43 & 1.00 & 6.435 & ${<}0.001$ & 100\% \\
-$2\times10^{-2}$ & 3.9\% & & & & & \\
-$5\times10^{-2}$ (UC2) & $2.5\times10^{-4}$ & 2.42 & 1.00 & 2.417 & $0.003$ & 100\% \\
-$10^{-1}$ & $8\times10^{-8}$ & & & & & \\
+$10^{-3}$          & 85.0\%              & 2.27 & 1.00 & 2.273 & ${<}0.001$ & 100\% \\
+$5\times10^{-3}$   & 44.4\%              & 3.18 & 1.00 & 3.182 & ${<}0.001$ & 100\% \\
+$10^{-2}$ (UC1)    & 19.7\%              & 6.43 & 1.00 & 6.435 & ${<}0.001$ & 100\% \\
+$2\times10^{-2}$   & 3.8\%               & 4.77 & 1.00 & 4.769 & $0.001$    & 100\% \\
+$5\times10^{-2}$   & $2.46\times10^{-4}$ & 5.92 & 1.00 & 5.920 & $0.001$    & 100\% \\
+$10^{-1}$          & $3.87\times10^{-8}$ & 6.13 & 1.00 & 6.130 & ${<}0.001$ & 100\% \\
 \hline
 \end{tabular}
 \end{table}
+
+Nessuna soglia critica è stata rilevata nell'intero range testato. $M_{\text{TOP4}}$ mantiene $\bar{M}=1.00$ e $P_{\text{succ}}=100\%$ per ogni livello di $\varepsilon_{2q}$, da $10^{-3}$ a $10^{-1}$. Questo risultato indica che, per $N=15$, la struttura dei picchi QPE è abbastanza robusta da permettere alla strategia multi-candidato di recuperare il risultato corretto anche quando $P_{\text{surv}} \approx 10^{-8}$. La variazione di $\rho$ (da 2.27 a 6.43) riflette il peggioramento di $\bar{M}_1$ al crescere del rumore, non un degrado di $M_{\text{TOP4}}$.
 
 % -----------------------------------------------
 \subsection{Variazione di $M_{\text{shots}}$ (shot per iterazione)}
@@ -174,14 +178,16 @@ Il numero di shot per iterazione determina la fedeltà statistica dell'istogramm
 \hline
 $M_{\text{shots}}$ & $P_{\text{succ}}$ & $\bar{M}$ & $\sigma_M$ & $\rho$ vs M1 \\
 \hline
-128  & & & & \\
-256  & & & & \\
-512  & & & & \\
+128  (min. testato) & 100\% & 1.00 & 0.00 & 6.430 \\
+256               & 100\% & 1.00 & 0.00 & 6.430 \\
+512               & 100\% & 1.00 & 0.00 & 6.430 \\
 1024 (riferimento) & 100\% & 1.00 & 0.00 & 6.435 \\
-2048 & & & & \\
+2048              & 100\% & 1.00 & 0.00 & 6.430 \\
 \hline
 \end{tabular}
 \end{table}
+
+La previsione teorica è smentita: il tasso di successo non degrada neppure a 128 shot, il minimo testato. Per $N=15$ i quattro picchi QPE validi occupano posizioni fisse e ben separate nell'istogramma: anche con 128 campioni l'istogramma è sufficiente a identificarli. La soglia teorica $4 \times 256 = 1024$ sovrastima il requisito effettivo di circa un ordine di grandezza.
 
 % -----------------------------------------------
 \subsection{Analisi Congiunta $K \times \varepsilon_{2q}$}
@@ -198,13 +204,15 @@ L'analisi congiunta verifica se esiste un'interazione tra il parametro $K$ e il 
  & \multicolumn{4}{c}{$\varepsilon_{2q}$} \\
 $K$ & $5\times10^{-3}$ & $10^{-2}$ (UC1) & $2\times10^{-2}$ & $5\times10^{-2}$ (UC2) \\
 \hline
-2 & & & & \\
-4 & & \textbf{1.00} & & \textbf{1.00} \\
-6 & & & & \\
-8 & & & & \\
+2 & \textbf{1.00} & \textbf{1.00} & \textbf{1.00} & \textbf{1.00} \\
+4 & \textbf{1.00} & \textbf{1.00} & \textbf{1.00} & \textbf{1.00} \\
+6 & \textbf{1.00} & \textbf{1.00} & \textbf{1.00} & \textbf{1.00} \\
+8 & \textbf{1.00} & \textbf{1.00} & \textbf{1.00} & \textbf{1.00} \\
 \hline
 \end{tabular}
 \end{table}
+
+L'interazione $K \times \varepsilon_{2q}$ è assente: ogni cella della griglia produce $\bar{M}=1.00$ con $P_{\text{succ}}=100\%$. Non esiste un regime in cui un $K$ più alto compensi un rumore più elevato, perché TOP-K non ne ha bisogno: anche a $\varepsilon_{2q}=5\times10^{-2}$ il picco corretto rientra già tra i primi due candidati. Il parametro $K$ e il livello di rumore agiscono in modo indipendente sulla prestazione, entrambi irrilevanti nel range testato.
 
 % -----------------------------------------------
 \subsection{Parametri Secondari: $T_1$/$T_2$ e $p_{\text{ro}}$}
@@ -222,14 +230,16 @@ I tempi di coerenza e il tasso di errore di lettura sono attesi come parametri s
 \hline
 $T_1$ ($\mu$s) & $T_2$ ($\mu$s) & $P_{\text{succ}}$ & $\bar{M}$ & $\sigma_M$ & $\rho$ vs M1 \\
 \hline
-20  & 16  & & & & \\
-50  & 40  & & & & \\
+20  & 16  & 100\% & 1.00 & 0.00 & 6.430 \\
+50  & 40  & 100\% & 1.00 & 0.00 & 6.430 \\
 100 (UC1) & 80 & 100\% & 1.00 & 0.00 & 6.435 \\
-200 & 160 & & & & \\
-500 & 400 & & & & \\
+200 & 160 & 100\% & 1.00 & 0.00 & 6.430 \\
+500 & 400 & 100\% & 1.00 & 0.00 & 6.430 \\
 \hline
 \end{tabular}
 \end{table}
+
+La previsione è confermata: $T_1$ e $T_2$ non influenzano $M_{\text{TOP4}}$ nell'intero range testato ($20\,\mu\text{s}$--$500\,\mu\text{s}$). Per $N=15$, il tempo di gate complessivo del circuito (${\approx}8\,\mu\text{s}$) è inferiore anche al valore minimo di $T_1$ testato, rendendo la decoerenza trascurabile rispetto all'errore di gate.
 
 \paragraph{Sweep $\varepsilon_{1q}$ (tasso di errore a singolo qubit).}
 Il tasso di errore a singolo qubit $\varepsilon_{1q}$ agisce sulle porte H, X e RZ del circuito. Il numero di porte a singolo qubit in questo circuito è nettamente inferiore al numero di porte CX ($n_{CX}=162$), pertanto ci si aspetta che $\varepsilon_{1q}$ abbia un impatto secondario rispetto a $\varepsilon_{2q}$. Il range esplorato va da un valore quasi ideale ($\varepsilon_{1q}=10^{-4}$, circa un ordine di grandezza sotto il riferimento) fino a $\varepsilon_{1q}=2\times10^{-2}$, ovvero lo stesso ordine di grandezza di $\varepsilon_{2q}$.
@@ -242,15 +252,17 @@ Il tasso di errore a singolo qubit $\varepsilon_{1q}$ agisce sulle porte H, X e 
 \hline
 $\varepsilon_{1q}$ & $P_{\text{succ}}$ & $\bar{M}$ & $\sigma_M$ & $\rho$ vs M1 \\
 \hline
-$10^{-4}$                        & & & & \\
-$5\times10^{-4}$                 & & & & \\
-$10^{-3}$ (UC1, riferimento)     & 100\% & 1.00 & 0.00 & 6.435 \\
-$5\times10^{-3}$                 & & & & \\
-$10^{-2}$                        & & & & \\
-$2\times10^{-2}$                 & & & & \\
+$10^{-4}$                    & 100\% & 1.00 & 0.00 & 6.430 \\
+$5\times10^{-4}$             & 100\% & 1.00 & 0.00 & 6.430 \\
+$10^{-3}$ (UC1, riferimento) & 100\% & 1.00 & 0.00 & 6.435 \\
+$5\times10^{-3}$             & 100\% & 1.00 & 0.00 & 6.430 \\
+$10^{-2}$                    & 100\% & 1.00 & 0.00 & 6.430 \\
+$2\times10^{-2}$             & 100\% & 1.00 & 0.00 & 6.430 \\
 \hline
 \end{tabular}
 \end{table}
+
+Anche $\varepsilon_{1q}$ è ininfluente: $M_{\text{TOP4}}$ rimane a 1.00 con successo al 100\% su tutto il range, incluso $\varepsilon_{1q}=2\times10^{-2}$ (stesso ordine di grandezza di $\varepsilon_{2q}$). Il basso numero di porte a singolo qubit nel circuito di Shor per $N=15$ spiega l'assenza di impatto.
 
 \paragraph{Sweep $p_{\text{ro}}$.}
 
@@ -262,15 +274,17 @@ $2\times10^{-2}$                 & & & & \\
 \hline
 $p_{\text{ro}}$ & $P_{\text{succ}}$ & $\bar{M}$ & $\sigma_M$ & $\rho$ vs M1 \\
 \hline
-0\%   & & & & \\
-1\%   & & & & \\
+0\%       & 100\% & 1.00 & 0.00 & 6.430 \\
+1\%       & 100\% & 1.00 & 0.00 & 6.430 \\
 2\% (UC1) & 100\% & 1.00 & 0.00 & 6.435 \\
-5\%   & & & & \\
-10\%  & & & & \\
-20\%  & & & & \\
+5\%       & 100\% & 1.00 & 0.00 & 6.430 \\
+10\%      & 100\% & 1.00 & 0.00 & 6.430 \\
+20\%      & 100\% & 1.00 & 0.00 & 6.430 \\
 \hline
 \end{tabular}
 \end{table}
+
+Anche $p_{\text{ro}}$ è irrilevante: $M_{\text{TOP4}}$ è invariante da 0\% a 20\% di errore di lettura. Un errore di lettura simmetrico allarga l'istogramma ma non sposta i picchi QPE: il candidato corretto rimane tra i più frequenti anche con rumore di lettura molto elevato rispetto ai valori realistici dei dispositivi attuali ($p_{\text{ro}} \lesssim 3\%$).
 
 % -----------------------------------------------
 \subsection{Sintesi dell'Analisi Parametrica}
@@ -285,11 +299,12 @@ $p_{\text{ro}}$ & $P_{\text{succ}}$ & $\bar{M}$ & $\sigma_M$ & $\rho$ vs M1 \\
 \hline
 \textbf{Parametro} & \textbf{Categoria} & \textbf{Impatto atteso} & \textbf{Soglia critica} & \textbf{Raccomandazione} \\
 \hline
-$\varepsilon_{2q}$    & Rumore   & Alto (dominante)   & da determinare sperimentalmente & Verificare $P_{\text{surv}} \gg 1/K$ \\
-$K$                   & Strategia & Alto               & $K < r$ degrada il successo     & $K \approx r$ (periodo atteso) \\
-$M_{\text{shots}}$    & Strategia & Medio              & $M_{\text{shots}} < 4\cdot2^{n_{\text{count}}}$ & $M_{\text{shots}} \geq 1024$ per $n_{\text{count}}=8$ \\
-$T_1$, $T_2$          & Rumore   & Basso (per $N=15$) & Rilevante per $N \geq 21$       & Priorità su circuiti profondi \\
-$p_{\text{ro}}$       & Rumore   & Basso              & da verificare sperimentalmente  & Tollerabile fino a $\approx 5$--$10\%$ \\
+$\varepsilon_{2q}$    & Rumore    & Alto (dominante)   & Nessuna soglia critica nel range $[10^{-3}, 10^{-1}]$ & TOP-K robusto su tutto il range testato \\
+$K$                   & Strategia & Alto               & $K \geq 2$ sufficiente (non $K = r$ come atteso) & $K = 2$ minimo; $K = 4$ raccomandato per margine \\
+$M_{\text{shots}}$    & Strategia & Nullo (per $N=15$) & Nessuna soglia trovata fino a 128 shots & 128 shots sufficienti per $n_{\text{count}}=8$ \\
+$T_1$, $T_2$          & Rumore    & Nullo (per $N=15$) & Rilevante per $N \geq 21$        & Priorità su circuiti profondi \\
+$\varepsilon_{1q}$    & Rumore    & Nullo              & Invariante su $[10^{-4}, 2\times10^{-2}]$ & Trascurabile rispetto a $\varepsilon_{2q}$ \\
+$p_{\text{ro}}$       & Rumore    & Nullo              & Nessuna soglia fino a 20\%       & Tollerabile su tutto il range hardware realistico \\
 \hline
 \end{tabular}%
 }

@@ -146,7 +146,8 @@ def sweep_k():
         results[k] = s
         U, p = mw_vs_m1([r['iterations'] for r in runs])
         r_val = rho(s['M_bar'])
-        print(f'  K={k}:  M_bar={s["M_bar"]:.2f if s["M_bar"] else "N/A"}  '
+        mbar_str = f'{s["M_bar"]:.2f}' if s['M_bar'] is not None else 'N/A'
+        print(f'  K={k}:  M_bar={mbar_str}  '
               f'sr={s["success_rate"]:.1%}  rho={r_val}  p={p:.4f} {sig(p)}      ')
 
     print('\n--- LaTeX rows (tabella sweep_k) ---')
@@ -200,9 +201,11 @@ def sweep_eps2q():
         r_val = rho(stk['M_bar'], s1['M_bar']) if s1['M_bar'] else None
 
         results[eps] = {'m1': s1, 'topk': stk, 'p_surv': p_surv}
+        mbar1_str = f'{s1["M_bar"]:.2f}' if s1['M_bar'] is not None else 'N/A'
+        mbartk_str = f'{stk["M_bar"]:.2f}' if stk['M_bar'] is not None else 'N/A'
         print(f'  eps={eps:.0e}  P_surv={p_surv:.2e}  '
-              f'M1={s1["M_bar"]:.2f if s1["M_bar"] else "N/A"}  '
-              f'TOP4={stk["M_bar"]:.2f if stk["M_bar"] else "N/A"}  '
+              f'M1={mbar1_str}  '
+              f'TOP4={mbartk_str}  '
               f'rho={r_val}  p={p:.4f} {sig(p)}      ')
 
     print('\n--- LaTeX rows (tabella sweep_eps) ---')
@@ -249,7 +252,8 @@ def sweep_shots():
         results[shots] = s
         U, p = mw_vs_m1([r['iterations'] for r in runs])
         r_val = rho(s['M_bar'])
-        print(f'  shots={shots}:  M_bar={s["M_bar"]:.2f if s["M_bar"] else "N/A"}  '
+        mbar_str = f'{s["M_bar"]:.2f}' if s['M_bar'] is not None else 'N/A'
+        print(f'  shots={shots}:  M_bar={mbar_str}  '
               f'sr={s["success_rate"]:.1%}  rho={r_val}  p={p:.4f} {sig(p)}      ')
 
     print('\n--- LaTeX rows (tabella sweep_shots) ---')
@@ -291,8 +295,9 @@ def sweep_joint():
                 runs.append(r)
             s = summarize(runs)
             results[k][eps] = s
+            mbar_str = f'{s["M_bar"]:.2f}' if s['M_bar'] is not None else 'N/A'
             print(f'  K={k} eps={eps:.0e}:  '
-                  f'M_bar={s["M_bar"]:.2f if s["M_bar"] else "N/A"}  '
+                  f'M_bar={mbar_str}  '
                   f'sr={s["success_rate"]:.1%}      ')
 
     print('\n--- LaTeX rows (tabella sweep_joint, M_bar) ---')
@@ -339,8 +344,9 @@ def sweep_t1t2():
         results[t1] = s
         U, p  = mw_vs_m1([r['iterations'] for r in runs])
         r_val = rho(s['M_bar'])
+        mbar_str = f'{s["M_bar"]:.2f}' if s['M_bar'] is not None else 'N/A'
         print(f'  T1={t1//1000}us T2={t2//1000}us:  '
-              f'M_bar={s["M_bar"]:.2f if s["M_bar"] else "N/A"}  '
+              f'M_bar={mbar_str}  '
               f'sr={s["success_rate"]:.1%}  rho={r_val}  p={p:.4f} {sig(p)}      ')
 
     print('\n--- LaTeX rows (tabella sweep_t1) ---')
@@ -382,7 +388,8 @@ def sweep_eps1q():
         results[eps1q] = s
         U, p  = mw_vs_m1([r['iterations'] for r in runs])
         r_val = rho(s['M_bar'])
-        print(f'  eps_1q={eps1q:.0e}:  M_bar={s["M_bar"]:.2f if s["M_bar"] else "N/A"}  '
+        mbar_str = f'{s["M_bar"]:.2f}' if s['M_bar'] is not None else 'N/A'
+        print(f'  eps_1q={eps1q:.0e}:  M_bar={mbar_str}  '
               f'sr={s["success_rate"]:.1%}  rho={r_val}  p={p:.4f} {sig(p)}      ')
 
     print('\n--- LaTeX rows (tabella sweep_eps1q) ---')
@@ -424,7 +431,8 @@ def sweep_pro():
         results[p_ro] = s
         U, p  = mw_vs_m1([r['iterations'] for r in runs])
         r_val = rho(s['M_bar'])
-        print(f'  p_ro={p_ro:.0%}:  M_bar={s["M_bar"]:.2f if s["M_bar"] else "N/A"}  '
+        mbar_str = f'{s["M_bar"]:.2f}' if s['M_bar'] is not None else 'N/A'
+        print(f'  p_ro={p_ro:.0%}:  M_bar={mbar_str}  '
               f'sr={s["success_rate"]:.1%}  rho={r_val}  p={p:.4f} {sig(p)}      ')
 
     print('\n--- LaTeX rows (tabella sweep_pro) ---')
@@ -447,7 +455,7 @@ def sweep_pro():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--sweep', default='all',
-                        choices=['all', 'k', 'eps', 'shots', 'joint', 't1t2', 'pro'],
+                        choices=['all', 'k', 'eps', 'shots', 'joint', 't1t2', 'eps1q', 'pro'],
                         help='Quale sweep eseguire (default: all)')
     args = parser.parse_args()
 
