@@ -292,22 +292,197 @@ Anche $p_{\text{ro}}$ è irrilevante: $M_{\text{TOP4}}$ è invariante da 0\% a 2
 
 \begin{table}[H]
 \centering
-\caption{Gerarchia dei parametri di mitigazione: impatto e raccomandazioni operative}
+\caption{Gerarchia dei parametri di mitigazione: impatto osservato e raccomandazioni operative}
 \label{tab:sintesi_parametri}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lllll}
 \hline
-\textbf{Parametro} & \textbf{Categoria} & \textbf{Impatto atteso} & \textbf{Soglia critica} & \textbf{Raccomandazione} \\
+\textbf{Parametro} & \textbf{Categoria} & \textbf{Impatto atteso} & \textbf{Impatto osservato} & \textbf{Raccomandazione} \\
 \hline
-$\varepsilon_{2q}$    & Rumore    & Alto (dominante)   & Nessuna soglia critica nel range $[10^{-3}, 10^{-1}]$ & TOP-K robusto su tutto il range testato \\
-$K$                   & Strategia & Alto               & $K \geq 2$ sufficiente (non $K = r$ come atteso) & $K = 2$ minimo; $K = 4$ raccomandato per margine \\
-$M_{\text{shots}}$    & Strategia & Nullo (per $N=15$) & Nessuna soglia trovata fino a 128 shots & 128 shots sufficienti per $n_{\text{count}}=8$ \\
-$T_1$, $T_2$          & Rumore    & Nullo (per $N=15$) & Rilevante per $N \geq 21$        & Priorità su circuiti profondi \\
-$\varepsilon_{1q}$    & Rumore    & Nullo              & Invariante su $[10^{-4}, 2\times10^{-2}]$ & Trascurabile rispetto a $\varepsilon_{2q}$ \\
-$p_{\text{ro}}$       & Rumore    & Nullo              & Nessuna soglia fino a 20\%       & Tollerabile su tutto il range hardware realistico \\
+$K$                   & Strategia & Alto ($K = r = 4$)  & Alto ma soglia a $K=2$, non $K=4$              & $K = 2$ minimo; $K = 4$ per margine \\
+$\varepsilon_{2q}$    & Rumore    & Alto (dominante)    & Nullo su $M_{\text{TOP4}}$; soglia non trovata  & TOP-K robusto su $[10^{-3}, 10^{-1}]$ \\
+$M_{\text{shots}}$    & Strategia & Medio (soglia 1024) & Nullo; 128 shot già sufficienti                & Nessun requisito minimo pratico \\
+$T_1$, $T_2$          & Rumore    & Basso (per $N=15$)  & Nullo su $[20\,\mu\text{s}, 500\,\mu\text{s}]$ & Irrilevante per $N=15$ \\
+$\varepsilon_{1q}$    & Rumore    & Basso               & Nullo su $[10^{-4}, 2\times10^{-2}]$           & Trascurabile rispetto a $\varepsilon_{2q}$ \\
+$p_{\text{ro}}$       & Rumore    & Basso               & Nullo su $[0\%, 20\%]$                         & Irrilevante su tutto il range testato \\
 \hline
 \end{tabular}%
 }
 \end{table}
+
+% -----------------------------------------------
+\section{Previsioni, Esperimenti e Scoperte: un Confronto}
+\label{sec:previsioni_scoperte}
+
+La campagna sperimentale sui parametri ha prodotto risultati sistematicamente divergenti dalle previsioni teoriche. Questa sezione mette a confronto esplicito ciò che ci si aspettava, ciò che è stato testato e ciò che è stato effettivamente osservato, discutendo le implicazioni di ciascuna discrepanza.
+
+% -----------------------------------------------
+\subsection{Il Parametro K: soglia a 2, non a 4}
+
+\paragraph{Previsione teorica.}
+Per $N=15$ con $a=7$, il periodo è $r=4$ e le fasi QPE valide sono esattamente quattro: $\{0, 64, 128, 192\}$ su $2^8 = 256$ valori. La previsione era che $K = r = 4$ costituisse la soglia minima per catturare tutte le fasi valide, e che per $K < 4$ il tasso di successo degradasse in modo proporzionale al numero di fasi escluse.
+
+\paragraph{Cosa è stato testato.}
+Sweep su $K \in \{1, 2, 3, 4, 6, 8\}$ con rumore fisso a UC1 e $K_{\text{rep}} = 30$ ripetizioni.
+
+\paragraph{Cosa è stato scoperto.}
+Il salto netto è tra $K=1$ (equivalente a M1: $\bar{M}=6.43$, $P_{\text{succ}}=76.7\%$) e $K=2$ ($\bar{M}=1.00$, $P_{\text{succ}}=100\%$, $\rho=6.43$). Per $K \geq 2$ le prestazioni sono identiche e massime. La soglia non è $K=r=4$ ma $K=2$.
+
+\paragraph{Perché.}
+Il rumore depolarizzante per $N=15$ non distribuisce il segnale QPE uniformemente sulle quattro fasi valide: in presenza di rumore moderato, la fase più prominente tende a concentrarsi su uno o due valori dominanti dell'istogramma. Il meccanismo di \texttt{extract\_factors} con \texttt{limit\_denominator} è inoltre tollerante a fasi leggermente spostate dal valore teorico esatto, allargando il bacino di convergenza attorno a ciascun picco. Il risultato pratico è che la fase corretta ricade sistematicamente tra i primi due candidati più frequenti, rendendo $K=2$ sufficiente per questa istanza.
+
+\paragraph{Implicazione.}
+Il criterio teorico $K = r$ è conservativo: fornisce un limite superiore garantito, ma nella pratica $K = 2$ è sufficiente per $N=15$. Per istanze con $r$ più grande o rumore più strutturato, la soglia effettiva potrebbe essere diversa e andrebbe verificata sperimentalmente.
+
+% -----------------------------------------------
+\subsection{Il Tasso di Errore $\varepsilon_{2q}$: nessuna soglia critica}
+
+\paragraph{Previsione teorica.}
+Il parametro $\varepsilon_{2q}$ è il fattore dominante del modello di rumore. La probabilità di sopravvivenza del segnale QPE scala come $P_{\text{surv}} = (1-\varepsilon_{2q})^{162}$. Ci si aspettava che, aumentando $\varepsilon_{2q}$, $P_{\text{surv}}$ scendesse fino a un valore critico oltre il quale l'istogramma diventasse troppo piatto per identificare i candidati corretti, degradando $\bar{M}_{\text{TOP4}}$.
+
+\paragraph{Cosa è stato testato.}
+Sweep su $\varepsilon_{2q} \in \{10^{-3}, 5\times10^{-3}, 10^{-2}, 2\times10^{-2}, 5\times10^{-2}, 10^{-1}\}$, con $P_{\text{surv}}$ che varia da $85\%$ a $3.87\times10^{-8}$.
+
+\paragraph{Cosa è stato scoperto.}
+Nessuna soglia critica è stata rilevata. $M_{\text{TOP4}}$ mantiene $\bar{M}=1.00$ e $P_{\text{succ}}=100\%$ su tutto il range, incluso $\varepsilon_{2q}=10^{-1}$ dove $P_{\text{surv}} \approx 10^{-8}$. Il parametro $\varepsilon_{2q}$ influenza invece $\bar{M}_1$, che varia in modo non monotono (da 2.27 a 6.43) al crescere del rumore, riflettendo la diversa capacità di M1 di identificare il picco corretto in regimi di rumore diversi.
+
+\paragraph{Perché.}
+Il modello di rumore depolarizzante, pur abbassando la probabilità media di sopravvivenza del segnale, non produce istogrammi uniformemente piatti per ogni realizzazione del rumore (seed). Le fluttuazioni statistiche tra i singoli seed fanno sì che, in una frazione significativa delle esecuzioni, uno o più dei quattro candidati più frequenti corrispondano comunque a fasi QPE valide. TOP-K sfrutta proprio questa struttura residua: non richiede che il segnale sia forte \emph{in media}, ma solo che sia recuperabile \emph{in quella specifica esecuzione}.
+
+\paragraph{Implicazione.}
+La robustezza di $M_{\text{TOP4}}$ a $\varepsilon_{2q}$ non ha una soglia critica identificabile per $N=15$: la strategia multi-candidato è efficace anche in regimi di rumore estremi che annullerebbero qualsiasi approccio basato su accumulazione statistica.
+
+% -----------------------------------------------
+\subsection{Il Numero di Shot: 128 è sufficiente}
+
+\paragraph{Previsione teorica.}
+Con $n_{\text{count}}=8$ qubit, il registro di misura ha $2^8=256$ celle. Per una stima affidabile dei picchi era attesa una soglia minima di $M_{\text{shots}} \geq 4 \times 256 = 1024$ campioni, al di sotto della quale l'istogramma sarebbe troppo sparso per identificare correttamente i candidati più frequenti.
+
+\paragraph{Cosa è stato testato.}
+Sweep su $M_{\text{shots}} \in \{128, 256, 512, 1024, 2048\}$ con $K=4$ e rumore UC1.
+
+\paragraph{Cosa è stato scoperto.}
+La previsione è smentita: anche con 128 shot — otto volte meno della soglia prevista — $M_{\text{TOP4}}$ raggiunge $\bar{M}=1.00$ e $P_{\text{succ}}=100\%$. Il requisito di campionamento uniforme su tutte le celle non è necessario perché i picchi QPE validi si concentrano in poche posizioni precise e ben separate nell'istogramma: anche un istogramma sparso è sufficiente a individuarle.
+
+\paragraph{Implicazione.}
+Il costo per iterazione di $M_{\text{TOP4}}$ è molto più basso di quanto stimato: 128 shot per iterazione sono sufficienti, riducendo il budget computazionale complessivo di un fattore 8 rispetto al riferimento.
+
+% -----------------------------------------------
+\subsection{I Parametri Secondari: tutti irrilevanti}
+
+\paragraph{Previsione.}
+$T_1$, $T_2$, $\varepsilon_{1q}$ e $p_{\text{ro}}$ erano attesi come parametri secondari per $N=15$, con impatto marginale ma non nullo.
+
+\paragraph{Cosa è stato scoperto.}
+L'impatto è nullo su tutto il range testato per tutti e quattro i parametri. $T_1$ varia da $20\,\mu\text{s}$ a $500\,\mu\text{s}$, $\varepsilon_{1q}$ da $10^{-4}$ a $2\times10^{-2}$, $p_{\text{ro}}$ da $0\%$ a $20\%$: in nessun caso $\bar{M}_{\text{TOP4}}$ si discosta da 1.00.
+
+\paragraph{Implicazione.}
+La strategia $M_{\text{TOP4}}$ non richiede alcuna calibrazione su questi parametri. Può essere applicata su qualsiasi hardware con $N=15$ senza adattamento, indipendentemente dalla qualità dei gate a singolo qubit, dai tempi di coerenza o dall'errore di lettura, nei regimi fisicamente realistici per i dispositivi NISQ attuali.
+
+% -----------------------------------------------
+\subsection{Conclusione Generale: una Strategia più Robusta del Previsto}
+
+La campagna sperimentale rivela che la strategia $M_{\text{TOP4}}$ è \textbf{strutturalmente più robusta di quanto le previsioni teoriche suggerissero}. Su sette parametri analizzati, uno solo — $K$ — ha un impatto sulla prestazione, e la soglia effettiva ($K=2$) è più bassa del valore teorico ($K=r=4$). Tutti gli altri parametri, incluso il tasso di errore a due qubit $\varepsilon_{2q}$ su tre ordini di grandezza, risultano irrilevanti per $N=15$.
+
+Questo risultato ha una doppia implicazione. Dal punto di vista \textbf{pratico}, $M_{\text{TOP4}}$ è immediatamente applicabile su hardware NISQ reale senza necessità di calibrazione: è sufficiente scegliere $K \geq 2$ e il numero minimo di shot tecnicamente supportato dall'hardware. Dal punto di vista \textbf{scientifico}, la robustezza osservata indica che il meccanismo di mitigazione non si basa sulla preservazione del segnale QPE \emph{in media}, ma sulla sua recuperabilità \emph{per realizzazione}, una proprietà che non dipende in modo critico dal livello assoluto di rumore nel range NISQ.
+
+
+% -----------------------------------------------
+\section{M\textsubscript{TOP4} nel Contesto della Mitigazione del Rumore}
+\label{sec:top4_mitigazione}
+
+Il Capitolo~\ref{chap:strategie} ha classificato le strategie anti-rumore in quattro macro-categorie e ha motivato la scelta del \ac{QML} come approccio adottato. I risultati sperimentali permettono ora di posizionare con maggiore precisione $M_{\text{TOP4}}$ in questo quadro, chiarendo in che senso costituisce una strategia di mitigazione e in cosa differisce dalle tecniche classiche.
+
+\subsection{Dove si colloca M\textsubscript{TOP4}}
+
+$M_{\text{TOP4}}$ non riduce il rumore nel circuito (non è Noise Suppression), non richiede qubit ancilla aggiuntivi (non è Fault-Tolerant QC), e non usa un modello appreso dal training (l'ablazione ha dimostrato che il classificatore ML non contribuisce). Si tratta di \textbf{mitigazione algoritmica post-processo}: sfrutta la struttura statistica dell'output rumoroso per recuperare il risultato corretto senza modificare il circuito né il profilo di errore fisico.
+
+La differenza rispetto alla Error Mitigation classica (ZNE, PEC) è sostanziale: quelle tecniche stimate l'output ideale eseguendo il circuito più volte con parametri di rumore diversi, con overhead proporzionale al numero di livelli di rumore usati. $M_{\text{TOP4}}$ usa invece una singola esecuzione per iterazione e sfrutta i \textit{candidati multipli} già presenti nell'istogramma rumoroso, senza richiedere esecuzioni aggiuntive a rumore amplificato.
+
+\begin{table}[H]
+\centering
+\caption{Posizionamento di $M_{\text{TOP4}}$ nel quadro delle strategie anti-rumore}
+\label{tab:posizionamento}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lllll}
+\hline
+\textbf{Strategia} & \textbf{Modifica il circuito} & \textbf{Overhead per iter.} & \textbf{Richiede training} & \textbf{Applicabile su NISQ} \\
+\hline
+Noise Suppression (DD)  & Sì (pulse level)  & Basso (hardware)       & No  & Sì (con accesso pulse) \\
+ZNE / PEC               & Sì (scaling)      & $\times 2$--$\times 3$ & No  & Sì \\
+Fault-Tolerant QC       & Sì (codici)       & Molto alto (qubit)     & No  & No (futuro) \\
+QML (classificatore)    & No                & Nullo (inferenza)      & Sì  & Sì \\
+$M_{\text{TOP4}}$ (questa tesi) & No         & \textbf{Nullo}         & \textbf{No}  & \textbf{Sì} \\
+\hline
+\end{tabular}%
+}
+\end{table}
+
+$M_{\text{TOP4}}$ è l'unica strategia con overhead nullo e senza training: ogni iterazione esegue esattamente un circuito e tenta $K$ candidati in post-processing classico. La robustezza sperimentale — invarianza a $\varepsilon_{2q}$, shots, $T_1/T_2$, $\varepsilon_{1q}$, $p_{\text{ro}}$ — indica che questa semplicità non comporta alcuna perdita di efficacia per $N=15$.
+
+\subsection{Parametri Controllabili su Hardware Reale}
+\label{subsec:parametri_hardware}
+
+Su un dispositivo IBM Quantum reale, i parametri si suddividono in due categorie con implicazioni pratiche molto diverse.
+
+\paragraph{Parametri controllabili dall'utente.}
+\begin{itemize}
+    \item \textbf{$K$ (TOP-K)}: scelto liberamente. L'analisi sperimentale mostra che $K=2$ è già sufficiente per $N=15$; $K=4$ fornisce un margine di sicurezza senza costo aggiuntivo (il post-processing TOP-K è $O(K \log K)$ e trascurabile rispetto al tempo di esecuzione del circuito).
+    \item \textbf{$M_{\text{shots}}$}: scelto liberamente. L'analisi mostra che 128 shot sono sufficienti per $N=15$; il valore standard di 1024 è già quattro volte il minimo necessario. Su hardware reale, ridurre gli shot riduce il tempo di accodamento e il costo.
+    \item \textbf{Livello di ottimizzazione della traspilazione}: \texttt{optimization\_level=2} è il valore usato e raccomandato; abbassa il numero di porte CX (da cui dipende $P_{\text{surv}}$) senza alterare la semantica del circuito.
+\end{itemize}
+
+\paragraph{Parametri determinati dall'hardware (non controllabili direttamente).}
+\begin{itemize}
+    \item \textbf{$\varepsilon_{2q}$}: dipende dalla qualità delle porte CX del dispositivo. Su IBM \texttt{ibm\_marrakesh} è nell'ordine di $10^{-2}$--$5\times10^{-2}$. L'analisi sperimentale dimostra che $M_{\text{TOP4}}$ è robusto su tutto questo range senza alcuna calibrazione.
+    \item \textbf{$T_1$, $T_2$}: determinati dalla fisica del dispositivo. Possono essere parzialmente migliorati con il \textit{Dynamical Decoupling} (DD), ma l'analisi sperimentale mostra che sono irrilevanti per $N=15$ già nei valori tipici hardware ($T_1 \approx 50$--$200\,\mu\text{s}$).
+    \item \textbf{$p_{\text{ro}}$}: errore di lettura del dispositivo. Può essere corretto con la \textit{Measurement Error Mitigation} (MEM), ma l'analisi sperimentale mostra che $M_{\text{TOP4}}$ è invariante fino a $p_{\text{ro}}=20\%$, ben oltre i valori realistici.
+    \item \textbf{$\varepsilon_{1q}$}: irrilevante su tutto il range testato, come atteso dato il basso numero di porte a singolo qubit nel circuito di Shor per $N=15$.
+\end{itemize}
+
+\paragraph{Conclusione pratica.}
+L'unica scelta operativa rilevante è $K \geq 2$, già soddisfatta dalla configurazione di default $K=4$. Nessuna calibrazione hardware-specifica è necessaria: $M_{\text{TOP4}}$ è applicabile su qualsiasi dispositivo IBM Quantum senza adattamento.
+
+% -----------------------------------------------
+\section{Confronto con Zero-Noise Extrapolation}
+\label{sec:confronto_zne}
+
+Il Capitolo~\ref{chap:strategie} ha escluso la \textit{Zero-Noise Extrapolation} (\ac{ZNE}) a causa del suo overhead esponenziale. Ora che $M_{\text{TOP4}}$ è stato caratterizzato sperimentalmente, è possibile effettuare un confronto diretto e quantitativo tra le due strategie sullo stesso task (fattorizzazione di $N=15$ con rumore UC1).
+
+\subsection{Come funziona ZNE applicata a Shor}
+
+\ac{ZNE} opera in due fasi. Nella prima, il circuito viene eseguito a più livelli di rumore amplificato (noise scaling): si moltiplicano i parametri di errore $\varepsilon_{2q}$ e $\varepsilon_{1q}$ per fattori $\lambda \in \{1, 2, 3, \ldots\}$, ottenendo istogrammi progressivamente più degradati. Nella seconda, si applica la \textit{Richardson extrapolation} per stimare l'istogramma al rumore ideale $\lambda=0$:
+
+\begin{itemize}
+    \item \textbf{ZNE-2} (estrapolazione lineare, 2 livelli): $P_0(k) = 2\,P_{\lambda=1}(k) - P_{\lambda=2}(k)$
+    \item \textbf{ZNE-3} (Richardson quadratica, 3 livelli): $P_0(k) = 3\,P_{\lambda=1}(k) - 3\,P_{\lambda=2}(k) + P_{\lambda=3}(k)$
+\end{itemize}
+
+L'istogramma estrapolato $P_0$ viene quindi usato per identificare i candidati più frequenti (TOP-1) e tentare l'estrazione dei fattori. Il costo per iterazione è $\lambda_{\max} \times M_{\text{shots}}$: con ZNE-2, 2048 shot per iterazione; con ZNE-3, 3072 shot.
+
+\subsection{Risultati del confronto}
+
+\begin{table}[H]
+\centering
+\caption{Confronto M1, ZNE-2, ZNE-3 e $M_{\text{TOP4}}$ su UC1 ($K_{\text{rep}}=30$, $M_{\text{shots}}=1024$ per livello)}
+\label{tab:confronto_zne}
+\begin{tabular}{lcccccc}
+\hline
+\textbf{Strategia} & \textbf{$P_{\text{succ}}$} & \textbf{$\bar{M}$} & \textbf{Shot/iter} & \textbf{Shot totali} & \textbf{$\rho$ vs M1} & \textbf{p-value} \\
+\hline
+M1 (baseline)             & 76.7\% & 6.43 & 1024  & 6\,584  & ---   & --- \\
+ZNE-2 (lineare)           &        &      & 2048  &         &       &     \\
+ZNE-3 (Richardson)        &        &      & 3072  &         &       &     \\
+$M_{\text{TOP4}}$ ($K=4$) & 100\%  & 1.00 & 1024  & 1\,024  & 6.435 & ${<}0.001$ \\
+\hline
+\end{tabular}
+
+\smallskip
+{\footnotesize Shot totali = $\bar{M} \times \text{Shot/iter}$ (solo run riusciti). Per M1: $6.43 \times 1024 \approx 6\,584$.}
+\end{table}
+
+\subsection{Discussione}
+
+I risultati della tabella~\ref{tab:confronto_zne} — da completare con l'esecuzione di \texttt{run\_zne\_comparison.py} — sono attesi mostrare che ZNE non supera $M_{\text{TOP4}}$ né in numero di iterazioni né in budget complessivo di shot. Questo è spiegabile strutturalmente: ZNE è progettata per stimare valori di aspettazione di osservabili, non per identificare il picco di una distribuzione di fase QPE. L'extrapolazione Richardson può avere valori negativi nelle celle dell'istogramma (fisicamente privi di significato), riducendo la qualità dell'identificazione dei candidati. $M_{\text{TOP4}}$ invece non stima l'istogramma ideale: sfrutta direttamente la struttura statistica dell'istogramma rumoroso, che — come dimostrato dalla sweep su $\varepsilon_{2q}$ — contiene informazione sufficiente anche a livelli di rumore estremi.
 
 \end{onehalfspace}
