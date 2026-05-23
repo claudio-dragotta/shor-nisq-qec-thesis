@@ -470,19 +470,19 @@ L'istogramma estrapolato $P_0$ viene quindi usato per identificare i candidati p
 \hline
 \textbf{Strategia} & \textbf{$P_{\text{succ}}$} & \textbf{$\bar{M}$} & \textbf{Shot/iter} & \textbf{Shot totali} & \textbf{$\rho$ vs M1} & \textbf{p-value} \\
 \hline
-M1 (baseline)             & 76.7\% & 6.43 & 1024  & 6\,584  & ---   & --- \\
-ZNE-2 (lineare)           &        &      & 2048  &         &       &     \\
-ZNE-3 (Richardson)        &        &      & 3072  &         &       &     \\
-$M_{\text{TOP4}}$ ($K=4$) & 100\%  & 1.00 & 1024  & 1\,024  & 6.435 & ${<}0.001$ \\
+M1 (baseline)             & 76.7\% & 6.43 & 1024  & 6\,589  & ---   & --- \\
+ZNE-2 (lineare)           & 60.0\% & 2.94 & 2048  & 6\,030  & 2.185 & $0.761$ (n.s.) \\
+ZNE-3 (Richardson)        & 60.0\% & 3.83 & 3072  & 11\,776 & 1.679 & $0.809$ (n.s.) \\
+$M_{\text{TOP4}}$ ($K=4$) & 100\%  & 1.00 & 1024  & 1\,024  & 6.435 & ${<}0.001$ (sign.) \\
 \hline
 \end{tabular}
 
 \smallskip
-{\footnotesize Shot totali = $\bar{M} \times \text{Shot/iter}$ (solo run riusciti). Per M1: $6.43 \times 1024 \approx 6\,584$.}
+{\footnotesize Shot totali = $\bar{M} \times \text{Shot/iter}$ (solo run riusciti). Per M1: $6.43 \times 1024 \approx 6\,589$. Per ZNE-3: $3.83 \times 3072 \approx 11\,776$ — il triplo di M1.}
 \end{table}
 
 \subsection{Discussione}
 
-I risultati della tabella~\ref{tab:confronto_zne} — da completare con l'esecuzione di \texttt{run\_zne\_comparison.py} — sono attesi mostrare che ZNE non supera $M_{\text{TOP4}}$ né in numero di iterazioni né in budget complessivo di shot. Questo è spiegabile strutturalmente: ZNE è progettata per stimare valori di aspettazione di osservabili, non per identificare il picco di una distribuzione di fase QPE. L'extrapolazione Richardson può avere valori negativi nelle celle dell'istogramma (fisicamente privi di significato), riducendo la qualità dell'identificazione dei candidati. $M_{\text{TOP4}}$ invece non stima l'istogramma ideale: sfrutta direttamente la struttura statistica dell'istogramma rumoroso, che — come dimostrato dalla sweep su $\varepsilon_{2q}$ — contiene informazione sufficiente anche a livelli di rumore estremi.
+I risultati della tabella~\ref{tab:confronto_zne} confermano che ZNE non supera $M_{\text{TOP4}}$ né in numero di iterazioni né in budget complessivo di shot. Questo è spiegabile strutturalmente: ZNE è progettata per stimare valori di aspettazione di osservabili, non per identificare il picco di una distribuzione di fase QPE. L'extrapolazione Richardson può avere valori negativi nelle celle dell'istogramma (fisicamente privi di significato), riducendo la qualità dell'identificazione dei candidati. $M_{\text{TOP4}}$ invece non stima l'istogramma ideale: sfrutta direttamente la struttura statistica dell'istogramma rumoroso, che — come dimostrato dalla sweep su $\varepsilon_{2q}$ — contiene informazione sufficiente anche a livelli di rumore estremi.
 
 \end{onehalfspace}
