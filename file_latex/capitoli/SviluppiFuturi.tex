@@ -2,59 +2,9 @@
 
 Ogni lavoro sperimentale su una tecnologia emergente porta con sé, oltre ai risultati ottenuti, una mappa di direzioni non esplorate: vincoli di tempo, risorse e maturità tecnologica che delimitano il perimetro di ciò che è stato fatto. Questo capitolo non riassume i risultati della tesi, ma guarda avanti: identifica le estensioni più naturali del lavoro svolto, le domande che i risultati aprono senza rispondere e le opportunità che lo stato dell'arte attuale rende oggi accessibili.
 
-Le direzioni presentate sono ordinate per crescente dipendenza dall'evoluzione hardware: si parte da sviluppi realizzabili già oggi con l'infrastruttura software esistente, si passa attraverso l'integrazione con hardware reale e la costruzione di modelli ML più sofisticati, e si conclude con scenari che dipendono dall'avanzamento dell'hardware verso il regime fault-tolerant.
+Le direzioni presentate sono ordinate per urgenza e vicinanza ai risultati ottenuti: si parte dall'estensione più immediata e realizzabile --- la scalabilità a istanze maggiori tramite decomposizioni efficienti --- per passare alla validazione su hardware reale, alla generalizzazione ad altri algoritmi e all'integrazione con la \ac{QEC} strutturale, concludendo con l'evoluzione del classificatore ML, il cui contributo è risultato secondario rispetto alla strategia di ricerca TOP-K.
 
-I risultati sperimentali della tesi evidenziano tre aperture concrete: (i) l'analisi di ablazione ha identificato la strategia di ricerca multi-candidato $M_{\text{TOP4}}$ come il componente attivo del miglioramento: raggiunge $\rho = 6.4$ per UC1 e $\rho = 2.4$ per UC2 senza classificatore, mentre il Metodo 2 (CLF + TOP-4) ottiene $\rho < 1$ per UC2, indicando che il classificatore è irrilevante o dannoso rispetto alla sola strategia TOP-K; (ii) la barriera di scalabilità per $N \geq 21$ è interamente attribuibile alla decomposizione \texttt{UnitaryGate} ($>10\,000$ porte CX), risolvibile con circuiti efficienti già disponibili in letteratura; (iii) il simulation gap tra il simulatore statevector e l'hardware reale rimane da quantificare sperimentalmente.
-
-% -----------------------------------------------
-\section{Test e Validazione su Hardware Quantistico Reale}
-\label{sec:hw_reale}
-
-Il sistema sperimentale sviluppato in questa tesi opera interamente su simulatore. Questa scelta garantisce riproducibilità, controllo preciso dei parametri di rumore e accesso illimitato --- tutti requisiti indispensabili per la generazione del dataset di addestramento e per l'esecuzione sistematica dei quattro use case. Tuttavia, la simulazione è per definizione un'approssimazione: il noise model adottato replica il comportamento macroscopico del processore IBM \texttt{ibm\_marrakesh} attraverso canali di rumore indipendenti e stazionari, mentre il rumore su hardware reale è correlato spazialmente tra qubit vicini, non stazionario nel tempo e affetto da derive lente dei parametri fisici non catturate da un modello statico.
-
-Il passo più immediato è quindi l'esecuzione dei quattro use case su hardware reale attraverso IBM Quantum, verificando in che misura le metriche ottenute su simulatore --- in particolare il fattore di riduzione delle iterazioni $\rho = \bar{M}_1 / \bar{M}_2$ --- si trasferiscono all'hardware fisico. Ci si attende che il classificatore addestrato su simulatore mostri un certo degrado di prestazioni sull'hardware reale, per la presenza di componenti di rumore non modellateprecisamente. Questa differenza è di per sé un risultato scientifico interessante: quantifica il \textit{simulation gap}, ossia la distanza tra il comportamento del simulatore e quello dell'hardware.
-
-Una direzione più ambiziosa consiste nel riaddestrare il classificatore \textit{direttamente} su dati raccolti dall'hardware reale, sfruttando le coppie (output misurato, correttezza verificata) accumulate nelle prime sessioni di test. Questo approccio --- noto come \textit{online learning} o \textit{fine-tuning} su dati reali --- è la strada percorsa dai decoder neurali per surface code come AlphaQubit \cite{alphaqubit2024}, che sono stati prima pre-addestrati su dati sintetici e poi raffinati su dati del processore Sycamore di Google. Applicare la stessa strategia al classificatore sviluppato in questa tesi rappresenta un'estensione diretta e concretamente realizzabile non appena si disponga di accesso regolare a un processore IBM Quantum.
-
-% -----------------------------------------------
-\section{Generalizzazione ad Altri Algoritmi Quantistici NISQ}
-\label{sec:altri_algoritmi}
-
-Il classificatore sviluppato in questa tesi è addestrato specificamente sugli output dell'algoritmo di Shor. Tuttavia, la struttura del problema è più generale: dato un algoritmo quantistico che produce, in assenza di rumore, una distribuzione di output con picchi netti, e dato che il rumore degrada quei picchi allargandoli e aggiungendo un fondo uniforme, un classificatore addestrato a distinguere output corretti da output rumorosi può in principio essere applicato a qualunque algoritmo con quella struttura.
-
-I candidati più naturali per una generalizzazione sono:
-
-\textbf{Algoritmo di Grover.} Come descritto nel Capitolo~\ref{chap:fondamenti}, Grover concentra l'ampiezza sullo stato soluzione tramite \textit{amplitude amplification}. In presenza di rumore, l'ampiezza sullo stato obiettivo si riduce e la distribuzione si appiattisce progressivamente con il numero di iterazioni. La struttura del problema è analoga a quella di Shor: la distribuzione ideale ha un picco dominante, il rumore lo degrada. Un classificatore addestrato su simulatori rumorosi di Grover potrebbe determinare, dopo ogni esecuzione, se il risultato punta allo stato soluzione o è contaminato dal rumore.
-
-\textbf{Variational Quantum Eigensolver (VQE).} Il VQE è uno degli algoritmi più rilevanti per l'era NISQ: stima il valore atteso di un Hamiltoniano usando circuiti parametrizzati e ottimizzazione classica. Il rumore introduce un bias sistematico nella stima dell'energia. Un modello di regressione addestrato a correggere questo bias --- estensione diretta dell'approccio di \cite{ml_mitigation2023} --- potrebbe ridurre significativamente il numero di misurazioni necessarie per convergere all'energia dello stato fondamentale.
-
-\textbf{Quantum Approximate Optimization Algorithm (QAOA).} Il QAOA è progettato per problemi di ottimizzazione combinatoria (Max-Cut, TSP). La funzione obiettivo è anch'essa un valore atteso misurato su un circuito quantistico, e il rumore la degrada in modo analogo al VQE. La tecnica del classificatore sviluppata per Shor potrebbe essere adattata per decidere, dopo ogni valutazione della funzione obiettivo, se il risultato è sufficientemente affidabile da guidare il passo di ottimizzazione classica, riducendo il numero di evaluazioni necessarie.
-
-Questa generalizzazione richiede la costruzione di dataset specifici per ciascun algoritmo e una riconsiderazione delle feature: nel caso di Grover e del QAOA, le feature più informative potrebbero essere diverse dalle distribuzioni di probabilità del registro di misura usate per Shor.
-
-% -----------------------------------------------
-\section{Evoluzione del Classificatore ML}
-\label{sec:evoluzione_ml}
-
-Il classificatore sviluppato in questa tesi è un modello a singola istanza: prende in ingresso il vettore di feature estratto da una singola esecuzione e produce un'etichetta binaria. Questa semplicità è una virtù nella fase iniziale, ma lascia spazio a miglioramenti significativi.
-
-\textbf{Classificatore con memoria delle iterazioni precedenti.} Il loop del Metodo 2 esegue il circuito in sequenza, ma ogni invocazione del classificatore è indipendente dalla precedente. Un modello \textit{recurrente} --- ad esempio un \ac{LSTM} o un Transformer con finestra di attenzione sulle ultime $k$ esecuzioni --- potrebbe sfruttare l'informazione accumulata nelle iterazioni precedenti: se le ultime $k$ esecuzioni hanno tutte prodotto output in un certo intervallo, questa coerenza è un segnale aggiuntivo di affidabilità del risultato. Questo approccio è analogo a quello adottato dai decoder neurali per surface code che operano su sequenze di sindromi nel tempo \cite{transformer_decoder2023}.
-
-\textbf{Calibrazione probabilistica dell'output.} Anziché un'etichetta binaria secca, un classificatore calibrato produce una probabilità $p(\text{corretto} \mid \text{output})$. Questo consente di impostare una soglia adattiva: il loop si interrompe quando la probabilità stimata supera un livello di confidenza configurabile, bilanciando il rischio di falsi positivi con il costo delle iterazioni aggiuntive.
-
-\textbf{Transfer learning tra noise model diversi.} Un classificatore addestrato su un noise model specifico (es. \texttt{ibm\_marrakesh}) potrebbe essere adattato a un hardware diverso (es. \texttt{ibm\_kyoto}) attraverso una fase di fine-tuning su un piccolo dataset del nuovo dispositivo, senza riaddestrare da zero. Questa tecnica, ispirata al transfer learning del deep learning classico, ridurrebbe significativamente il costo di portare il sistema su nuovi hardware.
-
-\textbf{Classificatore adattivo al regime di rumore.} Il risultato di UC2 ($\rho = 0.731 < 1$) ha evidenziato che, quando la probabilità di successo per iterazione del Metodo 1 è già alta ($p_{\text{iter}} \approx 41\%$), il filtraggio del classificatore ha un effetto netto negativo. Una soluzione naturale è un classificatore che stima direttamente $p_{\text{iter}}$ dall'istogramma e decide dinamicamente la strategia ottimale: ricerca TOP-1 (equivalente al Metodo 1) quando $p_{\text{iter}}$ stimata è alta, ricerca TOP-K con gating del classificatore quando $p_{\text{iter}}$ stimata è bassa. Questo adattamento al regime richiederebbe un modello di regressione (invece di classificazione binaria) o un sistema a due stadi con una soglia di commutazione calibrata sul noise model corrente.
-
-% -----------------------------------------------
-\section{Integrazione con la Quantum Error Correction Strutturale}
-\label{sec:qec_integrazione}
-
-Il classificatore sviluppato in questa tesi opera al livello degli \textit{output}: valuta la correttezza del risultato finale di un'esecuzione dopo che il rumore ha già agito sull'intero circuito. La \ac{QEC} strutturale --- basata su codici come il surface code --- opera invece al livello dei \textit{qubit fisici}: rileva e corregge gli errori \textit{durante} l'esecuzione, prima che si propaghino.
-
-Questi due approcci sono complementari, non alternativi. Con l'avanzare dell'hardware verso processori con un numero sufficiente di qubit fisici per implementare il surface code su istanze non banali (la roadmap IBM prevede questa capacità entro il 2026--2029 \cite{ibm_roadmap2025}), una direzione naturale è combinare i due livelli: utilizzare il surface code per proteggere il calcolo interno del circuito di Shor, e il classificatore ML per validare il risultato finale su un simulatore di circuiti fault-tolerant.
-
-In questo scenario, il classificatore non dovrebbe più correggere per il rumore fisico dei gate --- quello sarebbe compito del codice correttore --- ma per le imprecisioni residue a livello logico: errori di decodifica della sindrome, errori oltre la soglia del codice, o imperfezioni nella compilazione del circuito logico. Questo rappresenta una sinergia diretta tra le due tecniche e costituisce una delle frontiere più attive della ricerca attuale, come evidenziato dai risultati di AlphaQubit \cite{alphaqubit2024}.
+I risultati sperimentali della tesi evidenziano tre aperture concrete: (i) la barriera di scalabilità per $N \geq 21$ è interamente attribuibile alla decomposizione \texttt{UnitaryGate} ($>10\,000$ porte CX), risolvibile con circuiti efficienti già disponibili in letteratura; (ii) il simulation gap tra il simulatore statevector e l'hardware reale rimane da quantificare sperimentalmente; (iii) l'analisi di ablazione ha dimostrato che il classificatore ML è irrilevante --- il vantaggio $\rho = 6.4$ su UC1 è interamente attribuibile alla strategia TOP-K, aprendo la strada a un'ottimizzazione diretta di questa componente piuttosto che del filtro statistico.
 
 % -----------------------------------------------
 \section{Scalabilità a Istanze di Maggiore Dimensione}
@@ -64,10 +14,54 @@ I quattro use case di questa tesi utilizzano numeri $N$ di piccola dimensione. Q
 
 Il principale collo di bottiglia identificato dagli esperimenti non è il numero di qubit ma la \textbf{profondità del circuito}: la decomposizione tramite \texttt{UnitaryGate} genera 10\,040 porte CX per $N=21$ e 13\,064 per $N=35$, rendendo $P_{\text{surv}} \approx 10^{-44}$ e $10^{-57}$ rispettivamente --- valori per cui entrambi i metodi di analisi falliscono sistematicamente. Questo limite non è fondamentale: è un artefatto della decomposizione scelta.
 
-La soluzione disponibile in letteratura è l'implementazione di Beauregard~\cite{beauregard2002}, che riduce il circuito di moltiplicazione modulare a $O(n^3)$ porte elementari usando registri ausiliari e l'addizionatore di Draper. Per $N=21$ ($n=5$ qubit), questo produrrebbe $O(125)$ porte invece di $10\,040$: una riduzione di due ordini di grandezza che renderebbe fattibile la simulazione anche sotto rumore NISQ-realistico. L'adozione di questa decomposizione consentirebbe di estendere il confronto M1 vs M2 a UC3 e UC4, e di verificare se il vantaggio $\rho \approx 6$ osservato per UC1 scala con la dimensione del problema.
+La soluzione disponibile in letteratura è l'implementazione di Beauregard~\cite{beauregard2002}, che riduce il circuito di moltiplicazione modulare a $O(n^3)$ porte elementari usando registri ausiliari e l'addizionatore di Draper. Per $N=21$ ($n=5$ qubit), questo produrrebbe $O(125)$ porte invece di $10\,040$: una riduzione di due ordini di grandezza che renderebbe fattibile la simulazione anche sotto rumore NISQ-realistico. L'adozione di questa decomposizione consentirebbe di estendere il confronto M1 vs $M_{\text{TOP4}}$ a UC3 e UC4, e di verificare se il vantaggio $\rho \approx 6$ osservato per UC1 scala con la dimensione del problema.
 
-La direzione di sviluppo più realistica a breve termine è quindi: (i) integrare la decomposizione Beauregard in \texttt{shor\_core.py} per $N=21$ e $N=35$; (ii) rigenerare il dataset di addestramento per UC3 e UC4 con il nuovo circuito efficiente; (iii) rieseguire il confronto M1 vs M2 per questi use case.
+La direzione di sviluppo più realistica a breve termine è quindi: (i) integrare la decomposizione Beauregard in \texttt{shor\_core.py} per $N=21$ e $N=35$; (ii) rigenerare il confronto M1 vs $M_{\text{TOP4}}$ per questi use case; (iii) verificare se la robustezza parametrica osservata per $N=15$ si mantiene a profondità circuitale maggiore.
 
 Un'ulteriore direzione complementare è l'integrazione con simulatori MPS (\textit{Matrix Product States}), disponibili in Qiskit Aer, che permettono di simulare circuiti con molti qubit ma scarso entanglement in modo efficiente. Poiché i circuiti di Shor hanno struttura modulare con entanglement prevalentemente localizzato tra i due registri, la simulazione MPS potrebbe estendere la portata sperimentale a istanze con $N$ a 20--30 bit senza richiedere la simulazione statevector completa.
+
+% -----------------------------------------------
+\section{Test e Validazione su Hardware Quantistico Reale}
+\label{sec:hw_reale}
+
+Il sistema sperimentale sviluppato in questa tesi opera interamente su simulatore. Questa scelta garantisce riproducibilità, controllo preciso dei parametri di rumore e accesso illimitato --- tutti requisiti indispensabili per la generazione del dataset di addestramento e per l'esecuzione sistematica dei quattro use case. Tuttavia, la simulazione è per definizione un'approssimazione: il noise model adottato replica il comportamento macroscopico del processore IBM \texttt{ibm\_marrakesh} attraverso canali di rumore indipendenti e stazionari, mentre il rumore su hardware reale è correlato spazialmente tra qubit vicini, non stazionario nel tempo e affetto da derive lente dei parametri fisici non catturate da un modello statico.
+
+Il passo più immediato è quindi l'esecuzione di UC1 e UC2 su hardware reale attraverso IBM Quantum, verificando in che misura le metriche ottenute su simulatore --- in particolare il fattore di riduzione $\rho = \bar{M}_1 / \bar{M}_{\text{TOP4}}$ --- si trasferiscono all'hardware fisico. Poiché l'analisi di ablazione ha dimostrato che $M_{\text{TOP4}}$ non richiede addestramento, questa validazione è immediata: basta eseguire la strategia TOP-K sui risultati reali senza alcuna fase di fine-tuning. Ci si attende che $M_{\text{TOP4}}$ mostri la stessa robustezza osservata su simulatore, dato che la sua efficacia non dipende dal profilo specifico del rumore ma dalla struttura dei picchi QPE. Questa differenza è di per sé un risultato scientifico interessante: quantifica il \textit{simulation gap}, ossia la distanza tra il comportamento del simulatore e quello dell'hardware reale.
+
+% -----------------------------------------------
+\section{Generalizzazione ad Altri Algoritmi Quantistici NISQ}
+\label{sec:altri_algoritmi}
+
+La strategia multi-candidato TOP-K sviluppata in questa tesi è addestrata specificamente sugli output dell'algoritmo di Shor. Tuttavia, la struttura del problema è più generale: dato un algoritmo quantistico che produce, in assenza di rumore, una distribuzione di output con picchi netti, il rumore degrada quei picchi allargandoli e aggiungendo un fondo uniforme. La strategia TOP-K --- che sfrutta la struttura residua dei picchi senza modificare il circuito né il profilo di errore --- può in principio essere applicata a qualunque algoritmo con quella struttura.
+
+I candidati più naturali per una generalizzazione sono:
+
+\textbf{Algoritmo di Grover.} Come descritto nel Capitolo~\ref{chap:fondamenti}, Grover concentra l'ampiezza sullo stato soluzione tramite \textit{amplitude amplification}. In presenza di rumore, l'ampiezza sullo stato obiettivo si riduce e la distribuzione si appiattisce progressivamente con il numero di iterazioni. La struttura del problema è analoga a quella di Shor: la distribuzione ideale ha un picco dominante, il rumore lo degrada. Una strategia TOP-K applicata a Grover potrebbe tentare i $K$ candidati più frequenti invece del solo massimo, riducendo il numero di iterazioni necessarie.
+
+\textbf{Variational Quantum Eigensolver (VQE).} Il VQE è uno degli algoritmi più rilevanti per l'era NISQ: stima il valore atteso di un Hamiltoniano usando circuiti parametrizzati e ottimizzazione classica. Il rumore introduce un bias sistematico nella stima dell'energia. Un modello di regressione addestrato a correggere questo bias --- estensione diretta dell'approccio di \cite{ml_mitigation2023} --- potrebbe ridurre significativamente il numero di misurazioni necessarie per convergere all'energia dello stato fondamentale.
+
+\textbf{Quantum Approximate Optimization Algorithm (QAOA).} Il QAOA è progettato per problemi di ottimizzazione combinatoria (Max-Cut, TSP). La funzione obiettivo è anch'essa un valore atteso misurato su un circuito quantistico, e il rumore la degrada in modo analogo al VQE. La tecnica TOP-K sviluppata per Shor potrebbe essere adattata per selezionare, dopo ogni valutazione della funzione obiettivo, i $K$ candidati più promettenti invece del solo massimo, riducendo il numero di evaluazioni necessarie.
+
+% -----------------------------------------------
+\section{Integrazione con la Quantum Error Correction Strutturale}
+\label{sec:qec_integrazione}
+
+La strategia $M_{\text{TOP4}}$ sviluppata in questa tesi opera al livello degli \textit{output}: sfrutta la struttura statistica dell'istogramma rumoroso per identificare il risultato corretto. La \ac{QEC} strutturale --- basata su codici come il surface code --- opera invece al livello dei \textit{qubit fisici}: rileva e corregge gli errori \textit{durante} l'esecuzione, prima che si propaghino.
+
+Questi due approcci sono complementari, non alternativi. Con l'avanzare dell'hardware verso processori con un numero sufficiente di qubit fisici per implementare il surface code su istanze non banali (la roadmap IBM prevede questa capacità entro il 2026--2029 \cite{ibm_roadmap2025}), una direzione naturale è combinare i due livelli: utilizzare il surface code per proteggere il calcolo interno del circuito di Shor, e la strategia TOP-K per gestire l'incertezza residua nell'istogramma di output a livello logico.
+
+In questo scenario, TOP-K non dovrebbe più compensare il rumore fisico dei gate --- quello sarebbe compito del codice correttore --- ma l'incertezza residua derivante da errori oltre la soglia del codice, imprecisioni nella decodifica della sindrome o imperfezioni nella compilazione del circuito logico. Questo rappresenta una sinergia diretta tra le due tecniche e costituisce una delle frontiere più attive della ricerca attuale, come evidenziato dai risultati di AlphaQubit \cite{alphaqubit2024}.
+
+% -----------------------------------------------
+\section{Evoluzione del Classificatore ML}
+\label{sec:evoluzione_ml}
+
+L'analisi di ablazione ha dimostrato che il classificatore ML non contribuisce al miglioramento delle prestazioni: la variante $M_{\text{TOP4}}$ senza classificatore è statisticamente equivalente a M2 per UC1 ($p = 0.849$) e significativamente migliore per UC2 ($p < 0.001$). Il componente attivo è la strategia di ricerca TOP-K, non il filtro statistico. Le seguenti direzioni per l'evoluzione del classificatore rimangono comunque rilevanti in scenari in cui la struttura dei picchi QPE sia meno netta di quella osservata per $N=15$, o in cui il costo per iterazione sia sufficientemente elevato da rendere vantaggioso un filtraggio accurato.
+
+\textbf{Classificatore adattivo al regime di rumore.} Il risultato di UC2 ($\rho = 0.731 < 1$) ha evidenziato che, quando la probabilità di successo per iterazione del Metodo 1 è già alta ($p_{\text{iter}} \approx 41\%$), il filtraggio del classificatore ha un effetto netto negativo. Una soluzione naturale è un classificatore che stima direttamente $p_{\text{iter}}$ dall'istogramma e decide dinamicamente la strategia ottimale: ricerca TOP-1 (equivalente al Metodo 1) quando $p_{\text{iter}}$ stimata è alta, ricerca TOP-K quando $p_{\text{iter}}$ stimata è bassa. Questo adattamento al regime richiederebbe un modello di regressione o un sistema a due stadi con una soglia di commutazione calibrata sul noise model corrente.
+
+\textbf{Calibrazione probabilistica dell'output.} Anziché un'etichetta binaria secca, un classificatore calibrato produce una probabilità $p(\text{corretto} \mid \text{output})$. Questo consente di impostare una soglia adattiva: il loop si interrompe quando la probabilità stimata supera un livello di confidenza configurabile, bilanciando il rischio di falsi positivi con il costo delle iterazioni aggiuntive.
+
+\textbf{Transfer learning tra noise model diversi.} Un classificatore addestrato su un noise model specifico (es. \texttt{ibm\_marrakesh}) potrebbe essere adattato a un hardware diverso (es. \texttt{ibm\_kyoto}) attraverso una fase di fine-tuning su un piccolo dataset del nuovo dispositivo, senza riaddestrare da zero. Questa tecnica, ispirata al transfer learning del deep learning classico, ridurrebbe significativamente il costo di portare il sistema su nuovi hardware.
 
 \end{onehalfspace}

@@ -105,6 +105,8 @@ Il contributo originale di questa tesi è duplice: (\textit{i}) la dimostrazione
 \section{Analisi Sperimentale dei Parametri di Mitigazione}
 \label{sec:parametri_mitigazione}
 
+Le sezioni precedenti hanno stabilito \textit{cosa} ottiene $M_{\text{TOP4}}$. Questa sezione risponde alla domanda \textit{perché funziona e in quali condizioni}: attraverso una campagna sperimentale sistematica a variazione singola si caratterizza la sensibilità della strategia ai parametri hardware e algoritmici, quantificando i margini operativi e le soglie effettive.
+
 L'analisi di ablazione ha identificato la strategia $M_{\text{TOP4}}$ come il componente attivo del miglioramento. Per comprendere in modo quantitativo il ruolo di ciascun parametro — e per definire un criterio operativo di configurazione — si è condotta una campagna sperimentale sistematica. I parametri analizzati si suddividono in due categorie: i parametri della \textbf{strategia di ricerca} (controllabili dall'utente) e i parametri del \textbf{modello di rumore} (determinati dall'hardware target). Per ciascuno si è applicata la metodologia a variazione singola (\textit{one-factor-at-a-time}): tutti i parametri sono tenuti fissi ai valori di riferimento di UC1 mentre si fa variare il parametro in esame. Tutte le misure usano $K_{\text{rep}} = 30$ ripetizioni e il test Mann-Whitney a una coda per la significatività statistica.
 
 \paragraph{Configurazione di riferimento.}
