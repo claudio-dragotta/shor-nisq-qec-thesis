@@ -26,6 +26,23 @@ La direzione di sviluppo immediata è quindi la validazione sperimentale di UC3 
 
 Il sistema sperimentale sviluppato in questa tesi opera interamente su simulatore. Questa scelta garantisce riproducibilità, controllo preciso dei parametri di rumore e accesso illimitato --- tutti requisiti indispensabili per la generazione del dataset di addestramento e per l'esecuzione sistematica dei quattro use case. Tuttavia, la simulazione è per definizione un'approssimazione: il noise model adottato replica il comportamento macroscopico del processore IBM \texttt{ibm\_marrakesh} attraverso canali di rumore indipendenti e stazionari, mentre il rumore su hardware reale è correlato spazialmente tra qubit vicini, non stazionario nel tempo e affetto da derive lente dei parametri fisici non catturate da un modello statico.
 
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{10_histogram_simulator_N15.pdf}
+    \caption*{Simulatore (basso rumore)}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{11_histogram_hardware_N15.pdf}
+    \caption*{Hardware reale IBM}
+\end{minipage}
+\caption[Simulation gap: simulatore vs hardware reale per $N=15$]{Confronto degli istogrammi QPE per $N=15$, $a=7$ su simulatore (sinistra) e su hardware IBM Quantum reale (destra). Sul simulatore i quattro picchi corretti $\{0, 64, 128, 192\}$ raccolgono $\approx 250$ conteggi ciascuno su 1024 shot; sull'hardware reale gli stessi picchi risultano significativamente più deboli ($\approx 40$--$58$ conteggi), con la maggior parte dei conteggi dispersi uniformemente. Questo \textit{simulation gap} quantifica la distanza tra il modello di rumore statico adottato e il rumore reale correlato e non stazionario del processore fisico.}
+\label{fig:simulation_gap}
+\end{figure}
+
 Il passo più immediato è quindi l'esecuzione di UC1 e UC2 su hardware reale attraverso IBM Quantum, verificando in che misura le metriche ottenute su simulatore --- in particolare il fattore di riduzione $\rho = \bar{M}_1 / \bar{M}_{\text{TOP4}}$ --- si trasferiscono all'hardware fisico. Poiché l'analisi di ablazione ha dimostrato che $M_{\text{TOP4}}$ non richiede addestramento, questa validazione è immediata: basta eseguire la strategia TOP-K sui risultati reali senza alcuna fase di fine-tuning. Ci si attende che $M_{\text{TOP4}}$ mostri la stessa robustezza osservata su simulatore, dato che la sua efficacia non dipende dal profilo specifico del rumore ma dalla struttura dei picchi QPE. Questa differenza è di per sé un risultato scientifico interessante: quantifica il \textit{simulation gap}, ossia la distanza tra il comportamento del simulatore e quello dell'hardware reale.
 
 % -----------------------------------------------
