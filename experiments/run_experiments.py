@@ -12,20 +12,30 @@ from qiskit import transpile
 from qiskit_aer import AerSimulator
 from shor_core import build_noise_model, run_method1, run_method2, shor_circuit
 
-NOISE_REALISTIC = {'eps_1q': 1e-3, 'eps_2q': 1e-2,
-                   't1_ns': 100_000, 't2_ns': 80_000, 'p_ro': 0.02}
-NOISE_DEGRADED  = {'eps_1q': 5e-3, 'eps_2q': 5e-2,
-                   't1_ns': 50_000,  't2_ns': 30_000,  'p_ro': 0.05}
+NOISE_REALISTIC = {'eps_1q': 1e-3,  'eps_2q': 1e-2,
+                   't1_ns': 100_000, 't2_ns':  80_000, 'p_ro': 0.02}
+NOISE_DEGRADED  = {'eps_1q': 5e-3,  'eps_2q': 5e-2,
+                   't1_ns':  50_000, 't2_ns':  30_000, 'p_ro': 0.05}
+# Near-future NISQ (IBM roadmap 2026-2028): eps_2q=0.001, T1~500us
+# Beauregard per N=21: 2594 CX, P_surv~7.5% a eps_2q=0.001
+NOISE_NEARFUTURE_HARD = {'eps_1q': 1e-4,  'eps_2q': 1e-3,
+                          't1_ns': 500_000, 't2_ns': 400_000, 'p_ro': 0.005}
+# Near-future NISQ ottimistico: eps_2q=0.0005, P_surv~27%
+NOISE_NEARFUTURE_EASY = {'eps_1q': 5e-5,  'eps_2q': 5e-4,
+                          't1_ns': 800_000, 't2_ns': 600_000, 'p_ro': 0.002}
 
 USE_CASES = [
-    {'name': 'UC1', 'N': 15, 'a': 7, 'n_count': 8,  'noise': NOISE_REALISTIC,
+    {'name': 'UC1', 'N': 15, 'a': 7, 'n_count': 8, 'noise': NOISE_REALISTIC,
      'has_m2': True},
-    {'name': 'UC2', 'N': 15, 'a': 7, 'n_count': 8,  'noise': NOISE_DEGRADED,
+    {'name': 'UC2', 'N': 15, 'a': 7, 'n_count': 8, 'noise': NOISE_DEGRADED,
      'has_m2': True},
-    {'name': 'UC3', 'N': 21, 'a': 2, 'n_count': 10, 'noise': NOISE_REALISTIC,
-     'has_m2': False},
-    {'name': 'UC4', 'N': 35, 'a': 6, 'n_count': 12, 'noise': NOISE_REALISTIC,
-     'has_m2': False},
+    # UC3/UC4: N=21 con decomposizione Beauregard (O(n^3) CX)
+    # eps_2q=0.001 -> P_surv~7.5% (NISQ near-future "difficile")
+    {'name': 'UC3', 'N': 21, 'a': 2, 'n_count': 8, 'noise': NOISE_NEARFUTURE_HARD,
+     'has_m2': True},
+    # eps_2q=0.0005 -> P_surv~27% (NISQ near-future "ottimistico")
+    {'name': 'UC4', 'N': 21, 'a': 2, 'n_count': 8, 'noise': NOISE_NEARFUTURE_EASY,
+     'has_m2': True},
 ]
 
 K_REPETITIONS = 30   # ripetizioni per stima statistica (UC1/UC2)

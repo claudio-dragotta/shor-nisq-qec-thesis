@@ -120,14 +120,14 @@ Fattori estratti & $(3, 5)$ \\
 \subsection{Use Case 3 — $N = 21$, scalabilità}
 \label{sec:uc3_m1}
 
-Per $N=21$, la moltiplicazione modulare controllata è implementata tramite \texttt{UnitaryGate} (cfr. Sezione~\ref{sec:impl_metodo1}). Il circuito traspilato conta 10\,040 porte \texttt{cx} (profondità 19\,816): con $\epsilon_{2q} = 10^{-2}$, la probabilità di sopravvivenza è $(0.99)^{10040} \approx 1.5 \times 10^{-44}$, rendendo l'output del circuito indistinguibile dal rumore uniforme.
+Per $N=21$, la decomposizione tramite \texttt{UnitaryGate} produce 10\,040 porte \texttt{cx} (profondità 19\,816): con $\epsilon_{2q} = 10^{-2}$, la probabilità di sopravvivenza è $(0.99)^{10040} \approx 1.5 \times 10^{-44}$, rendendo l'output indistinguibile dal rumore uniforme. Con questa decomposizione, $P_{\text{succ}} = 0\%$ su tutte le ripetizioni.
 
-In queste condizioni, il Metodo 1 non produce mai i fattori corretti entro $M_{\text{max}}=50$ iterazioni su nessuna delle $K=10$ ripetizioni: $\bar{M}_1 = \text{N/A}$, $P_{\text{succ}} = 0\%$. Il circuito è inutilizzabile in regime NISQ con questa decomposizione.
+La decomposizione alternativa di Beauregard~\cite{beauregard2002} è stata implementata nel modulo \texttt{beauregard.py} e riduce il circuito a $\sim$2\,594 porte CX ($P_{\text{surv}} \approx 6\%$ con $\epsilon_{2q}=10^{-3}$, hardware near-future NISQ). I risultati sperimentali completi con questa implementazione sono in fase di acquisizione e richiedono accesso a un cluster HPC o a hardware IBM Quantum reale (cfr. Capitolo~\ref{chap:sviluppi}).
 
 \subsection{Use Case 4 — $N = 35$, scalabilità}
 \label{sec:uc4_m1}
 
-Per $N=35$, la situazione è analoga a UC3 ma ancora più critica: il circuito conta 13\,064 porte \texttt{cx} (profondità 25\,779), con $P_{\text{surv}} \approx 9.5\times10^{-58}$. Anche qui $P_{\text{succ}} = 0\%$ e il Metodo 1 non converge mai. L'analisi della scalabilità e le prospettive di miglioramento (circuiti efficienti basati su decomposizioni SWAP) sono discusse nel Capitolo~\ref{chap:conclusioni2}.
+Per $N=35$, la decomposizione \texttt{UnitaryGate} produce 13\,064 porte \texttt{cx} (profondità 25\,779), con $P_{\text{surv}} \approx 9.5\times10^{-58}$: anche qui $P_{\text{succ}} = 0\%$. Come per UC3, una decomposizione Beauregard è prevista come estensione diretta; i risultati sperimentali sono in attesa di risorse computazionali adeguate. L'analisi della scalabilità è discussa nel Capitolo~\ref{chap:conclusioni2}.
 
 % -----------------------------------------------
 \section{Analisi dei Risultati}
