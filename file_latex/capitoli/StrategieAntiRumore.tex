@@ -97,7 +97,7 @@ Il codice di Steane \cite{steane1996} riduce l'overhead a 7 qubit fisici per 1 q
 \textbf{Surface Code.}
 Il \textbf{surface code} \cite{fowler2012} è oggi il codice più promettente per implementazioni su hardware reale, ed è quello su cui IBM e Google stanno costruendo le loro architetture fault-tolerant. Organizza i qubit fisici in una griglia 2D con interazioni solo tra qubit vicini --- un requisito compatibile con le architetture superconduttrici. La sua proprietà chiave è il \textbf{threshold}: fintanto che il tasso di errore per gate rimane sotto circa $1\%$, aumentare la distanza $d$ del codice abbassa il tasso di errore logico in modo esponenziale.\footnote{Il threshold preciso dipende dal modello di rumore: $\approx 1.1\%$ per rumore depolarizzante indipendente, $\approx 0.5$--$0.7\%$ per modelli più realistici con correlazioni spaziali. I migliori processori IBM e Google si avvicinano oggi a queste soglie.} Per distanza $d$, il codice usa $d^2$ qubit fisici per 1 qubit logico e corregge fino a $\lfloor(d-1)/2\rfloor$ errori.
 
-\clearpage
+
 \subsection{Perché la QEC è una Sottocategoria del QML}
 
 Il legame tra QEC e QML emerge nella fase di decodifica. I decoder tradizionali assumono un modello di rumore semplice e stazionario, ma sull'hardware reale il rumore è correlato, non uniforme e varia nel tempo. Le reti neurali non hanno bisogno di questo modello: apprendono direttamente dalla storia delle sindromi la correzione più probabile, adattandosi al profilo di errore specifico del dispositivo. In questo senso la QEC non è una strategia separata dal QML, ma la sua specializzazione più strutturata: il modello apprenditivo sostituisce il decoder analitico e ne migliora le prestazioni in condizioni reali \cite{fowler2012}.
