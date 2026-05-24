@@ -473,6 +473,7 @@ L'istogramma estrapolato $P_0$ viene quindi usato per identificare i candidati p
 \centering
 \caption{Confronto M1, ZNE-2, ZNE-3 e $M_{\text{TOP4}}$ su UC1 ($K_{\text{rep}}=30$, $M_{\text{shots}}=1024$ per livello)}
 \label{tab:confronto_zne}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{lcccccc}
 \hline
 \textbf{Strategia} & \textbf{$P_{\text{succ}}$} & \textbf{$\bar{M}$} & \textbf{Shot/iter} & \textbf{Shot totali} & \textbf{$\rho$ vs M1} & \textbf{p-value} \\
@@ -482,7 +483,8 @@ ZNE-2 (lineare)           & 60.0\% & 2.94 & 2048  & 6\,030  & 2.185 & $0.761$ (n
 ZNE-3 (Richardson)        & 60.0\% & 3.83 & 3072  & 11\,776 & 1.679 & $0.809$ (n.s.) \\
 $M_{\text{TOP4}}$ ($K=4$) & 100\%  & 1.00 & 1024  & 1\,024  & 6.435 & ${<}0.001$ (sign.) \\
 \hline
-\end{tabular}
+\end{tabular}%
+}
 
 \smallskip
 {\footnotesize Shot totali = $\bar{M} \times \text{Shot/iter}$ (solo run riusciti). Per M1: $6.43 \times 1024 \approx 6\,589$. Per ZNE-3: $3.83 \times 3072 \approx 11\,776$ — il triplo di M1.}
