@@ -122,6 +122,20 @@ Fattori estratti & $(3, 5)$ \\
 
 Per $N=21$, la decomposizione tramite \texttt{UnitaryGate} produce 10\,040 porte \texttt{cx} (profondità 19\,816): con $\epsilon_{2q} = 10^{-2}$, la probabilità di sopravvivenza è $(0.99)^{10040} \approx 1.5 \times 10^{-44}$, rendendo l'output indistinguibile dal rumore uniforme. Con questa decomposizione, $P_{\text{succ}} = 0\%$ su tutte le ripetizioni.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.65\textwidth]{12_QPE_circuit_N21.pdf}
+\caption[Circuito QPE per $N=21$]{Circuito di Quantum Phase Estimation per $N=21$, $a=2$ ($n_{\text{count}}=10$ qubit di controllo, 5 qubit target). La struttura è analoga a $N=15$ ma con un registro di controllo più ampio e blocchi di moltiplicazione modulare controllata ($M_2, M_4, M_{16}, \ldots$) più profondi. La complessità risultante con decomposizione \texttt{UnitaryGate} porta a 10\,040 porte CX dopo la traspilosizione.}
+\label{fig:qpe_circuit_N21}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{13_histogram_simulator_N21.pdf}
+\caption[Istogramma QPE per $N=21$ — distribuzione piatta]{Distribuzione di misura del registro di controllo per $N=21$ con decomposizione \texttt{UnitaryGate} (1024 shot, noise model NISQ-realistico). I sei stati più frequenti hanno conteggi pressoché identici ($\approx 170$ ciascuno): l'output è indistinguibile da una distribuzione uniforme, confermando che $P_{\text{surv}} \approx 10^{-44}$ annulla qualsiasi segnale QPE.}
+\label{fig:histogram_N21_flat}
+\end{figure}
+
 La decomposizione alternativa di Beauregard~\cite{beauregard2002} è stata implementata nel modulo \texttt{beauregard.py} e riduce il circuito a $\sim$2\,594 porte CX ($P_{\text{surv}} \approx 6\%$ con $\epsilon_{2q}=10^{-3}$, hardware near-future NISQ). I risultati sperimentali completi con questa implementazione sono in fase di acquisizione e richiedono accesso a un cluster HPC o a hardware IBM Quantum reale (cfr. Capitolo~\ref{chap:sviluppi}).
 
 \subsection{Use Case 4 — $N = 35$, scalabilità}

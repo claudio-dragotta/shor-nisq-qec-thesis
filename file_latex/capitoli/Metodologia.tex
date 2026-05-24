@@ -24,6 +24,7 @@ Il sistema è strutturato come un pipeline a tre stadi sequenziali, illustrato i
 
 \begin{figure}[H]
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
     box/.style     = {rectangle, draw, rounded corners=4pt,
                       minimum width=3.0cm, minimum height=0.95cm,
@@ -43,7 +44,8 @@ Il sistema è strutturato come un pipeline a tre stadi sequenziali, illustrato i
 \draw[arrow] (noise) -- node[below left,  lbl]{output rumoroso} (m2);
 \draw[arrow] (m1)    -- (out);
 \draw[arrow] (m2)    -- (out);
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \caption[Pipeline sperimentale]{Pipeline sperimentale. Il circuito ideale dell'algoritmo di Shor viene eseguito sul simulatore rumoroso \texttt{AerSimulator} di Qiskit. L'output è elaborato in parallelo dal Metodo 1 (analisi della distribuzione statistica) e dal Metodo 2 (classificatore ML). Entrambi producono i fattori di $N$ e le metriche di confronto.}
 \label{fig:pipeline_architettura}
 \end{figure}

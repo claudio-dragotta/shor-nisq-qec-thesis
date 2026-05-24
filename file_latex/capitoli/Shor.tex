@@ -9,7 +9,7 @@ L'\textbf{algoritmo di Shor}, proposto da Peter Shor nel 1994 \cite{shor1994}, �
 Questo risultato costituisce uno \textbf{speedup esponenziale} rispetto al miglior algoritmo classico noto -- il \ac{GNFS} -- che richiede tempo sub-esponenziale (si veda l'equazione~\eqref{eq:gnfs_complexity}), del tutto impraticabile per i numeri di grandi dimensioni usati in crittografia. È considerato il risultato algoritmico più dirompente dell'informatica quantistica, poiché la fattorizzazione è il fondamento matematico del sistema crittografico RSA, che protegge la quasi totalità delle comunicazioni digitali moderne.
 
 L'algoritmo si articola in tre fasi: un \textit{preprocessing} classico che riconduce il problema a trovare il periodo di una funzione modulare; un nucleo quantistico basato sulla \ac{QFT} e sulla \ac{QPE}, che trova quel periodo in modo esponenzialmente più efficiente di qualunque strategia classica; e una \textit{post-elaborazione} classica che estrae i fattori di $N$ tramite il calcolo del massimo comune divisore. Nelle sezioni seguenti si introduce prima il problema che l'algoritmo risolve e la sua rilevanza crittografica, per poi svilupparne nel dettaglio la struttura.
-
+\clearpage
 \bigskip
 \section{Il Problema della Fattorizzazione Intera}
 
@@ -127,6 +127,13 @@ La QFT è impiegata, all'interno dell'algoritmo di Shor, attraverso la subroutin
 \includegraphics[width=0.6\textwidth]{09_QPE_circuit_N15.pdf}
 \caption[Circuito QPE per $N=15$, $a=2$]{Circuito di Quantum Phase Estimation per $N=15$, $a=2$, implementato con Qiskit. Il registro di controllo ($C$, 8 qubit) viene posto in sovrapposizione uniforme, entanglato tramite gli operatori $M_2$ e $M_4$ controllati, e trasformato con la QFT$^{-1}$. La misura del registro $C$ produce una stima della fase $\theta = k/r$, da cui si ricava il periodo $r$ tramite frazioni continue.}
 \label{fig:qpe_circuit_N15_qiskit}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{10_histogram_simulator_N15.pdf}
+\caption[Istogramma QPE ideale per $N=15$]{Distribuzione di misura del registro di controllo per $N=15$, $a=7$, su simulatore a basso rumore (1024 shot). I quattro stati più frequenti --- $\{0, 64, 128, 192\}$ --- corrispondono ai multipli di $2^8/r = 256/4 = 64$ attesi per il periodo $r=4$. Ogni picco raccoglie circa 250--270 conteggi su 1024, confermando la struttura teorica della QPE.}
+\label{fig:histogram_ideal_N15}
 \end{figure}
 
 \section{L'Algoritmo di Shor: Schema Completo}
