@@ -125,7 +125,9 @@ Per UC2 il Metodo 2 produce $\rho = 0{,}731 < 1$ ($\bar{M}_2 = 3{,}30$), non sig
 \subsection{Use Case 3 e 4 — Scalabilità}
 \label{sec:uc34_m2}
 
-Per UC3 e UC4 il Metodo 2 non è applicabile per la stessa ragione che limita il Metodo 1: la profondità del circuito (10\,040 e 13\,064 porte CX rispettivamente) annulla la coerenza del segnale QPE prima della misura. Il confronto M1 vs M2 è quindi limitato a UC1 e UC2.
+Con la decomposizione \texttt{UnitaryGate}, il Metodo 2 non è applicabile per UC3 e UC4: le profondità di 10\,040 e 13\,064 porte CX annullano la coerenza del segnale QPE, rendendo l'istogramma indistinguibile dal rumore uniforme e privando il classificatore di qualsiasi segnale discriminativo. Il confronto M1 vs $M_{\text{TOP4}}$ vs M2 è quindi limitato a UC1 e UC2.
+
+La decomposizione Beauregard~\cite{beauregard2002}, implementata nel modulo \texttt{beauregard.py}, riduce il circuito per $N=21$ a $\sim$2\,594 porte CX e rende fattibile il confronto anche per UC3 con hardware near-future NISQ ($\epsilon_{2q}=10^{-3}$, $P_{\text{surv}}\approx 6\%$). La validazione sperimentale completa è in fase di sviluppo e richiede accesso a risorse di calcolo avanzate (cluster HPC o IBM Quantum); i risultati saranno presentati in una pubblicazione successiva (cfr. Capitolo~\ref{chap:sviluppi}).
 
 % -----------------------------------------------
 \section{Confronto Diretto Metodo 1 vs Metodo 2}

@@ -11,6 +11,7 @@ from qiskit_aer import AerSimulator
 from qiskit_aer.noise import (
     NoiseModel, depolarizing_error, thermal_relaxation_error, ReadoutError
 )
+from beauregard import beauregard_c_amod
 
 
 # --- Inverse QFT (textbook convention) ---
@@ -84,19 +85,26 @@ def shor_circuit(N, a, n_count):
     else:
         if N not in [21, 35]:
             raise NotImplementedError(f"N={N} non supportato. Usa N in {{15, 21, 35}}.")
-        n_work = ceil(log2(N + 1))
-        qc = QuantumCircuit(n_count + n_work, n_count)
+        # Beauregard decomposition: O(n^3) porte CX invece di O(4^n) di UnitaryGate.
+        # Per N=21 (n=5): ~2594 CX totali vs 10040, P_surv(eps=0.001)~7.5%.
+        # Layout qubit Beauregard: [count | x(n) | b(n+1) | anc]
+        n = ceil(log2(N + 1))
+        n_b = n + 1
+        n_total = n_count + n + n_b + 1   # ctrl_qubits + x + b + ancilla
+        qc = QuantumCircuit(n_total, n_count)
         for q in range(n_count):
             qc.h(q)
-        # Inizializza registro lavoro a |2^(n_work-1)⟩ (qubit MSB del registro)
-        # Questo stato è sempre in un'orbita non banale per a,N scelti
-        qc.x(n_count + n_work - 1)
+        # Inizializza x a |1⟩: flip qubit MSB del registro x (qubit n_count + n - 1)
+        qc.x(n_count + n - 1)
         for j in range(n_count):
             power = 2 ** j
-            # Salta se U^power = identità (a^power ≡ 1 mod N)
             if pow(a, power, N) != 1:
-                qc.append(c_amod(a, N, power),
-                           [j] + list(range(n_count, n_count + n_work)))
+                gate = beauregard_c_amod(a, N, power)
+                # Qubits: ctrl=j, x=n_count..n_count+n-1, b=n_count+n..n_count+n+n_b-1, anc=last
+                x_qubits = list(range(n_count, n_count + n))
+                b_qubits = list(range(n_count + n, n_count + n + n_b))
+                anc_qubit = [n_count + n + n_b]
+                qc.append(gate, [j] + x_qubits + b_qubits + anc_qubit)
 
     qc.barrier()
     qc.append(inverse_qft(n_count), range(n_count))
@@ -135,8 +143,8 @@ def build_noise_model(eps_1q, eps_2q, t1_ns, t2_ns, gate_time_ns=50, p_ro=0.02):
 
 
 def _sim(noise_model=None):
-    """AerSimulator statevector (CPU)."""
-    kw = {'method': 'statevector'}
+    """AerSimulator MPS (matrix product state) — molto più veloce per circuiti profondi."""
+    kw = {'method': 'matrix_product_state'}
     return AerSimulator(noise_model=noise_model, **kw) if noise_model else AerSimulator(**kw)
 
 
