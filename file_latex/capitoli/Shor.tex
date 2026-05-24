@@ -131,6 +131,40 @@ La QFT è impiegata, all'interno dell'algoritmo di Shor, attraverso la subroutin
 
 \begin{figure}[H]
 \centering
+\begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{01_M2_circuit.pdf}
+    \caption*{(a) $U_{2}$ non controllato}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{02_controlled_M2.pdf}
+    \caption*{(b) $CU_{2}$ controllato}
+\end{minipage}
+\caption[Blocco di moltiplicazione modulare $U_2$ per $N=15$]{Gate di moltiplicazione modulare $U_2\ket{x} = \ket{2x \bmod 15}$ per $N=15$, $a=2$. (a) Versione non controllata su 4 qubit: implementata come sequenza di SWAP condizionati. (b) Versione controllata $CU_2$ su 5 qubit, utilizzata nel circuito QPE: il qubit $q_0$ di controllo attiva il blocco solo quando è in stato $|1\rangle$.}
+\label{fig:M2_circuit}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{04_M4_circuit.pdf}
+    \caption*{(a) $U_{4}$ non controllato}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{05_controlled_M4.pdf}
+    \caption*{(b) $CU_{4}$ controllato}
+\end{minipage}
+\caption[Blocco di moltiplicazione modulare $U_4$ per $N=15$]{Gate di moltiplicazione modulare $U_4\ket{x} = \ket{4x \bmod 15}$ per $N=15$, $a=4=2^2$. Il pattern di CNOT differisce da $U_2$ poiché la permutazione modulare per $a=4$ è diversa. (b) Versione controllata $CU_4$ su 5 qubit, secondo blocco del circuito QPE.}
+\label{fig:M4_circuit}
+\end{figure}
+
+\begin{figure}[H]
+\centering
 \includegraphics[width=0.7\textwidth]{10_histogram_simulator_N15.pdf}
 \caption[Istogramma QPE ideale per $N=15$]{Distribuzione di misura del registro di controllo per $N=15$, $a=7$, su simulatore a basso rumore (1024 shot). I quattro stati più frequenti --- $\{0, 64, 128, 192\}$ --- corrispondono ai multipli di $2^8/r = 256/4 = 64$ attesi per il periodo $r=4$. Ogni picco raccoglie circa 250--270 conteggi su 1024, confermando la struttura teorica della QPE.}
 \label{fig:histogram_ideal_N15}
