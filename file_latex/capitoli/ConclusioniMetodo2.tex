@@ -85,7 +85,7 @@ UC4 & 35 & 13\,064 & $\approx 10^{-57}$    & Nessuno \\
 \end{tabular}
 \end{table}
 
-Il percorso verso la scalabilità richiede l'adozione di decomposizioni efficienti per la moltiplicazione modulare: l'approccio di Beauregard~\cite{beauregard2002} riduce la complessità a $O(n^3)$ porte elementari (con $n = \lceil\log_2 N\rceil$), rendendo fattibili circuiti con $N$ fino a qualche centinaio su simulatori avanzati. L'estensione del Metodo 2 a questi regimi di scalabilità costituisce uno degli sviluppi futuri più promettenti (cfr. Capitolo~\ref{chap:sviluppi}).
+Il percorso verso la scalabilità richiede decomposizioni efficienti per la moltiplicazione modulare: l'approccio di Beauregard~\cite{beauregard2002} riduce la complessità a $O(n^3)$ porte elementari, portando il circuito per $N=21$ da 10\,040 a $\sim$2\,594 porte CX ($P_{\text{surv}}\approx 6\%$ con $\epsilon_{2q}=10^{-3}$). Questa decomposizione è stata implementata nel modulo \texttt{beauregard.py}; la validazione sperimentale del confronto M1 vs $M_{\text{TOP4}}$ su UC3 e UC4 è in corso e richiede accesso a risorse di calcolo avanzate. I risultati completi saranno oggetto di una pubblicazione successiva (cfr. Capitolo~\ref{chap:sviluppi}).
 
 % -----------------------------------------------
 \section{Validità del Contributo}
