@@ -407,7 +407,113 @@ def sweep_eps1q():
 
 
 # ─────────────────────────────────────────────
-# 7. Sweep p_ro
+# 7. Sweep optimization_level
+# ─────────────────────────────────────────────
+def sweep_opt_level():
+    print('\n' + '='*60)
+    print('SWEEP 7: Variazione di optimization_level (transpilazione)')
+    print('='*60)
+
+    opt_levels = [0, 1, 2, 3]
+    nm = build_noise_model(**BASE_NOISE)
+    sim = AerSimulator(noise_model=nm, method='statevector')
+    results = {}
+
+    base_qc = shor_circuit(N, A, N_COUNT)
+
+    for opt in opt_levels:
+        # Misura gate count sul circuito transpilato
+        transpiled = transpile(base_qc, sim, optimization_level=opt)
+        cx_count = transpiled.count_ops().get('cx', 0)
+        depth    = transpiled.depth()
+
+        # Esegui K_REPS con questo livello
+        m1_runs   = []
+        topk_runs = []
+        for rep in range(K_REPS):
+            print(f'  opt_level={opt}  rep {rep+1}/{K_REPS}', end='\r', flush=True)
+
+            # M1 (TOP-1)
+            counts = sim.run(
+                transpile(base_qc, sim, optimization_level=opt),
+                shots=1024, seed_simulator=rep * 10000
+            ).result().get_counts()
+            max_count = max(counts.values())
+            threshold = 0.3
+            peaks = {k: v for k, v in counts.items() if v >= threshold * max_count}
+            found = False
+            for it in range(1, MAX_ITER + 1):
+                for bs in sorted(peaks, key=peaks.get, reverse=True):
+                    p, q = extract_factors(int(bs, 2), N_COUNT, N, A)
+                    if p is not None:
+                        m1_runs.append({'iterations': it, 'success': True})
+                        found = True
+                        break
+                if found:
+                    break
+                counts = sim.run(
+                    transpile(base_qc, sim, optimization_level=opt),
+                    shots=1024, seed_simulator=rep * 10000 + it
+                ).result().get_counts()
+                max_count = max(counts.values())
+                peaks = {k: v for k, v in counts.items() if v >= threshold * max_count}
+            if not found:
+                m1_runs.append({'iterations': MAX_ITER, 'success': False})
+
+            # TOP-4
+            found_tk = False
+            for it in range(1, MAX_ITER + 1):
+                counts = sim.run(
+                    transpile(base_qc, sim, optimization_level=opt),
+                    shots=1024, seed_simulator=rep * 10000 + it + 5000
+                ).result().get_counts()
+                for bs, _ in sorted(counts.items(), key=lambda x: x[1], reverse=True)[:4]:
+                    p, q = extract_factors(int(bs, 2), N_COUNT, N, A)
+                    if p is not None:
+                        topk_runs.append({'iterations': it, 'success': True})
+                        found_tk = True
+                        break
+                if found_tk:
+                    break
+            if not found_tk:
+                topk_runs.append({'iterations': MAX_ITER, 'success': False})
+
+        s1  = summarize(m1_runs)
+        stk = summarize(topk_runs)
+        U, p = mw_vs_m1([r['iterations'] for r in topk_runs],
+                         [r['iterations'] for r in m1_runs])
+        r_val = rho(stk['M_bar'], s1['M_bar']) if s1['M_bar'] else None
+
+        results[opt] = {
+            'm1': s1, 'topk': stk,
+            'cx_count': cx_count, 'depth': depth
+        }
+        mbar1 = f'{s1["M_bar"]:.2f}' if s1['M_bar'] is not None else 'N/A'
+        mbartk = f'{stk["M_bar"]:.2f}' if stk['M_bar'] is not None else 'N/A'
+        print(f'  opt={opt}  CX={cx_count}  depth={depth}  '
+              f'M1={mbar1} ({s1["success_rate"]:.0%})  '
+              f'TOP4={mbartk} ({stk["success_rate"]:.0%})  '
+              f'rho={r_val}  p={p:.4f} {sig(p)}      ')
+
+    print('\n--- LaTeX rows (tabella sweep_opt_level) ---')
+    print(r'  Livello & Gate CX & Profondità & $\bar{M}_1$ & SR$_1$ & $\bar{M}_\text{TOP4}$ & SR$_4$ & $\rho$ \\')
+    for opt in opt_levels:
+        r = results[opt]
+        s1  = r['m1']
+        stk = r['topk']
+        rv  = rho(stk['M_bar'], s1['M_bar']) if s1['M_bar'] else None
+        mbar1  = f"{s1['M_bar']:.2f}"   if s1['M_bar']  else 'N/A'
+        mbartk = f"{stk['M_bar']:.2f}"  if stk['M_bar'] else 'N/A'
+        sr1    = f"{s1['success_rate']*100:.1f}\\%"
+        srtk   = f"{stk['success_rate']*100:.1f}\\%"
+        rval   = f"{rv:.3f}"            if rv           else '---'
+        print(f'  {opt} & {r["cx_count"]} & {r["depth"]} & {mbar1} & {sr1} & {mbartk} & {srtk} & {rval} \\\\')
+
+    return results
+
+
+# ─────────────────────────────────────────────
+# 8. Sweep p_ro
 # ─────────────────────────────────────────────
 def sweep_pro():
     print('\n' + '='*60)
@@ -455,20 +561,21 @@ def sweep_pro():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--sweep', default='all',
-                        choices=['all', 'k', 'eps', 'shots', 'joint', 't1t2', 'eps1q', 'pro'],
+                        choices=['all', 'k', 'eps', 'shots', 'joint', 't1t2', 'eps1q', 'pro', 'optlevel'],
                         help='Quale sweep eseguire (default: all)')
     args = parser.parse_args()
 
     all_results = {}
 
     sweep_map = {
-        'k':     ('sweep_k',      sweep_k),
-        'eps':   ('sweep_eps2q',  sweep_eps2q),
-        'shots': ('sweep_shots',  sweep_shots),
-        'joint': ('sweep_joint',  sweep_joint),
-        't1t2':  ('sweep_t1t2',   sweep_t1t2),
-        'eps1q': ('sweep_eps1q',  sweep_eps1q),
-        'pro':   ('sweep_pro',    sweep_pro),
+        'k':        ('sweep_k',         sweep_k),
+        'eps':      ('sweep_eps2q',     sweep_eps2q),
+        'shots':    ('sweep_shots',     sweep_shots),
+        'joint':    ('sweep_joint',     sweep_joint),
+        't1t2':     ('sweep_t1t2',      sweep_t1t2),
+        'eps1q':    ('sweep_eps1q',     sweep_eps1q),
+        'pro':      ('sweep_pro',       sweep_pro),
+        'optlevel': ('sweep_opt_level', sweep_opt_level),
     }
 
     to_run = list(sweep_map.keys()) if args.sweep == 'all' else [args.sweep]

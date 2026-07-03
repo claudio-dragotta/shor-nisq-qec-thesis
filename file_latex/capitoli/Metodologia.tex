@@ -57,6 +57,132 @@ Il sistema è strutturato come un pipeline a tre stadi sequenziali, illustrato i
 \textbf{Stadio 3 — L'analisi.} L'output del simulatore viene elaborato indipendentemente dai due metodi. I risultati prodotti da entrambi vengono confrontati sulle stesse metriche e sugli stessi use case, garantendo la comparabilità del confronto.
 
 % -----------------------------------------------
+\section{Tecniche di Mitigazione del Rumore: Analisi e Scelte Implementative}
+\label{sec:mitigazione_scelte}
+
+Prima di descrivere i due metodi, è necessario motivare una scelta di fondo: \textit{quali leve di mitigazione sono disponibili in questo contesto, e quali sono state adottate?} Il Capitolo~\ref{chap:strategie} ha classificato le macro-strategie; qui si scende al livello operativo, analizzando le tecniche concrete applicabili sul simulatore Qiskit e spiegando perché alcune sono state adottate, altre scartate e altre ancora mantenute come termine di confronto.
+
+Le tecniche disponibili si raggruppano in tre livelli di intervento: a livello di circuito (prima dell'esecuzione), a livello di misura (durante o subito dopo), e a livello di post-processing (sull'output classico).
+
+% -----------------------------------------------
+\subsection{Livello di Circuito: Transpilazione e Riduzione della Profondità}
+\label{subsec:transpilazione}
+
+La sorgente di errore più diretta in un circuito quantistico rumoroso è la profondità del circuito stesso: ogni gate a due qubit (\ac{CX}) introduce una probabilità di errore non trascurabile, e l'effetto si accumula in modo approssimativamente moltiplicativo. L'intervento più efficace --- e con il minore overhead computazionale --- è quindi ridurre il numero di gate \ac{CX} prima dell'esecuzione.
+
+Nel contesto dell'algoritmo di Shor, il collo di bottiglia è la \textbf{modular exponentiation} $U_f: \ket{x}\ket{0} \mapsto \ket{x}\ket{a^x \bmod N}$, la parte del circuito che implementa la funzione periodica il cui periodo $r$ viene estratto dalla \ac{QPE}. Una decomposizione naïve di questo operatore richiede $O(n^3)$ gate \ac{CX} su $n$ qubit, un overhead inaccettabile anche per $N$ piccoli.
+
+La \textbf{decomposizione di Beauregard} \cite{beauregard2002} risolve questo problema riducendo il numero di qubit richiesti a $2n+3$ e il numero di gate \ac{CX} a $O(n^2)$, sfruttando l'aritmetica modulare nel dominio della \ac{QFT} e sostituendo i registri ausiliari con adder di Draper in-place. Per $N=15$ ($n=4$ bit) la decomposizione porta il circuito \ac{QPE} completo a circa 98 gate \ac{CX} su 9 qubit; per $N=21$ ($n=5$ bit) a circa 2594 gate \ac{CX} su 20 qubit. \textbf{Questa ottimizzazione è già incorporata nel circuito di partenza adottato in questa tesi}: non è una scelta da fare a runtime, ma una precondizione dell'implementazione.
+
+Un ulteriore livello di riduzione è offerto dalla \textbf{transpilazione ottimizzata} di Qiskit (\texttt{optimization\_level=3}): il transpiler decompone le porte nel gate set nativo del backend target, cancella sequenze identità, riordina i gate commutanti e seleziona i qubit fisici con i migliori parametri $T_1$ e $T_2$. Sul simulatore rumoroso questa ottimizzazione è applicata sistematicamente in entrambi i metodi.
+
+\subsection{Livello di Misura: Mitigazione degli Errori di Readout}
+\label{subsec:readout_mitigation}
+
+Gli errori di \textit{readout} --- la probabilità che un qubit nello stato $\ket{0}$ venga letto come $1$ e viceversa --- sono una fonte di errore sistematica e in larga parte correggibile. La tecnica standard è la \textbf{calibrazione della matrice di assegnazione}: si preparano gli stati base $\ket{00\ldots0}$, $\ket{10\ldots0}$, \ldots e si misurano le distribuzioni degli output; la matrice $A_{ij} = P(\text{output}=i \mid \text{preparato}=j)$ viene poi invertita e applicata al vettore delle frequenze osservate.
+
+Nel contesto di questa tesi la readout mitigation non è stata adottata come tecnica principale per due ragioni. Prima, il modello di rumore del simulatore \texttt{AerSimulator} include già errori di readout calibrati su hardware IBM reale: la probabilità di errore è dell'ordine di $10^{-2}$ per qubit, un valore che il classificatore del Metodo 2 può compensare implicitamente senza richiedere la costruzione esplicita della matrice di calibrazione. Seconda, per i circuiti \ac{QPE} con 9--20 qubit, la matrice di calibrazione ha dimensione $2^n \times 2^n$: la sua costruzione richiederebbe $2^n$ preparazioni aggiuntive, un overhead incompatibile con l'obiettivo di minimizzare le esecuzioni. La readout mitigation è stata però inclusa nell'analisi a posteriori del Capitolo~\ref{chap:conclusioni2} come tecnica di confronto.
+
+\subsection{Livello di Post-processing: Zero-Noise Extrapolation}
+\label{subsec:zne}
+
+La \textbf{Zero-Noise Extrapolation} (\ac{ZNE}) \cite{temme2017} è una tecnica di mitigazione che opera interamente in post-processing: si esegue il circuito a più livelli di rumore artificialmente amplificato (tipicamente $\lambda = 1, 2, 3$ volte il rumore nominale, ottenuto per gate folding o pulse stretching), si misura il valor medio dell'osservabile di interesse per ciascun livello, e si estrapolano i valori verso $\lambda = 0$ tramite una regressione lineare o polinomiale.
+
+Il pregio della \ac{ZNE} è che non richiede conoscenza del modello di rumore e produce una stima dell'output ideale direttamente dall'output rumoroso. Il limite, nel contesto di questa tesi, è duplice. Da un lato, richiede almeno $k \geq 2$ esecuzioni per ogni singola stima --- il che contrasta direttamente con l'obiettivo del Metodo 2 di convergere in circa tre iterazioni totali. Dall'altro, l'amplificazione del rumore degrada ulteriormente la fedeltà dei gate già ai livelli $\lambda = 2$ e $\lambda = 3$: per circuiti profondi come quello di Shor, il gate folding introduce errori aggiuntivi che non si distribuiscono linearmente e rendono l'estrapolazione inaffidabile.
+
+Per questi motivi la \ac{ZNE} non è stata adottata come tecnica principale. Essa compare però nel Capitolo~\ref{chap:conclusioni2} come termine di confronto sperimentale: i risultati mostrano che ZNE-2 e ZNE-3 abbassano il tasso di successo dal 76.7\% (Metodo 2) al 60\%, con un costo di 11\,776 shot contro 1\,024 per $M_{\text{TOP4}}$.
+
+\subsection{Analisi di Sensibilità ai Parametri di Rumore}
+\label{subsec:sensitivity}
+
+Prima di fissare l'approccio definitivo, è stato condotto uno studio empirico sistematico per determinare quali parametri del modello di rumore influenzano effettivamente le prestazioni dell'algoritmo di Shor su N=15. Lo sweep è stato eseguito variando un parametro per volta mantenendo fissi tutti gli altri ai valori del profilo NISQ-realistico (Tabella~\ref{tab:noise_base}), con K=30 ripetizioni per punto e SHOTS=1024.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Parametro} & \textbf{Valore base} & \textbf{Range testato} & \textbf{Effetto su $\bar{M}_1$} \\
+\midrule
+$\varepsilon_{1q}$ (gate 1-qubit) & $10^{-3}$ & $[10^{-4},\ 2\times10^{-2}]$ & \textbf{Nessuno} \\
+$T_1 / T_2$ (decoerenza)          & 100/80 µs  & $[20,\ 500]$ µs              & \textbf{Nessuno} \\
+$p_{\text{ro}}$ (readout error)   & $0.02$     & $[0,\ 0.20]$                 & \textbf{Nessuno} \\
+$\varepsilon_{2q}$ (gate CX)      & $10^{-2}$  & $[10^{-3},\ 10^{-1}]$        & \textbf{Dominante} \\
+\bottomrule
+\end{tabular}
+\caption{Risultati dell'analisi di sensibilità ai parametri di rumore per N=15, a=7, n\_count=8. Solo $\varepsilon_{2q}$ influenza le prestazioni di M1.}
+\label{tab:sensitivity}
+\end{table}
+
+I risultati mostrano con nettezza che \textbf{il solo parametro che influenza $\bar{M}_1$ è il tasso di errore dei gate a due qubit $\varepsilon_{2q}$}. Tutti gli altri parametri --- errori sui gate a singolo qubit, tempi di decoerenza $T_1/T_2$ e readout error --- producono $\bar{M}_1 = 1.0$ con success rate $= 100\%$ sull'intero range testato, indistinguibili dal caso ideale.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+$\varepsilon_{2q}$ & $\bar{M}_1$ & $\sigma_{M_1}$ & Success rate & TOP-4 $\bar{M}$ \\
+\midrule
+$10^{-3}$ & 2.27 & 5.22 & 73.3\% & 1.0 \\
+$5\times10^{-3}$ & 3.18 & 6.11 & 73.3\% & 1.0 \\
+$10^{-2}$ & 6.43 & 9.80 & 76.7\% & 1.0 \\
+$2\times10^{-2}$ & 4.77 & 8.14 & 86.7\% & 1.0 \\
+$5\times10^{-2}$ & 5.92 & 8.96 & 83.3\% & 1.0 \\
+$10^{-1}$ & 6.13 & 9.41 & 76.7\% & 1.0 \\
+\bottomrule
+\end{tabular}
+\caption{Sweep di $\varepsilon_{2q}$ su UC1 (N=15, a=7, K=30). $\bar{M}_1$ cresce con il tasso di errore CX; la strategia TOP-4 mantiene success rate = 100\% su tutto il range.}
+\label{tab:sweep_eps2q}
+\end{table}
+
+Questo risultato ha un'interpretazione fisica precisa. Il circuito di Shor per N=15 con la decomposizione a permutazione (\texttt{c\_amod15}) ha profondità ridotta: in queste condizioni il tempo totale di esecuzione è sufficientemente breve da rendere la decoerenza ($T_1$, $T_2$) trascurabile rispetto al contributo dei gate a due qubit. Analogamente, gli errori sui gate a singolo qubit e il readout error si trovano in un regime in cui il loro effetto è oscurato dall'errore CX. La fonte di degradazione dominante è quindi il numero e la qualità dei gate \ac{CX}.
+
+\textbf{Implicazioni per le scelte implementative.} Questa analisi ha tre conseguenze dirette:
+
+\begin{enumerate}
+    \item \textbf{La decomposizione Beauregard è la leva più efficace.} Ridurre $\varepsilon_{2q}$ non è controllabile (è una proprietà del backend), ma ridurre il \textit{numero} di gate \ac{CX} è possibile a livello di implementazione. La decomposizione Beauregard (Sezione~\ref{subsec:transpilazione}) fa esattamente questo, portando N=21 da $\sim$10.040 gate \ac{CX} (UnitaryGate naïve) a $\sim$2.594 (Beauregard).
+
+    \item \textbf{Readout mitigation e ottimizzazioni $T_1/T_2$ sono inutili per N=15.} Il risultato empirico conferma che nessuno dei due approcci porta benefici misurabili nel regime N=15. Adottarli avrebbe aggiunto complessità senza impatto sulle metriche.
+
+    \item \textbf{La ZNE è controproducente.} Il confronto sperimentale (Sezione~\ref{subsec:zne} e Capitolo~\ref{chap:conclusioni2}) mostra che ZNE-2 e ZNE-3 abbassano il success rate dal 76.7\% al 60\%, confermando che l'amplificazione del rumore degrada ulteriormente un circuito già sensibile a $\varepsilon_{2q}$.
+
+    \item \textbf{L'\texttt{optimization\_level} ha effetto trascurabile per N=15.} È stato condotto un ulteriore sweep variando il livello di ottimizzazione del transpiler Qiskit da 0 a 3. I risultati sono riportati in Tabella~\ref{tab:sweep_optlevel}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Livello} & \textbf{Gate CX} & \textbf{Profondità} & $\bar{M}_1$ & \textbf{Success rate} \\
+\midrule
+0 & 168 & 319 & 1.00 & 100\% \\
+1 & 162 & 313 & 1.00 & 100\% \\
+2 & 162 & 309 & 1.00 & 100\% \\
+3 & 162 & 309 & 1.00 & 100\% \\
+\bottomrule
+\end{tabular}
+\caption{Sweep di \texttt{optimization\_level} su UC1 (N=15, a=7, K=30). Il passaggio da livello 0 a 1 riduce i gate CX del 3.6\% (168→162); i livelli 2 e 3 non apportano ulteriori riduzioni. Il success rate rimane 100\% a tutti i livelli.}
+\label{tab:sweep_optlevel}
+\end{table}
+
+La riduzione è marginale perché la decomposizione \texttt{c\_amod15} adottata per N=15 sfrutta matrici di permutazione già quasi ottimali: il transpiler trova poco margine di miglioramento. L'effetto dell'\texttt{optimization\_level} diventerebbe significativo per N=21 con la decomposizione Beauregard, dove il circuito ha struttura più complessa e maggiore spazio per la cancellazione di gate e il riordinamento delle operazioni. Anche in questo caso, tuttavia, il dato empirico conferma che il controllo del numero di gate CX tramite la \textit{scelta della decomposizione} è la leva dominante, non il livello di ottimizzazione del transpiler.
+\end{enumerate}
+
+La strategia TOP-4 --- che mantiene success rate = 100\% sull'intero range di $\varepsilon_{2q}$ --- emerge come la scelta ottimale per N=15. Il classificatore ML del Metodo 2 si inserisce in questo framework come strumento per ridurre ulteriormente il numero di iterazioni necessarie prima di convergere a un risultato affidabile, completando la catena di ottimizzazione descritta nella sezione seguente.
+
+\subsection{Scelta Adottata: Classificatore ML come Filtro Adattivo}
+\label{subsec:scelta_ml}
+
+L'analisi delle tecniche disponibili converge su una conclusione: le ottimizzazioni a livello di circuito (Beauregard, transpilazione) sono necessarie e già applicate; le tecniche di mitigazione tradizionali (readout, ZNE) presentano overhead o limitazioni che le rendono incompatibili con l'obiettivo di minimizzare le esecuzioni su hardware \ac{NISQ}.
+
+L'approccio adottato in questa tesi è diverso per natura: invece di modificare il circuito o correggere l'output stimando l'ideale, si \textbf{addestra un classificatore che apprende la firma degli output corretti} direttamente dalla distribuzione degli output rumorosi. Il classificatore non riduce il rumore, ma impara a distinguere i casi in cui il rumore non ha compromesso il risultato dai casi in cui l'ha reso inaffidabile. Questo lo rende:
+
+\begin{itemize}
+    \item \textbf{Adattivo}: si calibra sul profilo di errore specifico del simulatore o del backend, senza assumere un modello di rumore analitico.
+    \item \textbf{A basso overhead}: richiede una singola esecuzione per decisione, invece delle $k \geq 2$ esecuzioni della \ac{ZNE}.
+    \item \textbf{Complementare alle ottimizzazioni circuitali}: può essere impilato sopra la transpilazione ottimizzata senza conflitti.
+\end{itemize}
+
+Questa scelta è la premessa dei due metodi descritti nelle sezioni seguenti.
+
+% -----------------------------------------------
 \section{Il Metodo 1: Approccio Statistico Classico}
 \label{sec:metodo1}
 
