@@ -56,6 +56,23 @@ Per capire dove nascono gli errori bisogna prima capire com'è fatta la macchina
 \label{fig:qpu_anatomia}
 \end{figure}
 
+La Figura~\ref{fig:qpu_reale} mostra come questa architettura si presenta nella realtà: all'esterno il sistema integrato (criostato, elettronica e schermature racchiusi nella teca), all'interno della sala macchine i cilindri criogenici sospesi con il fascio di tubi e cavi coassiali che convogliano le microonde di controllo e lettura --- le ``guide d'onda'' dello schema precedente.
+
+\begin{figure}[H]
+\centering
+\subfloat[IBM Quantum System One (Ehningen, Germania)]{\includegraphics[height=52mm]{foto_system_one.jpg}}\hspace{3mm}
+\subfloat[Criostati IBM Q con il cablaggio di controllo]{\includegraphics[height=52mm]{foto_criostato_ibm.jpg}}
+\caption[La QPU reale: sistema integrato e criostati con cablaggio]{La \ac{QPU} reale. (a)~Il sistema integrato IBM Quantum System One: il cilindro nero al centro è il criostato che contiene il chip, circondato dall'elettronica di controllo. (b)~Criostati IBM Q in sala macchine: dall'alto arrivano i tubi per la refrigerazione e i cavi coassiali che convogliano le microonde di controllo e lettura verso il chip, sospeso sul fondo del cilindro a $\sim$15\,mK. \emph{Crediti: (a) IBM Research, licenza CC~BY~2.0; (b) Connie Zhou per IBM, pubblico dominio; entrambe via Wikimedia Commons.}}
+\label{fig:qpu_reale}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.62\textwidth]{foto_chip_transmon.png}
+\caption[Chip quantistico superconduttivo a 6 transmon con giunzioni di test]{Resa tridimensionale di un chip quantistico superconduttivo con 6 qubit transmon e 12 giunzioni di test. Si riconoscono gli elementi dello schema di Figura~\ref{fig:qpu_anatomia}: i qubit con i loro risonatori, le linee di accoppiamento, le piazzole dorate per il collegamento alle guide d'onda e --- ai quattro angoli --- le strutture di test isolate, l'analogo reale del qubit $T_0$. \emph{Credito: Onri Jay Benally, licenza CC~BY~4.0, via Wikimedia Commons.}}
+\label{fig:chip_transmon}
+\end{figure}
+
 Questa architettura ha tre conseguenze dirette per gli errori.
 
 \paragraph{La lettura distrugge lo stato --- fisicamente.}
