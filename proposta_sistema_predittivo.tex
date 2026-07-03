@@ -1,0 +1,108 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{setspace}
+
+\title{\textbf{Proposta tecnica}\\[2mm]\Large Sistema di Gestione Predittiva degli Errori\\per l'Algoritmo di Shor su QPU rumorose}
+\author{Claudio Dragotta\\\small Tesi magistrale --- Relatore: Ing. Floriano Caprio}
+\date{Luglio 2026}
+
+\begin{document}
+\maketitle
+\onehalfspacing
+
+\section*{Obiettivo in una frase}
+Sostituire la pratica attuale della \textbf{duplicazione dei qubit} (2 qubit fisici per 1 logico) con un \textbf{modello di machine learning addestrato sulla specifica QPU} che predice dove e quando gli errori si manifestano: \emph{stessa affidabilità, metà dei qubit fisici}.
+
+\section{Da dove partiamo}
+La fase di verifica della tesi è chiusa, con esito netto e statisticamente solido:
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+\textbf{Configurazione} & \textbf{UC1} ($N{=}15$, realistico) & \textbf{UC2} ($N{=}15$, degradato) & \textbf{Verdetto} \\
+\midrule
+M1 (TOP-1, baseline) & $\bar{M}=6.43$, succ. 76.7\% & $\bar{M}=2.42$, succ. 80.0\% & baseline \\
+$M_{\text{TOP4}}$ (senza ML) & $\bar{M}=1.00$, succ. 100\% & $\bar{M}=1.00$, succ. 100\% & \textbf{vince} \\
+M2 (ML + TOP-4) & $=M_{\text{TOP4}}$ ($p=0.849$, n.s.) & \emph{peggiore} ($p<0.001$) & ML bocciato \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+L'ablazione dimostra che l'ML applicato \emph{a valle} (sull'istogramma di output) non serve: quell'informazione è già catturata dalla ricerca TOP-4. In tesi questo è ora il Capitolo~10 (ponte); il nucleo della tesi è il sistema qui proposto (Capitolo~11, struttura già scritta con le sezioni sperimentali in bianco).
+
+\section{L'idea (dalla riunione di luglio)}
+Gli errori di una QPU reale non sono uniformi né casuali: sono \textbf{caratteristiche stabili del singolo esemplare} --- qubit con $T_1$ diversi sullo stesso chip (es. 100 vs 30~$\mu$s, con l'entanglement che degrada al peggiore), linee di gate con fedeltà e durate diverse, errori di lettura caratterizzabili con matrici di confusione, crosstalk dettato dalla topologia. Un comportamento sistematico e dipendente da variabili osservabili è \emph{apprendibile}. A differenza del classificatore bocciato, il modello qui proposto usa informazione \textbf{strutturale} che nell'output non c'è: topologia del dispositivo, $T_1/T_2$ per qubit, linee attraversate, profondità richiesta dall'input.
+
+Il modello ha due livelli di funzionamento:
+\begin{enumerate}[nosep]
+    \item \textbf{Segnalazione} (minimo): ``questo risultato è probabilmente errato'' $\rightarrow$ si scarta e si reitera. Non serve conoscere la risposta giusta.
+    \item \textbf{Prescrizione} (avanzato): ``per questo tipo di input, evita la linea 1: usa la seconda'' $\rightarrow$ instradamento prima dell'esecuzione.
+\end{enumerate}
+
+Il modello è addestrato \emph{per esemplare} (non per modello di QPU): una fase di caratterizzazione una-tantum con input a verità nota, analoga alla calibrazione periodica dei provider.
+
+\section{Architettura proposta (4 componenti)}
+
+\paragraph{1. QPU virtuale con iniezione errori per-qubit.}
+Estensione del noise model Qiskit Aer già sviluppato (oggi uniforme) a profili \textbf{per singolo qubit e per singola linea}: $T_1/T_2$ per qubit, fedeltà/durata di gate per coppia accoppiata, errore di lettura per linea, crosstalk modellato come errore correlato sui vicini della coupling map. Topologia iniziale proposta: \textbf{catena lineare a 12 qubit} (8 di conteggio + 4 di lavoro, sufficiente per Shor $N{=}15$), con profili di difetto configurabili e quindi noti. Qiskit Aer supporta nativamente errori per-qubit e coupling map; il crosstalk è l'unica parte da modellare a mano.
+
+\paragraph{2. Dataset a verità nota.}
+Istanze di fattorizzazione con soluzione nota (semiprimi $N = p \times q$ di profondità crescente: 15, 21, 33, 35, \ldots), $\sim$1000--2000 esecuzioni per configurazione su più profili di difetto. Ogni esecuzione produce un esempio etichettato: linee coinvolte, profilo attivo, esito corretto/errato (verificabile perché conosciamo $p$ e $q$).
+
+\paragraph{3. Modello predittivo.}
+Feature: descrizione QPU (topologia, $T_1/T_2$ per qubit, fedeltà per linea) + descrizione esecuzione (linee usate, profondità, input) + esito. Confronto sistematico di più architetture con metodologia identica alla fase di verifica (split stratificato, metrica dichiarata a priori). L'estensione QAOA sulle matrici di confusione resta \emph{fuori perimetro} (solo citata negli sviluppi futuri, come concordato).
+
+\paragraph{4. Validazione con la duplicazione come baseline.}
+Lezione della fase di verifica: \emph{l'ablazione si progetta dall'inizio}. Tre bracci sperimentali:
+\begin{enumerate}[label=(\alph*), nosep]
+    \item copia singola senza modello (baseline inferiore);
+    \item \textbf{duplicazione dei qubit} --- da implementare: due istanze gemelle su due linee distinte, lettura di entrambe, uso della sopravvissuta;
+    \item copia singola + modello predittivo (nei due livelli).
+\end{enumerate}
+Metriche: tasso di successo, iterazioni per risultato corretto, qubit fisici impiegati. Test Mann-Whitney a una coda, $K \geq 30$ ripetizioni per braccio.
+
+\section{Ipotesi verificabili e criteri di successo}
+\begin{enumerate}[nosep]
+    \item \textbf{Prevedibilità}: su difetti localizzati e stabili, il modello segnala gli esiti errati significativamente meglio del caso, tanto più quanto più i difetti sono sistematici.
+    \item \textbf{Sostituzione} (criterio primario, operativo): copia singola + modello $\geq$ duplicazione in tasso di successo a parità di iterazioni, \textbf{con metà dei qubit} (test unilaterale, $p<0.05$).
+\end{enumerate}
+Le metriche di apprendimento (F1, AUC) hanno solo ruolo diagnostico: il criterio di successo è operativo, per non ripetere l'errore metodologico della prima fase.
+
+\section{Piano di lavoro}
+\begin{center}
+\begin{tabular}{llp{6.8cm}}
+\toprule
+\textbf{Fase} & \textbf{Output} & \textbf{Riempie in tesi} \\
+\midrule
+WP1 --- QPU virtuale & modulo per-qubit + topologia + validazione & Cap.~11, §Implementazione QPU Virtuale \\
+WP2 --- Dataset & generatore + dataset etichettato & Cap.~11, §Generazione del Dataset \\
+WP3 --- Modello & confronto architetture + modello addestrato & Cap.~11, §Selezione e Addestramento \\
+WP4 --- Validazione & confronto 3 bracci + test statistici & Cap.~11, §Risultati del Confronto \\
+WP5 --- Analisi & risposta alle ipotesi, limiti & Cap.~11, §Discussione + Conclusioni \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+L'infrastruttura esistente (circuiti Shor, pipeline sperimentale, analisi Mann-Whitney, ambiente WSL) viene riusata integralmente: il lavoro nuovo è concentrato in WP1 (estensione noise model) e WP3 (modello).
+
+\section{Decisioni da confermare con Lei}
+\begin{enumerate}[nosep]
+    \item \textbf{Topologia iniziale}: catena lineare a 12 qubit va bene come primo caso, o preferisce partire da una topologia specifica (es. heavy-hex IBM)?
+    \item \textbf{Scala}: prima campagna interamente su $N{=}15$ (dove tutto è rodato), scalabilità dopo?
+    \item \textbf{Profili di difetto}: quanti e quali (es. 1 qubit debole / 1 linea di gate lenta / readout degradato su una linea / crosstalk forte / profili misti)?
+    \item \textbf{Duplicazione}: conferma che l'implementazione di riferimento è quella discussa (due istanze gemelle, si usa la sopravvissuta)?
+    \item \textbf{Risorse}: per dataset grandi può servire l'accesso HPC/IBM Quantum di cui si era parlato.
+\end{enumerate}
+
+\bigskip
+\noindent Se l'impostazione è approvata, si parte da WP1 (QPU virtuale).
+
+\end{document}
