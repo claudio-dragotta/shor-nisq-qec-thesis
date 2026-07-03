@@ -187,16 +187,16 @@ Tuttavia, la distanza tra i dispositivi attuali e un computer quantistico \texti
 
 In questo contesto scientifico e tecnologico si inserisce il presente lavoro di tesi. L'algoritmo di Shor rappresenta uno dei risultati più significativi e dirompenti dell'informatica quantistica: la sua capacità di fattorizzare interi in tempo polinomiale minaccia direttamente le fondamenta della crittografia moderna. Tuttavia, la sua esecuzione su hardware NISQ è ostacolata da requisiti stringenti in termini di profondità del circuito, numero di qubit e fedeltà delle porte -- rendendo il rumore quantistico il principale ostacolo alla sua realizzazione pratica.
 
-Questo lavoro si propone di affrontare tale sfida attraverso un approccio sperimentale sistematico: eseguire l'algoritmo di Shor su simulatori quantistici con noise model calibrati sull'hardware IBM e confrontare diverse strategie di estrazione del risultato dall'istogramma \ac{QPE} rumoroso.
-
-Il \textbf{contributo originale} è triplice:
+Questo lavoro affronta tale sfida in due fasi. La \textbf{prima fase} è una verifica sperimentale sistematica: eseguire l'algoritmo di Shor su simulatori quantistici con noise model calibrati sull'hardware IBM e mettere alla prova l'ipotesi che un classificatore \ac{ML} applicato all'output rumoroso riduca il numero di iterazioni necessarie. La verifica confronta tre configurazioni:
 \begin{itemize}
     \item \textbf{Metodo 1} (baseline classico, TOP-1): la misura più frequente dell'istogramma viene usata come candidato. Richiede in media $\bar{M}_1 = 6.43$ esecuzioni per $N=15$ in condizioni NISQ-realistiche.
     \item \textbf{Metodo 2} (classificatore \ac{ML} + TOP-4): un classificatore binario (Random Forest) pre-addestrato su 2\,000 istogrammi sintetici filtra le iterazioni con segnale \ac{QPE} assente; la ricerca è estesa ai 4 candidati più frequenti. Ottiene $\bar{M}_2 = 1.00$, con fattore di riduzione $\rho = 6.44$ ($p = 0.0002$).
     \item \textbf{Analisi di ablazione} ($M_{\text{TOP4}}$, TOP-4 senza classificatore): isola il contributo della ricerca multi-candidato da quello del filtro ML. L'ablazione mostra che $M_{\text{TOP4}}$ è statisticamente equivalente a M2 per UC1 ($p = 0.849$) e significativamente migliore per UC2 ($\rho = 2.42$, $p = 0.003$): il guadagno è attribuibile alla \textbf{strategia di ricerca TOP-4}, non al classificatore.
 \end{itemize}
 
-L'elaborato si sviluppa dalle fondamenta teoriche del calcolo quantistico fino ai risultati sperimentali su simulatori rumorosi. Gli obiettivi specifici e la struttura dettagliata del lavoro sono descritti nel Capitolo~\ref{chap:obiettivi}.
+L'esito della verifica --- l'\ac{ML} applicato all'output, in quel punto e in quel modo, non serve --- non chiude il ruolo dell'apprendimento automatico, ma lo riorienta. La \textbf{seconda fase}, che costituisce il nucleo della tesi, muove esattamente da qui: poiché gli errori di una \ac{QPU} reale sono sistematici e localizzati (qubit con tempi di coerenza diversi, linee di gate con fedeltà diverse, crosstalk dipendente dalla topologia), un modello addestrato su feature \emph{strutturali} del dispositivo può \textbf{predire dove e quando gli errori si manifesteranno}. L'obiettivo è sostituire la pratica attuale della \textbf{duplicazione dei qubit} --- che raddoppia il fabbisogno di hardware per pura ridondanza --- con la gestione predittiva degli errori: stessa affidabilità, metà dei qubit fisici.
+
+L'elaborato si sviluppa dalle fondamenta teoriche del calcolo quantistico, attraverso la verifica sperimentale su simulatori rumorosi, fino alla proposta del sistema di gestione predittiva degli errori. Gli obiettivi specifici e la struttura dettagliata del lavoro sono descritti nel Capitolo~\ref{chap:obiettivi}.
 
 \clearpage
 % ⚠ SYNC-STRUTTURA: questa sezione deve essere aggiornata ogni volta che
@@ -204,7 +204,7 @@ L'elaborato si sviluppa dalle fondamenta teoriche del calcolo quantistico fino a
 %   controlla se la sua descrizione qui è ancora accurata.
 \section{Struttura della Tesi}
 
-L'elaborato è organizzato in undici capitoli. Il Capitolo~2 svolge una funzione trasversale di raccordo tra teoria e pratica; i Capitoli~3--6 costituiscono la parte teorica; i Capitoli~7--11 la parte sperimentale.
+L'elaborato è organizzato in dodici capitoli, più un'appendice sperimentale. Il Capitolo~2 svolge una funzione trasversale di raccordo tra teoria e pratica; i Capitoli~3--6 costituiscono la parte teorica; i Capitoli~7--12 la parte sperimentale e propositiva.
 
 \medskip
 Il \textbf{Capitolo~\ref{chap:obiettivi}} (\textit{Obiettivi e Piano Sperimentale}) ha una funzione duplice: motiva il lavoro mostrando perché i sistemi crittografici attuali siano strutturalmente vulnerabili all'algoritmo di Shor --- attraverso il confronto diretto tra la complessità del \ac{GNFS} e quella polinomiale di Shor --- e stabilisce il contratto sperimentale completo: obiettivi, ipotesi di ricerca (in particolare $\rho = \bar{M}_1/\bar{M}_2 \gg 1$), contributo originale, requisiti funzionali, parametri dei quattro use case e metriche di valutazione.
@@ -221,7 +221,7 @@ Il \textbf{Capitolo~\ref{chap:rumore}} (\textit{Rumore Quantistico nei Sistemi N
 Il \textbf{Capitolo~\ref{chap:strategie}} (\textit{Strategie per la Riduzione del Rumore Quantistico}) descrive e confronta le quattro macro-strategie di mitigazione del rumore nell'era NISQ, approfondisce la Correzione degli Errori Quantistici --- dai codici stabilizzatori al surface code --- inquadrandola come sottocategoria del Quantum Machine Learning, e motiva la scelta di quest'ultimo come approccio adottato in questa tesi.
 
 \medskip
-\textbf{Parte sperimentale (Capitoli 7--11).}
+\textbf{Parte sperimentale e propositiva (Capitoli 7--12).}
 
 Il \textbf{Capitolo~\ref{chap:strumenti}} (\textit{Strumenti e Ambiente di Simulazione}) descrive il framework Qiskit e il simulatore Qiskit Aer con accelerazione GPU, illustra la costruzione del noise model parametrizzato e la procedura di transpilazione dei circuiti.
 
@@ -229,8 +229,12 @@ Il \textbf{Capitolo~\ref{chap:metodologia}} (\textit{Metodologia e Architettura}
 
 Il \textbf{Capitolo~\ref{chap:sviluppo}} (\textit{Sviluppo e Implementazione}) presenta il codice sviluppato: l'ambiente di simulazione WSL2 con \texttt{AerSimulator} in modalità statevector, l'implementazione della \ac{QFT} inversa, del circuito di Shor, del noise model parametrizzato e delle pipeline di entrambi i metodi, con particolare attenzione alla procedura di traspilazione critica (\texttt{optimization\_level=2} con noise model nel costruttore) necessaria per la corretta decomposizione delle porte Toffoli.
 
-Il \textbf{Capitolo~\ref{chap:risultati}} (\textit{Risultati Sperimentali: dal Classificatore ML alla Strategia TOP-K}) riporta l'intera campagna sperimentale, documentando che cosa è stato testato e perché. Stabilisce la baseline del Metodo 1 sui quattro use case ($\bar{M}_1 = 6.43$ iterazioni per UC1, $\bar{M}_1 = 2.42$ per UC2; UC3 e UC4 inaccessibili per l'elevata profondità di circuito, $>10\,000$ porte CX, prodotta dalla decomposizione \texttt{UnitaryGate}); verifica sperimentalmente il classificatore \ac{ML} e ne isola il contributo tramite analisi di ablazione: il guadagno ($\rho = 6.44$ su UC1, $p = 0.0002$) è interamente attribuibile alla strategia di ricerca multi-candidato TOP-4, mentre il classificatore risulta statisticamente irrilevante su UC1 ($p = 0.849$) e controproducente su UC2 ($\rho = 0.731$ contro $\rho = 2.42$ di $M_{\text{TOP4}}$). Completano il capitolo la campagna parametrica sistematica su $M_{\text{TOP4}}$, il suo posizionamento nel quadro delle strategie di mitigazione e il confronto sperimentale con la Zero-Noise Extrapolation.
+Il \textbf{Capitolo~\ref{chap:risultati}} (\textit{Verifica Sperimentale dell'Ipotesi Iniziale: dal Classificatore ML alla Strategia TOP-K}) è il ponte tra la parte teorica e il nucleo della tesi: mette alla prova l'ipotesi di partenza e ne documenta l'esito. Stabilisce la baseline del Metodo 1 sui quattro use case ($\bar{M}_1 = 6.43$ iterazioni per UC1, $\bar{M}_1 = 2.42$ per UC2; UC3 e UC4 inaccessibili per l'elevata profondità di circuito prodotta dalla decomposizione \texttt{UnitaryGate}) e isola il contributo del classificatore \ac{ML} tramite analisi di ablazione: il guadagno ($\rho = 6.44$ su UC1, $p = 0.0002$) è interamente attribuibile alla strategia di ricerca multi-candidato TOP-4, mentre il classificatore risulta statisticamente irrilevante su UC1 ($p = 0.849$) e controproducente su UC2. Quanto appurato --- l'\ac{ML} a valle dell'esecuzione non serve --- motiva il cambio di prospettiva del capitolo successivo; il dettaglio della campagna parametrica e del confronto con la Zero-Noise Extrapolation è riportato nell'Appendice~\ref{app:parametrica}.
 
-Il \textbf{Capitolo~\ref{chap:sviluppi}} (\textit{Sviluppi Futuri}) delinea le principali direzioni di ricerca aperte: test su hardware reale, decomposizioni efficienti per la moltiplicazione modulare (approccio Beauregard), classificatore adattivo per regimi ad alto rumore, generalizzazione ad altri algoritmi NISQ e integrazione con la \ac{QEC} strutturale.
+Il \textbf{Capitolo~\ref{chap:predizione}} (\textit{Gestione Predittiva degli Errori: dalla Duplicazione dei Qubit al Machine Learning}) presenta il nucleo della tesi. Descrive la natura sistematica e non uniforme degli errori hardware (tempi di coerenza diversi da qubit a qubit, fedeltà di gate diverse da linea a linea, crosstalk dipendente dalla topologia), analizza la pratica industriale attuale --- la duplicazione dei qubit, che raddoppia il fabbisogno fisico per pura ridondanza --- e formula la proposta: un modello di apprendimento automatico addestrato sulla specifica \ac{QPU}, tramite una QPU virtuale con iniezione di errori configurabile e un dataset a verità nota, capace di predire dove e quando gli errori si manifesteranno. Il capitolo definisce l'architettura del sistema, le ipotesi operative e i criteri quantitativi di successo, inclusa la baseline di duplicazione contro cui il modello sarà validato.
+
+Il \textbf{Capitolo~\ref{chap:sviluppi}} (\textit{Sviluppi Futuri}) delinea le direzioni di ricerca oltre il perimetro del programma predittivo: test su hardware reale, decomposizioni efficienti per la moltiplicazione modulare (approccio Beauregard), generalizzazione ad altri algoritmi NISQ e integrazione con la \ac{QEC} strutturale.
+
+L'\textbf{Appendice~\ref{app:parametrica}} (\textit{Campagna Parametrica Dettagliata e Confronto ZNE}) riporta integralmente le sette sweep parametriche su $M_{\text{TOP4}}$, con il confronto previsione--esito per ciascun parametro, e il dettaglio metodologico del confronto con la Zero-Noise Extrapolation.
 
 \end{onehalfspace}

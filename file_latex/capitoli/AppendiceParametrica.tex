@@ -1,0 +1,194 @@
+\begin{onehalfspace}
+
+Questa appendice riporta integralmente la campagna sperimentale parametrica su $M_{\text{TOP4}}$ e il confronto quantitativo con la \textit{Zero-Noise Extrapolation}, di cui il Capitolo~\ref{chap:risultati} presenta la sintesi. Per ciascun parametro si confrontano esplicitamente \emph{previsione teorica} ed \emph{esito osservato}. Tutte le misure usano $K_{\text{rep}} = 30$ ripetizioni e il test Mann-Whitney a una coda; la metodologia è a variazione singola (\textit{one-factor-at-a-time}) rispetto alla configurazione di riferimento di UC1: $N=15$, $a=7$, $n_{\text{count}}=8$, $\varepsilon_{1q}=10^{-3}$, $\varepsilon_{2q}=10^{-2}$, $T_1=100\,\mu\text{s}$, $T_2=80\,\mu\text{s}$, $p_{\text{ro}}=2\%$, $M_{\text{shots}}=1024$, $K=4$, $M_{\text{max}}=50$.
+
+% -----------------------------------------------
+\section{Variazione di K (numero di candidati per iterazione)}
+\label{subsec:sweep_k}
+
+\paragraph{Previsione.}
+Per $N=15$ con $a=7$, il periodo è $r=4$ e le fasi QPE valide sono esattamente quattro: $\{0, 64, 128, 192\}$ su $2^8 = 256$ valori. La previsione era che $K = r = 4$ costituisse la soglia minima per catturare tutte le fasi valide, e che per $K < 4$ il tasso di successo degradasse proporzionalmente al numero di fasi escluse.
+
+\paragraph{Esito.}
+Sweep su $K \in \{1, 2, 3, 4, 6, 8\}$ con rumore fisso a UC1:
+
+\begin{table}[H]
+\centering
+\caption{Effetto del parametro $K$ su $\bar{M}$, tasso di successo e $\rho$ vs M1 ($N=15$, UC1, $K_{\text{rep}}=30$)}
+\label{tab:sweep_k}
+\begin{tabular}{cccccc}
+\hline
+$K$ & $P_{\text{succ}}$ & $\bar{M}$ & $\sigma_M$ & $\rho$ vs M1 & p-value (vs M1) \\
+\hline
+1 (= M1)  & \multicolumn{5}{c}{\textit{baseline: $\bar{M}_1 = 6.43$, $P_{\text{succ}} = 76.7\%$}} \\
+2         & 100\% & 1.00 & 0.00 & 6.430 & $0.003$ \\
+3         & 100\% & 1.00 & 0.00 & 6.430 & $0.003$ \\
+4 (= $M_{\text{TOP4}}$) & 100\% & 1.00 & 0.00 & 6.435 & ${<}0.001$ \\
+6         & 100\% & 1.00 & 0.00 & 6.430 & $0.003$ \\
+8         & 100\% & 1.00 & 0.00 & 6.430 & $0.003$ \\
+\hline
+\end{tabular}
+\end{table}
+
+La soglia effettiva non è $K=r=4$ ma $K=2$: il salto netto è tra $K=1$ (equivalente a M1) e $K=2$ ($\bar{M}=1.00$, $P_{\text{succ}}=100\%$, $\rho=6.43$); per $K \geq 2$ le prestazioni sono identiche e massime. La spiegazione è duplice: il rumore depolarizzante non distribuisce il segnale uniformemente sulle quattro fasi valide, ma tende a concentrarlo su uno o due valori dominanti dell'istogramma; inoltre \texttt{extract\_factors} con \texttt{limit\_denominator} è tollerante a fasi leggermente spostate, allargando il bacino di convergenza attorno a ciascun picco. Il criterio teorico $K=r$ resta un limite superiore garantito, ma nella pratica $K=2$ è sufficiente per questa istanza; per $r$ più grandi la soglia effettiva andrebbe riverificata.
+
+% -----------------------------------------------
+\section{Variazione di $\varepsilon_{2q}$ (tasso di errore a due qubit)}
+\label{subsec:sweep_eps}
+
+\paragraph{Previsione.}
+$\varepsilon_{2q}$ è il parametro di rumore dominante: $P_{\text{surv}} = (1-\varepsilon_{2q})^{162}$. Ci si aspettava una \textbf{soglia critica} oltre la quale l'istogramma diventasse troppo piatto per identificare i candidati corretti, degradando $\bar{M}_{\text{TOP4}}$.
+
+\paragraph{Esito.}
+Sweep su tre ordini di grandezza, con $P_{\text{surv}}$ da $85\%$ a $3.87\times10^{-8}$:
+
+\begin{table}[H]
+\centering
+\caption{Effetto di $\varepsilon_{2q}$ su $M_{\text{TOP4}}$ ($K=4$, $K_{\text{rep}}=30$, altri parametri fissi a UC1)}
+\label{tab:sweep_eps}
+\begin{tabular}{ccccccc}
+\hline
+$\varepsilon_{2q}$ & $P_{\text{surv}}$ & $\bar{M}_1$ & $\bar{M}_{\text{TOP4}}$ & $\rho$ & p-value & $P_{\text{succ}}$ \\
+\hline
+$10^{-3}$          & 85.0\%              & 2.27 & 1.00 & 2.273 & ${<}0.001$ & 100\% \\
+$5\times10^{-3}$   & 44.4\%              & 3.18 & 1.00 & 3.182 & ${<}0.001$ & 100\% \\
+$10^{-2}$ (UC1)    & 19.7\%              & 6.43 & 1.00 & 6.435 & ${<}0.001$ & 100\% \\
+$2\times10^{-2}$   & 3.8\%               & 4.77 & 1.00 & 4.769 & $0.001$    & 100\% \\
+$5\times10^{-2}$   & $2.46\times10^{-4}$ & 5.92 & 1.00 & 5.920 & $0.001$    & 100\% \\
+$10^{-1}$          & $3.87\times10^{-8}$ & 6.13 & 1.00 & 6.130 & ${<}0.001$ & 100\% \\
+\hline
+\end{tabular}
+\end{table}
+
+Nessuna soglia critica è stata rilevata: $M_{\text{TOP4}}$ mantiene $\bar{M}=1.00$ e $P_{\text{succ}}=100\%$ su tutto il range, incluso $\varepsilon_{2q}=10^{-1}$ dove $P_{\text{surv}} \approx 10^{-8}$. Il rumore depolarizzante, pur abbassando la probabilità \emph{media} di sopravvivenza del segnale, non produce istogrammi uniformemente piatti per ogni realizzazione (seed): in una frazione significativa delle esecuzioni uno o più dei quattro candidati più frequenti corrisponde comunque a una fase QPE valida. TOP-K sfrutta questa struttura residua: non richiede che il segnale sia forte in media, ma solo che sia recuperabile \emph{in quella specifica esecuzione}. La variazione di $\rho$ (da 2.27 a 6.43) riflette il peggioramento di $\bar{M}_1$, non un degrado di $M_{\text{TOP4}}$.
+
+% -----------------------------------------------
+\section{Variazione di $M_{\text{shots}}$ (shot per iterazione)}
+\label{subsec:sweep_shots}
+
+\paragraph{Previsione.}
+Con $n_{\text{count}}=8$ qubit il registro ha $2^8=256$ celle: era attesa una soglia minima di $M_{\text{shots}} \geq 4 \times 256 = 1024$ campioni, sotto la quale l'istogramma sarebbe troppo sparso per identificare i picchi in modo affidabile.
+
+\paragraph{Esito.}
+
+\begin{table}[H]
+\centering
+\caption{Effetto di $M_{\text{shots}}$ su $M_{\text{TOP4}}$ ($K=4$, $K_{\text{rep}}=30$, UC1)}
+\label{tab:sweep_shots}
+\begin{tabular}{ccccc}
+\hline
+$M_{\text{shots}}$ & $P_{\text{succ}}$ & $\bar{M}$ & $\sigma_M$ & $\rho$ vs M1 \\
+\hline
+128  (min. testato) & 100\% & 1.00 & 0.00 & 6.430 \\
+256               & 100\% & 1.00 & 0.00 & 6.430 \\
+512               & 100\% & 1.00 & 0.00 & 6.430 \\
+1024 (riferimento) & 100\% & 1.00 & 0.00 & 6.435 \\
+2048              & 100\% & 1.00 & 0.00 & 6.430 \\
+\hline
+\end{tabular}
+\end{table}
+
+La previsione è smentita: anche con 128 shot --- otto volte meno della soglia prevista --- $M_{\text{TOP4}}$ raggiunge $\bar{M}=1.00$ e $P_{\text{succ}}=100\%$. Il campionamento uniforme di tutte le celle non è necessario perché i picchi QPE validi occupano poche posizioni fisse e ben separate: anche un istogramma sparso è sufficiente a individuarle. Il costo per iterazione è dunque fino a 8 volte inferiore al riferimento.
+
+% -----------------------------------------------
+\section{Analisi Congiunta $K \times \varepsilon_{2q}$}
+\label{subsec:sweep_joint}
+
+L'analisi congiunta verifica se esiste un'interazione tra $K$ e il livello di rumore: in regime di rumore elevato, un $K$ maggiore potrebbe compensare il degrado del picco QPE. Griglia $K \in \{2, 4, 6, 8\} \times \varepsilon_{2q} \in \{5\times10^{-3}, 10^{-2}, 2\times10^{-2}, 5\times10^{-2}\}$, $K_{\text{rep}}=30$ per cella.
+
+\begin{table}[H]
+\centering
+\caption{$\bar{M}_{\text{TOPK}}$ per combinazioni di $K$ e $\varepsilon_{2q}$ ($K_{\text{rep}}=30$). In grassetto: $\rho > 2$ con $p < 0.05$.}
+\label{tab:sweep_joint}
+\begin{tabular}{c|cccc}
+\hline
+ & \multicolumn{4}{c}{$\varepsilon_{2q}$} \\
+$K$ & $5\times10^{-3}$ & $10^{-2}$ (UC1) & $2\times10^{-2}$ & $5\times10^{-2}$ (UC2) \\
+\hline
+2 & \textbf{1.00} & \textbf{1.00} & \textbf{1.00} & \textbf{1.00} \\
+4 & \textbf{1.00} & \textbf{1.00} & \textbf{1.00} & \textbf{1.00} \\
+6 & \textbf{1.00} & \textbf{1.00} & \textbf{1.00} & \textbf{1.00} \\
+8 & \textbf{1.00} & \textbf{1.00} & \textbf{1.00} & \textbf{1.00} \\
+\hline
+\end{tabular}
+\end{table}
+
+L'interazione è assente: ogni cella produce $\bar{M}=1.00$ con $P_{\text{succ}}=100\%$. Non esiste un regime in cui un $K$ più alto compensi un rumore più elevato, perché TOP-K non ne ha bisogno: anche a $\varepsilon_{2q}=5\times10^{-2}$ il picco corretto rientra già tra i primi due candidati.
+
+% -----------------------------------------------
+\section{Parametri Secondari: $T_1$/$T_2$, $\varepsilon_{1q}$ e $p_{\text{ro}}$}
+\label{subsec:sweep_secondari}
+
+I tempi di coerenza, il tasso di errore a singolo qubit e l'errore di lettura erano attesi come parametri secondari per $N=15$: il tempo di gate totale (${\approx}8\,\mu\text{s}$) è ben inferiore ai tempi di decoerenza tipici, le porte a singolo qubit sono molto meno numerose delle 162 CX, e $p_{\text{ro}}$ produce solo un allargamento simmetrico dell'istogramma.
+
+\begin{table}[H]
+\centering
+\caption{Effetto di $T_1$ su $M_{\text{TOP4}}$ ($K=4$, $\varepsilon_{2q}=10^{-2}$, $K_{\text{rep}}=30$, $T_2 = 0.8\,T_1$)}
+\label{tab:sweep_t1}
+\begin{tabular}{cccccc}
+\hline
+$T_1$ ($\mu$s) & $T_2$ ($\mu$s) & $P_{\text{succ}}$ & $\bar{M}$ & $\sigma_M$ & $\rho$ vs M1 \\
+\hline
+20  & 16  & 100\% & 1.00 & 0.00 & 6.430 \\
+50  & 40  & 100\% & 1.00 & 0.00 & 6.430 \\
+100 (UC1) & 80 & 100\% & 1.00 & 0.00 & 6.435 \\
+200 & 160 & 100\% & 1.00 & 0.00 & 6.430 \\
+500 & 400 & 100\% & 1.00 & 0.00 & 6.430 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Effetto di $\varepsilon_{1q}$ su $M_{\text{TOP4}}$ ($K=4$, $\varepsilon_{2q}=10^{-2}$, $K_{\text{rep}}=30$)}
+\label{tab:sweep_eps1q}
+\begin{tabular}{ccccc}
+\hline
+$\varepsilon_{1q}$ & $P_{\text{succ}}$ & $\bar{M}$ & $\sigma_M$ & $\rho$ vs M1 \\
+\hline
+$10^{-4}$                    & 100\% & 1.00 & 0.00 & 6.430 \\
+$5\times10^{-4}$             & 100\% & 1.00 & 0.00 & 6.430 \\
+$10^{-3}$ (UC1, riferimento) & 100\% & 1.00 & 0.00 & 6.435 \\
+$5\times10^{-3}$             & 100\% & 1.00 & 0.00 & 6.430 \\
+$10^{-2}$                    & 100\% & 1.00 & 0.00 & 6.430 \\
+$2\times10^{-2}$             & 100\% & 1.00 & 0.00 & 6.430 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Effetto di $p_{\text{ro}}$ su $M_{\text{TOP4}}$ ($K=4$, $\varepsilon_{2q}=10^{-2}$, $K_{\text{rep}}=30$)}
+\label{tab:sweep_pro}
+\begin{tabular}{ccccc}
+\hline
+$p_{\text{ro}}$ & $P_{\text{succ}}$ & $\bar{M}$ & $\sigma_M$ & $\rho$ vs M1 \\
+\hline
+0\%       & 100\% & 1.00 & 0.00 & 6.430 \\
+1\%       & 100\% & 1.00 & 0.00 & 6.430 \\
+2\% (UC1) & 100\% & 1.00 & 0.00 & 6.435 \\
+5\%       & 100\% & 1.00 & 0.00 & 6.430 \\
+10\%      & 100\% & 1.00 & 0.00 & 6.430 \\
+20\%      & 100\% & 1.00 & 0.00 & 6.430 \\
+\hline
+\end{tabular}
+\end{table}
+
+La previsione qualitativa (impatto marginale) è confermata, ma l'esito quantitativo è ancora più netto: l'impatto è \emph{nullo} su tutto il range testato per tutti i parametri. $T_1$ varia da $20$ a $500\,\mu\text{s}$, $\varepsilon_{1q}$ da $10^{-4}$ a $2\times10^{-2}$ (lo stesso ordine di grandezza di $\varepsilon_{2q}$), $p_{\text{ro}}$ da $0\%$ a $20\%$ (ben oltre i valori realistici $\lesssim 3\%$ dei dispositivi attuali): in nessun caso $\bar{M}_{\text{TOP4}}$ si discosta da 1.00. Un errore di lettura simmetrico allarga l'istogramma ma non sposta i picchi QPE; il basso numero di porte a singolo qubit rende $\varepsilon_{1q}$ trascurabile; il tempo di gate complessivo è inferiore anche al minimo $T_1$ testato.
+
+% -----------------------------------------------
+\section{Dettaglio del Confronto con Zero-Noise Extrapolation}
+\label{sec:app_zne}
+
+\ac{ZNE} opera in due fasi. Nella prima, il circuito viene eseguito a più livelli di rumore amplificato (noise scaling): si moltiplicano i parametri di errore $\varepsilon_{2q}$ e $\varepsilon_{1q}$ per fattori $\lambda \in \{1, 2, 3, \ldots\}$, ottenendo istogrammi progressivamente più degradati. Nella seconda, si applica la \textit{Richardson extrapolation} per stimare l'istogramma al rumore ideale $\lambda=0$:
+
+\begin{itemize}
+    \item \textbf{ZNE-2} (estrapolazione lineare, 2 livelli): $P_0(k) = 2\,P_{\lambda=1}(k) - P_{\lambda=2}(k)$
+    \item \textbf{ZNE-3} (Richardson quadratica, 3 livelli): $P_0(k) = 3\,P_{\lambda=1}(k) - 3\,P_{\lambda=2}(k) + P_{\lambda=3}(k)$
+\end{itemize}
+
+L'istogramma estrapolato $P_0$ viene quindi usato per identificare i candidati più frequenti (TOP-1) e tentare l'estrazione dei fattori. Il costo per iterazione è $\lambda_{\max} \times M_{\text{shots}}$: con ZNE-2, 2048 shot per iterazione; con ZNE-3, 3072 shot.
+
+Il fallimento di ZNE su questo task (Tabella~\ref{tab:confronto_zne} nel Capitolo~\ref{chap:risultati}) è spiegabile strutturalmente. ZNE è progettata per stimare valori di aspettazione di osservabili scalari (es.\ $\langle Z \rangle$), dove la relazione tra rumore e output è regolare e l'estrapolazione è stabile. Nel caso di Shor, l'output è una distribuzione di probabilità su $2^8 = 256$ stati: l'estrapolazione Richardson applicata componente per componente produce valori negativi in molte celle (fisicamente privi di significato), che vengono tagliati e rinormalizzati, distorcendo la struttura dei picchi QPE. Il risultato è un istogramma estrapolato \emph{più piatto} di quello originale, non più nitido. $M_{\text{TOP4}}$ segue la logica opposta: invece di correggere l'istogramma, accetta il rumore come dato di fatto e amplia la ricerca ai $K$ candidati più probabili.
+
+\end{onehalfspace}
