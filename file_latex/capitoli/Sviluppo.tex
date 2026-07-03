@@ -1,6 +1,6 @@
 \begin{onehalfspace}
 
-Il Capitolo~\ref{chap:obiettivi} ha formalizzato il contratto sperimentale: quattro use case, i parametri di rumore ipotizzati e le metriche di confronto. Il Capitolo~\ref{chap:metodologia} ha definito l'architettura del pipeline a tre stadi. Questo capitolo descrive cosa è stato concretamente costruito: il setup dell'ambiente di esecuzione, l'integrazione dell'algoritmo di Shor con il simulatore rumoroso, e l'implementazione dei due metodi di analisi. Non vengono qui riportati i risultati degli esperimenti --- quelli sono oggetto dei Capitoli~\ref{chap:risultati1} e~\ref{chap:risultati2} --- ma le scelte implementative, il codice sviluppato e la struttura del sistema che ha prodotto quei risultati.
+Il Capitolo~\ref{chap:obiettivi} ha formalizzato il contratto sperimentale: quattro use case, i parametri di rumore ipotizzati e le metriche di confronto. Il Capitolo~\ref{chap:metodologia} ha definito l'architettura del pipeline a tre stadi. Questo capitolo descrive cosa è stato concretamente costruito: il setup dell'ambiente di esecuzione, l'integrazione dell'algoritmo di Shor con il simulatore rumoroso, e l'implementazione dei due metodi di analisi. Non vengono qui riportati i risultati degli esperimenti --- quelli sono oggetto del Capitolo~\ref{chap:risultati} --- ma le scelte implementative, il codice sviluppato e la struttura del sistema che ha prodotto quei risultati.
 
 % -----------------------------------------------
 \section{Setup dell'Ambiente di Esecuzione}
@@ -95,7 +95,7 @@ def mod_exp_15_7(power):
 \end{lstlisting}
 
 % Per UC3 (N=21) e UC4 (N=35) si usa c_amod() con UnitaryGate (matrice di
-% permutazione generale). La sintesi produce >8000 porte CX dopo traspilosizione,
+% permutazione generale). La sintesi produce >8000 porte CX dopo traspilazione,
 % rendendo entrambi i use case inutilizzabili in regime NISQ (cfr. Sec. sec:impl_metodo1).
 
 \subsection{Circuito Completo e Post-Processing}
@@ -191,7 +191,7 @@ def build_noise_model(eps_1q, eps_2q, t1_ns, t2_ns,
 
 Il Metodo 1 adotta la strategia \textit{TOP-1}: ad ogni iterazione esegue il circuito, identifica la misura più frequente nell'istogramma degli output e tenta la fattorizzazione tramite il post-processing classico. Il loop si interrompe non appena viene trovata una coppia di fattori non banali.
 
-Una scelta critica di implementazione riguarda la traspilosizione del circuito. Affinché il noise model sia applicato correttamente a \emph{tutti} i gate, il simulatore deve essere istanziato con il noise model nel costruttore prima della traspilosizione, e il livello di ottimizzazione deve essere pari a 2:
+Una scelta critica di implementazione riguarda la traspilazione del circuito. Affinché il noise model sia applicato correttamente a \emph{tutti} i gate, il simulatore deve essere istanziato con il noise model nel costruttore prima della traspilazione, e il livello di ottimizzazione deve essere pari a 2:
 
 \begin{lstlisting}[caption={Pipeline del Metodo 1 (TOP-1, ottimizzazione corretta)}]
 def run_method1(N, a, n_count, noise_model, shots=1024,
@@ -220,7 +220,7 @@ def run_method1(N, a, n_count, noise_model, shots=1024,
 Senza il noise model nel costruttore, Qiskit Aer non decompone le porte Toffoli (\texttt{CCX}) presenti nell'espansione di \texttt{.control()}: le 27 porte \texttt{CCX} del circuito per $N=15$ rimangono nella netlist finale come gate non rumorosi, rendendo la simulazione non fisicamente accurata. Con \texttt{optimization\_level=2} e il noise model nel costruttore, il circuito traspilato contiene esclusivamente porte elementari: per $N=15$, $a=7$, $n_{\text{count}}=8$ si ottengono 162 porte \texttt{cx}, 0 \texttt{ccx}, 0 \texttt{swap}, per una profondità complessiva di 309.
 
 \paragraph{Limite di scalabilità per UC3 e UC4.}
-Per $N=21$ e $N=35$, il blocco di moltiplicazione modulare viene implementato tramite \texttt{UnitaryGate} (matrice di permutazione) anzichè la decomposizione textbook valida solo per $N=15$. La sintesi di \texttt{UnitaryGate} da parte di Qiskit produce tuttavia circuiti con $>8000$ porte \texttt{cx} dopo la traspilosizione, rendendo la probabilità di sopravvivenza coerente $(1 - \epsilon_{2q})^{8000} \approx 0$ già a $\epsilon_{2q} = 10^{-2}$. Entrambi i metodi risultano quindi inutilizzabili per UC3 e UC4 in regime NISQ: l'analisi scalabilità è discussa nel Capitolo~\ref{chap:conclusioni2}.
+Per $N=21$ e $N=35$, il blocco di moltiplicazione modulare viene implementato tramite \texttt{UnitaryGate} (matrice di permutazione) anzichè la decomposizione textbook valida solo per $N=15$. La sintesi di \texttt{UnitaryGate} da parte di Qiskit produce tuttavia circuiti con $>8000$ porte \texttt{cx} dopo la traspilazione, rendendo la probabilità di sopravvivenza coerente $(1 - \epsilon_{2q})^{8000} \approx 0$ già a $\epsilon_{2q} = 10^{-2}$. Entrambi i metodi risultano quindi inutilizzabili per UC3 e UC4 in regime NISQ: l'analisi scalabilità è discussa nel Capitolo~\ref{chap:risultati}.
 
 % -----------------------------------------------
 \section{Implementazione del Metodo 2}
@@ -230,7 +230,7 @@ Il Metodo 2 si articola in due fasi: la generazione del dataset e l'addestrament
 
 \subsection{Generazione del Dataset e Definizione dell'Etichetta}
 
-Il dataset viene generato eseguendo il circuito con parametri di rumore variabili nell'intorno dei valori nominali (fattore di variazione $\pm 50\%$). La stessa traspilosizione con \texttt{optimization\_level=2} è usata per tutti i campioni, variando solo il noise model a run-time per efficienza.
+Il dataset viene generato eseguendo il circuito con parametri di rumore variabili nell'intorno dei valori nominali (fattore di variazione $\pm 50\%$). La stessa traspilazione con \texttt{optimization\_level=2} è usata per tutti i campioni, variando solo il noise model a run-time per efficienza.
 
 L'etichetta di un campione vale 1 se \emph{almeno uno} dei \textsc{TOP\_K=16} misure più frequenti nell'istogramma corrisponde a fattori non banali. Questa definizione è coerente con la strategia di inferenza del Metodo 2: il classificatore impara a riconoscere gli istogrammi che ``contengono segnale QPE utile'', indipendentemente da quale specifica misura sia la moda.
 

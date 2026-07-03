@@ -1,0 +1,195 @@
+\babel@toc {italian}{}\relax 
+\babel@toc {italian}{}\relax 
+\contentsline {chapter}{Elenco delle figure}{vi}{chapter*.2}%
+\contentsline {chapter}{Elenco delle tabelle}{vii}{chapter*.3}%
+\contentsline {chapter}{Elenco degli Acronimi}{x}{section*.5}%
+\contentsline {chapter}{\numberline {1}Introduzione}{2}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Il Limite del Calcolo Classico}{2}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Dal Bit al Qubit: i Principi Fisici del Calcolo Quantistico}{3}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Il Qubit e la Sovrapposizione}{3}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}La Sfera di Bloch}{4}{subsection.1.2.2}%
+\contentsline {subsection}{\numberline {1.2.3}L'Entanglement}{4}{subsection.1.2.3}%
+\contentsline {subsection}{\numberline {1.2.4}L'Interferenza Quantistica}{5}{subsection.1.2.4}%
+\contentsline {subsection}{\numberline {1.2.5}Implementazione Fisica: i Qubit Superconduttori di IBM}{5}{subsection.1.2.5}%
+\contentsline {section}{\numberline {1.3}La Rivoluzione Algoritmica degli Anni Novanta}{6}{section.1.3}%
+\contentsline {section}{\numberline {1.4}RSA e le Implicazioni Crittografiche dell'Algoritmo di Shor}{7}{section.1.4}%
+\contentsline {subsection}{\numberline {1.4.1}Struttura del Protocollo RSA}{7}{subsection.1.4.1}%
+\contentsline {subsection}{\numberline {1.4.2}Perché l'Algoritmo di Shor Rompe RSA}{8}{subsection.1.4.2}%
+\contentsline {subsection}{\numberline {1.4.3}Implicazioni Pratiche per la Sicurezza Informatica}{9}{subsection.1.4.3}%
+\contentsline {section}{\numberline {1.5}Crittografia Post-Quantistica: la Risposta dell'Industria}{10}{section.1.5}%
+\contentsline {subsection}{\numberline {1.5.1}Gli Standard NIST 2024}{10}{subsection.1.5.1}%
+\contentsline {subsection}{\numberline {1.5.2}La Sfida della Migrazione}{11}{subsection.1.5.2}%
+\contentsline {section}{\numberline {1.6}Lo Stato dell'Arte: dall'Era NISQ ai Computer Fault-Tolerant}{12}{section.1.6}%
+\contentsline {section}{\numberline {1.7}Motivazione e Contributo del Presente Lavoro}{14}{section.1.7}%
+\contentsline {section}{\numberline {1.8}Struttura della Tesi}{15}{section.1.8}%
+\contentsline {chapter}{\numberline {2}Obiettivi e Piano Sperimentale}{18}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Motivazione: la Vulnerabilità della Crittografia Attuale}{18}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Obiettivi Generali}{20}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Obiettivi Specifici}{20}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Ipotesi di Lavoro}{21}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Contributo Originale}{22}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Requisiti Funzionali}{22}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Parametri di Input e Output}{24}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Parametri di Input}{24}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.2}Output del Sistema}{24}{subsection.2.7.2}%
+\contentsline {section}{\numberline {2.8}I Quattro Use Case}{25}{section.2.8}%
+\contentsline {subsection}{\numberline {2.8.1}Parametri dei Use Case}{25}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.2}Razionale per la Scelta delle Istanze}{26}{subsection.2.8.2}%
+\contentsline {section}{\numberline {2.9}Metriche di Valutazione}{27}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Metriche del Metodo 1}{27}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}Metriche del Metodo 2}{27}{subsection.2.9.2}%
+\contentsline {subsection}{\numberline {2.9.3}Metrica di Confronto}{28}{subsection.2.9.3}%
+\contentsline {subsection}{\numberline {2.9.4}Parametri di Error Mitigation Applicati}{28}{subsection.2.9.4}%
+\contentsline {section}{\numberline {2.10}Approccio Metodologico}{28}{section.2.10}%
+\contentsline {chapter}{\numberline {3}Fondamenti del Calcolo Quantistico}{29}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Dalla Meccanica Classica alla Meccanica Quantistica}{29}{section.3.1}%
+\contentsline {section}{\numberline {3.2}I Postulati della Meccanica Quantistica}{30}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Il Qubit}{32}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Definizione Matematica}{32}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}La Sfera di Bloch}{32}{subsection.3.3.2}%
+\contentsline {section}{\numberline {3.4}Sistemi Multi-Qubit e Prodotto Tensoriale}{33}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Entanglement}{33}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}L'Entanglement come Risorsa Fisica Fragile}{34}{subsection.3.4.2}%
+\contentsline {section}{\numberline {3.5}Porte Quantistiche}{35}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Porte a Singolo Qubit}{35}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Porte a Due Qubit}{37}{subsection.3.5.2}%
+\contentsline {section}{\numberline {3.6}Circuiti Quantistici}{38}{section.3.6}%
+\contentsline {section}{\numberline {3.7}Misura Quantistica}{38}{section.3.7}%
+\contentsline {section}{\numberline {3.8}Interferenza Quantistica}{38}{section.3.8}%
+\contentsline {section}{\numberline {3.9}Modello di Complessità Quantistica}{39}{section.3.9}%
+\contentsline {chapter}{\numberline {4}L'Algoritmo di Shor}{40}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Il Problema della Fattorizzazione Intera}{41}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Rilevanza Crittografica: RSA}{41}{subsection.4.1.1}%
+\contentsline {section}{\numberline {4.2}Riduzione alla Ricerca del Periodo}{42}{section.4.2}%
+\contentsline {section}{\numberline {4.3}La Quantum Fourier Transform}{43}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Definizione}{43}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Implementazione Efficiente}{44}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Phase Estimation}{44}{subsection.4.3.3}%
+\contentsline {section}{\numberline {4.4}L'Algoritmo di Shor: Schema Completo}{47}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Il Ruolo dell'Entanglement nel Period Finding}{48}{subsection.4.4.1}%
+\contentsline {section}{\numberline {4.5}Analisi della Complessità}{50}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Impatto sulla Crittografia e Prospettive Post-Quantum}{50}{section.4.6}%
+\contentsline {section}{\numberline {4.7}Sviluppi Recenti e Stato dell'Arte}{51}{section.4.7}%
+\contentsline {subsection}{\numberline {4.7.1}Implementazioni su Hardware Reale}{51}{subsection.4.7.1}%
+\contentsline {subsection}{\numberline {4.7.2}Miglioramenti Algoritmici: Regev 2023}{52}{subsection.4.7.2}%
+\contentsline {subsection}{\numberline {4.7.3}Roadmap IBM verso il Quantum Fault-Tolerant}{52}{subsection.4.7.3}%
+\contentsline {section}{\numberline {4.8}Contesto: Confronto con l'Algoritmo di Grover}{53}{section.4.8}%
+\contentsline {subsection}{\numberline {4.8.1}Il Problema di Grover}{53}{subsection.4.8.1}%
+\contentsline {subsection}{\numberline {4.8.2}Differenze Fondamentali}{53}{subsection.4.8.2}%
+\contentsline {chapter}{\numberline {5}Rumore Quantistico nei Sistemi NISQ}{55}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Introduzione al Rumore Quantistico}{55}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Le Quattro Fonti Fisiche di Rumore}{56}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Decoerenza ($T_1$ e $T_2$)}{56}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Errori di Gate}{57}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}Errori di Misura (Readout Errors)}{57}{subsection.5.2.3}%
+\contentsline {subsection}{\numberline {5.2.4}Crosstalk}{58}{subsection.5.2.4}%
+\contentsline {section}{\numberline {5.3}Dal Fenomeno Fisico al Modello Matematico}{58}{section.5.3}%
+\contentsline {section}{\numberline {5.4}I Quattro Canali Matematici del Rumore}{60}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Canale Bit Flip}{60}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Canale Phase Flip}{60}{subsection.5.4.2}%
+\contentsline {subsection}{\numberline {5.4.3}Canale Depolarizzante}{61}{subsection.5.4.3}%
+\contentsline {subsection}{\numberline {5.4.4}Canale di Amplitude Damping}{61}{subsection.5.4.4}%
+\contentsline {section}{\numberline {5.5}Impatto del Rumore sull'Algoritmo di Shor}{63}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Errori nella Quantum Fourier Transform}{63}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}Errori nella Phase Estimation}{63}{subsection.5.5.2}%
+\contentsline {subsection}{\numberline {5.5.3}Errori nella Modular Exponentiation}{63}{subsection.5.5.3}%
+\contentsline {section}{\numberline {5.6}Sfide Pratiche su Hardware NISQ}{64}{section.5.6}%
+\contentsline {chapter}{\numberline {6}Strategie per la Riduzione del Rumore Quantistico}{65}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Le Quattro Strategie: Panoramica e Scelta}{65}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Quantum Machine Learning per la Robustezza al Rumore}{67}{section.6.2}%
+\contentsline {section}{\numberline {6.3}La Correzione degli Errori Quantistici come \\ Sottocategoria del QML}{68}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}Il Problema Fondamentale}{68}{subsection.6.3.1}%
+\contentsline {subsection}{\numberline {6.3.2}Il Paradigma in Tre Fasi}{68}{subsection.6.3.2}%
+\contentsline {subsection}{\numberline {6.3.3}I Principali Codici Quantistici}{69}{subsection.6.3.3}%
+\contentsline {subsection}{\numberline {6.3.4}Perché la QEC è una Sottocategoria del QML}{69}{subsection.6.3.4}%
+\contentsline {section}{\numberline {6.4}Motivazione Pratica: il Contributo di questa Tesi}{70}{section.6.4}%
+\contentsline {chapter}{\numberline {7}Strumenti e Ambiente di Simulazione}{72}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Qiskit: il Framework Quantistico di Riferimento}{72}{section.7.1}%
+\contentsline {subsection}{\numberline {7.1.1}Architettura del Framework}{72}{subsection.7.1.1}%
+\contentsline {subsection}{\numberline {7.1.2}Perché Qiskit e non un'alternativa}{73}{subsection.7.1.2}%
+\contentsline {section}{\numberline {7.2}Qiskit Aer: il Simulatore}{74}{section.7.2}%
+\contentsline {subsection}{\numberline {7.2.1}Metodi di Simulazione}{74}{subsection.7.2.1}%
+\contentsline {subsection}{\numberline {7.2.2}Modelli di Rumore}{75}{subsection.7.2.2}%
+\contentsline {subsection}{\numberline {7.2.3}Transpilazione}{75}{subsection.7.2.3}%
+\contentsline {section}{\numberline {7.3}Accelerazione GPU con Qiskit Aer}{76}{section.7.3}%
+\contentsline {section}{\numberline {7.4}scikit-learn: la Libreria per il Classificatore}{76}{section.7.4}%
+\contentsline {section}{\numberline {7.5}Ambiente di Esecuzione: WSL con Ubuntu}{77}{section.7.5}%
+\contentsline {chapter}{\numberline {8}Metodologia e Architettura}{78}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Obiettivi della Parte Sperimentale}{78}{section.8.1}%
+\contentsline {section}{\numberline {8.2}Architettura del Pipeline Sperimentale}{79}{section.8.2}%
+\contentsline {section}{\numberline {8.3}Tecniche di Mitigazione del Rumore: Analisi e Scelte Implementative}{80}{section.8.3}%
+\contentsline {subsection}{\numberline {8.3.1}Livello di Circuito: Transpilazione e Riduzione della Profondità}{80}{subsection.8.3.1}%
+\contentsline {subsection}{\numberline {8.3.2}Livello di Misura: Mitigazione degli Errori di Readout}{81}{subsection.8.3.2}%
+\contentsline {subsection}{\numberline {8.3.3}Livello di Post-processing: Zero-Noise Extrapolation}{82}{subsection.8.3.3}%
+\contentsline {subsection}{\numberline {8.3.4}Analisi di Sensibilità ai Parametri di Rumore}{82}{subsection.8.3.4}%
+\contentsline {subsection}{\numberline {8.3.5}Scelta Adottata: Classificatore ML come Filtro Adattivo}{85}{subsection.8.3.5}%
+\contentsline {section}{\numberline {8.4}Il Metodo 1: Approccio Statistico Classico}{85}{section.8.4}%
+\contentsline {section}{\numberline {8.5}Il Metodo 2: Classificatore ML}{86}{section.8.5}%
+\contentsline {chapter}{\numberline {9}Sviluppo e Implementazione}{88}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Setup dell'Ambiente di Esecuzione}{88}{section.9.1}%
+\contentsline {subsection}{\numberline {9.1.1}Dipendenze e Virtual Environment}{88}{subsection.9.1.1}%
+\contentsline {subsection}{\numberline {9.1.2}Accelerazione GPU: Tentativo e Limitazione WSL}{89}{subsection.9.1.2}%
+\contentsline {section}{\numberline {9.2}L'Algoritmo di Shor: Implementazione di Riferimento}{90}{section.9.2}%
+\contentsline {subsection}{\numberline {9.2.1}La Quantum Fourier Transform}{90}{subsection.9.2.1}%
+\contentsline {subsection}{\numberline {9.2.2}La Moltiplicazione Modulare Controllata}{90}{subsection.9.2.2}%
+\contentsline {subsection}{\numberline {9.2.3}Circuito Completo e Post-Processing}{91}{subsection.9.2.3}%
+\contentsline {section}{\numberline {9.3}Configurazione del Noise Model}{92}{section.9.3}%
+\contentsline {section}{\numberline {9.4}Implementazione del Metodo 1}{93}{section.9.4}%
+\contentsline {paragraph}{Limite di scalabilità per UC3 e UC4.}{95}{section*.32}%
+\contentsline {section}{\numberline {9.5}Implementazione del Metodo 2}{95}{section.9.5}%
+\contentsline {subsection}{\numberline {9.5.1}Generazione del Dataset e Definizione dell'Etichetta}{95}{subsection.9.5.1}%
+\contentsline {subsection}{\numberline {9.5.2}Addestramento e Selezione del Modello}{97}{subsection.9.5.2}%
+\contentsline {subsection}{\numberline {9.5.3}Inferenza: Classificatore + Ricerca TOP-K}{97}{subsection.9.5.3}%
+\contentsline {section}{\numberline {9.6}Infrastruttura di Test e Raccolta Dati}{99}{section.9.6}%
+\contentsline {chapter}{\numberline {10}Risultati Sperimentali: dal Classificatore ML alla Strategia TOP-K}{100}{chapter.10}%
+\contentsline {section}{\numberline {10.1}Setup Sperimentale}{100}{section.10.1}%
+\contentsline {section}{\numberline {10.2}Analisi del Circuito e Barriera di Scalabilità}{101}{section.10.2}%
+\contentsline {section}{\numberline {10.3}Risultati del Metodo 1 (Baseline TOP-1)}{103}{section.10.3}%
+\contentsline {subsection}{\numberline {10.3.1}Use Case 1 — $N = 15$, NISQ-realistico ($\epsilon _{2q} = 10^{-2}$)}{103}{subsection.10.3.1}%
+\contentsline {subsection}{\numberline {10.3.2}Use Case 2 — $N = 15$, NISQ-degradato ($\epsilon _{2q} = 5 \times 10^{-2}$)}{105}{subsection.10.3.2}%
+\contentsline {subsection}{\numberline {10.3.3}Analisi della Baseline}{105}{subsection.10.3.3}%
+\contentsline {paragraph}{Effetto del rumore (UC1 vs UC2).}{105}{section*.42}%
+\contentsline {paragraph}{Punti di forza.}{106}{section*.43}%
+\contentsline {paragraph}{Limiti.}{106}{section*.44}%
+\contentsline {section}{\numberline {10.4}Il Classificatore ML: Cosa È Stato Testato e Perché}{106}{section.10.4}%
+\contentsline {subsection}{\numberline {10.4.1}Architettura del Metodo 2}{107}{subsection.10.4.1}%
+\contentsline {subsection}{\numberline {10.4.2}Generazione del Dataset}{107}{subsection.10.4.2}%
+\contentsline {subsection}{\numberline {10.4.3}Selezione e Valutazione del Modello}{108}{subsection.10.4.3}%
+\contentsline {paragraph}{Falsi positivi e falsi negativi.}{109}{section*.48}%
+\contentsline {section}{\numberline {10.5}Confronto e Analisi di Ablazione}{109}{section.10.5}%
+\contentsline {paragraph}{UC1: il classificatore è superfluo.}{110}{section*.50}%
+\contentsline {paragraph}{UC2: il classificatore è dannoso.}{110}{section*.51}%
+\contentsline {paragraph}{Risposta all'ipotesi della tesi.}{110}{section*.52}%
+\contentsline {paragraph}{Distribuzione delle iterazioni.}{110}{section*.53}%
+\contentsline {paragraph}{Trade-off computazionale.}{111}{section*.55}%
+\contentsline {section}{\numberline {10.6}Campagna Parametrica su M\textsubscript {TOP4}}{111}{section.10.6}%
+\contentsline {paragraph}{Configurazione di riferimento.}{112}{section*.56}%
+\contentsline {subsection}{\numberline {10.6.1}Variazione di K (numero di candidati per iterazione)}{112}{subsection.10.6.1}%
+\contentsline {paragraph}{Previsione.}{112}{section*.57}%
+\contentsline {paragraph}{Esito.}{112}{section*.58}%
+\contentsline {subsection}{\numberline {10.6.2}Variazione di $\varepsilon _{2q}$ (tasso di errore a due qubit)}{113}{subsection.10.6.2}%
+\contentsline {paragraph}{Previsione.}{113}{section*.60}%
+\contentsline {paragraph}{Esito.}{113}{section*.61}%
+\contentsline {subsection}{\numberline {10.6.3}Variazione di $M_{\text {shots}}$ (shot per iterazione)}{113}{subsection.10.6.3}%
+\contentsline {paragraph}{Previsione.}{113}{section*.63}%
+\contentsline {paragraph}{Esito.}{114}{table.caption.65}%
+\contentsline {subsection}{\numberline {10.6.4}Analisi Congiunta $K \times \varepsilon _{2q}$}{114}{subsection.10.6.4}%
+\contentsline {subsection}{\numberline {10.6.5}Parametri Secondari: $T_1$/$T_2$, $\varepsilon _{1q}$ e $p_{\text {ro}}$}{115}{subsection.10.6.5}%
+\contentsline {subsection}{\numberline {10.6.6}Sintesi: una Strategia più Robusta del Previsto}{116}{subsection.10.6.6}%
+\contentsline {section}{\numberline {10.7}Confronto con Zero-Noise Extrapolation}{116}{section.10.7}%
+\contentsline {subsection}{\numberline {10.7.1}Come funziona ZNE applicata a Shor}{116}{subsection.10.7.1}%
+\contentsline {subsection}{\numberline {10.7.2}Risultati del confronto}{117}{subsection.10.7.2}%
+\contentsline {section}{\numberline {10.8}Discussione: il Ruolo dell'IA e il Posizionamento di M\textsubscript {TOP4}}{118}{section.10.8}%
+\contentsline {subsection}{\numberline {10.8.1}Perché il Classificatore non Serve in Questo Ruolo}{118}{subsection.10.8.1}%
+\contentsline {subsection}{\numberline {10.8.2}Posizionamento nel Quadro delle Strategie Anti-Rumore}{118}{subsection.10.8.2}%
+\contentsline {subsection}{\numberline {10.8.3}Applicabilità su Hardware Reale}{119}{subsection.10.8.3}%
+\contentsline {subsection}{\numberline {10.8.4}Validità e Sintesi del Contributo}{119}{subsection.10.8.4}%
+\contentsline {paragraph}{Solidità e riproducibilità.}{119}{section*.73}%
+\contentsline {paragraph}{Sintesi del contributo.}{119}{section*.74}%
+\contentsline {chapter}{\numberline {11}Sviluppi Futuri}{121}{chapter.11}%
+\contentsline {section}{\numberline {11.1}Scalabilità a Istanze di Maggiore Dimensione}{122}{section.11.1}%
+\contentsline {section}{\numberline {11.2}Test e Validazione su Hardware Quantistico Reale}{123}{section.11.2}%
+\contentsline {section}{\numberline {11.3}Generalizzazione ad Altri Algoritmi Quantistici NISQ}{124}{section.11.3}%
+\contentsline {section}{\numberline {11.4}Integrazione con la Quantum Error Correction Strutturale}{125}{section.11.4}%
+\contentsline {section}{\numberline {11.5}Evoluzione del Classificatore ML}{125}{section.11.5}%
+\contentsline {chapter}{Bibliografia}{128}{chapter*.76}%

@@ -1,0 +1,33 @@
+\babel@toc {italian}{}\relax 
+\babel@toc {italian}{}\relax 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces La sfera di Bloch}}{33}{figure.caption.9}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Circuito per lo stato di Bell $\mathinner {|{\Phi ^+}\rangle }$}}{34}{figure.caption.10}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Porte quantistiche a singolo e due qubit}}{37}{figure.caption.11}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Gerarchia delle classi di complessità quantistica}}{39}{figure.caption.12}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Periodicità di $f(x)=7^x \bmod 15$}}{42}{figure.caption.13}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Circuito della QFT su 3 qubit}}{44}{figure.caption.14}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Circuito QPE per $N=15$, $a=2$}}{45}{figure.caption.15}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Blocco di moltiplicazione modulare $U_2$ per $N=15$}}{45}{figure.caption.16}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Blocco di moltiplicazione modulare $U_4$ per $N=15$}}{46}{figure.caption.17}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Istogramma QPE ideale per $N=15$}}{47}{figure.caption.18}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Schema a due registri dell'algoritmo di Shor}}{48}{figure.caption.19}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Effetto dei canali di rumore sulla sfera di Bloch}}{62}{figure.caption.23}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Probabilità di successo di Shor in presenza di rumore}}{64}{figure.caption.25}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {8.1}{\ignorespaces Pipeline sperimentale}}{79}{figure.caption.28}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {10.1}{\ignorespaces Circuito QPE per $N=21$}}{102}{figure.caption.36}%
+\contentsline {figure}{\numberline {10.2}{\ignorespaces Istogramma QPE per $N=21$ — distribuzione piatta}}{103}{figure.caption.37}%
+\contentsline {figure}{\numberline {10.3}{\ignorespaces Confronto istogrammi QPE con segnale strutturato e dominato dal rumore (UC1)}}{104}{figure.caption.38}%
+\contentsline {figure}{\numberline {10.4}{\ignorespaces Curve ROC dei classificatori selezionati (UC1: Random Forest, UC2: \acrshort {SVM})}}{109}{figure.caption.47}%
+\contentsline {figure}{\numberline {10.5}{\ignorespaces Analisi di ablazione: M1, $M_{\text {TOP4}}$ e M2 su UC1 ($K=30$)}}{111}{figure.caption.54}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {11.1}{\ignorespaces Simulation gap: simulatore vs hardware reale per $N=15$}}{123}{figure.caption.75}%

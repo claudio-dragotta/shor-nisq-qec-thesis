@@ -146,9 +146,9 @@ La QFT è impiegata, all'interno dell'algoritmo di Shor, attraverso la subroutin
 \vspace{0.5em}
 \centering
 \includegraphics[width=0.85\textwidth]{03_controlled_M2_decomposed.pdf}
-\caption*{(c) $CU_{2}$ decomposto in gate elementari (post-traspilosizione)}
+\caption*{(c) $CU_{2}$ decomposto in gate elementari (post-traspilazione)}
 
-\caption[Blocco di moltiplicazione modulare $U_2$ per $N=15$]{Gate di moltiplicazione modulare $U_2\ket{x} = \ket{2x \bmod 15}$ per $N=15$, $a=2$. (a)~Versione non controllata su 4 qubit: implementata come sequenza di SWAP. (b)~Versione controllata $CU_2$ su 5 qubit utilizzata nel circuito QPE. (c)~Decomposizione in gate elementari dopo la traspilosizione: le porte SWAP si espandono in triple di CNOT, rivelando il costo effettivo in gate a due qubit del blocco.}
+\caption[Blocco di moltiplicazione modulare $U_2$ per $N=15$]{Gate di moltiplicazione modulare $U_2\ket{x} = \ket{2x \bmod 15}$ per $N=15$, $a=2$. (a)~Versione non controllata su 4 qubit: implementata come sequenza di SWAP. (b)~Versione controllata $CU_2$ su 5 qubit utilizzata nel circuito QPE. (c)~Decomposizione in gate elementari dopo la traspilazione: le porte SWAP si espandono in triple di CNOT, rivelando il costo effettivo in gate a due qubit del blocco.}
 \label{fig:M2_circuit}
 \end{figure}
 
@@ -169,7 +169,7 @@ La QFT è impiegata, all'interno dell'algoritmo di Shor, attraverso la subroutin
 \vspace{0.5em}
 \centering
 \includegraphics[width=0.85\textwidth]{06_controlled_M4_decomposed.pdf}
-\caption*{(c) $CU_{4}$ decomposto in gate elementari (post-traspilosizione)}
+\caption*{(c) $CU_{4}$ decomposto in gate elementari (post-traspilazione)}
 
 \caption[Blocco di moltiplicazione modulare $U_4$ per $N=15$]{Gate di moltiplicazione modulare $U_4\ket{x} = \ket{4x \bmod 15}$ per $N=15$, $a=4=2^2$. (a)~Versione non controllata: il pattern di SWAP differisce da $U_2$ poiché la permutazione modulare per $a=4$ è diversa. (b)~Versione controllata $CU_4$ su 5 qubit, secondo blocco del circuito QPE. (c)~Decomposizione in gate elementari: il costo aggiuntivo rispetto a $CU_2$ riflette la maggiore complessità della permutazione per $a=4$.}
 \label{fig:M4_circuit}
