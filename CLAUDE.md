@@ -76,7 +76,7 @@ L'algoritmo di Shor fattorizza interi in tempo polinomiale, ma su hardware NISQ 
 | 8 | `Metodologia.tex` | Metodologia e Architettura | ✅ Scritto |
 | 9 | `Sviluppo.tex` | Sviluppo e Implementazione | ✅ Scritto — include tabella selezione classificatore (RF/SVM/MLP) con metriche reali |
 | 10 | `RisultatiSperimentali.tex` | Verifica Sperimentale dell'Ipotesi Iniziale: dal Classificatore ML alla Strategia TOP-K | ✅ Scritto — capitolo PONTE (non conclusioni!): verifica che l'ML a valle non serve; ~250 righe, dettagli sweep/ZNE in Appendice |
-| 11 | `NuovoApproccio.tex` | Gestione Predittiva degli Errori: dalla Duplicazione dei Qubit al Machine Learning | ✅ Scritto — capitolo CORE della tesi: errori non uniformi, duplicazione qubit, proposta ML predittivo, architettura, ipotesi. Realizzazione sperimentale = prossima fase |
+| 11 | `NuovoApproccio.tex` | Gestione Predittiva degli Errori: dalla Duplicazione dei Qubit al Machine Learning | 🔶 Capitolo CORE — parti concettuali DEFINITIVE (problema, duplicazione, sistema, protocollo validazione); 5 sezioni sperimentali IN BIANCO con segnaposto corsivi \[DA COMPLETARE...\]: impl. QPU virtuale, generazione dataset, selezione modello, risultati confronto, discussione |
 | 12 | `SviluppiFuturi.tex` | Sviluppi Futuri | ✅ Scritto — direzioni oltre il perimetro predittivo |
 | A | `AppendiceParametrica.tex` | Campagna Parametrica Dettagliata e Confronto ZNE | ✅ Scritto — 7 sweep con previsione→esito + meccanica ZNE |
 
