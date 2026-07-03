@@ -1,12 +1,15 @@
+% ⚠ STATO DEL CAPITOLO: struttura e parti concettuali DEFINITIVE.
+%   Le sezioni contrassegnate con [DA COMPLETARE ...] restano in bianco
+%   finché la fase sperimentale (QPU virtuale + dataset + training) non produce i dati.
 \begin{onehalfspace}
 
-Il Capitolo~\ref{chap:risultati} ha chiuso la verifica dell'ipotesi iniziale con un esito netto: applicare l'apprendimento automatico \emph{a valle} dell'esecuzione, sul solo output, non ha senso --- l'informazione contenuta nell'istogramma è già interamente sfruttabile da una ricerca multi-candidato a costo zero. Questo capitolo presenta il nucleo della tesi, che nasce proprio da quel risultato: se l'\ac{ML} deve contribuire alla mitigazione degli errori dell'algoritmo di Shor, deve operare \emph{a monte}, sull'informazione che nell'output non c'è --- la fisica del dispositivo. Nelle sezioni che seguono si descrive il problema (gli errori hardware non sono uniformi, ma sistematici e quindi prevedibili), la soluzione oggi adottata dall'industria (la duplicazione dei qubit), la proposta di questa tesi (un modello predittivo degli errori addestrato sulla specifica \mbox{QPU}) e l'architettura del sistema con cui intendiamo realizzarla e validarla.
+Il Capitolo~\ref{chap:risultati} ha chiuso la verifica dell'ipotesi iniziale con un esito netto: applicare l'apprendimento automatico \emph{a valle} dell'esecuzione, sul solo output, non ha senso --- l'informazione contenuta nell'istogramma è già interamente sfruttabile da una ricerca multi-candidato a costo zero. Questo capitolo presenta il nucleo della tesi, che nasce proprio da quel risultato: un sistema in cui l'\ac{ML} opera \emph{a monte}, sull'informazione che nell'output non c'è --- la fisica del dispositivo. Il capitolo descrive il problema (gli errori hardware non sono uniformi, ma sistematici e quindi prevedibili), la soluzione oggi adottata dall'industria (la duplicazione dei qubit), il sistema di gestione predittiva degli errori che questa tesi vi contrappone, e il protocollo sperimentale con cui il sistema viene validato.
 
 % -----------------------------------------------
 \section{Il Problema: gli Errori Hardware non sono Uniformi}
 \label{sec:errori_non_uniformi}
 
-Il Capitolo~\ref{chap:rumore} ha analizzato le quattro fonti fisiche di errore dei processori \ac{NISQ}: la decoerenza ($T_1$, $T_2$), gli errori di gate, gli errori di misura (\textit{readout}) e il crosstalk. Nella modellazione adottata finora --- come nella maggior parte della letteratura introduttiva --- questi errori sono stati trattati come proprietà \emph{globali} del dispositivo: un unico $T_1$, un unico tasso $\varepsilon_{2q}$, un'unica probabilità di errore di lettura per tutti i qubit. La realtà fisica di una \ac{QPU} è diversa, e questa differenza è il punto di partenza dell'intero approccio proposto.
+Il Capitolo~\ref{chap:rumore} ha analizzato le quattro fonti fisiche di errore dei processori \ac{NISQ}: la decoerenza ($T_1$, $T_2$), gli errori di gate, gli errori di misura (\textit{readout}) e il crosstalk. Nella modellazione adottata nella fase di verifica --- come nella maggior parte della letteratura introduttiva --- questi errori sono stati trattati come proprietà \emph{globali} del dispositivo: un unico $T_1$, un unico tasso $\varepsilon_{2q}$, un'unica probabilità di errore di lettura per tutti i qubit. La realtà fisica di una \ac{QPU} è diversa, e questa differenza è il fondamento dell'intero approccio.
 
 \paragraph{La decoerenza varia da qubit a qubit.}
 I qubit superconduttori sono strutture litografiche a scala molecolare: imperfezioni nel processo di fabbricazione (ad esempio nell'ossidazione delle giunzioni Josephson) fanno sì che, sullo stesso chip, un qubit possa esibire $T_1 = 100\,\mu\text{s}$ e il suo vicino $T_1 = 30\,\mu\text{s}$. La conseguenza operativa è severa: quando due qubit vengono posti in entanglement, la coerenza della coppia decade con il \emph{peggiore} dei due --- il qubit da $100\,\mu\text{s}$ viene trascinato a $30\,\mu\text{s}$, e quando uno dei due decade, l'informazione condivisa è persa per entrambi. Un algoritmo che ignora questa disomogeneità è costretto a dimensionarsi sul qubit più debole della linea utilizzata; il rischio cresce quando il tempo di esecuzione del circuito si avvicina al bordo della finestra di coerenza, dove la probabilità di decadimento è massima.
@@ -33,7 +36,7 @@ Operativamente, si eseguono \emph{due istanze gemelle} dell'algoritmo di Shor in
 
 Il costo di questa strategia è diretto e severo: \textbf{il fabbisogno di qubit fisici raddoppia}. Per l'istanza crittograficamente rilevante --- fattorizzare un modulo RSA a 2048 bit, che richiede $\sim$2048 qubit logici --- servono $\sim$4096 qubit fisici. L'esperienza pratica mostra inoltre rendimenti decrescenti: raddoppiare conviene, triplicare o quadruplicare no --- il guadagno di affidabilità aggiuntivo non giustifica il costo, proprio perché il meccanismo agisce solo sulla probabilità di sopravvivenza e non sulla \emph{causa} dei fallimenti.
 
-La duplicazione ha infine tre limiti strutturali che la rendono un bersaglio naturale per un approccio più intelligente:
+La duplicazione ha infine tre limiti strutturali:
 \begin{itemize}
     \item è \textbf{agnostica rispetto al dispositivo}: tratta tutti i qubit come ugualmente inaffidabili, ignorando che i difetti sono localizzati e stabili;
     \item \textbf{spreca conoscenza}: ogni esecuzione rivela quali linee hanno fallito, ma questa informazione non viene accumulata né riutilizzata;
@@ -41,52 +44,88 @@ La duplicazione ha infine tre limiti strutturali che la rendono un bersaglio nat
 \end{itemize}
 
 % -----------------------------------------------
-\section{La Proposta: un Modello Predittivo degli Errori}
+\section{Il Sistema di Gestione Predittiva degli Errori}
 \label{sec:proposta_predittiva}
 
-La proposta di questa tesi è sostituire la ridondanza fisica con la \textbf{conoscenza appresa del dispositivo}: un modello di apprendimento automatico, addestrato sul comportamento della specifica \ac{QPU}, che predica dove e quando gli errori si manifesteranno.
+Il sistema sviluppato in questa tesi sostituisce la ridondanza fisica con la \textbf{conoscenza appresa del dispositivo}: un modello di apprendimento automatico, addestrato sul comportamento della specifica \ac{QPU}, predice dove e quando gli errori si manifestano.
 
-\paragraph{Perché qui l'ML ha senso (e a valle no).}
-La verifica del Capitolo~\ref{chap:risultati} ha dimostrato che un classificatore che osserva il solo istogramma di output non aggiunge nulla: quell'informazione è già catturata dalla ricerca TOP-K. Il modello proposto attinge invece a informazione \emph{strutturale}, che nessuna strategia a valle può vedere: la topologia del dispositivo, i tempi di coerenza dei singoli qubit, quali linee il circuito attraversa, la profondità richiesta dall'input. È la differenza tra giudicare una fotografia sfocata e conoscere quale lente dell'obiettivo è graffiata: la seconda conoscenza permette di \emph{prevedere} la sfocatura prima dello scatto, e di scegliere una lente diversa.
+\paragraph{Perché qui l'ML funziona (e a valle no).}
+La verifica del Capitolo~\ref{chap:risultati} ha dimostrato che un classificatore che osserva il solo istogramma di output non aggiunge nulla: quell'informazione è già catturata dalla ricerca TOP-K. Il modello di questo capitolo attinge invece a informazione \emph{strutturale}, che nessuna strategia a valle può vedere: la topologia del dispositivo, i tempi di coerenza dei singoli qubit, quali linee il circuito attraversa, la profondità richiesta dall'input. È la differenza tra giudicare una fotografia sfocata e conoscere quale lente dell'obiettivo è graffiata: la seconda conoscenza permette di \emph{prevedere} la sfocatura prima dello scatto, e di scegliere una lente diversa.
 
-\paragraph{Che cosa promette il modello.}
-Il livello minimo di funzionalità --- sufficiente a giustificare l'approccio --- è la \textbf{segnalazione}: dato l'esito di un'esecuzione e le condizioni in cui è avvenuta, il modello indica "questo risultato è probabilmente errato". Non serve conoscere la risposta giusta: la sola segnalazione affidabile permette di scartare l'esito e reiterare, esattamente come la strategia TOP-K permetteva di evitare iterazioni sprecate. Il livello avanzato è la \textbf{prescrizione}: per un dato tipo di input, il modello indica quali linee di qubit evitare ("per questa profondità di circuito, la linea 1 fallisce sistematicamente: usa la seconda"), instradando l'esecuzione sulle risorse fisiche più adatte \emph{prima} di consumarle.
+\paragraph{I due livelli di funzionamento.}
+Il livello minimo è la \textbf{segnalazione}: dato l'esito di un'esecuzione e le condizioni in cui è avvenuta, il modello indica "questo risultato è probabilmente errato". Non serve conoscere la risposta giusta: la sola segnalazione affidabile permette di scartare l'esito e reiterare. Il livello avanzato è la \textbf{prescrizione}: per un dato tipo di input, il modello indica quali linee di qubit evitare ("per questa profondità di circuito, la linea 1 fallisce sistematicamente: usa la seconda"), instradando l'esecuzione sulle risorse fisiche più adatte \emph{prima} di consumarle.
 
 \paragraph{Un modello per esemplare, non per modello.}
-Poiché i difetti sono caratteristiche del singolo chip --- due esemplari identici dello stesso modello di QPU hanno mappe di difetti diverse --- il modello va addestrato \emph{su quella specifica QPU}, con una fase di caratterizzazione basata su input a verità nota. Questo è un costo una-tantum per dispositivo, analogo alla calibrazione periodica che i provider già eseguono, ma il suo prodotto è riutilizzabile per ogni esecuzione successiva.
+Poiché i difetti sono caratteristiche del singolo chip --- due esemplari identici dello stesso modello di QPU hanno mappe di difetti diverse --- il modello viene addestrato \emph{su quella specifica QPU}, con una fase di caratterizzazione basata su input a verità nota. È un costo una-tantum per dispositivo, analogo alla calibrazione periodica che i provider già eseguono, ma il suo prodotto è riutilizzabile per ogni esecuzione successiva.
 
-\paragraph{Il claim da validare.}
-La promessa quantitativa, che la fase sperimentale dovrà verificare, si formula così: \emph{l'algoritmo di Shor eseguito in copia singola, assistito dal modello predittivo, raggiunge un'affidabilità almeno pari a quella della duplicazione, utilizzando la metà dei qubit fisici}. Se il claim regge, il messaggio pratico è quello indicato dal relatore: chi implementa Shor non ha più bisogno di duplicare --- esegue una copia sola e lascia che il modello, addestrato su quella macchina, faccia il resto.
+\paragraph{Il claim.}
+La promessa quantitativa che il protocollo sperimentale di questo capitolo mette alla prova si formula così: \emph{l'algoritmo di Shor eseguito in copia singola, assistito dal modello predittivo, raggiunge un'affidabilità almeno pari a quella della duplicazione, utilizzando la metà dei qubit fisici}. Se il claim regge, il messaggio pratico è quello indicato dal relatore: chi implementa Shor non ha più bisogno di duplicare --- esegue una copia sola e lascia che il modello, addestrato su quella macchina, faccia il resto.
 
 % -----------------------------------------------
-\section{Architettura del Sistema Proposto}
+\section{Architettura del Sistema}
 \label{sec:architettura_predittiva}
 
-Il sistema si compone di quattro elementi, progettati per essere realizzati con l'infrastruttura sperimentale già sviluppata (Capitoli~\ref{chap:strumenti} e~\ref{chap:sviluppo}) opportunamente estesa.
+Il sistema si compone di quattro elementi, realizzati estendendo l'infrastruttura sperimentale dei Capitoli~\ref{chap:strumenti} e~\ref{chap:sviluppo}.
 
-\paragraph{1. QPU virtuale con iniezione di errori configurabile.}
-Il primo componente è un simulatore di \ac{QPU} in cui le quattro categorie di errore sono configurabili \emph{per singolo qubit e per singola linea}, non globalmente: a ogni qubit i propri $T_1$/$T_2$, a ogni coppia accoppiata la propria fedeltà e durata di gate, a ogni linea di lettura il proprio errore di misura, e un modello di crosstalk derivato dalla topologia dichiarata (quali qubit sono fisicamente accoppiati con quali). Rispetto al noise model uniforme utilizzato nella fase di verifica, questa è un'estensione sostanziale ma tecnicamente percorribile: Qiskit Aer supporta nativamente errori per-qubit e coupling map, mentre il crosstalk andrà modellato come canale di errore correlato sui vicini topologici. La QPU virtuale si comporta come una QPU reale --- "su dieci gate che passano, a volte uno sbaglia" --- ma con percentuali e localizzazione dei difetti decise da noi, e quindi note.
+\subsection{La QPU Virtuale}
+\label{subsec:qpu_virtuale}
 
-\paragraph{2. Dataset a verità nota.}
-Il secondo componente è la campagna di caratterizzazione: si costruisce un insieme di istanze di fattorizzazione con soluzione nota (semiprimi $N = p \times q$ con $p$, $q$ primi scelti, di profondità circuitale crescente) e lo si esegue ripetutamente sulla QPU virtuale --- nell'ordine del migliaio di esecuzioni per configurazione. Poiché input, output atteso e profilo di errore iniettato sono tutti noti, ogni esecuzione produce un esempio etichettato: quali linee erano coinvolte, quale profilo di errore era attivo, e se l'esito era corretto.
+Il primo componente è un simulatore di \ac{QPU} in cui le quattro categorie di errore sono configurabili \emph{per singolo qubit e per singola linea}, non globalmente: a ogni qubit i propri $T_1$/$T_2$, a ogni coppia accoppiata la propria fedeltà e durata di gate, a ogni linea di lettura il proprio errore di misura, e un modello di crosstalk derivato dalla topologia dichiarata (quali qubit sono fisicamente accoppiati con quali). Rispetto al noise model uniforme utilizzato nella fase di verifica, questa è un'estensione sostanziale: Qiskit Aer supporta nativamente errori per-qubit e coupling map, mentre il crosstalk è modellato come canale di errore correlato sui vicini topologici. La QPU virtuale si comporta come una QPU reale --- "su dieci gate che passano, a volte uno sbaglia" --- ma con percentuali e localizzazione dei difetti decise in fase di configurazione, e quindi note.
 
-\paragraph{3. Modello predittivo con feature strutturali.}
-Il terzo componente è il modello di apprendimento: le feature comprendono la descrizione della QPU (topologia, $T_1$/$T_2$ per qubit, fedeltà di gate per linea), la descrizione dell'esecuzione (linee utilizzate, profondità del circuito, tipo di input) e l'esito osservato; le etichette derivano dalla verità nota. L'architettura del modello (classificatore, regressore di affidabilità per linea, o sistema a due stadi) è una scelta progettuale aperta, da guidare con lo stesso rigore comparativo usato nella fase di verifica. Un'estensione avanzata segnalata dal relatore --- l'uso delle matrici di confusione come spazio hamiltoniano in ingresso a un algoritmo \ac{QAOA} per identificare gli errori trascurabili --- è deliberatamente esclusa dal perimetro di questa fase per la sua complessità, e rimandata agli sviluppi futuri.
+\subsubsection{Implementazione della QPU Virtuale}
+\label{subsec:impl_qpu}
 
-\paragraph{4. Protocollo di validazione con baseline di duplicazione.}
-Il quarto componente incorpora la lezione metodologica della fase di verifica: \emph{l'ablazione si progetta dall'inizio, non si aggiunge dopo}. Il confronto sperimentale prevede tre bracci fin dal disegno: (a) copia singola senza modello (baseline inferiore), (b) \textbf{duplicazione dei qubit} --- da implementare come baseline di riferimento, poiché è la pratica che il modello intende sostituire --- e (c) copia singola assistita dal modello predittivo. Le metriche sono il tasso di successo, il numero di iterazioni e il costo in qubit fisici; la significatività statistica sarà valutata con gli stessi strumenti non parametrici già adottati (Mann-Whitney, $K \geq 30$ ripetizioni).
+\textit{[DA COMPLETARE al termine della fase implementativa --- questa sezione conterrà: la struttura del modulo software (estensione di \texttt{build\_noise\_model} a profili per-qubit); la definizione della topologia adottata (coupling map) con relativo schema grafico; la tabella dei parametri configurabili per qubit e per linea con i valori dei profili di difetto utilizzati; il listato del codice di costruzione del noise model per-qubit; la validazione del comportamento della QPU virtuale rispetto alle attese (es. tasso di errore osservato per linea vs configurato).]}
+
+\subsection{Il Dataset a Verità Nota}
+\label{subsec:dataset_verita}
+
+Il secondo componente è la campagna di caratterizzazione: un insieme di istanze di fattorizzazione con soluzione nota (semiprimi $N = p \times q$ con $p$, $q$ primi scelti, di profondità circuitale crescente) viene eseguito ripetutamente sulla QPU virtuale --- nell'ordine del migliaio di esecuzioni per configurazione. Poiché input, output atteso e profilo di errore iniettato sono tutti noti, ogni esecuzione produce un esempio etichettato: quali linee erano coinvolte, quale profilo di errore era attivo, e se l'esito era corretto.
+
+\subsubsection{Generazione del Dataset}
+\label{subsec:impl_dataset}
+
+\textit{[DA COMPLETARE al termine della campagna di generazione --- questa sezione conterrà: la tabella delle istanze scelte (semiprimi, basi $a$, profondità circuitale risultante); il numero di esecuzioni per configurazione e per profilo di difetto; la definizione precisa del vettore di feature e dell'etichetta; le statistiche del dataset risultante (bilanciamento delle classi, distribuzione degli esiti per linea); il tempo di generazione e le risorse impiegate.]}
+
+\subsection{Il Modello Predittivo}
+\label{subsec:modello_predittivo}
+
+Il terzo componente è il modello di apprendimento. Le feature comprendono la descrizione della QPU (topologia, $T_1$/$T_2$ per qubit, fedeltà di gate per linea), la descrizione dell'esecuzione (linee utilizzate, profondità del circuito, tipo di input) e l'esito osservato; le etichette derivano dalla verità nota. Un'estensione avanzata segnalata dal relatore --- l'uso delle matrici di confusione come spazio hamiltoniano in ingresso a un algoritmo \ac{QAOA} per identificare gli errori trascurabili --- è deliberatamente esclusa dal perimetro di questa fase per la sua complessità, ed è discussa tra gli sviluppi futuri.
+
+\subsubsection{Selezione e Addestramento del Modello}
+\label{subsec:impl_modello}
+
+\textit{[DA COMPLETARE al termine della fase di addestramento --- questa sezione conterrà: le architetture candidate confrontate (con la stessa metodologia comparativa della fase di verifica: split stratificato, selezione su metrica dichiarata a priori); gli iperparametri; le metriche di apprendimento sul test set (precision/recall della segnalazione, per non ripetere l'errore metodologico della fase di verifica queste metriche hanno solo ruolo diagnostico); l'analisi delle feature più informative (es. importanza della topologia vs $T_1$/$T_2$ per qubit).]}
 
 % -----------------------------------------------
-\section{Ipotesi Operative e Criteri di Successo}
-\label{sec:ipotesi_predittiva}
+\section{Protocollo di Validazione}
+\label{sec:protocollo_validazione}
 
-La fase sperimentale è guidata da due ipotesi verificabili:
+Il protocollo incorpora la lezione metodologica della fase di verifica: \emph{l'ablazione si progetta dall'inizio, non si aggiunge dopo}. Il confronto sperimentale prevede tre bracci fin dal disegno:
 
 \begin{enumerate}
-    \item \textbf{Ipotesi di prevedibilità}: sugli errori generati dalla QPU virtuale con difetti localizzati e stabili, un modello addestrato con feature strutturali raggiunge una capacità di segnalazione degli esiti errati significativamente superiore al caso ($\text{AUC} > 0.5$ con margine statisticamente significativo), e crescente con la sistematicità dei difetti iniettati.
+    \item[(a)] \textbf{copia singola senza modello} --- baseline inferiore;
+    \item[(b)] \textbf{duplicazione dei qubit} --- la pratica attuale che il sistema intende sostituire, implementata come baseline di riferimento: due istanze gemelle su due linee distinte della QPU virtuale, lettura di entrambe, uso della copia sopravvissuta;
+    \item[(c)] \textbf{copia singola assistita dal modello predittivo} --- il sistema proposto, nei due livelli di funzionamento (sola segnalazione; segnalazione + prescrizione delle linee).
+\end{enumerate}
+
+Le metriche di confronto sono il tasso di successo, il numero di iterazioni per risultato corretto e il costo in qubit fisici; la significatività statistica è valutata con gli stessi strumenti non parametrici della fase di verifica (Mann-Whitney a una coda, $K \geq 30$ ripetizioni per braccio). Le due ipotesi verificabili sono:
+
+\begin{enumerate}
+    \item \textbf{Ipotesi di prevedibilità}: sugli errori generati dalla QPU virtuale con difetti localizzati e stabili, il modello raggiunge una capacità di segnalazione degli esiti errati significativamente superiore al caso, crescente con la sistematicità dei difetti iniettati.
     \item \textbf{Ipotesi di sostituzione}: la copia singola assistita dal modello eguaglia o supera il tasso di successo della duplicazione a parità di iterazioni, con la metà dei qubit fisici. Criterio quantitativo: differenza di tasso di successo non inferiore (test unilaterale, $p < 0.05$) rispetto al braccio duplicato.
 \end{enumerate}
 
-Diversamente dalla fase di verifica --- dove le metriche di classificazione eccellenti nascondevano l'assenza di guadagno operativo --- il criterio di successo primario è qui direttamente operativo (ipotesi 2), e le metriche di apprendimento (ipotesi 1) hanno il solo ruolo di diagnostica intermedia. La realizzazione sperimentale di questo programma --- l'implementazione della QPU virtuale, la generazione del dataset, l'addestramento e la validazione comparativa --- costituisce la prossima fase del lavoro; le estensioni oltre questo perimetro, dalla validazione su hardware fisico reale all'integrazione con la correzione d'errore strutturale, sono discusse nel Capitolo~\ref{chap:sviluppi}.
+Diversamente dalla fase di verifica --- dove metriche di classificazione eccellenti nascondevano l'assenza di guadagno operativo --- il criterio di successo primario è direttamente operativo (ipotesi 2), e le metriche di apprendimento (ipotesi 1) hanno il solo ruolo di diagnostica intermedia.
+
+\subsection{Risultati del Confronto}
+\label{subsec:risultati_predizione}
+
+\textit{[DA COMPLETARE al termine della campagna sperimentale --- questa sezione conterrà: la tabella comparativa dei tre bracci (tasso di successo, $\bar{M}$, $\sigma_M$, qubit fisici impiegati, p-value); il confronto tra i due livelli di funzionamento del modello (sola segnalazione vs segnalazione + prescrizione); l'analisi per profilo di difetto (il vantaggio del modello al crescere della sistematicità dei difetti); le figure di distribuzione delle iterazioni per braccio.]}
+
+\subsection{Discussione}
+\label{subsec:discussione_predizione}
+
+\textit{[DA COMPLETARE al termine della campagna sperimentale --- questa sezione conterrà: la risposta alle due ipotesi; le condizioni di applicabilità del sistema (per quali profili di difetto conviene, per quali no); i limiti (dipendenza dalla qualità della caratterizzazione, costo della fase di training, trasferibilità del modello dopo una ricalibratura del dispositivo); il confronto qualitativo con la duplicazione in termini di costi operativi su hardware reale.]}
 
 \end{onehalfspace}
