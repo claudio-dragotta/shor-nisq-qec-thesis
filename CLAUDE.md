@@ -50,7 +50,7 @@ L'algoritmo di Shor fattorizza interi in tempo polinomiale, ma su hardware NISQ 
 
 ---
 
-## Struttura della tesi (11 capitoli)
+## Struttura della tesi (12 capitoli + appendice)
 
 ### Parte introduttiva e raccordo
 
@@ -75,11 +75,13 @@ L'algoritmo di Shor fattorizza interi in tempo polinomiale, ma su hardware NISQ 
 | 7 | `Strumenti.tex` | Strumenti e Ambiente di Simulazione | ✅ Completo |
 | 8 | `Metodologia.tex` | Metodologia e Architettura | ✅ Scritto |
 | 9 | `Sviluppo.tex` | Sviluppo e Implementazione | ✅ Scritto — include tabella selezione classificatore (RF/SVM/MLP) con metriche reali |
-| 10 | `RisultatiSperimentali.tex` | Risultati Sperimentali: dal Classificatore ML alla Strategia TOP-K | ✅ Scritto — FUSIONE (2026-07) dei 4 ex-capitoli Risultati/Conclusioni M1+M2; baseline, ablazione, campagna parametrica, ZNE, discussione |
-| 11 | `SviluppiFuturi.tex` | Sviluppi Futuri | ✅ Scritto — include direzione "ML a monte" (predizione impatto errori) |
+| 10 | `RisultatiSperimentali.tex` | Verifica Sperimentale dell'Ipotesi Iniziale: dal Classificatore ML alla Strategia TOP-K | ✅ Scritto — capitolo PONTE (non conclusioni!): verifica che l'ML a valle non serve; ~250 righe, dettagli sweep/ZNE in Appendice |
+| 11 | `NuovoApproccio.tex` | Gestione Predittiva degli Errori: dalla Duplicazione dei Qubit al Machine Learning | ✅ Scritto — capitolo CORE della tesi: errori non uniformi, duplicazione qubit, proposta ML predittivo, architettura, ipotesi. Realizzazione sperimentale = prossima fase |
+| 12 | `SviluppiFuturi.tex` | Sviluppi Futuri | ✅ Scritto — direzioni oltre il perimetro predittivo |
+| A | `AppendiceParametrica.tex` | Campagna Parametrica Dettagliata e Confronto ZNE | ✅ Scritto — 7 sweep con previsione→esito + meccanica ZNE |
 
 > `SpecificheFunzionali.tex` ELIMINATO il 2026-05-15 — contenuto integrato in Cap.2.
-> `RisultatiMetodo1/2.tex` e `ConclusioniMetodo1/2.tex` FUSI il 2026-07-03 in `RisultatiSperimentali.tex` (indicazione relatore). I vecchi file restano nel repo ma NON sono più inclusi in `main.tex`. Il label del capitolo unico è `chap:risultati`; i vecchi label `chap:risultati1/2`, `chap:conclusioni1/2` sono alias sullo stesso capitolo.
+> `RisultatiMetodo1/2.tex` e `ConclusioniMetodo1/2.tex` FUSI il 2026-07-03 in `RisultatiSperimentali.tex` (indicazione relatore), poi SNELLITO a capitolo ponte il 2026-07-03 (dettagli → `AppendiceParametrica.tex`). I vecchi file restano nel repo ma NON sono più inclusi in `main.tex`. Label: capitolo ponte `chap:risultati` (+ alias `chap:risultati1/2`, `chap:conclusioni1/2`), capitolo core `chap:predizione`, appendice `app:parametrica`.
 
 I file skeleton contengono in italiano la descrizione precisa di cosa va inserito in ogni sezione — leggili prima di scrivere quei capitoli.
 

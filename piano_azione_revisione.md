@@ -127,6 +127,107 @@ Riferimenti da aggiornare (grep già fatto, file → cosa toccare):
 
 ---
 
+# PIANO OPERATIVO C — Ristrutturazione narrativa: ponte + capitolo core (2026-07-03)
+
+> **STATO**: STEP 1–5 completati ✅ (titoli scelti da Claudio: ponte = "Verifica Sperimentale
+> dell'Ipotesi Iniziale…", core = "Gestione Predittiva degli Errori: dalla Duplicazione dei
+> Qubit al Machine Learning"). STEP 6–7 (compilazione+commit) in corso.
+
+> Richiesta di Claudio: il capitolo del vecchio ML NON è un mega-capitolo né "le conclusioni":
+> è un **ponte** tra la teoria e il core della tesi (il nuovo ML). Serve inoltre un **nuovo
+> capitolo core** che spieghi: perché vogliamo questo ML, cosa si fa oggi (duplicazione dei
+> qubit su due linee), come lo costruiremo e cosa promette.
+
+## STEP 0 — Decisioni sui titoli (da confermare con Claudio)
+
+- Titolo cap. ponte (ex 4 capitoli fusi), proposta:
+  **"Verifica Sperimentale dell'Ipotesi Iniziale: dal Classificatore ML alla Strategia TOP-K"**
+- Titolo cap. core (nuovo), proposta:
+  **"Oltre la Duplicazione dei Qubit: verso un Modello Predittivo degli Errori"**
+  (file `NuovoApproccio.tex`, label `chap:predizione`)
+- Appendice per i dati di dettaglio: **"Campagna Parametrica Dettagliata e Confronto ZNE"**
+  (file `AppendiceParametrica.tex`, label `app:parametrica`)
+
+## STEP 1 — Capitolo ponte snellito ✅ FATTO (da rileggere)
+
+- [x] 1.1 `RisultatiSperimentali.tex` riscritto (~250 righe vs ~530): apertura che ANNUNCIA
+      l'esito e il ruolo di ponte; setup compattato; circuito/scalabilità; baseline M1 (1 tabella
+      riepilogo + 1 figura); ipotesi ML alla prova (architettura+dataset compattati, metriche clf);
+      **"Il Verdetto dell'Ablazione"** (tabella chiave + figura); robustezza TOP-4 (SOLO tabella
+      di sintesi + tabella ZNE, dettagli→appendice); chiusura **"Bilancio della Verifica e Ponte
+      verso il Nucleo della Tesi"** — 3 fatti appurati + aggancio esplicito a `chap:predizione`.
+      NIENTE linguaggio da "conclusioni della tesi" o "contributo originale della tesi".
+- [x] 1.2 `AppendiceParametrica.tex` creata: 7 tabelle sweep (K, ε2q, shots, K×ε2q, T1/T2,
+      ε1q, p_ro) con formato previsione→esito, + meccanica e discussione ZNE.
+      Label esterne preservate: `subsec:sweep_secondari` (referenziata da Obiettivi) vive lì.
+
+## STEP 2 — Nuovo capitolo core `NuovoApproccio.tex` (chap:predizione)
+
+Sezioni previste (~180 righe):
+- [ ] 2.1 Apertura-aggancio: "appurato che l'ML a valle non serve → il nucleo della tesi"
+- [ ] 2.2 §Il Problema: errori fisici NON uniformi — richiamo alle 4 categorie (ref chap:rumore),
+      ma con l'angolo nuovo: T1/T2 variano da qubit a qubit (difetti di fabbricazione, es. 100 vs
+      30 µs; l'entanglement degrada al peggiore); qualità/durata dei gate varia per linea;
+      crosstalk dipende dalla topologia. Punto chiave: questi difetti sono SISTEMATICI e
+      ripetibili → quindi apprendibili/prevedibili.
+- [ ] 2.3 §La Pratica Attuale: la Duplicazione dei Qubit — no-cloning (ref Fondamenti) → non si
+      copia lo stato; si eseguono due istanze GEMELLE di Shor su due linee diverse di qubit
+      (informazione duplicata all'ingresso, stessi input); alla lettura si usa la copia
+      sopravvissuta; costo: 2× qubit fisici (2048 logici → 4096); raddoppiare conviene,
+      triplicare no. Limiti: (i) è agnostica sul dispositivo, (ii) spreca la conoscenza
+      sistematica delle linee deboli, (iii) consuma metà QPU.
+- [ ] 2.4 §La Proposta: Modello Predittivo degli Errori — perché QUI l'ML ha senso (usa
+      informazione strutturale che nell'output non c'è — contrasto esplicito col classificatore
+      bocciato nel cap. ponte); cosa promette: (a) minimo: flag "risultato probabilmente errato"
+      → si reitera; (b) avanzato: quali linee/qubit evitare per quel tipo di input; modello
+      addestrato sulla SINGOLA QPU fisica (non sul modello di QPU). Claim: copia singola +
+      modello ≳ duplicazione, con metà dei qubit.
+- [ ] 2.5 §Architettura del Sistema Proposto — 4 componenti: (1) QPU virtuale con iniezione
+      errori per-qubit/per-linea nelle 4 categorie + topologia (estensione del noise model
+      uniforme di Cap. Strumenti/Sviluppo); (2) dataset a verità nota (semiprimi noti, migliaia
+      di run); (3) modello ML con feature strutturali (topologia, T1/T2 per qubit, linee usate,
+      input) ed etichette dalla verità nota; (4) protocollo di validazione: baseline duplicazione
+      DA IMPLEMENTARE + ablazione progettata dall'inizio (lezione della verifica).
+- [ ] 2.6 §Ipotesi e Criteri di Successo + chiusura onesta: la realizzazione sperimentale è
+      l'oggetto della prossima fase; estensioni in Sviluppi Futuri.
+
+## STEP 3 — Cablaggio in main.tex
+
+- [ ] 3.1 Rinominare il cap. 10 col titolo ponte scelto
+- [ ] 3.2 Inserire il cap. 11: `\chapter{...}` + `\label{chap:predizione}` + input NuovoApproccio
+- [ ] 3.3 Dopo SviluppiFuturi, prima della bibliografia: `\appendix` + capitolo appendice
+      (`\label{app:parametrica}`)
+
+## STEP 4 — Raccordi negli altri capitoli
+
+- [ ] 4.1 `SviluppiFuturi.tex`: il paragrafo "ML a monte" (aggiunto ieri) è ora RIDONDANTE col
+      cap. core → sostituirlo con un rimando a chap:predizione; aggiornare l'apertura (punto iii)
+- [ ] 4.2 `Introduzione.tex` (SYNC-STRUTTURA): "undici"→"dodici capitoli"; "Capitoli 7--11"→
+      "7--12"; riscrivere il paragrafo del cap. 10 (nuovo titolo + ruolo di verifica/ponte);
+      aggiungere il paragrafo del cap. 11 (core); menzionare l'appendice
+- [ ] 4.3 Introduzione, bullet dei contributi: aggiungere che la verifica è propedeutica al
+      vero scopo (modello predittivo vs duplicazione)
+- [ ] 4.4 Controllo linguaggio: grep nel ponte per "conclusion/contributo della tesi" residui
+- [ ] 4.5 Controllo refs: `chap:sviluppi` nel ponte deve restare SOLO per Beauregard/scalabilità
+
+## STEP 5 — Documentazione di progetto
+
+- [ ] 5.1 `CLAUDE.md`: tabella struttura → 12 capitoli + appendice, nuovi titoli
+- [ ] 5.2 `diario_relatore.md`: registrare la ristrutturazione C
+- [ ] 5.3 Questo piano: spuntare gli step
+
+## STEP 6 — Verifica finale
+
+- [ ] 6.1 Compilazione completa (workaround microtype locale) → 0 errori, 0 undefined
+- [ ] 6.2 Controllo indice: 12 capitoli + appendice A, numerazione corretta
+- [ ] 6.3 Conteggio pagine (atteso ~146±5)
+
+## STEP 7 — Commit
+
+- [ ] Commit unico "ristruttura: capitolo ponte + capitolo core + appendice"
+
+---
+
 # PARTE B — Il nuovo algoritmo (il vero contributo conclusivo della tesi)
 
 > Il capitolo fuso della Parte A dice "il ML usato come filtro a posteriori non serve".

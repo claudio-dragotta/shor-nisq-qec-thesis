@@ -143,9 +143,10 @@
 \input{capitoli/Sviluppo}
 
 % -----------------------------------------------
-% Capitolo unico risultati: fusione dei precedenti 4 capitoli
-% (Risultati M1, Conclusioni M1, Risultati M2, Conclusioni M2) — indicazione relatore 2026-07
-\chapter{Risultati Sperimentali: dal Classificatore ML alla Strategia TOP-K}
+% Capitolo PONTE: verifica dell'ipotesi iniziale (fusione dei precedenti 4 capitoli
+% Risultati/Conclusioni M1+M2 — indicazione relatore 2026-07). Non sono le conclusioni
+% della tesi: è la verifica che motiva il capitolo core successivo.
+\chapter{Verifica Sperimentale dell'Ipotesi Iniziale: dal Classificatore ML alla Strategia TOP-K}
 \label{chap:risultati}
 \label{chap:risultati1}    % alias retro-compatibilità
 \label{chap:conclusioni1}  % alias retro-compatibilità
@@ -154,9 +155,21 @@
 \input{capitoli/RisultatiSperimentali}
 
 % -----------------------------------------------
+% Capitolo CORE della tesi: il nuovo approccio (gestione predittiva degli errori)
+\chapter{Gestione Predittiva degli Errori: dalla Duplicazione dei Qubit al Machine Learning}
+\label{chap:predizione}
+\input{capitoli/NuovoApproccio}
+
+% -----------------------------------------------
 \chapter{Sviluppi Futuri}
 \label{chap:sviluppi}
 \input{capitoli/SviluppiFuturi}
+
+% -----------------------------------------------
+\appendix
+\chapter{Campagna Parametrica Dettagliata e Confronto ZNE}
+\label{app:parametrica}
+\input{capitoli/AppendiceParametrica}
 
 % -----------------------------------------------
 \printbibliography[heading=bibintoc, title={Bibliografia}]
