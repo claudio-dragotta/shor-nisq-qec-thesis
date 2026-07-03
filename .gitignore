@@ -2,3 +2,17 @@
 __pycache__/
 *.pyc
 *.pyo
+
+# Artefatti build LaTeX
+file_latex/*.aux
+file_latex/*.log
+file_latex/*.bbl
+file_latex/*.bcf
+file_latex/*.blg
+file_latex/*.lof
+file_latex/*.lot
+file_latex/*.out
+file_latex/*.run.xml
+file_latex/*.toc
+file_latex/*.synctex.gz
+file_latex/main.pdf
