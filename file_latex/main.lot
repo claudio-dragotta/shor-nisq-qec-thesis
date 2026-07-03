@@ -1,0 +1,43 @@
+\babel@toc {italian}{}\relax 
+\babel@toc {italian}{}\relax 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {2.1}{\ignorespaces Parametri di input del sistema sperimentale. I valori di $\epsilon _{1q}$, $\epsilon _{2q}$, $T_1$, $T_2$ e $p_{\text {ro}}$ definiscono il noise model e vengono variati tra i use case per coprire scenari di rumore diversi.}}{24}{table.caption.7}%
+\contentsline {table}{\numberline {2.2}{\ignorespaces Configurazione completa dei quattro use case. I parametri di rumore del livello NISQ-realistico sono derivati dalle specifiche di \texttt {ibm\_marrakesh} \blx@tocontentsinit {0}\cite {ibm_shor_tutorial, epjqt_noise2024}. Il livello NISQ-degradato scala i tassi di errore di $5\times $ e dimezza $T_1$ e $T_2$.}}{26}{table.caption.8}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {4.1}{\ignorespaces Confronto tra l'algoritmo di Shor e l'algoritmo di Grover}}{53}{table.caption.20}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {5.1}{\ignorespaces Riepilogo delle quattro fonti fisiche di rumore nei processori quantistici superconduttori.}}{58}{table.caption.21}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Corrispondenza tra fonti fisiche di rumore e canali quantistici.}}{58}{table.caption.22}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces I quattro canali matematici fondamentali del rumore quantistico \blx@tocontentsinit {0}\cite {nielsenChuang2000}.}}{62}{table.caption.24}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {6.1}{\ignorespaces Confronto delle quattro strategie anti-rumore per il contesto di questa tesi.}}{66}{table.caption.26}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {7.1}{\ignorespaces Confronto tra i principali framework per la simulazione quantistica con rumore.}}{74}{table.caption.27}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {8.1}{\ignorespaces Risultati dell'analisi di sensibilità ai parametri di rumore per N=15, a=7, n\_count=8. Solo $\varepsilon _{2q}$ influenza le prestazioni di M1.}}{83}{table.caption.29}%
+\contentsline {table}{\numberline {8.2}{\ignorespaces Sweep di $\varepsilon _{2q}$ su UC1 (N=15, a=7, K=30). $\bar {M}_1$ cresce con il tasso di errore CX; la strategia TOP-4 mantiene success rate = 100\% su tutto il range.}}{83}{table.caption.30}%
+\contentsline {table}{\numberline {8.3}{\ignorespaces Sweep di \texttt {optimization\_level} su UC1 (N=15, a=7, K=30). Il passaggio da livello 0 a 1 riduce i gate CX del 3.6\% (168→162); i livelli 2 e 3 non apportano ulteriori riduzioni. Il success rate rimane 100\% a tutti i livelli.}}{84}{table.caption.31}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {9.1}{\ignorespaces Selezione del classificatore per i due use case (test set 20\%, $n=400$ campioni)}}{97}{table.caption.33}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {10.1}{\ignorespaces Parametri sperimentali comuni}}{101}{table.caption.34}%
+\contentsline {table}{\numberline {10.2}{\ignorespaces Caratteristiche del circuito traspilato e applicabilità dei metodi per ciascun use case}}{102}{table.caption.35}%
+\contentsline {table}{\numberline {10.3}{\ignorespaces Risultati del Metodo 1 su UC1 ($K=30$ ripetizioni)}}{104}{table.caption.39}%
+\contentsline {table}{\numberline {10.4}{\ignorespaces Risultati del Metodo 1 su UC2 ($K=30$ ripetizioni)}}{105}{table.caption.40}%
+\contentsline {table}{\numberline {10.5}{\ignorespaces Riepilogo delle metriche del Metodo 1 sui quattro use case}}{105}{table.caption.41}%
+\contentsline {table}{\numberline {10.6}{\ignorespaces Dataset di addestramento per il Metodo 2 (etichetta TOP\_K=16)}}{108}{table.caption.45}%
+\contentsline {table}{\numberline {10.7}{\ignorespaces Metriche dei classificatori sul test set (20\% del dataset, etichetta TOP\_K=16)}}{108}{table.caption.46}%
+\contentsline {table}{\numberline {10.8}{\ignorespaces Riepilogo comparativo M1, $M_{\text {TOP4}}$ e M2 --- risultato principale con analisi di ablazione ($K=30$, $M_{\text {max}}=50$)}}{109}{table.caption.49}%
+\contentsline {table}{\numberline {10.9}{\ignorespaces Effetto del parametro $K$ su $\bar {M}$, tasso di successo e $\rho $ vs M1 ($N=15$, UC1, $K_{\text {rep}}=30$)}}{112}{table.caption.59}%
+\contentsline {table}{\numberline {10.10}{\ignorespaces Effetto di $\varepsilon _{2q}$ su $M_{\text {TOP4}}$ ($K=4$, $K_{\text {rep}}=30$, altri parametri fissi a UC1)}}{113}{table.caption.62}%
+\contentsline {table}{\numberline {10.11}{\ignorespaces Effetto di $M_{\text {shots}}$ su $M_{\text {TOP4}}$ ($K=4$, $K_{\text {rep}}=30$, UC1)}}{114}{table.caption.65}%
+\contentsline {table}{\numberline {10.12}{\ignorespaces $\bar {M}_{\text {TOPK}}$ per combinazioni di $K$ e $\varepsilon _{2q}$ ($K_{\text {rep}}=30$). In grassetto: $\rho > 2$ con $p < 0.05$.}}{114}{table.caption.66}%
+\contentsline {table}{\numberline {10.13}{\ignorespaces Effetto di $T_1$ su $M_{\text {TOP4}}$ ($K=4$, $\varepsilon _{2q}=10^{-2}$, $K_{\text {rep}}=30$, $T_2 = 0.8\,T_1$)}}{115}{table.caption.67}%
+\contentsline {table}{\numberline {10.14}{\ignorespaces Effetto di $\varepsilon _{1q}$ su $M_{\text {TOP4}}$ ($K=4$, $\varepsilon _{2q}=10^{-2}$, $K_{\text {rep}}=30$)}}{115}{table.caption.68}%
+\contentsline {table}{\numberline {10.15}{\ignorespaces Effetto di $p_{\text {ro}}$ su $M_{\text {TOP4}}$ ($K=4$, $\varepsilon _{2q}=10^{-2}$, $K_{\text {rep}}=30$)}}{115}{table.caption.69}%
+\contentsline {table}{\numberline {10.16}{\ignorespaces Gerarchia dei parametri di mitigazione: impatto atteso, impatto osservato e raccomandazioni operative}}{116}{table.caption.70}%
+\contentsline {table}{\numberline {10.17}{\ignorespaces Confronto M1, ZNE-2, ZNE-3 e $M_{\text {TOP4}}$ su UC1 ($K_{\text {rep}}=30$, $M_{\text {shots}}=1024$ per livello)}}{117}{table.caption.71}%
+\contentsline {table}{\numberline {10.18}{\ignorespaces Posizionamento di $M_{\text {TOP4}}$ nel quadro delle strategie anti-rumore}}{119}{table.caption.72}%
+\addvspace {10\p@ }
