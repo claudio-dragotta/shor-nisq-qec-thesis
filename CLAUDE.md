@@ -180,7 +180,7 @@ Il backend è **biber** (non bibtex). Usa sempre `pdflatex + biber + pdflatex x2
 | `CLAUDE.md` | Questo file |
 | `shors-algorithm.ipynb` | Notebook Qiskit di riferimento per i test iniziali |
 | `file_latex/` | Tutti i file LaTeX della tesi |
-| `file_latex/Bibliografia.bib` | ~36 citazioni — aggiorna quando aggiungi riferimenti |
+| `file_latex/Bibliografia.bib` | 47 voci, tutte citate (verificato 2026-07-03) — aggiorna quando aggiungi riferimenti |
 | `file_latex/capitoli/Acronimi.tex` | Definizioni acronimi — aggiungi qui nuovi acronimi |
 
 ---
