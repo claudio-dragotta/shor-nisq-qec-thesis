@@ -180,7 +180,7 @@ La previsione qualitativa (impatto marginale) è confermata, ma l'esito quantita
 \section{Dettaglio del Confronto con Zero-Noise Extrapolation}
 \label{sec:app_zne}
 
-\ac{ZNE} opera in due fasi. Nella prima, il circuito viene eseguito a più livelli di rumore amplificato (noise scaling): si moltiplicano i parametri di errore $\varepsilon_{2q}$ e $\varepsilon_{1q}$ per fattori $\lambda \in \{1, 2, 3, \ldots\}$, ottenendo istogrammi progressivamente più degradati. Nella seconda, si applica la \textit{Richardson extrapolation} per stimare l'istogramma al rumore ideale $\lambda=0$:
+La \ac{ZNE}~\cite{temme2017} opera in due fasi. Nella prima, il circuito viene eseguito a più livelli di rumore amplificato (noise scaling): si moltiplicano i parametri di errore $\varepsilon_{2q}$ e $\varepsilon_{1q}$ per fattori $\lambda \in \{1, 2, 3, \ldots\}$, ottenendo istogrammi progressivamente più degradati. Nella seconda, si applica la \textit{Richardson extrapolation} per stimare l'istogramma al rumore ideale $\lambda=0$:
 
 \begin{itemize}
     \item \textbf{ZNE-2} (estrapolazione lineare, 2 livelli): $P_0(k) = 2\,P_{\lambda=1}(k) - P_{\lambda=2}(k)$
