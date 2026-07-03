@@ -70,7 +70,30 @@ Il sistema si compone di quattro elementi, realizzati estendendo l'infrastruttur
 \subsection{La QPU Virtuale}
 \label{subsec:qpu_virtuale}
 
-Il primo componente è un simulatore di \ac{QPU} in cui le quattro categorie di errore sono configurabili \emph{per singolo qubit e per singola linea}, non globalmente: a ogni qubit i propri $T_1$/$T_2$, a ogni coppia accoppiata la propria fedeltà e durata di gate, a ogni linea di lettura il proprio errore di misura, e un modello di crosstalk derivato dalla topologia dichiarata (quali qubit sono fisicamente accoppiati con quali). Rispetto al noise model uniforme utilizzato nella fase di verifica, questa è un'estensione sostanziale: Qiskit Aer supporta nativamente errori per-qubit e coupling map, mentre il crosstalk è modellato come canale di errore correlato sui vicini topologici. La QPU virtuale si comporta come una QPU reale --- "su dieci gate che passano, a volte uno sbaglia" --- ma con percentuali e localizzazione dei difetti decise in fase di configurazione, e quindi note.
+Il primo componente è un simulatore di \ac{QPU} in cui le quattro categorie di errore sono configurabili \emph{per singolo qubit e per singola linea}, non globalmente: a ogni qubit i propri $T_1$/$T_2$, a ogni coppia accoppiata la propria fedeltà e durata di gate, a ogni linea di lettura il proprio errore di misura, e un modello di crosstalk derivato dalla topologia dichiarata (quali qubit sono fisicamente accoppiati con quali). Rispetto al noise model uniforme utilizzato nella fase di verifica, questa è un'estensione sostanziale: Qiskit Aer supporta nativamente errori per-qubit e coupling map, mentre il crosstalk è modellato come canale di errore correlato sui vicini topologici. La QPU virtuale si comporta come una QPU reale --- "su dieci gate che passano, a volte uno sbaglia" --- ma con percentuali e localizzazione dei difetti decise in fase di configurazione, e quindi note. La topologia di partenza è la catena lineare a 12 qubit di Figura~\ref{fig:topologia_virtuale}, coerente con l'anatomia descritta nella Sezione~\ref{sec:anatomia_qpu} e dimensionata per l'istanza $N=15$.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+  cq/.style={circle, draw=black, thick, fill=blue!18, minimum size=8.5mm, font=\scriptsize},
+  wq/.style={circle, draw=black, thick, fill=green!20, minimum size=8.5mm, font=\scriptsize},
+  coupl/.style={line width=1.5pt, gray!60}
+]
+\foreach \i in {0,...,7}{ \node[cq] (Q\i) at (\i*1.35, 0) {$q_{\i}$}; }
+\foreach \i in {8,...,11}{ \node[wq] (Q\i) at (\i*1.35, 0) {$q_{\i}$}; }
+\foreach \i [evaluate=\i as \j using int(\i+1)] in {0,...,10}{ \draw[coupl] (Q\i) -- (Q\j); }
+\draw[decorate, decoration={brace, amplitude=5pt}] (-0.45,0.65) -- (9.9,0.65)
+  node[midway, above=5pt, font=\footnotesize] {registro di controllo ($n_{\text{count}}=8$)};
+\draw[decorate, decoration={brace, amplitude=5pt}] (10.35,0.65) -- (15.3,0.65)
+  node[midway, above=5pt, font=\footnotesize] {registro di lavoro (4 qubit)};
+\node[font=\footnotesize, gray!40!black] at (7.4,-1.0)
+  {ogni qubit: $T_1^{(i)}, T_2^{(i)}, e_0^{(i)}, e_1^{(i)}$ propri \quad---\quad ogni arco: $\varepsilon_{2q}^{(i,j)}, \tau_{\text{gate}}^{(i,j)}$ propri \quad---\quad crosstalk sui vicini};
+\end{tikzpicture}%
+}
+\caption[Topologia della QPU virtuale: catena lineare a 12 qubit con parametri per-qubit]{Topologia di partenza della QPU virtuale: catena lineare a 12 qubit (8 di controllo + 4 di lavoro, sufficiente per Shor con $N=15$). A differenza del noise model uniforme della fase di verifica, ogni qubit ha i propri parametri di coerenza e lettura, ogni arco della coupling map la propria fedeltà e durata di gate, e il crosstalk agisce sui vicini topologici. I profili di difetto (es.\ un qubit debole, una linea lenta) sono configurabili e noti.}
+\label{fig:topologia_virtuale}
+\end{figure}
 
 \subsubsection{Implementazione della QPU Virtuale}
 \label{subsec:impl_qpu}

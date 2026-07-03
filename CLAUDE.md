@@ -65,7 +65,7 @@ L'algoritmo di Shor fattorizza interi in tempo polinomiale, ma su hardware NISQ 
 |---|---|---|---|
 | 3 | `Fondamenti.tex` | Fondamenti del Calcolo Quantistico | ✅ Completo |
 | 4 | `Shor.tex` | L'Algoritmo di Shor | ✅ Completo |
-| 5 | `Rumore.tex` | Rumore Quantistico nei Sistemi NISQ | ✅ Completo |
+| 5 | `Rumore.tex` | Rumore Quantistico nei Sistemi NISQ | ✅ Completo — include §Anatomia Fisica di una QPU (2026-07: 3 figure TikZ + tabella tecnologie, dalla spiegazione del prof) |
 | 6 | `StrategieAntiRumore.tex` | Strategie per la Riduzione del Rumore Quantistico | ✅ Completo |
 
 ### Parte sperimentale — IN CORSO
