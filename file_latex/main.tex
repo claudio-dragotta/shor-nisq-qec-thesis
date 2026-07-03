@@ -36,6 +36,7 @@
 \let\ac\gls
 \providecommand{\acf}[1]{\acrfull{#1}}
 \providecommand{\acl}[1]{\acrlong{#1}}
+\providecommand{\acs}[1]{\acrshort{#1}}
 \input{capitoli/Acronimi}   % definizioni acronimi nel preambolo
 
 % Stile codice Python/Qiskit
@@ -142,24 +143,15 @@
 \input{capitoli/Sviluppo}
 
 % -----------------------------------------------
-\chapter{Risultati — Metodo 1: Approccio Classico}
-\label{chap:risultati1}
-\input{capitoli/RisultatiMetodo1}
-
-% -----------------------------------------------
-\chapter{Conclusioni — Metodo 1}
-\label{chap:conclusioni1}
-\input{capitoli/ConclusioniMetodo1}
-
-% -----------------------------------------------
-\chapter{Risultati — Confronto M1, $M_{\text{TOP4}}$ e Analisi di Ablazione}
-\label{chap:risultati2}
-\input{capitoli/RisultatiMetodo2}
-
-% -----------------------------------------------
-\chapter{Conclusioni — Metodo 2}
-\label{chap:conclusioni2}
-\input{capitoli/ConclusioniMetodo2}
+% Capitolo unico risultati: fusione dei precedenti 4 capitoli
+% (Risultati M1, Conclusioni M1, Risultati M2, Conclusioni M2) — indicazione relatore 2026-07
+\chapter{Risultati Sperimentali: dal Classificatore ML alla Strategia TOP-K}
+\label{chap:risultati}
+\label{chap:risultati1}    % alias retro-compatibilità
+\label{chap:conclusioni1}  % alias retro-compatibilità
+\label{chap:risultati2}    % alias retro-compatibilità
+\label{chap:conclusioni2}  % alias retro-compatibilità
+\input{capitoli/RisultatiSperimentali}
 
 % -----------------------------------------------
 \chapter{Sviluppi Futuri}

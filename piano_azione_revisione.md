@@ -1,5 +1,13 @@
 # Piano d'azione — Revisione post-riunione relatore (luglio 2026)
 
+> **STATO (2026-07-03)**: Parte A eseguita (Fasi 0–4 ✅): creato `RisultatiSperimentali.tex`
+> (fusione dei 4 capitoli, titolo "Risultati Sperimentali: dal Classificatore ML alla Strategia
+> TOP-K"), aggiornati main.tex (label alias), Introduzione (11 capitoli), Obiettivi (ablazione
+> nel piano sperimentale), StrategieAntiRumore (ipotesi→esito), Metodologia (refuso 76.7%),
+> Sviluppo, SviluppiFuturi (nuova direzione "ML a monte"), CLAUDE.md. Fase 5 (compilazione) in
+> verifica. I 4 vecchi file .tex restano nel repo ma non sono più inclusi in main.tex.
+> **Parte B**: in attesa della spiegazione dettagliata dell'algoritmo da parte di Claudio/prof.
+
 > Il piano ha DUE parti. La fusione dei capitoli è solo la prima (l'iceberg visibile).
 >
 > **PARTE A — Ristrutturazione**: fondere i 4 capitoli sperimentali in uno solo che racconti
@@ -126,24 +134,38 @@ Riferimenti da aggiornare (grep già fatto, file → cosa toccare):
 > La direzione esatta va fissata con il prof; le indicazioni del 2026-06-04 (diario) sono il
 > punto di partenza più probabile.
 
-## FASE 6 — Definire il problema e la direzione (BLOCCANTE: serve l'input del prof)
+## FASE 6 — Definire il problema e la direzione ✅ DIREZIONE DEFINITA (trascrizione 2026-07-02)
 
-- [ ] **Annotare l'elenco esatto delle richieste del prof** (riportarlo nel diario + qui)
-- [ ] Scegliere la direzione dell'algoritmo. Candidati coerenti con la riunione 2026-06-04:
-  1. **Predizione dell'impatto degli errori** (il "Metodo 3"): ML che prevede — prima o durante
-     l'esecuzione — se un errore sarà impattante sul risultato del circuito di Shor
-     (feature: posizione del gate, profondità, qubit coinvolti). È l'uso *diverso* dell'IA:
-     non filtro a posteriori sull'istogramma, ma predizione strutturale a priori.
-     → si aggancia perfettamente al risultato negativo della Parte A.
-  2. **Caratterizzazione dell'impatto**: metrica errore alto/basso impatto tramite fault-injection
-     (inietti un errore in un punto preciso del circuito, misuri quanto degrada l'output).
-     È il prerequisito sperimentale del punto 1 (genera il dataset di training).
-  3. **TOP-K adattivo / criterio di stop intelligente**: evoluzione del componente che ha
-     davvero funzionato (K scelto dinamicamente dalla forma dell'istogramma).
-  4. **Scalabilità con Beauregard** (UC3/UC4 con HCP/IBM Quantum, credenziali promesse dal prof).
-- [ ] Definire l'ipotesi quantitativa verificabile (equivalente del vecchio "ρ≫1") e i criteri
-      di successo PRIMA di implementare — errore da non ripetere: stavolta l'ablazione va
-      progettata dall'inizio, non aggiunta dopo.
+La trascrizione integrale dell'incontro chiarisce l'obiettivo (dettagli nel `diario_relatore.md`):
+
+> **"Creare una simulazione di QPU con gestione degli errori con le 4 categorie, e in base agli
+> errori addestrare un sistema di ML che ci aiuti a correggere gli errori — in quel caso vedrai
+> che invece è efficace."** Claim finale: eliminare la **duplicazione dei qubit** (pratica NISQ
+> attuale: 2 qubit fisici per 1 logico) sostituendola con un modello ML addestrato sulla
+> specifica QPU.
+
+Componenti del nuovo sistema:
+
+1. **QPU virtuale con iniezione errori configurabile PER-QUBIT/PER-LINEA** — le 4 categorie:
+   decoerenza (T1/T2 **non uniformi** tra qubit), errori di gate (durata/affidabilità per linea),
+   errori di misura (matrici di confusione), crosstalk (dipendente dalla **topologia/geometria**).
+   Nota: il noise model attuale (`build_noise_model`) è all-qubit uniforme → va esteso.
+2. **Dataset a verità nota**: fattorizzazioni di semiprimi noti (input→output atteso noto),
+   ~1000–2000 coppie di run sulla QPU virtuale con profili d'errore noti.
+3. **Modello ML predittivo** con feature STRUTTURALI (topologia QPU, T1/T2 per qubit, linee
+   usate, tipo di input) — non solo l'istogramma (che è ciò che ha fallito in Parte A).
+   Output minimo: "questo risultato è probabilmente sbagliato" (→ ri-itera).
+   Output avanzato: quali linee/qubit evitare per quel tipo di input.
+4. **Confronto quantitativo** (la nuova ipotesi ρ): ML-assistito su copia singola vs
+   **duplicazione dei qubit** (baseline da implementare) — stessa affidabilità con metà qubit?
+5. (Solo citazione, dichiarato troppo complesso dal prof: QAOA sulle matrici di confusione.)
+
+- [ ] Definire ipotesi quantitativa e criteri di successo PRIMA di implementare; **ablazione
+      progettata dall'inizio** (lezione della Parte A): confronto ML vs duplicazione vs niente.
+- [ ] Decidere lo strumento per la QPU virtuale: estendere Qiskit Aer con noise per-qubit
+      (supportato: `add_quantum_error` su qubit specifici, ReadoutError per qubit, coupling map)
+      vs cercare simulatore esistente ("o cercare anche in rete una simulazione di QPU" — prof).
+      Crosstalk: da modellare come errori correlati sui vicini della coupling map.
 
 ## FASE 7 — Design e implementazione
 

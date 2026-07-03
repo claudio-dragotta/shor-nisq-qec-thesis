@@ -22,11 +22,15 @@ Il file `diario_relatore.md` nella root di questa directory contiene tutte le de
 
 ## Di cosa parla questa tesi
 
-L'algoritmo di Shor fattorizza interi in tempo polinomiale, ma su hardware NISQ il rumore degrada l'output rendendo necessarie molte iterazioni per ottenere il risultato corretto. L'obiettivo della tesi è dimostrare che un classificatore ML, addestrato sugli output rumorosi del simulatore Qiskit, può ridurre drasticamente il numero di iterazioni necessarie (da decine a ~3).
+L'algoritmo di Shor fattorizza interi in tempo polinomiale, ma su hardware NISQ il rumore degrada l'output rendendo necessarie molte iterazioni per ottenere il risultato corretto. L'ipotesi di partenza era che un classificatore ML, addestrato sugli output rumorosi del simulatore Qiskit, potesse ridurre drasticamente il numero di iterazioni (da decine a ~3).
 
-**Il contributo originale** è il confronto sperimentale tra:
-- **Metodo 1**: approccio classico — raccolta distribuzione output → analisi gaussiana → picco = valore più probabile
-- **Metodo 2**: classificatore ML — dato l'output di una singola esecuzione, decide se è corretto o no
+**L'esito sperimentale (e il messaggio attuale della tesi)** è un **risultato negativo consapevole sul ML**: l'analisi di ablazione dimostra che il guadagno (ρ=6.44 su UC1, ρ=2.42 su UC2) è interamente attribuibile alla **strategia di ricerca multi-candidato TOP-4**, non al classificatore, che risulta neutro su UC1 (p=0.849) e dannoso su UC2 (ρ=0.73 < 1). Direttiva del relatore (2026-07): presentare esplicitamente "cosa abbiamo testato e perché", dimostrando che l'IA usata così (filtro a valle sull'output) non serve.
+
+**Il contributo originale** è duplice:
+1. La dimostrazione sperimentale che TOP-4 riduce M̄ da 6.43 a 1.00, con robustezza completa ai parametri di rumore (campagna parametrica) e superiorità netta su ZNE
+2. L'isolamento via ablazione del contributo del classificatore ML (nullo/negativo) — confronto a tre: **M1** (TOP-1), **M_TOP4** (TOP-4 senza clf), **M2** (CLF+TOP-4)
+
+**Prossima fase (Parte B, da definire col prof)**: nuovo algoritmo come contributo conclusivo — vedi `piano_azione_revisione.md`.
 
 ---
 
@@ -46,7 +50,7 @@ L'algoritmo di Shor fattorizza interi in tempo polinomiale, ma su hardware NISQ 
 
 ---
 
-## Struttura della tesi (14 capitoli)
+## Struttura della tesi (11 capitoli)
 
 ### Parte introduttiva e raccordo
 
@@ -71,13 +75,11 @@ L'algoritmo di Shor fattorizza interi in tempo polinomiale, ma su hardware NISQ 
 | 7 | `Strumenti.tex` | Strumenti e Ambiente di Simulazione | ✅ Completo |
 | 8 | `Metodologia.tex` | Metodologia e Architettura | ✅ Scritto |
 | 9 | `Sviluppo.tex` | Sviluppo e Implementazione | ✅ Scritto — include tabella selezione classificatore (RF/SVM/MLP) con metriche reali |
-| 10 | `RisultatiMetodo1.tex` | Risultati — Metodo 1 | ✅ Scritto — dati sperimentali completi (UC1/UC2/UC3/UC4) |
-| 11 | `RisultatiMetodo2.tex` | Risultati — Metodo 2 | ✅ Scritto — confronto M1 vs M2, ρ=6.43 UC1, ρ=0.73 UC2 |
-| 12 | `ConclusioniMetodo1.tex` | Conclusioni — Metodo 1 | ✅ Scritto — dati sperimentali completi |
-| 13 | `ConclusioniMetodo2.tex` | Conclusioni — Metodo 2 | ✅ Scritto — analisi ρ, regime di applicabilità |
-| 14 | `SviluppiFuturi.tex` | Sviluppi Futuri | ✅ Scritto |
+| 10 | `RisultatiSperimentali.tex` | Risultati Sperimentali: dal Classificatore ML alla Strategia TOP-K | ✅ Scritto — FUSIONE (2026-07) dei 4 ex-capitoli Risultati/Conclusioni M1+M2; baseline, ablazione, campagna parametrica, ZNE, discussione |
+| 11 | `SviluppiFuturi.tex` | Sviluppi Futuri | ✅ Scritto — include direzione "ML a monte" (predizione impatto errori) |
 
 > `SpecificheFunzionali.tex` ELIMINATO il 2026-05-15 — contenuto integrato in Cap.2.
+> `RisultatiMetodo1/2.tex` e `ConclusioniMetodo1/2.tex` FUSI il 2026-07-03 in `RisultatiSperimentali.tex` (indicazione relatore). I vecchi file restano nel repo ma NON sono più inclusi in `main.tex`. Il label del capitolo unico è `chap:risultati`; i vecchi label `chap:risultati1/2`, `chap:conclusioni1/2` sono alias sullo stesso capitolo.
 
 I file skeleton contengono in italiano la descrizione precisa di cosa va inserito in ogni sezione — leggili prima di scrivere quei capitoli.
 

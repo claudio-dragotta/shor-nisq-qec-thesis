@@ -81,7 +81,7 @@ Un ulteriore livello di riduzione è offerto dalla \textbf{transpilazione ottimi
 
 Gli errori di \textit{readout} --- la probabilità che un qubit nello stato $\ket{0}$ venga letto come $1$ e viceversa --- sono una fonte di errore sistematica e in larga parte correggibile. La tecnica standard è la \textbf{calibrazione della matrice di assegnazione}: si preparano gli stati base $\ket{00\ldots0}$, $\ket{10\ldots0}$, \ldots e si misurano le distribuzioni degli output; la matrice $A_{ij} = P(\text{output}=i \mid \text{preparato}=j)$ viene poi invertita e applicata al vettore delle frequenze osservate.
 
-Nel contesto di questa tesi la readout mitigation non è stata adottata come tecnica principale per due ragioni. Prima, il modello di rumore del simulatore \texttt{AerSimulator} include già errori di readout calibrati su hardware IBM reale: la probabilità di errore è dell'ordine di $10^{-2}$ per qubit, un valore che il classificatore del Metodo 2 può compensare implicitamente senza richiedere la costruzione esplicita della matrice di calibrazione. Seconda, per i circuiti \ac{QPE} con 9--20 qubit, la matrice di calibrazione ha dimensione $2^n \times 2^n$: la sua costruzione richiederebbe $2^n$ preparazioni aggiuntive, un overhead incompatibile con l'obiettivo di minimizzare le esecuzioni. La readout mitigation è stata però inclusa nell'analisi a posteriori del Capitolo~\ref{chap:conclusioni2} come tecnica di confronto.
+Nel contesto di questa tesi la readout mitigation non è stata adottata come tecnica principale per due ragioni. Prima, il modello di rumore del simulatore \texttt{AerSimulator} include già errori di readout calibrati su hardware IBM reale: la probabilità di errore è dell'ordine di $10^{-2}$ per qubit, un valore che il classificatore del Metodo 2 può compensare implicitamente senza richiedere la costruzione esplicita della matrice di calibrazione. Seconda, per i circuiti \ac{QPE} con 9--20 qubit, la matrice di calibrazione ha dimensione $2^n \times 2^n$: la sua costruzione richiederebbe $2^n$ preparazioni aggiuntive, un overhead incompatibile con l'obiettivo di minimizzare le esecuzioni. La readout mitigation è stata però inclusa nell'analisi a posteriori del Capitolo~\ref{chap:risultati} come tecnica di confronto.
 
 \subsection{Livello di Post-processing: Zero-Noise Extrapolation}
 \label{subsec:zne}
@@ -90,12 +90,12 @@ La \textbf{Zero-Noise Extrapolation} (\ac{ZNE}) \cite{temme2017} è una tecnica 
 
 Il pregio della \ac{ZNE} è che non richiede conoscenza del modello di rumore e produce una stima dell'output ideale direttamente dall'output rumoroso. Il limite, nel contesto di questa tesi, è duplice. Da un lato, richiede almeno $k \geq 2$ esecuzioni per ogni singola stima --- il che contrasta direttamente con l'obiettivo del Metodo 2 di convergere in circa tre iterazioni totali. Dall'altro, l'amplificazione del rumore degrada ulteriormente la fedeltà dei gate già ai livelli $\lambda = 2$ e $\lambda = 3$: per circuiti profondi come quello di Shor, il gate folding introduce errori aggiuntivi che non si distribuiscono linearmente e rendono l'estrapolazione inaffidabile.
 
-Per questi motivi la \ac{ZNE} non è stata adottata come tecnica principale. Essa compare però nel Capitolo~\ref{chap:conclusioni2} come termine di confronto sperimentale: i risultati mostrano che ZNE-2 e ZNE-3 abbassano il tasso di successo dal 76.7\% (Metodo 2) al 60\%, con un costo di 11\,776 shot contro 1\,024 per $M_{\text{TOP4}}$.
+Per questi motivi la \ac{ZNE} non è stata adottata come tecnica principale. Essa compare però nel Capitolo~\ref{chap:risultati} come termine di confronto sperimentale: i risultati mostrano che ZNE-2 e ZNE-3 abbassano il tasso di successo dal 76.7\% (baseline M1) al 60\%, con un costo di 11\,776 shot contro 1\,024 per $M_{\text{TOP4}}$.
 
 \subsection{Analisi di Sensibilità ai Parametri di Rumore}
 \label{subsec:sensitivity}
 
-Prima di fissare l'approccio definitivo, è stato condotto uno studio empirico sistematico per determinare quali parametri del modello di rumore influenzano effettivamente le prestazioni dell'algoritmo di Shor su N=15. Lo sweep è stato eseguito variando un parametro per volta mantenendo fissi tutti gli altri ai valori del profilo NISQ-realistico (Tabella~\ref{tab:noise_base}), con K=30 ripetizioni per punto e SHOTS=1024.
+Prima di fissare l'approccio definitivo, è stato condotto uno studio empirico sistematico per determinare quali parametri del modello di rumore influenzano effettivamente le prestazioni dell'algoritmo di Shor su N=15. Lo sweep è stato eseguito variando un parametro per volta mantenendo fissi tutti gli altri ai valori del profilo NISQ-realistico (Tabella~\ref{tab:use_case_params}), con K=30 ripetizioni per punto e SHOTS=1024.
 
 \begin{table}[H]
 \centering
@@ -142,7 +142,7 @@ Questo risultato ha un'interpretazione fisica precisa. Il circuito di Shor per N
 
     \item \textbf{Readout mitigation e ottimizzazioni $T_1/T_2$ sono inutili per N=15.} Il risultato empirico conferma che nessuno dei due approcci porta benefici misurabili nel regime N=15. Adottarli avrebbe aggiunto complessità senza impatto sulle metriche.
 
-    \item \textbf{La ZNE è controproducente.} Il confronto sperimentale (Sezione~\ref{subsec:zne} e Capitolo~\ref{chap:conclusioni2}) mostra che ZNE-2 e ZNE-3 abbassano il success rate dal 76.7\% al 60\%, confermando che l'amplificazione del rumore degrada ulteriormente un circuito già sensibile a $\varepsilon_{2q}$.
+    \item \textbf{La ZNE è controproducente.} Il confronto sperimentale (Sezione~\ref{subsec:zne} e Capitolo~\ref{chap:risultati}) mostra che ZNE-2 e ZNE-3 abbassano il success rate dal 76.7\% al 60\%, confermando che l'amplificazione del rumore degrada ulteriormente un circuito già sensibile a $\varepsilon_{2q}$.
 
     \item \textbf{L'\texttt{optimization\_level} ha effetto trascurabile per N=15.} È stato condotto un ulteriore sweep variando il livello di ottimizzazione del transpiler Qiskit da 0 a 3. I risultati sono riportati in Tabella~\ref{tab:sweep_optlevel}.
 

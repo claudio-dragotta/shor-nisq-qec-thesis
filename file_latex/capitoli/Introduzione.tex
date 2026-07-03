@@ -105,7 +105,7 @@ La \textbf{chiave pubblica} è la coppia $(N,\, e)$; la \textbf{chiave privata} 
 Il miglior algoritmo classico per la fattorizzazione di un intero a $n$ bit è il \textit{General Number Field Sieve} (GNFS) \cite{lenstra1993gnfs}, con complessità sub-esponenziale:
 \begin{equation}
     T_{\text{GNFS}}(N) = O\!\left(\exp\!\left[c\cdot(\log N)^{1/3}(\log\log N)^{2/3}\right]\right)
-    \label{eq:gnfs_complexity}
+    \label{eq:gnfs_complexity_intro}
 \end{equation}
 Per $N$ a 2048 bit, questa espressione implica circa $2^{112}$ operazioni classiche -- un numero astronomico, ben oltre la capacità di qualunque infrastruttura computazionale esistente o prevedibile in ambito classico. I migliori risultati pratici al 2020 hanno raggiunto la fattorizzazione di RSA-250 (829 bit) \cite{rsa250_2020}, impiegando circa 2700 anni-CPU di calcolo distribuito.
 
@@ -204,7 +204,7 @@ L'elaborato si sviluppa dalle fondamenta teoriche del calcolo quantistico fino a
 %   controlla se la sua descrizione qui è ancora accurata.
 \section{Struttura della Tesi}
 
-L'elaborato è organizzato in quattordici capitoli. Il Capitolo~2 svolge una funzione trasversale di raccordo tra teoria e pratica; i Capitoli~3--6 costituiscono la parte teorica; i Capitoli~7--14 la parte sperimentale.
+L'elaborato è organizzato in undici capitoli. Il Capitolo~2 svolge una funzione trasversale di raccordo tra teoria e pratica; i Capitoli~3--6 costituiscono la parte teorica; i Capitoli~7--11 la parte sperimentale.
 
 \medskip
 Il \textbf{Capitolo~\ref{chap:obiettivi}} (\textit{Obiettivi e Piano Sperimentale}) ha una funzione duplice: motiva il lavoro mostrando perché i sistemi crittografici attuali siano strutturalmente vulnerabili all'algoritmo di Shor --- attraverso il confronto diretto tra la complessità del \ac{GNFS} e quella polinomiale di Shor --- e stabilisce il contratto sperimentale completo: obiettivi, ipotesi di ricerca (in particolare $\rho = \bar{M}_1/\bar{M}_2 \gg 1$), contributo originale, requisiti funzionali, parametri dei quattro use case e metriche di valutazione.
@@ -221,21 +221,15 @@ Il \textbf{Capitolo~\ref{chap:rumore}} (\textit{Rumore Quantistico nei Sistemi N
 Il \textbf{Capitolo~\ref{chap:strategie}} (\textit{Strategie per la Riduzione del Rumore Quantistico}) descrive e confronta le quattro macro-strategie di mitigazione del rumore nell'era NISQ, approfondisce la Correzione degli Errori Quantistici --- dai codici stabilizzatori al surface code --- inquadrandola come sottocategoria del Quantum Machine Learning, e motiva la scelta di quest'ultimo come approccio adottato in questa tesi.
 
 \medskip
-\textbf{Parte sperimentale (Capitoli 7--14).}
+\textbf{Parte sperimentale (Capitoli 7--11).}
 
 Il \textbf{Capitolo~\ref{chap:strumenti}} (\textit{Strumenti e Ambiente di Simulazione}) descrive il framework Qiskit e il simulatore Qiskit Aer con accelerazione GPU, illustra la costruzione del noise model parametrizzato e la procedura di transpilazione dei circuiti.
 
 Il \textbf{Capitolo~\ref{chap:metodologia}} (\textit{Metodologia e Architettura}) descrive la pipeline sperimentale a tre stadi (circuito ideale, simulatore rumoroso, analisi con Metodo 1 e Metodo 2) e motiva le scelte architetturali. Una sezione dedicata analizza operativamente le tecniche di mitigazione del rumore disponibili --- transpilazione e decomposizione Beauregard, readout mitigation, \ac{ZNE} --- e riporta i risultati di una campagna di sensibilità sperimentale su tutti i parametri del noise model: $\varepsilon_{2q}$ emerge come unico parametro dominante per $N=15$, mentre $T_1/T_2$, $\varepsilon_{1q}$, $p_{\text{ro}}$ e il livello di ottimizzazione della traspilazione risultano privi di effetto misurabile, motivando empiricamente la scelta della strategia TOP-K come meccanismo di mitigazione principale.
 
-Il \textbf{Capitolo~\ref{chap:sviluppo}} (\textit{Sviluppo e Implementazione}) presenta il codice sviluppato: l'ambiente di simulazione WSL2 con \texttt{AerSimulator} in modalità statevector, l'implementazione della \ac{QFT} inversa, del circuito di Shor, del noise model parametrizzato e delle pipeline di entrambi i metodi, con particolare attenzione alla procedura di traspilosizione critica (\texttt{optimization\_level=2} con noise model nel costruttore) necessaria per la corretta decomposizione delle porte Toffoli.
+Il \textbf{Capitolo~\ref{chap:sviluppo}} (\textit{Sviluppo e Implementazione}) presenta il codice sviluppato: l'ambiente di simulazione WSL2 con \texttt{AerSimulator} in modalità statevector, l'implementazione della \ac{QFT} inversa, del circuito di Shor, del noise model parametrizzato e delle pipeline di entrambi i metodi, con particolare attenzione alla procedura di traspilazione critica (\texttt{optimization\_level=2} con noise model nel costruttore) necessaria per la corretta decomposizione delle porte Toffoli.
 
-Il \textbf{Capitolo~\ref{chap:risultati1}} (\textit{Risultati --- Metodo 1}) riporta i risultati della baseline sperimentale sui quattro use case: $\bar{M}_1 = 6.43$ iterazioni per UC1 ($N=15$, NISQ-realistico) e $\bar{M}_1 = 2.42$ per UC2 ($N=15$, NISQ-degradato). Per UC3 ($N=21$) e UC4 ($N=35$) il circuito risulta inutilizzabile in regime NISQ a causa dell'elevata profondità delle porte CX ($>10\,000$ porte) prodotta dalla decomposizione tramite \texttt{UnitaryGate}.
-
-Il \textbf{Capitolo~\ref{chap:conclusioni1}} (\textit{Conclusioni --- Metodo 1}) sintetizza i risultati del Metodo 1, ne quantifica i limiti principali --- sfruttamento parziale dell'istogramma e alta varianza --- e identifica la motivazione per l'introduzione della strategia multi-candidato.
-
-Il \textbf{Capitolo~\ref{chap:risultati2}} (\textit{Risultati --- Confronto M1, $M_{\text{TOP4}}$ e Analisi di Ablazione}) confronta il Metodo \ac{ML}-assistito con la baseline tramite analisi di ablazione: per UC1 il fattore di riduzione $\rho = 6.44$ ($p = 0.0002$), con $\bar{M}_2 = 1.00$ iterazione; per UC2 il classificatore degrada le prestazioni ($\rho = 0.731$, $p = 0.704$), mentre la variante $M_{\text{TOP4}}$ senza classificatore ottiene $\rho = 2.42$ ($p = 0.003$).
-
-Il \textbf{Capitolo~\ref{chap:conclusioni2}} (\textit{Conclusioni --- Metodo 2}) sintetizza il contributo originale, conduce la campagna parametrica sperimentale su $M_{\text{TOP4}}$, posiziona la strategia nel contesto della mitigazione del rumore e ne confronta le prestazioni con la Zero-Noise Extrapolation.
+Il \textbf{Capitolo~\ref{chap:risultati}} (\textit{Risultati Sperimentali: dal Classificatore ML alla Strategia TOP-K}) riporta l'intera campagna sperimentale, documentando che cosa è stato testato e perché. Stabilisce la baseline del Metodo 1 sui quattro use case ($\bar{M}_1 = 6.43$ iterazioni per UC1, $\bar{M}_1 = 2.42$ per UC2; UC3 e UC4 inaccessibili per l'elevata profondità di circuito, $>10\,000$ porte CX, prodotta dalla decomposizione \texttt{UnitaryGate}); verifica sperimentalmente il classificatore \ac{ML} e ne isola il contributo tramite analisi di ablazione: il guadagno ($\rho = 6.44$ su UC1, $p = 0.0002$) è interamente attribuibile alla strategia di ricerca multi-candidato TOP-4, mentre il classificatore risulta statisticamente irrilevante su UC1 ($p = 0.849$) e controproducente su UC2 ($\rho = 0.731$ contro $\rho = 2.42$ di $M_{\text{TOP4}}$). Completano il capitolo la campagna parametrica sistematica su $M_{\text{TOP4}}$, il suo posizionamento nel quadro delle strategie di mitigazione e il confronto sperimentale con la Zero-Noise Extrapolation.
 
 Il \textbf{Capitolo~\ref{chap:sviluppi}} (\textit{Sviluppi Futuri}) delinea le principali direzioni di ricerca aperte: test su hardware reale, decomposizioni efficienti per la moltiplicazione modulare (approccio Beauregard), classificatore adattivo per regimi ad alto rumore, generalizzazione ad altri algoritmi NISQ e integrazione con la \ac{QEC} strutturale.
 
