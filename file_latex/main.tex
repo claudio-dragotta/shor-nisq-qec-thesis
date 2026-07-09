@@ -157,10 +157,24 @@
 \input{capitoli/RisultatiSperimentali}
 
 % -----------------------------------------------
-% Capitolo CORE della tesi: il nuovo approccio (gestione predittiva degli errori)
-\chapter{Gestione Predittiva degli Errori: dalla Duplicazione dei Qubit al Machine Learning}
-\label{chap:predizione}
-\input{capitoli/NuovoApproccio}
+% NUCLEO della tesi (riallineamento QEC 2026-07-09, documento di indirizzo del relatore):
+% tre capitoli — codici correttori, surface code, Shor logico.
+% Il precedente capitolo "Gestione Predittiva" (NuovoApproccio.tex) NON è più incluso;
+% il file resta nel repo. L'alias chap:predizione punta al primo capitolo QEC.
+\chapter{La Correzione d'Errore Quantistico: dal Codice a Ripetizione al Codice di Steane}
+\label{chap:qec}
+\label{chap:predizione}   % alias retro-compatibilità (ex capitolo Gestione Predittiva)
+\input{capitoli/CorrezioneErrori}
+
+% -----------------------------------------------
+\chapter{Il Surface Code e la Stima dell'Errore Logico}
+\label{chap:surface}
+\input{capitoli/SurfaceCode}
+
+% -----------------------------------------------
+\chapter{Integrazione: lo Shor Logico e i Requisiti di Correzione}
+\label{chap:integrazione}
+\input{capitoli/ShorLogico}
 
 % -----------------------------------------------
 \chapter{Sviluppi Futuri}

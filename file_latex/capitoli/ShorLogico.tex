@@ -1,0 +1,65 @@
+% ⚠ STATO DEL CAPITOLO: struttura e parti concettuali DEFINITIVE (fedeli al documento di
+%   indirizzo del relatore, §11). Le sezioni [DA COMPLETARE...] restano in bianco finché
+%   la milestone sperimentale M8 (Shor logico) non produce i dati.
+\begin{onehalfspace}
+
+I Capitoli~\ref{chap:qec} e~\ref{chap:surface} hanno costruito e misurato la correzione d'errore su circuiti dedicati; il Capitolo~\ref{chap:risultati} aveva misurato quanto il rumore fisico degrada Shor. Questo capitolo chiude il cerchio unendo i due fili: che cosa succederebbe all'algoritmo di Shor se i suoi qubit fossero \emph{logici}, protetti da un codice correttore? La tentazione naturale --- codificare ogni qubit di Shor con Steane o surface code e simulare tutto esplicitamente --- non è percorribile, e la ragione è strutturale, non solo pratica. La soluzione metodologicamente corretta, prescritta dal documento di indirizzo del lavoro, è un'\textbf{integrazione a livelli}: caratterizzare separatamente Shor rumoroso e correzione d'errore, e connetterli attraverso un'unica grandezza di scambio --- il logical error rate $p_L$. Il prodotto finale è la risposta a una domanda scientifica precisa: \emph{quale livello di errore logico è necessario affinché Shor mantenga una probabilità di successo accettabile?}
+
+% -----------------------------------------------
+\section{L'Architettura a Quattro Livelli}
+\label{sec:quattro_livelli}
+
+Il percorso sperimentale complessivo della tesi si organizza in quattro livelli di simulazione, ciascuno con il proprio strumento e la propria domanda:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{clll}
+\toprule
+\textbf{Livello} & \textbf{Oggetto} & \textbf{Strumento} & \textbf{Dove nella tesi} \\
+\midrule
+1 & Shor ideale & Qiskit Aer (statevector) & Capp.~\ref{chap:sviluppo}--\ref{chap:risultati} \\
+2 & Shor rumoroso & Qiskit Aer + noise model & Cap.~\ref{chap:risultati}, App.~\ref{app:parametrica} \\
+3 & QEC isolata & Qiskit (repetition, Steane); Stim + PyMatching (surface) & Capp.~\ref{chap:qec}--\ref{chap:surface} \\
+4 & Shor logico & Qiskit Aer + errore logico $p_L$ & questo capitolo \\
+\bottomrule
+\end{tabular}
+\caption[Architettura a quattro livelli della parte sperimentale]{L'integrazione a livelli: ogni livello isola una domanda. Il livello 4 connette i precedenti: l'errore logico $p_L$, misurato al livello 3, sostituisce il rumore fisico del livello 2 nel circuito del livello 1.}
+\label{tab:quattro_livelli}
+\end{table}
+
+\paragraph{Perché la simulazione completa non è percorribile.}
+Due barriere si sommano. La prima è dimensionale: codificare i 12 qubit di Shor per $N=15$ con un surface code di distanza 3 richiederebbe centinaia di qubit fisici simulati, ben oltre il limite statevector già discusso nel Capitolo~\ref{chap:strumenti}. La seconda è strutturale: Stim, che ai livelli di qubit richiesti sarebbe l'unico strumento efficiente, simula solo circuiti \emph{stabilizer} --- e Shor non lo è. L'esponenziazione modulare e le rotazioni della \ac{QFT} sono operazioni non-Clifford, che nessun simulatore stabilizer può trattare senza perdere l'efficienza garantita dal teorema di Gottesman-Knill. Presentare Stim come simulatore di uno Shor completo sarebbe un errore metodologico; la divisione dei compiti tra Qiskit Aer (circuiti generali piccoli) e Stim/PyMatching (QEC stabilizer) è l'unica configurazione corretta, ed è quella adottata.
+
+% -----------------------------------------------
+\section{Il Modello di Shor Logico}
+\label{sec:modello_logico}
+
+L'idea del livello 4 è sostituire il rumore fisico con il suo residuo dopo la correzione. In un'esecuzione fault-tolerant reale, ogni operazione logica --- gate su qubit codificati, cicli di sindrome, misura logica --- lascia una probabilità residua $p_L$ di errore logico non corretto. Il modello di Shor logico rappresenta questo residuo direttamente: il circuito di Shor del Capitolo~\ref{chap:sviluppo} viene eseguito con un canale d'errore di probabilità $p_L$ applicato dopo ogni gate logico (o, in una variante a granularità maggiore, dopo ogni blocco computazionale), con $p_L$ trattato come parametro libero nell'intervallo stimato sperimentalmente al Capitolo~\ref{chap:surface}.
+
+Il modello è dichiaratamente un'approssimazione: assume errori logici indipendenti e uniformi tra i gate, trascura le correlazioni residue del decoder e l'overhead dei gate logici non transversali. La sua funzione non è riprodurre fedelmente una macchina fault-tolerant, ma porre in modo quantitativo la domanda di ricerca conclusiva:
+
+\begin{quote}
+\emph{quale valore di $p_L$ è necessario affinché la probabilità di successo di Shor superi una soglia prefissata --- ad esempio l'80\%?}
+\end{quote}
+
+La risposta, combinata con le curve $p \rightarrow p_L$ del surface code, si traduce in un requisito sull'hardware fisico: dato il tasso d'errore fisico $p$ di una QPU, quale distanza di codice --- e quindi quanti qubit fisici --- servono perché quella QPU esegua Shor in modo affidabile. Il confronto con il livello 2 (lo stesso circuito sotto rumore fisico diretto, dove la probabilità di successo crolla al 3.4\% già per $N=15$) quantifica il beneficio della correzione, e il \textbf{break-even} --- il regime in cui il qubit logico diventa più affidabile del qubit fisico equivalente --- fornisce il criterio sintetico di valutazione.
+
+% -----------------------------------------------
+\section{Il Contesto: le Stime di Risorse per Shor Fault-Tolerant}
+\label{sec:resource_estimates}
+
+Per collocare i risultati didattici nella giusta scala, il capitolo si chiude sul confronto con le stime di risorse della letteratura. Gidney ed Ekerå hanno stimato nel 2021 che fattorizzare un modulo RSA a 2048 bit richiederebbe circa 20 milioni di qubit fisici rumorosi per 8 ore di calcolo, sotto assunzioni fisiche esplicite --- con il costo dominato non dall'algoritmo ma dall'overhead di correzione: cicli di sindrome, routing e distillazione di stati magici~\cite{gidney2021}. Lavori successivi hanno ridotto la stima sotto il milione di qubit tramite miglioramenti architetturali e aritmetici~\cite{gidney2025}. Questi numeri, confrontati con lo Shor didattico a 12 qubit di questa tesi, chiariscono perché Shor dimostrativo e Shor crittograficamente rilevante siano problemi radicalmente diversi --- e perché la grandezza che li connette concettualmente sia proprio quella misurata in questo capitolo: il costo, in qubit e cicli, di portare $p_L$ al livello richiesto dall'algoritmo.
+
+% -----------------------------------------------
+\section{Risultati del Confronto}
+\label{sec:risultati_logico}
+
+\textit{[DA COMPLETARE al termine della milestone M8 --- questa sezione conterrà: la curva $p_L$ vs P\_success di Shor logico per $N=15$ (e $N=21$ se la decomposizione lo consente), con l'individuazione del $p_L$ critico per P\_success $\geq 80\%$; il confronto tra iniezione per-gate e per-blocco; la FIGURA CONCLUSIVA della tesi: probabilità di successo di Shor in funzione dell'errore --- circuito fisico rumoroso vs qubit logici (Steane, surface a distanze crescenti) --- che unisce in un solo grafico i livelli 2, 3 e 4; la traduzione del $p_L$ critico in requisiti fisici tramite le curve del Capitolo precedente (distanza e qubit fisici necessari a $p$ realistico); la discussione dei limiti del modello (indipendenza degli errori logici, gate non transversali, magic states) e delle condizioni di validità.]}
+
+\subsection{Discussione}
+\label{subsec:discussione_logico}
+
+\textit{[DA COMPLETARE al termine della campagna --- questa sezione conterrà: la risposta argomentata alla domanda di ricerca conclusiva; il bilancio dell'intero arco sperimentale della tesi (dal risultato negativo sull'ML a valle, alla strategia TOP-K, alla correzione d'errore come risposta strutturale); i limiti dichiarati e il perimetro di ciò che i risultati dimostrano e non dimostrano.]}
+
+\end{onehalfspace}
