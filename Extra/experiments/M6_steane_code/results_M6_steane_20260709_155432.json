@@ -1,0 +1,10 @@
+{
+  "milestone": "M6_steane",
+  "timestamp": "2026-07-09T15:54:30.717118",
+  "seed": 42,
+  "verify": {
+    "X": true,
+    "Z": true,
+    "Y": true
+  }
+}

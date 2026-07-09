@@ -1,0 +1,11 @@
+{
+  "milestone": "M6_steane",
+  "timestamp": "2026-07-09T15:54:20.640784",
+  "seed": 42,
+  "check": {
+    "all_zero": true,
+    "counts": {
+      "000000": 2000
+    }
+  }
+}

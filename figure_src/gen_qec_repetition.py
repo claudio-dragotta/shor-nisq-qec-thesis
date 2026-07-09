@@ -15,7 +15,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-EXP_DIR = os.path.join(os.path.dirname(__file__), '..', 'Extra', 'experiments')
+EXP_DIR = os.path.join(os.path.dirname(__file__), '..', 'Extra', 'experiments', 'M5_repetition_code')
 
 
 def _latest(basis):
