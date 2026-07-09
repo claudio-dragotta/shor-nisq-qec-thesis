@@ -47,7 +47,11 @@ Riordino del 2026-07-09. Regola: **`file_latex/` contiene SOLO i sorgenti Overle
 - `file_latex/` → sorgenti tesi (Overleaf-ready). Compila: `pdflatex → biber → pdflatex ×2`.
 - `figure_src/` → script Python che generano `file_latex/figure/` (fuori da file_latex apposta;
   scrivono in `../file_latex/figure/`).
-- `Extra/experiments/` → codice sperimentale Qiskit (`shor_core.py`, `qec_repetition.py`, …).
+- `Extra/experiments/` → codice sperimentale Qiskit, organizzato **per blocco M** (una cartella
+  per milestone: `campagne_classiche_M1-M4/`, `M5_repetition_code/`, `M6_steane_code/`,
+  `M7_surface_code/`, `M8_shor_logico/`), ciascuna con codice + JSON + `README.md`. Indice in
+  `Extra/experiments/README.md`. I moduli condivisi (`shor_core.py`, `beauregard.py`) stanno in
+  `campagne_classiche_M1-M4/` perché gli import sono interdipendenti.
 - `_archivio/` → documenti e capitoli superati (M_PRED + capitoli fusi). NON cancellare.
 - `tesi_compilata.pdf` (root) → ultimo PDF prodotto; l'output NON vive in `file_latex/`.
 

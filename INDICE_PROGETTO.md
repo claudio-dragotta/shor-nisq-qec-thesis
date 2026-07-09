@@ -90,24 +90,21 @@ tesi_magistrale_quantum/
 
 ## Extra/experiments/ — codice sperimentale (Qiskit)
 
-| File | Cos'è | Stato |
-|---|---|---|
-| `shor_core.py` | Funzioni core: circuito di Shor, QFT⁻¹, noise model, Metodo 1/2 | 🟢 core |
-| `beauregard.py` | Decomposizione efficiente per N=21/35 | 🟢 core |
-| `qec_repetition.py` | **M5**: repetition code bit-flip/phase-flip (verify + curva p_L) | 🟢 QEC |
-| `run_experiments.py`, `run_top4_baseline.py` | Campagne Metodo 1/2 e TOP-4 | 🟢 riusabile |
-| `run_parameter_analysis.py` | Sweep parametrici (→ Appendice A) | 🟢 riusabile |
-| `run_zne_comparison.py` | Confronto ZNE | 🟢 riusabile |
-| `train_classifier.py`, `mwu_analysis.py` | Training classificatore + test statistici | 🟢 riusabile |
-| `pilot_calibration.py`, `pilot_uc3_uc4.py`, `test_beauregard_cx.py` | Script di calibrazione/pilota | riferimento |
-| `generate_figures.py`, `extract_latex.py` | Utility figure/LaTeX (campagne M1/M2) | riferimento |
-| `clf_UC1.joblib`, `clf_UC2.joblib` | Classificatori addestrati (Metodo 2) | dato |
-| `results_*.json` | Output degli esperimenti (M5, campagne parametriche, ZNE) | dato |
-| `requirements.txt` | Ambiente Python versionato (qiskit, aer, numpy, scipy, matplotlib) | 🟢 attivo |
-| `GUIDA_ESPERIMENTI_PARAMETRI.md` | Guida agli sweep parametrici | riferimento |
+Organizzato **per blocco M**: ogni cartella ha codice + risultati (JSON) + un `README.md` che
+spiega cosa fa, cosa aspettarsi e come leggere i risultati. Indice generale in
+`Extra/experiments/README.md`.
 
-> **Prossimi file QEC** (dal piano): `qec_steane.py` (M6), `qec_surface.py` (M7, +stim/pymatching),
-> `shor_logico.py` (M8).
+| Cartella | Blocco | Contenuto | Stato |
+|---|---|---|---|
+| `campagne_classiche_M1-M4/` | M1–M4 | `shor_core.py`, `beauregard.py` + campagne (Metodo 1/2, TOP-4, parametrica, ZNE) + classificatori + JSON. **Tenuti insieme**: import interdipendenti | ✅ fatto |
+| `M5_repetition_code/` | M5 | `qec_repetition.py` + JSON (bit-flip/phase-flip) | ✅ completo |
+| `M6_steane_code/` | M6 | `qec_steane.py` + JSON (check/verify/curve) | ✅ completo |
+| `M7_surface_code/` | M7 | `qec_surface.py` (Stim+PyMatching) | ⬜ da fare |
+| `M8_shor_logico/` | M8 | `shor_logico.py` (p_L → P_success) | ⬜ da fare |
+| `requirements.txt` | — | Ambiente versionato (qiskit 2.5, aer, numpy, scipy, matplotlib) | 🟢 |
+
+> Gli script figura (`figure_src/gen_qec_*.py`) leggono i JSON dalle rispettive cartelle
+> `M5_.../ M6_.../` e scrivono in `file_latex/figure/`.
 
 ---
 
