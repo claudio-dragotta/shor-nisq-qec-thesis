@@ -3,6 +3,9 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import os as _os
+# le figure vanno scritte in file_latex/figure/ (questo script vive in figure_src/)
+_os.chdir(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..', 'file_latex', 'figure'))
 
 fig = plt.figure(figsize=(6, 6))
 ax = fig.add_subplot(111, projection='3d')

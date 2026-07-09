@@ -1,0 +1,79 @@
+% ⚠ STATO DEL CAPITOLO: struttura e parti concettuali DEFINITIVE (fedeli al documento di
+%   indirizzo del relatore, §10). Le sezioni [DA COMPLETARE...] restano in bianco finché
+%   la milestone sperimentale M7 (surface code con Stim + PyMatching) non produce i dati.
+\begin{onehalfspace}
+
+Il Capitolo~\ref{chap:qec} ha mostrato che un codice di distanza 3 può correggere un errore arbitrario su un singolo qubit --- ma anche che questa protezione, da sola, non basta: con sette qubit fisici per qubit logico e distanza fissa, lo Steane code non offre alcuna via per \emph{ridurre a piacere} l'errore residuo. La proprietà che manca è la scalabilità della protezione: un parametro che, aumentato, faccia diminuire l'errore logico. È esattamente ciò che offre il \textbf{surface code}~\cite{fowler2012}, oggi lo standard di riferimento industriale per il calcolo fault-tolerant: un codice definito su una griglia bidimensionale di qubit con sole interazioni locali, la cui distanza $d$ cresce con la taglia della griglia. Questo capitolo ne descrive il funzionamento operativo, introduce il problema della decodifica e la sua soluzione standard --- il \textit{matching} di peso minimo --- e presenta l'esperimento centrale della parte QEC della tesi: la stima del \textbf{logical error rate} $p_L$ in funzione dell'errore fisico $p$ e della distanza $d$, condotta con gli strumenti specializzati Stim e PyMatching.
+
+% -----------------------------------------------
+\section{Il Codice su Griglia: Concetto Operativo}
+\label{sec:surface_concetto}
+
+Il surface code dispone su una griglia bidimensionale due popolazioni di qubit: i \textbf{qubit dati} (\textit{data qubits}), che portano l'informazione logica, e i \textbf{qubit di misura} (\textit{measure qubits}), che estraggono ciclicamente stabilizzatori \emph{locali} --- ciascuno coinvolge solo i pochi qubit dati adiacenti sulla griglia. Questa località è il vantaggio architetturale decisivo: ogni operazione richiesta dal codice è un'interazione tra vicini fisici, compatibile con le topologie reali delle QPU superconduttive descritte nel Capitolo~\ref{chap:rumore}.
+
+I parametri del codice sono $[[\sim d^2, 1, d]]$: una distanza maggiore richiede una griglia più grande --- il costo in qubit fisici cresce quadraticamente --- ma corregge più errori (Eq.~\ref{eq:distanza_t}). L'estrazione degli stabilizzatori viene ripetuta per più cicli (\textit{rounds}) consecutivi, perché anche le misure di sindrome sono rumorose: la diagnosi non può basarsi su un singolo ciclo. Una \emph{variazione} dell'esito di uno stabilizzatore tra due cicli successivi costituisce un \textbf{detection event}: è il segnale grezzo da cui il decoder deve ricostruire cosa è accaduto.
+
+% -----------------------------------------------
+\section{La Decodifica: Minimum Weight Perfect Matching}
+\label{sec:mwpm}
+
+Gli errori fisici sul surface code producono detection events \emph{in coppie} (un errore su un qubit dati viola i due stabilizzatori adiacenti), e catene di errori producono eventi solo agli estremi della catena. Il problema del decoder è quindi: dati gli eventi osservati nello spazio-tempo dei cicli di misura, inferire la configurazione di errori \emph{più probabile} che li ha generati. La formulazione standard è un problema di accoppiamento su grafo: il \ac{MWPM} associa gli eventi a coppie minimizzando un peso legato alla probabilità degli errori, e la libreria PyMatching~\cite{pymatching2021} lo implementa in modo efficiente a partire dal modello di errore del circuito.
+
+Se la catena di correzione proposta dal decoder e la catena di errori reale differiscono per un ciclo che attraversa la griglia da parte a parte, la correzione fallisce \emph{silenziosamente}: l'informazione logica è stata alterata senza che alcuna sindrome lo riveli. La frequenza di questi fallimenti è il logical error rate $p_L$ --- la metrica centrale di tutta la parte QEC.
+
+\paragraph{Perché servono strumenti dedicati.}
+La stima di $p_L$ richiede milioni di esecuzioni di circuiti con centinaia di qubit: fuori portata per un simulatore statevector, il cui costo cresce come $2^n$ (Capitolo~\ref{chap:strumenti}). I circuiti del surface code, però, sono interamente \emph{stabilizer} (composti di sole operazioni Clifford e misure), e per questa classe il teorema di Gottesman-Knill garantisce la simulabilità classica efficiente. Stim~\cite{stim2021} sfrutta esattamente questa proprietà: campiona detection events di circuiti stabilizer a velocità di milioni di shot al secondo. Il rovescio della medaglia --- il fatto che Shor \emph{non} sia un circuito stabilizer --- è il punto di partenza del Capitolo~\ref{chap:integrazione}.
+
+\begin{lstlisting}[caption={Struttura concettuale della stima di $p_L$ con Stim e PyMatching (dal documento di indirizzo). Il circuito di memoria del surface code viene generato parametricamente, campionato, e decodificato con MWPM; $p_L$ è la frazione di shot in cui la predizione del decoder non coincide con l'osservabile logico.}, label={lst:stim_pymatching}]
+import stim
+import pymatching
+
+circuit = stim.Circuit.generated(
+    'surface_code:rotated_memory_x',
+    distance=d,
+    rounds=rounds,
+    after_clifford_depolarization=p,
+    after_reset_flip_probability=p,
+    before_measure_flip_probability=p,
+)
+sampler = circuit.compile_detector_sampler()
+events, observables = sampler.sample(shots, separate_observables=True)
+
+model = circuit.detector_error_model(decompose_errors=True)
+matching = pymatching.Matching.from_detector_error_model(model)
+predictions = matching.decode_batch(events)
+p_L = (predictions != observables).any(axis=1).mean()
+\end{lstlisting}
+
+% -----------------------------------------------
+\section{Disegno Sperimentale}
+\label{sec:surface_esperimento}
+
+L'esperimento segue il protocollo del documento di indirizzo:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Variabile} & \textbf{Valori} & \textbf{Osservazione attesa} \\
+\midrule
+distanza $d$ & 3, 5, 7 & $p_L$ diminuisce con $d$ se $p$ è sotto soglia \\
+rounds & $d$ e $2d$ & cicli di memoria quantistica \\
+$p$ fisico & $10^{-4}$ \dots $2 \times 10^{-2}$ & curva $p$ vs $p_L$ \\
+shots & $\geq 10^4$ per punto & stima stabile di $p_L$ con intervalli di confidenza \\
+base & memory X e memory Z & confronto protezione errori X/Z \\
+\bottomrule
+\end{tabular}
+\caption[Disegno sperimentale surface code]{Griglia sperimentale per la stima del logical error rate. Il decoding a distanza 7 è computazionalmente oneroso: la campagna parte da $d=3$ e scala solo se sostenibile (mitigazione dichiarata nel piano dei rischi).}
+\label{tab:surface_esperimento}
+\end{table}
+
+Il risultato scientifico atteso è una famiglia di curve $p$ vs $p_L$, una per distanza. Se, in una regione di $p$ sufficientemente bassa, le curve si ordinano in modo che $d$ maggiore dia $p_L$ minore --- mentre sopra una certa soglia l'ordine si inverte --- l'esperimento avrà osservato il comportamento \emph{threshold-like} che il teorema della soglia~\cite{aharonov1997fault} prevede: sotto soglia, aggiungere ridondanza conviene; sopra soglia, il codice amplifica i propri stessi errori. Il valore di $p$ a cui le curve si incrociano, confrontato con i tassi d'errore fisici realistici del Capitolo~\ref{chap:rumore}, dice quanto margine separa l'hardware attuale dal regime in cui la correzione scalabile funziona.
+
+% -----------------------------------------------
+\section{Risultati}
+\label{sec:surface_risultati}
+
+\textit{[DA COMPLETARE al termine della milestone M7 --- questa sezione conterrà: le curve $p$ vs $p_L$ per $d = 3, 5, 7$ in base X e Z (figura principale del capitolo, rigenerata da CSV); la stima della regione di soglia osservata con relativa discussione; la tabella dei tempi di campionamento e decodifica per distanza; il confronto tra rounds $= d$ e $= 2d$; il valore di $p_L$ raggiungibile a $p$ realistico (da confrontare con i parametri NISQ del Capitolo 5) --- questo valore alimenta direttamente il modello di Shor logico del capitolo successivo; intervalli di confidenza, seed, versioni e script di rigenerazione.]}
+
+\end{onehalfspace}

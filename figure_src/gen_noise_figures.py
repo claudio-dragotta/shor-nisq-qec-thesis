@@ -10,7 +10,7 @@ import matplotlib.patches as patches
 from matplotlib.patches import FancyArrowPatch
 import os
 
-OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "file_latex", "figure")
 
 # ──────────────────────────────────────────────────────────────
 # Figura 1: effetto dei 4 canali sulla sfera di Bloch (sezione xz)

@@ -1,0 +1,159 @@
+% ⚠ STATO DEL CAPITOLO: struttura e parti concettuali DEFINITIVE (fedeli al documento di
+%   indirizzo del relatore, §7–§9). Le sezioni [DA COMPLETARE...] restano in bianco finché
+%   le milestone sperimentali M5 (repetition code) e M6 (Steane) non producono i dati.
+\begin{onehalfspace}
+
+Il Capitolo~\ref{chap:risultati} ha chiuso la verifica dell'ipotesi iniziale con un esito netto e una lezione precisa: filtrare l'output rumoroso --- con o senza apprendimento automatico --- non aggiunge nulla che una ricerca multi-candidato non ottenga già a costo zero, perché a quel punto l'informazione distrutta dal rumore è irrecuperabile. Se l'errore non può essere recuperato \emph{dopo}, deve essere corretto \emph{durante}: è la prospettiva della \ac{QEC}, introdotta nel quadro teorico del Capitolo~\ref{chap:strategie} e resa operativa qui. Questo capitolo costruisce gli strumenti concettuali e sperimentali della correzione d'errore --- stabilizzatori, sindrome, decodifica --- e li applica in due laboratori a complessità crescente: il codice a ripetizione a 3 qubit, che introduce il meccanismo della sindrome nel caso più semplice, e il codice di Steane $[[7,1,3]]$, il primo codice pienamente quantistico della tesi, capace di correggere un errore arbitrario su un singolo qubit. Il capitolo successivo estende il percorso al surface code e alla stima quantitativa dell'errore logico.
+
+% -----------------------------------------------
+\section{Dalla Ridondanza Ingenua alla Codifica}
+\label{sec:ridondanza_codifica}
+
+L'idea di proteggere l'informazione replicandola è classica: si trasmettono tre copie di un bit e si decide a maggioranza. Sul piano quantistico questa strada è sbarrata due volte. Il teorema di no-cloning~\cite{wootters1982} (Capitolo~\ref{chap:fondamenti}) impedisce di copiare uno stato ignoto; e la misura diretta di un qubit, necessaria per un ipotetico ``voto di maggioranza'', distrugge la sovrapposizione che si voleva proteggere. Per questo la pratica NISQ più diffusa si limita a una ridondanza \emph{a livello di esecuzione} --- eseguire istanze gemelle dello stesso circuito su regioni diverse del dispositivo e usare l'esito della copia sopravvissuta --- che paga un raddoppio di qubit fisici senza agire sulla causa degli errori.
+
+La \ac{QEC} risolve il problema in modo strutturalmente diverso~\cite{shorcorrection1995, steane1996, roffe2019}: l'informazione di un \textbf{qubit logico} (\textit{logical qubit}) viene \emph{codificata} --- non copiata --- nelle correlazioni di entanglement di più \textbf{qubit fisici} (\textit{physical qubits}), e gli errori vengono diagnosticati misurando operatori ausiliari che rivelano \emph{che cosa è andato storto} senza rivelare --- e quindi senza distruggere --- \emph{che cosa è codificato}. È questa distinzione, non la semplice ridondanza, a rendere possibile la correzione durante il calcolo.
+
+% -----------------------------------------------
+\section{Il Ciclo della Correzione: Stabilizzatori, Sindrome, Decoder}
+\label{sec:ciclo_qec}
+
+Il funzionamento di ogni codice correttore quantistico segue lo stesso ciclo concettuale:
+
+\begin{enumerate}
+    \item \textbf{Codifica}: lo stato logico $\ket{\psi_L}$ viene preparato su $n$ qubit fisici;
+    \item \textbf{Rumore}: i canali fisici del Capitolo~\ref{chap:rumore} agiscono sui qubit fisici;
+    \item \textbf{Estrazione della sindrome}: qubit ausiliari (\textit{ancilla}) misurano gli stabilizzatori del codice; l'esito --- una stringa di bit classica detta \textbf{sindrome} (\textit{syndrome}) --- identifica la classe di errore senza toccare l'informazione logica;
+    \item \textbf{Decodifica}: un algoritmo classico, il \textbf{decoder}, interpreta la sindrome e propone la correzione più probabile;
+    \item \textbf{Correzione}: la correzione viene applicata fisicamente, oppure registrata in un registro classico --- il \textbf{Pauli frame} --- che tiene memoria delle correzioni da interpretare sulle misure successive, riducendo le operazioni fisiche e la propagazione di errori.
+\end{enumerate}
+
+\paragraph{Stabilizzatori.}
+Uno \textbf{stabilizzatore} (\textit{stabilizer}) è un operatore $S$ che lascia invariati tutti gli stati validi del codice: $S\ket{\psi_L} = \ket{\psi_L}$. Finché lo stato resta nello spazio del codice, ogni misura di $S$ restituisce $+1$; un esito $-1$ segnala che un errore ha portato lo stato fuori dal sottospazio consentito. La collezione degli esiti di tutti i generatori del gruppo stabilizzatore costituisce la sindrome. Il punto cruciale è che gli stabilizzatori commutano con l'informazione logica: la loro misura proietta lo stato in un autospazio dell'errore, ma non distingue --- e quindi non collassa --- i coefficienti della sovrapposizione logica.
+
+\paragraph{Distanza del codice.}
+Un codice si denota $[[n, k, d]]$: $n$ qubit fisici, $k$ qubit logici, distanza $d$. La distanza è il peso minimo di un errore capace di trasformare uno stato logico valido in un altro senza essere rilevato; un codice di distanza $d$ corregge fino a
+\begin{equation}
+    t = \left\lfloor \frac{d-1}{2} \right\rfloor
+    \label{eq:distanza_t}
+\end{equation}
+errori arbitrari. Lo Steane code ($d=3$) corregge un errore; un surface code di distanza 5 ne corregge due, di distanza 7 tre. La soglia oltre la quale aggiungere distanza \emph{conviene} --- il regime sotto-soglia in cui l'errore logico decresce all'aumentare di $d$ --- è l'oggetto quantitativo del Capitolo~\ref{chap:surface}, e la sua esistenza è garantita in linea di principio dal teorema della soglia per il calcolo fault-tolerant~\cite{aharonov1997fault}.
+
+% -----------------------------------------------
+\section{Il Panorama dei Codici e la Scelta Metodologica}
+\label{sec:confronto_codici}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llp{2.6cm}p{2.6cm}p{3.0cm}}
+\toprule
+\textbf{Codice} & \textbf{Parametri} & \textbf{Corregge} & \textbf{Pro / Contro} & \textbf{Uso in questa tesi} \\
+\midrule
+Repetition (bit-flip) & $[[3,1,1]]$ su X & solo bit-flip & semplice / non corregge phase-flip & primo laboratorio (sindrome) \\
+Repetition (phase-flip) & 3 qubit, base H & solo phase-flip & mostra dualità X/Z / parziale & secondo laboratorio \\
+Shor code & $[[9,1,3]]$ & errore arbitrario singolo & storico, intuitivo / più pesante dello Steane & approfondimento didattico~\cite{shorcorrection1995} \\
+Steane code & $[[7,1,3]]$ & errore arbitrario singolo & \ac{CSS}, compatto / distanza bassa & \textbf{codice centrale}~\cite{steane1996} \\
+Five-qubit & $[[5,1,3]]$ & errore arbitrario singolo & minimo possibile / non \ac{CSS} & confronto teorico \\
+Surface code & $[[\sim d^2,1,d]]$ & errori locali su griglia 2D & scalabile, standard industriale / molti qubit & Capitolo~\ref{chap:surface}~\cite{fowler2012} \\
+\bottomrule
+\end{tabular}
+\caption[Confronto tra codici correttori quantistici]{Confronto tra i principali codici correttori e loro ruolo nella tesi. La progressione metodologica --- repetition per introdurre la sindrome, Steane per la correzione di errori arbitrari, surface code per la prospettiva scalabile --- segue il documento di indirizzo del lavoro.}
+\label{tab:confronto_codici}
+\end{table}
+
+La scelta metodologica è dunque una progressione a tre stadi: il \emph{repetition code} introduce l'estrazione di sindrome nel caso più leggibile; lo \emph{Steane code} è il codice centrale, primo capace di correggere un errore arbitrario; il \emph{surface code} porta il discorso sul terreno scalabile e permette la stima del \textbf{logical error rate} $p_L$ con un decoder reale.
+
+% -----------------------------------------------
+\section{Laboratorio I: il Codice a Ripetizione}
+\label{sec:repetition}
+
+\subsection{Il codice bit-flip a 3 qubit}
+
+Il codice a ripetizione contro errori X codifica $\ket{0_L} = \ket{000}$ e $\ket{1_L} = \ket{111}$: uno stato arbitrario $\alpha\ket{0} + \beta\ket{1}$ diventa $\alpha\ket{000} + \beta\ket{111}$ --- uno stato entangled, non tre copie. Gli stabilizzatori sono $Z_1 Z_2$ e $Z_2 Z_3$: misurano la \emph{parità} tra coppie di qubit senza misurare i singoli qubit. Un bit-flip su un qubit altera una o entrambe le parità, e la sindrome a 2 bit identifica univocamente quale dei tre qubit ha subito l'errore --- che viene corretto riapplicando X. La misura di parità avviene tramite ancilla: due CNOT copiano la parità sull'ancilla, che viene misurata al posto dei qubit dati.
+
+Il limite è strutturale: il codice non rileva gli errori Z (phase-flip), che commutano con tutti gli stabilizzatori. Il duale --- codificare nella base di Hadamard, $\ket{\pm_L} = \ket{{\pm}{\pm}{\pm}}$, con stabilizzatori $X_1 X_2$ e $X_2 X_3$ --- protegge dai phase-flip ma non dai bit-flip. La dualità X/Z è la ragione per cui la correzione quantistica è più difficile di quella classica, e la concatenazione delle due protezioni è esattamente la costruzione del codice di Shor a 9 qubit~\cite{shorcorrection1995}.
+
+\subsection{Risultati del laboratorio repetition}
+\label{subsec:risultati_repetition}
+
+Il laboratorio è stato implementato in Qiskit con estrazione di sindrome tramite due qubit ancilla, secondo il ciclo della Sezione~\ref{sec:ciclo_qec}. Il primo test verifica che la sindrome identifichi correttamente il qubit colpito: si inietta un errore deterministico su ciascuno dei tre qubit dati (un $X$ per il codice bit-flip, un $Z$ per il duale phase-flip) e si legge la sindrome. La Tabella~\ref{tab:sindrome_repetition} riporta l'esito: in tutti i casi la sindrome osservata coincide con la previsione della lookup table, e la posizione dell'errore è ricostruita senza ambiguità.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Errore iniettato} & \textbf{Sindrome $(a_0, a_1)$} & \textbf{Qubit dedotto} & \textbf{Esito} \\
+\midrule
+nessuno   & $(0,0)$ & --- & \checkmark \\
+su $q_0$  & $(1,0)$ & $q_0$ & \checkmark \\
+su $q_1$  & $(1,1)$ & $q_1$ & \checkmark \\
+su $q_2$  & $(0,1)$ & $q_2$ & \checkmark \\
+\bottomrule
+\end{tabular}
+\caption[Verifica della sindrome del codice a ripetizione]{Verifica della sindrome: iniezione deterministica di un errore su ciascun qubit e sindrome osservata (senza rumore). Vale identicamente per il codice bit-flip (errore $X$, stabilizzatori $Z_0Z_1$, $Z_1Z_2$) e per il duale phase-flip (errore $Z$, stabilizzatori $X_0X_1$, $X_1X_2$): la simmetria X/Z è confermata sperimentalmente. L'ancilla $a_0$ misura la parità dei qubit $\{0,1\}$, l'ancilla $a_1$ quella di $\{1,2\}$.}
+\label{tab:sindrome_repetition}
+\end{table}
+
+Il secondo test misura il beneficio della correzione. Si prepara lo stato logico, si applica a ciascun qubit dato un errore indipendente con probabilità $p$ (canale $X$ per il bit-flip, $Z$ per il phase-flip), si estrae la sindrome, si applica la correzione e si decodifica: la frazione di esiti logici errati su $20\,000$ ripetizioni (seed $=42$) stima l'errore logico $p_L$. La Figura~\ref{fig:qec_repetition} confronta i punti Monte Carlo con la previsione analitica del voto di maggioranza: il codice sbaglia quando almeno due dei tre qubit subiscono un errore, cioè
+\begin{equation}
+    p_L = 3p^2(1-p) + p^3 = 3p^2 - 2p^3.
+    \label{eq:pL_repetition}
+\end{equation}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{qec_repetition_curve.pdf}
+\caption[Errore logico del codice a ripetizione a 3 qubit]{Errore logico $p_L$ in funzione dell'errore fisico $p$ per il codice a ripetizione a 3 qubit. I punti Monte Carlo del codice bit-flip e del duale phase-flip ($20\,000$ ripetizioni per punto) coincidono con la previsione analitica $3p^2 - 2p^3$ (Eq.~\ref{eq:pL_repetition}) entro l'errore statistico. Nella regione $p < 0.5$ la curva giace sotto la bisettrice $p_L = p$: la codifica rende il qubit logico più affidabile del qubit fisico non protetto. Il punto di \emph{break-even} è a $p = 0.5$, dove correzione e assenza di correzione si equivalgono; oltre, la ridondanza amplifica gli errori anziché sopprimerli.}
+\label{fig:qec_repetition}
+\end{figure}
+
+L'accordo con l'Eq.~\ref{eq:pL_repetition} è quantitativo su tutto l'intervallo: ad esempio, per $p = 0.10$ si osserva $p_L = 0.0288 \pm 0.0012$ contro il valore teorico $0.0280$, e per $p = 0.20$ si ha $p_L = 0.1026 \pm 0.0021$ contro $0.1040$. Il messaggio operativo è quello che l'intera parte \ac{QEC} svilupperà su codici più potenti: sotto una soglia di errore fisico, la codifica \emph{sopprime} l'errore --- qui da $p$ a $\mathcal{O}(p^2)$ --- mentre sopra la soglia lo \emph{amplifica}. Il codice a ripetizione paga però un limite strutturale già discusso: protegge da un solo tipo di errore per volta. Un errore $Z$ sul codice bit-flip commuta con entrambi gli stabilizzatori, non produce sindrome e resta invisibile --- ragione per cui il passo successivo richiede un codice, come quello di Steane, capace di correggere \emph{qualunque} errore su un qubit.
+
+% -----------------------------------------------
+\section{Laboratorio II: il Codice di Steane $[[7,1,3]]$}
+\label{sec:steane}
+
+\subsection{Struttura del codice}
+
+Lo Steane code~\cite{steane1996} codifica un qubit logico in sette qubit fisici, ha distanza 3 e corregge un errore arbitrario (X, Z o Y) su un singolo qubit. È un codice \ac{CSS}, costruito a partire dal codice classico di Hamming $[7,4,3]$: la stessa matrice di parità classica genera sia gli stabilizzatori di tipo X sia quelli di tipo Z, il che permette di trattare separatamente le due famiglie di errori.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lcl}
+\toprule
+\textbf{Parametro} & \textbf{Valore} & \textbf{Significato} \\
+\midrule
+$n$ & 7 & qubit fisici \\
+$k$ & 1 & qubit logici \\
+$d$ & 3 & distanza del codice \\
+$t$ & 1 & errori arbitrari correggibili (Eq.~\ref{eq:distanza_t}) \\
+Tipo & \ac{CSS} & sindromi X e Z separate \\
+\bottomrule
+\end{tabular}
+\caption[Parametri del codice di Steane]{Parametri del codice di Steane $[[7,1,3]]$.}
+\label{tab:steane_parametri}
+\end{table}
+
+I generatori degli stabilizzatori, nella convenzione adottata, sono:
+\begin{equation}
+\begin{aligned}
+\text{tipo X:} \quad & IIIXXXX, \quad IXXIIXX, \quad XIXIXIX \\
+\text{tipo Z:} \quad & IIIZZZZ, \quad IZZIIZZ, \quad ZIZIZIZ
+\end{aligned}
+\label{eq:steane_stabilizzatori}
+\end{equation}
+
+Gli stabilizzatori di tipo Z rilevano gli errori X; quelli di tipo X rilevano gli errori Z; un errore Y, essendo proporzionale a $XZ$, produce entrambe le sindromi. La struttura di Hamming rende la decodifica trasparente: i tre bit di sindrome di ciascuna famiglia, letti come numero binario, indicano direttamente la \emph{posizione} del qubit colpito (sindrome $011 \rightarrow$ qubit 3, sindrome $110 \rightarrow$ qubit 6, e così via), e una lookup table sindrome~$\rightarrow$~correzione completa il decoder.
+
+\subsection{Protocollo di laboratorio}
+
+Il laboratorio segue il protocollo del documento di indirizzo: (i) preparazione di uno stato logico $\ket{0_L}$ o $\ket{+_L}$ secondo una costruzione documentata; (ii) iniezione manuale di un errore X su ciascuno dei sette qubit e misura della sindrome; (iii) ripetizione con errori Z e Y; (iv) costruzione della lookup table; (v) valutazione della probabilità di correzione riuscita al crescere dell'errore fisico $p$; (vi) distinzione tra errori sui qubit dati ed errori sulle ancilla durante l'estrazione della sindrome.
+
+Su quest'ultimo punto va dichiarata fin d'ora un'assunzione metodologica: lo Steane code corregge un errore arbitrario \emph{solo se} il modello assume al più un errore rilevante nel blocco, o se il protocollo fault-tolerant impedisce che un singolo guasto si propaghi in più errori non correggibili. La versione implementata in questa tesi usa un'estrazione di sindrome non fault-tolerant, e i risultati vanno letti entro questa assunzione --- distinguere ciò che il codice garantisce da ciò che l'implementazione didattica mostra è parte del rigore richiesto al lavoro.
+
+\subsection{Risultati del laboratorio Steane}
+\label{subsec:risultati_steane}
+
+\textit{[DA COMPLETARE al termine della milestone M6 --- questa sezione conterrà: la costruzione del circuito di codifica di $\ket{0_L}$ con relativo listato; la tabella completa sindrome$\rightarrow$qubit$\rightarrow$correzione verificata per X, Z e Y su ciascuno dei 7 qubit ($21$ casi); la curva $p$ vs probabilità di correzione riuscita, con l'individuazione del regime in cui il qubit logico è più affidabile del qubit fisico (break-even); l'analisi degli errori sulle ancilla (frazione di sindromi corrotte e loro effetto); il confronto con il repetition code a parità di $p$; seed, shot, versioni e script di rigenerazione delle figure.]}
+
+\end{onehalfspace}
