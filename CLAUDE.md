@@ -26,11 +26,33 @@ L'algoritmo di Shor fattorizza interi in tempo polinomiale, ma su hardware NISQ 
 
 **L'esito sperimentale (e il messaggio attuale della tesi)** è un **risultato negativo consapevole sul ML**: l'analisi di ablazione dimostra che il guadagno (ρ=6.44 su UC1, ρ=2.42 su UC2) è interamente attribuibile alla **strategia di ricerca multi-candidato TOP-4**, non al classificatore, che risulta neutro su UC1 (p=0.849) e dannoso su UC2 (ρ=0.73 < 1). Direttiva del relatore (2026-07): presentare esplicitamente "cosa abbiamo testato e perché", dimostrando che l'IA usata così (filtro a valle sull'output) non serve.
 
-**Il contributo originale** è duplice:
+**Il contributo della prima campagna** è duplice:
 1. La dimostrazione sperimentale che TOP-4 riduce M̄ da 6.43 a 1.00, con robustezza completa ai parametri di rumore (campagna parametrica) e superiorità netta su ZNE
 2. L'isolamento via ablazione del contributo del classificatore ML (nullo/negativo) — confronto a tre: **M1** (TOP-1), **M_TOP4** (TOP-4 senza clf), **M2** (CLF+TOP-4)
 
-**Prossima fase (Parte B, da definire col prof)**: nuovo algoritmo come contributo conclusivo — vedi `piano_azione_revisione.md`.
+**Il NUCLEO della tesi (dal 2026-07-08, documento di indirizzo del relatore — fedeltà vincolante)** è la **QEC**: se l'informazione distrutta dal rumore non è recuperabile a valle, l'errore va corretto durante l'esecuzione. Percorso: repetition code → **Steane [[7,1,3]] (codice centrale)** → surface code con Stim+PyMatching (curve p vs p_L, d=3,5,7) → **Shor logico** (errore logico p_L per gate; domanda conclusiva: quale p_L per P_success ≥ 80%). Integrazione A LIVELLI (mai "Shor fault-tolerant completo"). Piano operativo: `piano_azione_qec.md`. Deadline: **ottobre 2026**.
+
+> La precedente direzione "gestione predittiva / anti-duplicazione (M_PRED)" è stata ARCHIVIATA
+> l'8/7 (vedi diario). Dal riordino del 2026-07-09 i suoi documenti stanno in `_archivio/`
+> (`documento_algoritmo_predittivo.*`, `proposta_*`, `mappa_fase_sperimentale.md`,
+> `piano_azione_revisione.md`) e `NuovoApproccio.tex` in `_archivio/capitoli_storici/`.
+
+---
+
+## Organizzazione della cartella (leggenda completa: `INDICE_PROGETTO.md`)
+
+Riordino del 2026-07-09. Regola: **`file_latex/` contiene SOLO i sorgenti Overleaf** (`.tex`,
+`.bib`, `figure/` con le immagini) — niente artefatti build, script o PDF di output.
+
+- `file_latex/` → sorgenti tesi (Overleaf-ready). Compila: `pdflatex → biber → pdflatex ×2`.
+- `figure_src/` → script Python che generano `file_latex/figure/` (fuori da file_latex apposta;
+  scrivono in `../file_latex/figure/`).
+- `Extra/experiments/` → codice sperimentale Qiskit (`shor_core.py`, `qec_repetition.py`, …).
+- `_archivio/` → documenti e capitoli superati (M_PRED + capitoli fusi). NON cancellare.
+- `tesi_compilata.pdf` (root) → ultimo PDF prodotto; l'output NON vive in `file_latex/`.
+
+I 5 capitoli storici (RisultatiMetodo1/2, ConclusioniMetodo1/2, NuovoApproccio) sono in
+`_archivio/capitoli_storici/`, non più in `file_latex/capitoli/`.
 
 ---
 
@@ -50,7 +72,7 @@ L'algoritmo di Shor fattorizza interi in tempo polinomiale, ma su hardware NISQ 
 
 ---
 
-## Struttura della tesi (12 capitoli + appendice)
+## Struttura della tesi (14 capitoli + appendice)
 
 ### Parte introduttiva e raccordo
 
@@ -75,13 +97,17 @@ L'algoritmo di Shor fattorizza interi in tempo polinomiale, ma su hardware NISQ 
 | 7 | `Strumenti.tex` | Strumenti e Ambiente di Simulazione | ✅ Completo |
 | 8 | `Metodologia.tex` | Metodologia e Architettura | ✅ Scritto |
 | 9 | `Sviluppo.tex` | Sviluppo e Implementazione | ✅ Scritto — include tabella selezione classificatore (RF/SVM/MLP) con metriche reali |
-| 10 | `RisultatiSperimentali.tex` | Verifica Sperimentale dell'Ipotesi Iniziale: dal Classificatore ML alla Strategia TOP-K | ✅ Scritto — capitolo PONTE (non conclusioni!): verifica che l'ML a valle non serve; ~250 righe, dettagli sweep/ZNE in Appendice |
-| 11 | `NuovoApproccio.tex` | Gestione Predittiva degli Errori: dalla Duplicazione dei Qubit al Machine Learning | 🔶 Capitolo CORE — parti concettuali DEFINITIVE (problema, duplicazione, sistema, protocollo validazione); 5 sezioni sperimentali IN BIANCO con segnaposto corsivi \[DA COMPLETARE...\]: impl. QPU virtuale, generazione dataset, selezione modello, risultati confronto, discussione |
-| 12 | `SviluppiFuturi.tex` | Sviluppi Futuri | ✅ Scritto — direzioni oltre il perimetro predittivo |
-| A | `AppendiceParametrica.tex` | Campagna Parametrica Dettagliata e Confronto ZNE | ✅ Scritto — 7 sweep con previsione→esito + meccanica ZNE |
+| 10 | `RisultatiSperimentali.tex` | Verifica Sperimentale dell'Ipotesi Iniziale: dal Classificatore ML alla Strategia TOP-K | ✅ Scritto — capitolo PONTE (non conclusioni!): verifica che l'ML a valle non serve; il ponte ora punta alla QEC |
+| 11 | `CorrezioneErrori.tex` | La Correzione d'Errore Quantistico: dal Codice a Ripetizione al Codice di Steane | 🔶 NUCLEO — concetti DEFINITIVI (ciclo QEC, stabilizzatori, confronto codici, repetition, Steane); 2 sezioni \[DA COMPLETARE\]: risultati M5 (repetition) e M6 (Steane) |
+| 12 | `SurfaceCode.tex` | Il Surface Code e la Stima dell'Errore Logico | 🔶 NUCLEO — concetti DEFINITIVI (griglia, detection events, MWPM, Stim+PyMatching, disegno sperimentale); 1 sezione \[DA COMPLETARE\]: risultati M7 (curve p vs p_L, d=3,5,7) |
+| 13 | `ShorLogico.tex` | Integrazione: lo Shor Logico e i Requisiti di Correzione | 🔶 NUCLEO — concetti DEFINITIVI (4 livelli, limiti Stim/non-Clifford, modello p_L, resource estimates); 2 sezioni \[DA COMPLETARE\]: risultati M8 + discussione finale |
+| 14 | `SviluppiFuturi.tex` | Sviluppi Futuri | ✅ Scritto — TOP-K a livello logico, decodifica neurale (AlphaQubit), hardware reale, Beauregard |
+| A | `AppendiceParametrica.tex` | Campagna Parametrica Dettagliata e Confronto ZNE | ✅ Scritto — 7 sweep con previsione→esito + meccanica ZNE (≈ milestone M4) |
 
 > `SpecificheFunzionali.tex` ELIMINATO il 2026-05-15 — contenuto integrato in Cap.2.
-> `RisultatiMetodo1/2.tex` e `ConclusioniMetodo1/2.tex` FUSI il 2026-07-03 in `RisultatiSperimentali.tex` (indicazione relatore), poi SNELLITO a capitolo ponte il 2026-07-03 (dettagli → `AppendiceParametrica.tex`). I vecchi file restano nel repo ma NON sono più inclusi in `main.tex`. Label: capitolo ponte `chap:risultati` (+ alias `chap:risultati1/2`, `chap:conclusioni1/2`), capitolo core `chap:predizione`, appendice `app:parametrica`.
+> `RisultatiMetodo1/2.tex` e `ConclusioniMetodo1/2.tex` FUSI il 2026-07-03 in `RisultatiSperimentali.tex` (indicazione relatore), poi SNELLITO a capitolo ponte il 2026-07-03 (dettagli → `AppendiceParametrica.tex`).
+> `NuovoApproccio.tex` (ex cap. 11 "Gestione Predittiva") RIMOSSO da main.tex il 2026-07-09 (pivot QEC, documento di indirizzo del relatore); il file è in `_archivio/capitoli_storici/` (riordino 2026-07-09). I vecchi capitoli fusi/sostituiti stanno lì, non più in `file_latex/`.
+> Label: ponte `chap:risultati` (+ alias `chap:risultati1/2`, `chap:conclusioni1/2`); QEC `chap:qec` (+ alias `chap:predizione`); surface `chap:surface`; integrazione `chap:integrazione`; appendice `app:parametrica`.
 
 I file skeleton contengono in italiano la descrizione precisa di cosa va inserito in ogni sezione — leggili prima di scrivere quei capitoli.
 
@@ -187,7 +213,7 @@ Il backend è **biber** (non bibtex). Usa sempre `pdflatex + biber + pdflatex x2
 
 ## Acronimi già definiti
 
-BHT, BQP, CCNOT, CDR, CNF, CNOT, CPTP, DFT, DSA, ECDSA, GNFS, HTTPS, IBM, MIT, NIST, NISQ, NMR, PEC, PQC, QEC, QFT, QML, QMA, QPE, RSA, SAT, SSH, TLS, TSP, ZNE, AUC, GCD, GPU, MLP, SVM, WSL, SDK, API, CPU, **ML, LSTM** (ultimi 2 aggiunti il 2026-05-17)
+BHT, BQP, CCNOT, CDR, CNF, CNOT, CPTP, DFT, DSA, ECDSA, GNFS, HTTPS, IBM, MIT, NIST, NISQ, NMR, PEC, PQC, QEC, QFT, QML, QMA, QPE, RSA, SAT, SSH, TLS, TSP, ZNE, AUC, GCD, GPU, MLP, SVM, WSL, SDK, API, CPU, CX, QPU, QAOA, ML, LSTM, **MWPM, CSS** (ultimi 2 aggiunti il 2026-07-09)
 
 ---
 
