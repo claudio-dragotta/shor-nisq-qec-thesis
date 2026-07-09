@@ -74,6 +74,22 @@ Il risultato scientifico atteso è una famiglia di curve $p$ vs $p_L$, una per d
 \section{Risultati}
 \label{sec:surface_risultati}
 
-\textit{[DA COMPLETARE al termine della milestone M7 --- questa sezione conterrà: le curve $p$ vs $p_L$ per $d = 3, 5, 7$ in base X e Z (figura principale del capitolo, rigenerata da CSV); la stima della regione di soglia osservata con relativa discussione; la tabella dei tempi di campionamento e decodifica per distanza; il confronto tra rounds $= d$ e $= 2d$; il valore di $p_L$ raggiungibile a $p$ realistico (da confrontare con i parametri NISQ del Capitolo 5) --- questo valore alimenta direttamente il modello di Shor logico del capitolo successivo; intervalli di confidenza, seed, versioni e script di rigenerazione.]}
+L'esperimento è stato realizzato con \textbf{Stim} per il campionamento dei circuiti stabilizzatori e \textbf{PyMatching} per la decodifica \ac{MWPM}, secondo lo schema della Sezione~\ref{sec:surface_esperimento}: memory experiment a $\text{rounds} = d$, modello di rumore \textit{circuit-level} (depolarizzazione dopo ogni Clifford, flip di reset e di misura tutti pari a $p$), $200\,000$ campioni per punto. La Figura~\ref{fig:qec_surface} riporta le curve $p$ vs $p_L$ per $d = 3, 5, 7$ in base Z.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{qec_surface_curve.pdf}
+\caption[Comportamento a soglia del surface code]{Errore logico $p_L$ in funzione dell'errore fisico $p$ (\textit{circuit-level}) per il surface code ruotato a distanza $d = 3, 5, 7$, decoder \ac{MWPM}, scala doppio-logaritmica. A $p$ basso le curve \emph{divergono} --- distanza maggiore dà errore logico molto minore --- e si \emph{incrociano} attorno alla soglia $p_{th} \approx 0.9\%$. È la firma del comportamento \textit{threshold-like}: sotto soglia la ridondanza sopprime l'errore, sopra soglia lo amplifica. Barre d'errore statistiche (spesso più piccole del marcatore); curva rigenerabile da \texttt{figure\_src/gen\_qec\_surface.py}.}
+\label{fig:qec_surface}
+\end{figure}
+
+\paragraph{La soglia è osservata.}
+Il risultato centrale è la presenza di un incrocio netto. Nel regime sotto-soglia la soppressione è marcata e cresce con la distanza: a $p = 2 \times 10^{-3}$ si passa da $p_L = 1.9 \times 10^{-3}$ ($d=3$) a $4.4 \times 10^{-4}$ ($d=5$) a $1.1 \times 10^{-4}$ ($d=7$) --- ogni incremento di distanza abbatte l'errore logico di un fattore $\sim 4$. L'ordine si mantiene fino a circa $p = 6 \times 10^{-3}$; oltre, le curve si accavallano e a $p = 10^{-2}$ l'ordine è \emph{invertito} ($p_L = 3.8\%$ per $d=3$ contro $5.2\%$ per $d=7$): sopra soglia aumentare la distanza peggiora l'errore. La soglia osservata, $p_{th} \approx 0.9\%$ in base Z e $\approx 0.7\%$ in base X (la lieve asimmetria è attesa per il layout ruotato), è coerente con i valori di letteratura per il surface code con decoder \ac{MWPM} sotto rumore circuit-level. La coincidenza qualitativa tra le due basi conferma la robustezza del risultato.
+
+\paragraph{Distanza dall'hardware attuale.}
+Il confronto con i parametri \ac{NISQ} del Capitolo~\ref{chap:rumore} è istruttivo: il tasso d'errore a due qubit assunto per il regime realistico ($\varepsilon_{2q} \approx 10^{-2}$) cade \emph{sopra} la soglia osservata. In altre parole, con la fedeltà dei dispositivi odierni il surface code non sopprimerebbe ancora l'errore --- servono gate a due qubit al di sotto di $\sim 10^{-3}$ perché aggiungere distanza produca il guadagno esponenziale atteso. È esattamente il margine che separa l'era NISQ dal calcolo fault-tolerant. Il valore di $p_L$ ottenibile nel regime sotto-soglia (ad esempio $p_L \sim 10^{-4}$ a $p = 2 \times 10^{-3}$, $d = 7$) è il dato che alimenta il modello di Shor logico del Capitolo~\ref{chap:integrazione}: è il tasso di errore per gate logico che una versione codificata di Shor erediterebbe.
+
+\paragraph{Riproducibilità.}
+Tutti i punti sono ottenuti con seed fissato e $200\,000$ campioni per configurazione; gli intervalli mostrati sono le deviazioni standard binomiali. Lo scaling $\text{rounds} = 2d$ e distanze maggiori sono estensioni naturali, limitate dal costo di decodifica (il piano dei rischi prevede di partire da $d=3$ e salire solo se sostenibile); l'implementazione con Stim rende però il campionamento a queste distanze poco oneroso.
 
 \end{onehalfspace}
