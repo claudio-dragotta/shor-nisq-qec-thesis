@@ -24,8 +24,9 @@ numpy, scipy, matplotlib. Per M7 servirà in aggiunta `pip install stim pymatchi
 | `campagne_classiche_M1-M4/` | M1–M4 | Shor ideale/rumoroso, Metodo 1/2, TOP-4, campagna parametrica, ZNE | ✅ fatto (prima campagna) |
 | `M5_repetition_code/` | M5 | Codice a ripetizione a 3 qubit (bit-flip + phase-flip) | ✅ completo |
 | `M6_steane_code/` | M6 | Codice di Steane [[7,1,3]] (codice QEC centrale) | ✅ completo |
-| `M7_surface_code/` | M7 | Surface code con Stim + PyMatching (da fare) | ⬜ |
-| `M8_shor_logico/` | M8 | Shor logico: p_L per P_success ≥ 80% (da fare) | ⬜ |
+| `M7_surface_code/` | M7 | Surface code con Stim + PyMatching (soglia p_th≈0.8%) | ✅ completo |
+| `M8_shor_logico/` | M8 | Shor logico: P_success vs p_L + figura conclusiva | ✅ completo |
+| `extra_rumore_coerente/` | extra | Errore coerente vs Pauli (limite del modello Clifford-Pauli, cfr. Plaquette) | ✅ completo |
 
 ## Regola di validazione (dal documento del relatore)
 

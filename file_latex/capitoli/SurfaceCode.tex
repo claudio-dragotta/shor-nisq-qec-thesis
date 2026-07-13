@@ -92,4 +92,27 @@ Il confronto con i parametri \ac{NISQ} del Capitolo~\ref{chap:rumore} è istrutt
 \paragraph{Riproducibilità.}
 Tutti i punti sono ottenuti con seed fissato e $200\,000$ campioni per configurazione; gli intervalli mostrati sono le deviazioni standard binomiali. Lo scaling $\text{rounds} = 2d$ e distanze maggiori sono estensioni naturali, limitate dal costo di decodifica (il piano dei rischi prevede di partire da $d=3$ e salire solo se sostenibile); l'implementazione con Stim rende però il campionamento a queste distanze poco oneroso.
 
+% -----------------------------------------------
+\section{Oltre il Modello di Pauli: Errori Coerenti e Leakage}
+\label{sec:oltre_pauli}
+
+La stima del logical error rate appena presentata poggia su un'assunzione che va resa esplicita, perché ne delimita la validità: Stim è un simulatore a \textbf{stabilizzatori}, efficiente proprio perché i gate sono Clifford e gli errori sono Pauli casuali ($X$, $Y$, $Z$) con probabilità assegnate. È il modello standard delle grandi campagne di soglia, ma l'hardware reale non commette necessariamente errori di Pauli. Un lavoro recente~\cite{plaquette2026} argomenta in modo sistematico che questa semplificazione può rendere le stime \emph{ottimistiche}, e che una parte della fisica rilevante --- errori coerenti, leakage, correlazioni temporali --- va conservata nella simulazione per non certificare un'astrazione al posto del dispositivo.
+
+Due sono le sorgenti di errore non-Pauli più importanti. La prima è l'\textbf{errore coerente}: un'imperfezione di calibrazione produce una piccola sovrarotazione sistematica $U = e^{-i\varepsilon H}$, uguale a ogni ripetizione del gate. A differenza di un errore stocastico, le sovrarotazioni si sommano \emph{in ampiezza}, non in probabilità. La seconda è il \textbf{leakage}: un transmon non è un sistema a due livelli e può popolare lo stato $\ket{2}$, un grado di libertà che un modello Pauli su due livelli non può nemmeno rappresentare.
+
+\paragraph{Una verifica diretta su scala trattabile.}
+Il meccanismo alla base del divario si dimostra con un esperimento elementare, alla portata della simulazione \textit{full-state} (Figura~\ref{fig:qec_coherent}): un singolo qubit soggetto a $N$ operazioni rumorose ripetute, con la stessa probabilità di errore per operazione $p = 10^{-2}$, modellata in due modi --- come errore di Pauli ($X$ con probabilità $p$) e come errore coerente (sovrarotazione $\text{RX}(\theta)$ con $\sin^2(\theta/2) = p$). L'errore di Pauli si accumula \emph{linearmente} in $N$; quello coerente \emph{quadraticamente}, perché gli angoli si sommano ($\sin^2(N\theta/2)$). La simulazione (Qiskit Aer) coincide con la previsione analitica e mostra un divario netto: già a $N=8$ operazioni l'errore coerente è circa $7$ volte quello di Pauli. Un modello che trattasse le sovrarotazioni come errori Pauli equivalenti sottostimerebbe l'errore reale esattamente di questo fattore.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{qec_coherent.pdf}
+\caption[Errore coerente vs errore di Pauli]{Accumulo dell'errore su un singolo qubit al crescere del numero $N$ di operazioni rumorose, a parità di probabilità di errore per operazione ($p = 10^{-2}$). L'errore coerente (sovrarotazione, in rosso) cresce quadraticamente e raggiunge il regime di errore quasi certo intorno a $N=16$; l'errore di Pauli (in blu) cresce linearmente. La simulazione \textit{full-state} (marcatori) coincide con la teoria (linee). A $N=8$ il divario è di circa un fattore $7$: il modello di Pauli è \emph{ottimistico}. Rigenerabile da \texttt{figure\_src/gen\_coherent.py}.}
+\label{fig:qec_coherent}
+\end{figure}
+
+\paragraph{Implicazioni per la stima di soglia.}
+Su un codice completo il divario si amplifica. Lo studio citato riporta, su esperimenti didattici controllati, che il modello Clifford-Pauli stima un errore logico dell'$1.7\%$ contro il $23.5\%$ della simulazione completa in presenza di leakage, e del $18.1\%$ contro il $38.7\%$ in presenza di errori coerenti; su un modello di gate CZ fra transmon con surface code a distanza $9$, l'errore logico reale può risultare da $25$ a $56$ volte superiore alla stima Clifford-Pauli, con la soglia sovrastimata di circa il $20\%$~\cite{plaquette2026}. La direzione metodologica che ne emerge è l'approccio \emph{channel-first}: descrivere il rumore fisico una sola volta come canale quantistico completo (operatori di Kraus, equazione di Lindblad) e scegliere di volta in volta la rappresentazione di simulazione più adatta, conservando gli effetti non-Pauli dove contano. La soglia cessa così di essere un singolo numero e diventa una \emph{superficie} nello spazio dei parametri fisici del dispositivo ($T_1$, $T_2$, durata di gate, leakage, crosstalk), che indica quale imperfezione limiti davvero la macchina.
+
+Per questa tesi la conseguenza è duplice e va dichiarata: i valori di soglia e di $p_L$ qui riportati vanno intesi come \textbf{baseline ottimistica} valida entro il modello Pauli, e il loro raffinamento verso un modello di rumore fisico più ricco --- nella linea del Capitolo~\ref{chap:integrazione} e degli sviluppi futuri --- è la naturale continuazione del lavoro.
+
 \end{onehalfspace}
