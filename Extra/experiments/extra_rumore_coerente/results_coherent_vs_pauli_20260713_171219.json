@@ -1,0 +1,149 @@
+{
+  "analysis": "coherent_vs_pauli",
+  "p": 0.01,
+  "theta": 0.2003348423231196,
+  "shots": 20000,
+  "timestamp": "2026-07-13T17:12:19.242732",
+  "points": [
+    {
+      "N": 1,
+      "coherent_sim": 0.0099,
+      "coherent_theory": 0.010000000000000002,
+      "pauli_sim": 0.0099,
+      "pauli_theory": 0.010000000000000009
+    },
+    {
+      "N": 2,
+      "coherent_sim": 0.0386,
+      "coherent_theory": 0.0396,
+      "pauli_sim": 0.0198,
+      "pauli_theory": 0.01980000000000004
+    },
+    {
+      "N": 3,
+      "coherent_sim": 0.08615,
+      "coherent_theory": 0.08761599999999999,
+      "pauli_sim": 0.0288,
+      "pauli_theory": 0.02940400000000004
+    },
+    {
+      "N": 4,
+      "coherent_sim": 0.15135,
+      "coherent_theory": 0.15212736,
+      "pauli_sim": 0.038,
+      "pauli_theory": 0.03881592000000006
+    },
+    {
+      "N": 5,
+      "coherent_sim": 0.2309,
+      "coherent_theory": 0.23055362559999998,
+      "pauli_sim": 0.0468,
+      "pauli_theory": 0.04803960160000004
+    },
+    {
+      "N": 6,
+      "coherent_sim": 0.3186,
+      "coherent_theory": 0.319757746176,
+      "pauli_sim": 0.05505,
+      "pauli_theory": 0.057078809568000044
+    },
+    {
+      "N": 7,
+      "coherent_sim": 0.4173,
+      "coherent_theory": 0.4161715569049601,
+      "pauli_sim": 0.06345,
+      "pauli_theory": 0.06593723337664004
+    },
+    {
+      "N": 8,
+      "coherent_sim": 0.5173,
+      "coherent_theory": 0.5159385053577217,
+      "pauli_sim": 0.0725,
+      "pauli_theory": 0.07461848870910726
+    },
+    {
+      "N": 9,
+      "coherent_sim": 0.6182,
+      "coherent_theory": 0.6150679135961743,
+      "pauli_sim": 0.0819,
+      "pauli_theory": 0.08312611893492511
+    },
+    {
+      "N": 10,
+      "coherent_sim": 0.71185,
+      "coherent_theory": 0.7095946052907801,
+      "pauli_sim": 0.0895,
+      "pauli_theory": 0.09146359655622666
+    },
+    {
+      "N": 11,
+      "coherent_sim": 0.79465,
+      "coherent_theory": 0.7957375127737547,
+      "pauli_sim": 0.09785,
+      "pauli_theory": 0.09963432462510208
+    },
+    {
+      "N": 12,
+      "coherent_sim": 0.87195,
+      "coherent_theory": 0.8700509197457791,
+      "pauli_sim": 0.10625,
+      "pauli_theory": 0.10764163813260008
+    },
+    {
+      "N": 13,
+      "coherent_sim": 0.9307,
+      "coherent_theory": 0.9295622899279723,
+      "pauli_sim": 0.1132,
+      "pauli_theory": 0.1154888053699481
+    },
+    {
+      "N": 14,
+      "coherent_sim": 0.9725,
+      "coherent_theory": 0.9718911685130466,
+      "pauli_sim": 0.12085,
+      "pauli_theory": 0.12317902926254914
+    },
+    {
+      "N": 15,
+      "coherent_sim": 0.9955,
+      "coherent_theory": 0.9953444003575992,
+      "pauli_sim": 0.12895,
+      "pauli_theory": 0.13071544867729812
+    },
+    {
+      "N": 16,
+      "coherent_sim": 0.99895,
+      "coherent_theory": 0.9989838561878476,
+      "pauli_sim": 0.1372,
+      "pauli_theory": 0.1381011397037522
+    },
+    {
+      "N": 17,
+      "coherent_sim": 0.98245,
+      "coherent_theory": 0.982663957770582,
+      "pauli_sim": 0.14515,
+      "pauli_theory": 0.14533911690967716
+    },
+    {
+      "N": 18,
+      "coherent_sim": 0.9474,
+      "coherent_theory": 0.9470375010424935,
+      "pauli_sim": 0.15175,
+      "pauli_theory": 0.15243233457148364
+    },
+    {
+      "N": 19,
+      "coherent_sim": 0.89535,
+      "coherent_theory": 0.8935295442727049,
+      "pauli_sim": 0.15965,
+      "pauli_theory": 0.15938368788005397
+    },
+    {
+      "N": 20,
+      "coherent_sim": 0.8226,
+      "coherent_theory": 0.8242804057320086,
+      "pauli_sim": 0.1655,
+      "pauli_theory": 0.16619601412245288
+    }
+  ]
+}
