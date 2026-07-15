@@ -29,7 +29,9 @@ Il problema pratico che impedisce questa minaccia di materializzarsi oggi è il 
 
 Partendo dal contesto delineato, il presente lavoro si propone di analizzare in profondità l'algoritmo di Shor per la fattorizzazione di interi e di affrontare il problema della sua esecuzione su hardware quantistico reale, afflitto da rumore e decoerenza.
 
-Il filo conduttore del lavoro è duplice: da un lato la comprensione del \textbf{potenziale computazionale} offerto dall'algoritmo di Shor rispetto ai migliori approcci classici noti; dall'altro lo studio delle \textbf{limitazioni pratiche} imposte dal rumore nei dispositivi \ac{NISQ} attuali, e lo sviluppo di strategie di mitigazione e ottimizzazione basate su \textbf{modelli di intelligenza artificiale}.
+Il filo conduttore del lavoro è duplice: da un lato la comprensione del \textbf{potenziale computazionale} offerto dall'algoritmo di Shor rispetto ai migliori approcci classici noti; dall'altro lo studio delle \textbf{limitazioni pratiche} imposte dal rumore nei dispositivi \ac{NISQ} attuali, e delle strategie per superarle.
+
+Coerentemente con questo secondo asse, il lavoro sperimentale si articola in \textbf{due fasi}. La prima verifica se un'ottimizzazione basata su \textbf{modelli di intelligenza artificiale}, applicata a valle dell'esecuzione, riduca il costo dell'algoritmo; il suo esito --- l'\ac{ML} in quella posizione non è il meccanismo attivo --- motiva la seconda fase, dedicata alla \textbf{Correzione degli Errori Quantistici} (\ac{QEC}): la costruzione, la simulazione e la caratterizzazione dei codici correttori (ripetizione, Steane, surface code) e la loro integrazione con Shor tramite il modello a livelli dello \textbf{Shor logico}. Le due fasi condividono l'infrastruttura di simulazione e l'impianto statistico, e insieme coprono l'arco che va dalla fragilità del calcolo rumoroso alla sua correzione strutturale.
 
 \section{Obiettivi Specifici}
 
@@ -50,7 +52,20 @@ Il filo conduttore del lavoro è duplice: da un lato la comprensione del \textbf
     \item \textbf{Ottimizzazione mediante modelli di intelligenza artificiale.}
     Esplorare l'integrazione di modelli di machine learning per la caratterizzazione del rumore, l'ottimizzazione dei parametri circuitali e il miglioramento della fedeltà dei risultati in ambienti quantistici rumorosi. Valutare l'apporto dell'intelligenza artificiale come strumento complementare alle tecniche di mitigazione tradizionali per estendere la praticabilità dell'algoritmo di Shor su hardware NISQ.
 
+    \item \textbf{Correzione degli errori quantistici e integrazione con Shor.}
+    Costruire e simulare i codici correttori d'errore in ordine di complessità crescente --- il codice a ripetizione, il codice di Steane $[[7,1,3]]$ e il surface code --- caratterizzandone quantitativamente la capacità di protezione: la corrispondenza sindrome$\rightarrow$errore, la soppressione dell'errore logico $p_L$ in funzione dell'errore fisico $p$ e della distanza di codice $d$, e il comportamento di soglia. Integrare infine la correzione con l'algoritmo di Shor tramite un modello a livelli (lo \textbf{Shor logico}), per stabilire quale livello di errore logico sia compatibile con un'esecuzione affidabile della fattorizzazione.
+
 \end{enumerate}
+
+Questo secondo blocco di obiettivi si traduce in un insieme di \textbf{domande di ricerca} (DR) che la parte sperimentale sulla correzione d'errore affronta esplicitamente:
+
+\begin{description}
+    \item[\textbf{DR1.}] Come degrada la probabilità di successo di Shor al crescere dell'errore fisico sui gate, e quale fonte di rumore è la più dannosa?
+    \item[\textbf{DR2.}] In che modo un codice a ripetizione permette di introdurre il concetto di sindrome senza collassare lo stato logico?
+    \item[\textbf{DR3.}] Quali vantaggi e limiti offre il codice di Steane $[[7,1,3]]$ come primo codice capace di correggere un errore arbitrario su un qubit?
+    \item[\textbf{DR4.}] Perché il surface code è più rilevante per scenari scalabili, e come si stima il suo logical error rate tramite decodifica? Esiste un comportamento di soglia osservabile?
+    \item[\textbf{DR5.}] Quale livello di errore logico $p_L$ è necessario affinché una versione logica di Shor mantenga una probabilità di successo accettabile?
+\end{description}
 
 \section{Ipotesi di Lavoro}
 \label{sec:ipotesi}
@@ -68,6 +83,15 @@ dove $\bar{M}_1$ e $\bar{M}_2$ sono rispettivamente il numero medio di iterazion
 
 \textbf{Ipotesi secondaria 2.} Il vantaggio del Metodo 2 si mantiene al crescere della dimensione dell'istanza ($N = 15 \to 21 \to 35$) e al peggiorare del livello di rumore, confermando la generalizzabilità dell'approccio oltre il caso baseline.
 
+\medskip
+La seconda fase del lavoro, sulla correzione d'errore, è retta da un'ulteriore terna di ipotesi, anch'esse formulate a priori e verificate quantitativamente.
+
+\textbf{Ipotesi QEC 1 (soppressione).} La codifica rende il qubit logico più affidabile del qubit fisico al di sotto di una soglia di errore: per un codice di distanza $d=3$ (ripetizione, Steane) l'errore logico è soppresso quadraticamente, $p_L \propto p^2$, ed esiste un regime in cui $p_L < p$.
+
+\textbf{Ipotesi QEC 2 (soglia).} Il surface code esibisce un comportamento di soglia: al di sotto di un errore fisico critico $p_{th}$, aumentare la distanza di codice $d$ riduce l'errore logico $p_L$; al di sopra, lo aumenta. Le curve $p_L(p)$ per $d = 3, 5, 7$ si incrociano in prossimità di $p_{th}$.
+
+\textbf{Ipotesi QEC 3 (integrazione).} Esiste un livello di errore logico $p_L$ sufficientemente basso perché l'algoritmo di Shor, eseguito con quell'errore residuo su ogni gate logico, mantenga una probabilità di successo elevata; tale livello è raggiungibile dai codici studiati nel regime sotto-soglia.
+
 \section{Contributo Originale}
 \label{sec:contributo_originale}
 
@@ -78,6 +102,8 @@ Rispetto alla letteratura esistente sull'algoritmo di Shor e sulla mitigazione d
 \textbf{Quantificazione empirica del fattore di riduzione $\rho$.} La letteratura fornisce stime teoriche del numero di iterazioni necessarie a ottenere un risultato corretto da Shor in presenza di rumore, ma raramente misure sperimentali sistematiche su più configurazioni. Il presente lavoro misura $\bar{M}_1$ e $\bar{M}$ (Metodo 1 e $M_{\text{TOP4}}$) su quattro use case distinti --- due livelli di rumore per $N=15$, e due istanze di dimensione crescente ($N=21$, $N=35$) --- producendo stime empiriche di $\rho$ validate statisticamente con test di Mann-Whitney U.
 
 \textbf{Analisi di ablazione che separa il contributo TOP-K da quello del classificatore ML.} Il lavoro conduce un'analisi di ablazione esplicita che isola il contributo della strategia di ricerca rispetto a quello del classificatore ML. Il risultato --- che $M_{\text{TOP4}}$ (TOP-K senza classificatore) è statisticamente equivalente a M2 su UC1 e significativamente migliore su UC2 --- chiarisce quale componente è responsabile del guadagno, e orienta gli sviluppi futuri verso l'ottimizzazione della strategia di ricerca piuttosto che del modello apprenditivo.
+
+\textbf{Caratterizzazione sperimentale end-to-end della correzione d'errore su Shor.} La seconda fase costruisce e simula una progressione di codici correttori --- ripetizione, Steane $[[7,1,3]]$, surface code con decodifica \ac{MWPM} --- misurandone il logical error rate con protocollo di validazione a flag, e li integra con l'algoritmo di Shor in un modello a livelli. Il risultato è una \textbf{figura conclusiva} che colloca sullo stesso grafico la probabilità di successo di Shor in funzione dell'errore per i tre regimi (fisico non corretto, Steane, surface), quantificando in un'unica misura il beneficio della correzione. Rispetto alla letteratura, che tratta separatamente la stima di soglia e l'esecuzione dell'algoritmo, il contributo è l'integrazione esplicita dei due livelli su un'istanza trattabile, con una discussione critica dei limiti del modello di rumore Clifford-Pauli adottato.
 
 \section{Requisiti Funzionali}
 \label{sec:requisiti}
@@ -245,6 +271,21 @@ La metrica principale per il confronto tra i due metodi è il \textbf{fattore di
     \label{eq:fattore_riduzione}
 \end{equation}
 Un valore $\rho > 1$ indica che il Metodo 2 converge più rapidamente del Metodo 1. L'ipotesi sperimentale, motivata nel Capitolo~\ref{chap:strategie}, è $\rho \gg 1$, con $\bar{M}_2 \approx 3$. La significatività statistica del risultato viene valutata tramite il test di Mann-Whitney U (non parametrico, unilaterale $M_1 > M_2$) sulle distribuzioni di $M_1$ e $M_2$. Poiché il Metodo 2 combina due componenti distinte (il classificatore \ac{ML} e la ricerca multi-candidato TOP-K), il piano sperimentale prevede inoltre un'\textbf{analisi di ablazione}: la variante $M_{\text{TOP4}}$ (TOP-K senza classificatore) viene misurata nelle stesse condizioni, in modo da attribuire un eventuale guadagno all'una o all'altra componente e verificare se l'apprendimento automatico è effettivamente necessario.
+
+\subsection{Metriche della Parte QEC}
+\label{subsec:metriche_qec}
+
+La fase sulla correzione d'errore adotta un insieme di metriche proprio, centrato sul \textbf{logical error rate} anziché sul numero di iterazioni:
+
+\begin{itemize}
+    \item $p_L$: \textbf{logical error rate}, ossia la probabilità che il qubit logico subisca un errore non corretto dopo un ciclo di codifica, rumore, estrazione di sindrome e decodifica. È la metrica centrale della parte QEC, misurata in funzione dell'errore fisico $p$ e della distanza di codice $d$.
+    \item \textbf{Pendenza di soppressione}: l'esponente $\gamma$ nella relazione $p_L \propto p^{\gamma}$ a $p$ piccolo; per un codice di distanza $d=3$ il valore atteso è $\gamma \approx 2$ (correzione di un errore, fallimento a peso due).
+    \item \textbf{Break-even}: il regime in cui $p_L < p$, in cui cioè il qubit logico è più affidabile del qubit fisico non protetto.
+    \item \textbf{Soglia} $p_{th}$: per il surface code, il valore di errore fisico a cui le curve $p_L(p)$ a distanze diverse si incrociano, separando il regime in cui aumentare $d$ conviene da quello in cui è controproducente.
+    \item $P_{\text{success}}(p_L)$ e $P(k)$: per lo Shor logico, la probabilità di successo per singola misura in funzione dell'errore logico per gate, e la probabilità cumulativa $P(k) = 1 - (1-P_s)^k$ dopo $k$ esecuzioni indipendenti.
+\end{itemize}
+
+Ogni stima di $p_L$ è accompagnata dal numero di campioni, dal seed e dall'intervallo di confidenza (deviazione standard binomiale), secondo le stesse regole di riproducibilità della prima fase.
 
 \subsection{Parametri di Error Mitigation Applicati}
 
