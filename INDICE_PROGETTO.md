@@ -1,7 +1,7 @@
 # Indice del progetto — Tesi Magistrale (Shor + QEC)
 
-> Leggenda di **dove si trova cosa** e **a che serve**. Aggiornato il 2026-07-09 dopo il
-> riordino della cartella. Regola: `file_latex/` contiene SOLO ciò che serve a Overleaf;
+> Leggenda di **dove si trova cosa** e **a che serve**. Aggiornato il 2026-07-25 dopo la ristrutturazione della tesi
+> (sunti nel corpo + trattazioni estese in appendice, corpo ~119 pp). Regola: `file_latex/` contiene SOLO ciò che serve a Overleaf;
 > tutto il resto (script, output, materiale superato) vive fuori.
 
 ---
@@ -28,9 +28,11 @@ tesi_magistrale_quantum/
 | `CLAUDE.md` | Istruzioni e contesto del progetto (letto da Claude Code) | 🟢 attivo |
 | `diario_relatore.md` | Registro cronologico di tutte le riunioni col prof | 🟢 attivo |
 | `piano_azione_qec.md` | **Piano corrente**: milestone M0–M9 QEC + semaforo di validazione (flag) | 🟢 attivo |
-| `INDICE_PROGETTO.md` | Questo file | 🟢 attivo |
+| `INDICE_PROGETTO.md` | Questo file (indice dettagliato, IT) | 🟢 attivo |
+| `README.md` | Overview del progetto in **inglese** (struttura, build, cosa è stato fatto) | 🟢 attivo |
+| `Proposta_nuovo_ML.md` | Proposta di un nuovo algoritmo di decodifica *topology-aware* per Shor | 🟢 attivo |
 | `AVVIO_WSL.md` | Guida al setup dell'ambiente WSL + Qiskit | 🟢 riferimento |
-| `tesi_compilata.pdf` | Ultimo PDF prodotto da `file_latex/main.tex` (164 pp.) | output |
+| `tesi_compilata.pdf` | Ultimo PDF prodotto da `file_latex/main.tex` (184 pp.; corpo ~119) | output |
 | `.gitignore` | Ignora artefatti build, `__pycache__`, PDF | 🟢 attivo |
 
 ---
@@ -45,7 +47,7 @@ tesi_magistrale_quantum/
 | `main.tex` | File master: preambolo, ordine dei capitoli, bibliografia |
 | `TITLE.tex` | Frontespizio |
 | `Bibliografia.bib` | Bibliografia (biblatex + biber) |
-| `capitoli/` | I 17 file `.tex` dei capitoli attivi (sotto) |
+| `capitoli/` | I 22 file `.tex` di capitoli e appendici attivi (sotto) |
 | `figure/` | Immagini incluse nella tesi (`.pdf`, `.png`, `.jpg`) — **generate da `figure_src/`** |
 
 ### file_latex/capitoli/ — i capitoli (ordine in `main.tex`)
@@ -68,6 +70,11 @@ tesi_magistrale_quantum/
 | 13 | `ShorLogico.tex` | Integrazione: lo Shor Logico **[QEC]** |
 | 14 | `SviluppiFuturi.tex` | Sviluppi Futuri |
 | A | `AppendiceParametrica.tex` | Campagna Parametrica Dettagliata e Confronto ZNE |
+| B | `AppendiceFondamenti.tex` | Fondamenti del Calcolo Quantistico — Trattazione Estesa |
+| C | `AppendiceStrumenti.tex` | Strumenti e Ambiente di Simulazione — Trattazione Estesa |
+| D | `AppendiceIntroduzione.tex` | Contesto Esteso dell'Introduzione |
+| E | `AppendiceObiettivi.tex` | Dettaglio degli Obiettivi e del Piano Sperimentale |
+| F | `AppendiceClassificatore.tex` | Il Classificatore ML: Architettura, Addestramento e Metriche |
 | — | `Ringraziamenti.tex` | Ringraziamenti |
 
 ---

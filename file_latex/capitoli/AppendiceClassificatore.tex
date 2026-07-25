@@ -1,0 +1,42 @@
+\begin{onehalfspace}
+
+Questa appendice riporta il dettaglio del classificatore \ac{ML} valutato nella prima fase sperimentale (Capitolo~\ref{chap:risultati}): architettura, procedura di addestramento e metriche di classificazione. Il verdetto operativo --- che il classificatore, a valle dell'esecuzione, non riduce le iterazioni rispetto alla sola ricerca multi-candidato TOP-4 --- è discusso e dimostrato nel corpo del capitolo tramite l'analisi di ablazione.
+
+\section{L'Ipotesi alla Prova: il Classificatore ML}
+\label{sec:risultati_uc_m2}
+\label{sec:valutazione_clf}
+
+L'ipotesi formalizzata nel Capitolo~\ref{chap:obiettivi} era che un classificatore \ac{ML}, addestrato a riconoscere gli istogrammi privi di segnale QPE, riducesse le iterazioni scartando le esecuzioni inutili: quantitativamente, $\bar{M}_2 \approx 3$ e $\rho = \bar{M}_1/\bar{M}_2 > 1$ con $p < 0.05$ (Mann-Whitney). Il disegno sperimentale include fin dall'inizio la variante di ablazione $M_{\text{TOP4}}$: poiché il Metodo 2 combina due componenti (filtro \ac{ML} + ricerca TOP-4), solo il confronto a tre permette di attribuire un eventuale guadagno all'una o all'altra.
+
+\paragraph{Architettura e addestramento.}
+Il Metodo 2 opera su due livelli: un \textit{gate di qualità} (il classificatore riceve il vettore di distribuzione normalizzato $\mathbf{x} \in \mathbb{R}^{256}$ e predice se l'istogramma contiene segnale recuperabile; etichetta positiva se almeno una delle 16 misure più frequenti produce i fattori corretti) e una \textit{ricerca multi-candidato} (se il classificatore approva, si tentano i 4 candidati più frequenti). Per ciascun use case è stato generato un dataset di 2000 campioni con noise model variato del $\pm50\%$ intorno al valore nominale (74.2\% di positivi per UC1, 83.2\% per UC2: il problema di classificazione non è banale). Tre architetture confrontate --- Random Forest, \ac{SVM} con kernel RBF, \ac{MLP} $(256,128)$ --- con split 80/20 stratificato e selezione per F1-score.
+
+\begin{table}[H]
+\centering
+\caption{Metriche dei classificatori sul test set (20\% del dataset, etichetta TOP\_K=16)}
+\label{tab:clf_metrics}
+\begin{tabular}{llccc}
+\hline
+\textbf{Use Case} & \textbf{Modello} & \textbf{F1} & \textbf{Accuratezza} & \textbf{\acs{AUC}-ROC} \\
+\hline
+\multirow{3}{*}{UC1} & \textbf{Random Forest (selezionato)} & \textbf{0.949} & \textbf{0.922} & \textbf{0.964} \\
+                     & \ac{SVM}                             & 0.855          & 0.748          & 0.929 \\
+                     & \ac{MLP}                             & 0.919          & 0.885          & 0.952 \\
+\hline
+\multirow{3}{*}{UC2} & \textbf{\ac{SVM} (selezionato)}      & \textbf{0.979} & \textbf{0.965} & \textbf{0.987} \\
+                     & Random Forest                        & 0.976          & 0.960          & 0.982 \\
+                     & \ac{MLP}                             & 0.977          & 0.963          & 0.987 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{fig_roc_curve.pdf}
+    \caption[Curve ROC dei classificatori selezionati (UC1: Random Forest, UC2: \acs{SVM})]{Curve ROC dei classificatori selezionati: Random Forest per UC1 (\acs{AUC}=0.964) e \acs{SVM} per UC2 (\acs{AUC}=0.987). La linea tratteggiata rappresenta il classificatore casuale (\acs{AUC}=0.5).}
+    \label{fig:roc_curve}
+\end{figure}
+
+Come \emph{classificatori}, i modelli funzionano molto bene (F1 fino a 0.98, AUC fino a 0.99). Ma le metriche di classificazione dicono solo che il modello sa distinguere le due classi di istogrammi. La domanda sperimentale rilevante è un'altra: \emph{questo filtraggio riduce davvero il numero di iterazioni rispetto alla sola ricerca multi-candidato?}
+
+\end{onehalfspace}
