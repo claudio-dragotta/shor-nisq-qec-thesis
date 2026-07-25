@@ -28,7 +28,7 @@ Il funzionamento di ogni codice correttore quantistico segue lo stesso ciclo con
 \end{enumerate}
 
 \paragraph{Stabilizzatori.}
-Uno \textbf{stabilizzatore} (\textit{stabilizer}) è un operatore $S$ che lascia invariati tutti gli stati validi del codice: $S\ket{\psi_L} = \ket{\psi_L}$. Finché lo stato resta nello spazio del codice, ogni misura di $S$ restituisce $+1$; un esito $-1$ segnala che un errore ha portato lo stato fuori dal sottospazio consentito. La collezione degli esiti di tutti i generatori del gruppo stabilizzatore costituisce la sindrome. Il punto cruciale è che gli stabilizzatori commutano con l'informazione logica: la loro misura proietta lo stato in un autospazio dell'errore, ma non distingue --- e quindi non collassa --- i coefficienti della sovrapposizione logica.
+Uno \textbf{stabilizzatore} (\textit{stabilizer})~\cite{gottesman1997} è un operatore $S$ che lascia invariati tutti gli stati validi del codice: $S\ket{\psi_L} = \ket{\psi_L}$. Finché lo stato resta nello spazio del codice, ogni misura di $S$ restituisce $+1$; un esito $-1$ segnala che un errore ha portato lo stato fuori dal sottospazio consentito. La collezione degli esiti di tutti i generatori del gruppo stabilizzatore costituisce la sindrome. Il punto cruciale è che gli stabilizzatori commutano con l'informazione logica: la loro misura proietta lo stato in un autospazio dell'errore, ma non distingue --- e quindi non collassa --- i coefficienti della sovrapposizione logica.
 
 \paragraph{Distanza del codice.}
 Un codice si denota $[[n, k, d]]$: $n$ qubit fisici, $k$ qubit logici, distanza $d$. La distanza è il peso minimo di un errore capace di trasformare uno stato logico valido in un altro senza essere rilevato; un codice di distanza $d$ corregge fino a
