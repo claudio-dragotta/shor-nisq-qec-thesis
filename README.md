@@ -54,7 +54,7 @@ is, and its benefit is quantifiable end-to-end.
 │   └── figure/              figures embedded in the thesis
 ├── figure_src/          Python scripts that GENERATE file_latex/figure/
 ├── Extra/
-│   ├── demo/               interactive Streamlit demo (see Extra/demo/README.md)
+│   ├── demo/               → interactive demo moved to its own repo + live site (see below)
 │   └── experiments/        experimental code + JSON results, one folder per block M1–M8
 ├── tesi_compilata.pdf   compiled thesis (output snapshot)
 ├── piano_azione_qec.md  QEC action plan (milestones M0–M9)
@@ -102,15 +102,14 @@ python figure_src/gen_qec_repetition.py    # writes into file_latex/figure/
 # build the thesis
 cd file_latex
 latexmk -pdf main.tex                # pdflatex → biber → pdflatex ×2
-
-# interactive demo
-cd Extra/demo
-pip install -r requirements.txt
-streamlit run app.py                 # opens http://localhost:8501
 ```
 
-The demo can also be run via Docker or deployed on Render — see
-[`Extra/demo/README.md`](Extra/demo/README.md).
+## Interactive demo
+
+A **live** interactive demo of Shor's algorithm — the circuit and a Bloch sphere per qubit,
+stage by stage, with statistical execution over many iterations — runs at
+**<https://shor-demo-6knp.onrender.com>**. Its source code lives in a dedicated repository:
+**<https://github.com/claudio-dragotta/shor-demo>** (FastAPI + Qiskit, deployed on Render).
 
 ---
 
