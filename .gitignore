@@ -15,4 +15,6 @@ file_latex/*.out
 file_latex/*.run.xml
 file_latex/*.toc
 file_latex/*.synctex.gz
+file_latex/*.fdb_latexmk
+file_latex/*.fls
 file_latex/main.pdf
