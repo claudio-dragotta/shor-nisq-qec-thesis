@@ -160,6 +160,23 @@ scripts, seeds and JSON outputs needed to regenerate the thesis figures and numb
 
 ---
 
+## Keeping the public mirror in sync
+
+This public repository is a **scrubbed mirror** of a private working repository. Keeping it
+up to date is automated: a git `post-commit` hook re-creates the scrubbed mirror (via
+[`git filter-repo`](https://github.com/newren/git-filter-repo), stripping the excluded
+material from the *entire* history) and force-pushes it whenever a commit touches files that
+belong here.
+
+- **Enable** (once, after cloning the private repo): `sh scripts/setup-hooks.sh`
+- **Toggle**: `git config tesi.autopublish true|false`
+- The hook [`.githooks/post-commit`](.githooks/post-commit) **skips** commits that only touch
+  excluded/private files; the publish logic and the exclusion list live in
+  [`scripts/publish-public.sh`](scripts/publish-public.sh).
+- Requires `git-filter-repo` (`pip install git-filter-repo`).
+
+---
+
 ## Academic use
 
 This is academic work submitted as a master's thesis. If you reference the methods or results,
