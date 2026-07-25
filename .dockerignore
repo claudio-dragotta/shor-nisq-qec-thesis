@@ -1,0 +1,13 @@
+# Contesto di build ridotto per Extra/demo/Dockerfile: la demo copia solo i file che le
+# servono con COPY mirati, ma senza questo file l'intero repo (LaTeX, PDF, _archivio) verrebbe
+# comunque inviato al daemon Docker come contesto, rallentando ogni build.
+.git/
+__pycache__/
+*.pyc
+_archivio/
+file_latex/
+figure_src/
+*.pdf
+*.docx
+*.log
+Extra/demo/__pycache__/

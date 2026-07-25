@@ -1,121 +1,13 @@
 \begin{onehalfspace}
 
-La scelta degli strumenti di simulazione non è neutrale. In informatica quantistica, il framework adottato determina quali modelli di rumore sono disponibili, verso quale hardware è possibile traslare i circuiti e con quali risultati della letteratura è possibile confrontarsi direttamente. Questo capitolo descrive gli strumenti utilizzati nella parte sperimentale di questa tesi, motivando ciascuna scelta e collocandola rispetto alle alternative disponibili.
+Questo capitolo riassume gli strumenti software e l'ambiente usati nella parte sperimentale. La motivazione estesa di ciascuna scelta --- il confronto tra i framework, i metodi di simulazione di Aer, le specifiche GPU e la configurazione WSL --- è riportata nell'Appendice~\ref{app:strumenti}.
 
-% -----------------------------------------------
-\section{Qiskit: il Framework Quantistico di Riferimento}
-\label{sec:qiskit}
+\textbf{Framework: Qiskit + Qiskit Aer.} L'intera pipeline usa \textbf{Qiskit} \cite{qiskit2023}, l'SDK di IBM Quantum, e il suo simulatore \textbf{Qiskit Aer}. La scelta è motivata dalla coerenza con l'hardware superconduttore IBM su cui è calibrato il modello di rumore, dalla maturità del noise model di Aer rispetto alle alternative (Cirq, PennyLane), e dall'allineamento con la letteratura e con l'implementazione di riferimento dell'algoritmo di Shor \cite{skosana2021, github_shor}.
 
-\textbf{Qiskit} (\textit{Quantum Information Science Kit}) è un \ac{SDK} open-source sviluppato da \ac{IBM} Quantum per la programmazione, la simulazione e l'esecuzione di algoritmi su processori quantistici superconduttori \cite{qiskit2023}. Rilasciato pubblicamente nel 2017, è oggi il framework di riferimento per la ricerca e la sperimentazione su hardware \ac{IBM} ed è il più adottato nella letteratura scientifica sugli algoritmi quantistici a corto termine \cite{skosana2021, shor_hpec2023}.
+\textbf{Metodo di simulazione e limite di scala.} Tra i metodi di \texttt{AerSimulator} si adotta \texttt{statevector} (simulazione esatta del vettore di stato), per la precisione numerica richiesta dagli use case a 11--18 qubit. Il costo in memoria cresce come $2^n$ (ampiezze \texttt{complex128}): con 12\,GB di VRAM il limite pratico è $\approx 30$ qubit. È questo vincolo esponenziale a rendere impraticabile la simulazione diretta dello Shor logico con surface code e a imporre l'uso di Stim per i circuiti \emph{stabilizer} della QEC (Capitoli~\ref{chap:surface} e~\ref{chap:integrazione}).
 
-\subsection{Architettura del Framework}
+\textbf{Modello di rumore.} Il modulo \texttt{qiskit\_aer.noise} compone errore \textbf{depolarizzante}, \textbf{rilassamento termico} $T_1/T_2$ e \textbf{readout error} (matrice di confusione), con parametri calibrati sull'hardware \texttt{ibm\_marrakesh} \cite{epjqt_noise2024}; la configurazione dettagliata è nel Capitolo~\ref{chap:obiettivi}. Prima dell'esecuzione i circuiti sono transpilati (\texttt{optimization\_level=3}) per minimizzare profondità e accumulo di errori.
 
-Qiskit è organizzato in tre componenti principali, ciascuno con un ruolo distinto nel ciclo di vita di un esperimento quantistico:
-
-\begin{itemize}
-
-    \item \textbf{Qiskit (core)} — il nucleo del framework, già noto come Qiskit Terra. Fornisce le primitive fondamentali per la costruzione di circuiti quantistici (\texttt{QuantumCircuit}), la compilazione e la trasposizione verso un backend target (\texttt{transpile}), e le interfacce di esecuzione (\texttt{Sampler}, \texttt{Estimator}). Gestisce l'intera pipeline dalla descrizione astratta del circuito fino all'invio al simulatore o all'hardware reale.
-
-    \item \textbf{Qiskit Aer} — il modulo di simulazione classica ad alte prestazioni. Implementa diversi metodi di simulazione esatta e approssimata, con supporto nativo per modelli di rumore realistici. È il componente centrale di questa tesi e viene descritto in dettaglio nella Sezione~\ref{sec:qiskit_aer}.
-
-    \item \textbf{Qiskit IBM Runtime} — l'interfaccia per l'esecuzione su processori \ac{IBM} Quantum reali tramite cloud (\texttt{qiskit-ibm-runtime}). Fornisce le primitive \texttt{Sampler} e \texttt{Estimator} ottimizzate per l'hardware reale, con supporto per tecniche di soppressione del rumore come il \textit{Dynamical Decoupling} e il \textit{Gate Twirling} \cite{ibm_shor_tutorial}.
-
-\end{itemize}
-
-\subsection{Perché Qiskit e non un'alternativa}
-\label{sec:confronto_framework}
-
-La scelta di Qiskit è stata formalizzata nell'incontro con il relatore del 18 marzo 2026, in seguito all'analisi del tutorial ufficiale \ac{IBM} per l'algoritmo di Shor \cite{ibm_shor_tutorial}. La decisione è motivata da quattro ragioni convergenti.
-
-\textbf{Prima ragione: coerenza con la piattaforma hardware.} Il lavoro di tesi utilizza un modello di rumore calibrato su processori superconduttori \ac{IBM}. Qiskit è sviluppato da \ac{IBM} Quantum e i suoi modelli di rumore, le sue primitive di esecuzione e le sue tecniche di mitigazione sono progettati e validati su quella stessa architettura fisica. Questa coerenza garantisce che i parametri di simulazione siano direttamente confrontabili con dati sperimentali reali \cite{epjqt_noise2024}.
-
-\textbf{Seconda ragione: maturità del simulatore Aer.} Qiskit Aer è il simulatore con il modello di rumore più maturo e documentato tra i framework open-source disponibili. I principali competitor — Cirq (Google) \cite{cirq2024}, PennyLane (Xanadu) \cite{pennylane2022} — offrono simulazione con rumore, ma con un supporto meno esteso per i modelli fisici dei processori superconduttori (errori di depolarizzazione, rilassamento termico $T_1/T_2$, errori di misura).
-
-\textbf{Terza ragione: disponibilità dell'implementazione di riferimento.} Il circuito dell'algoritmo di Shor utilizzato in questa tesi è tratto da un'implementazione open-source in Qiskit \cite{github_shor}. Questo punto di partenza, validato dalla letteratura \cite{skosana2021}, ha reso naturale mantenere Qiskit come framework unico lungo l'intero pipeline sperimentale.
-
-\textbf{Quarta ragione: allineamento con la letteratura.} La grande maggioranza dei lavori recenti sull'implementazione dell'algoritmo di Shor e sulla mitigazione del rumore su sistemi \ac{NISQ} utilizza Qiskit \cite{skosana2021, shor_hpec2023, ml_mitigation2023}. L'adozione dello stesso framework garantisce la comparabilità diretta dei risultati senza necessità di ricalibrare modelli o convertire rappresentazioni.
-
-\begin{table}[H]
-\centering
-\caption{Confronto tra i principali framework per la simulazione quantistica con rumore.}
-\label{tab:framework_confronto}
-\begin{tabularx}{\textwidth}{lXXX}
-\toprule
-\textbf{Framework} & \textbf{Sviluppatore} & \textbf{Simulatore con rumore} & \textbf{Target hardware primario} \\
-\midrule
-Qiskit + Aer        & IBM Quantum           & Completo (T1, T2, depolarz., readout) & IBM superconduttori \\
-Cirq                & Google Quantum AI     & Parziale                               & Google superconduttori \\
-PennyLane           & Xanadu                & Limitato                               & Vari (plug-in) \\
-Forest / PyQuil     & Rigetti               & Parziale                               & Rigetti superconduttori \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-% -----------------------------------------------
-\section{Qiskit Aer: il Simulatore}
-\label{sec:qiskit_aer}
-
-Qiskit Aer è il modulo di simulazione classica di Qiskit. Il suo componente principale è \texttt{AerSimulator}, un simulatore ad alte prestazioni che supporta più metodi di simulazione selezionabili a seconda della dimensione del circuito e del tipo di analisi richiesta.
-
-\subsection{Metodi di Simulazione}
-
-\texttt{AerSimulator} espone i seguenti metodi principali tramite il parametro \texttt{method}:
-
-\begin{itemize}
-    \item \texttt{statevector} — simulazione esatta del vettore di stato completo. Richiede $2^n$ ampiezze complesse in memoria, il che limita la scalabilità a circa 30 qubit su hardware consumer con \ac{GPU}. È il metodo adottato in questa tesi per la precisione numerica che garantisce.
-
-    \item \texttt{density\_matrix} — evolve la matrice densità $\rho$ anziché il vettore di stato, permettendo di modellare canali di rumore non unitari in modo esatto. Richiede $4^n$ elementi e riduce il limite pratico a circa 25 qubit.
-
-    \item \texttt{stabilizer} — simulazione efficiente di circuiti Clifford puri (senza porte non-Clifford come $T$ o $R_z$ arbitrarie). Scala a migliaia di qubit ma non è applicabile all'algoritmo di Shor, che utilizza rotazioni di fase arbitrarie.
-
-    \item \texttt{matrix\_product\_state} — approssima lo stato come prodotto di tensori, adatto a circuiti con bassa entanglement. Non adeguato per le istanze di Shor usate in questa tesi, dove l'entanglement è significativo.
-\end{itemize}
-
-La scelta del metodo \texttt{statevector} è motivata dal numero di qubit delle istanze trattate (da 11 a 18 qubit nei quattro use case) e dalla necessità di un risultato esatto, non approssimato.
-
-\subsection{Modelli di Rumore}
-
-Il modulo \texttt{qiskit\_aer.noise} fornisce le primitive per costruire modelli di rumore compositi. Ogni errore è rappresentato come un canale quantistico che viene applicato ai gate specificati, con la possibilità di assegnare errori diversi a qubit diversi (rumore eterogeneo) o un errore uniforme a tutti i qubit (\textit{all-qubit error}). I tipi di errore disponibili includono:
-
-\begin{itemize}
-    \item \texttt{depolarizing\_error} — errore depolarizzante su gate a 1 o 2 qubit, parametrizzato dal tasso $\epsilon$.
-    \item \texttt{thermal\_relaxation\_error} — modella il rilassamento verso lo stato fondamentale ($T_1$) e la perdita di coerenza di fase ($T_2$), con un tempo di gate configurabile.
-    \item \texttt{ReadoutError} — matrice di confusione che descrive la probabilità di misurare $\ket{0}$ come $\ket{1}$ e viceversa.
-    \item Errori coerenti — applicazione di una rotazione indesiderata su ogni gate, modellabile tramite operatori unitari arbitrari.
-\end{itemize}
-
-Il modello di rumore usato in questa tesi combina errori depolarizzanti, rilassamento termico e readout error, con parametri calibrati sull'hardware \texttt{ibm\_marrakesh} secondo la metodologia descritta in \cite{epjqt_noise2024}. La configurazione dettagliata è riportata nel Capitolo~\ref{chap:obiettivi}.
-
-\subsection{Transpilazione}
-
-Prima dell'esecuzione, il circuito deve essere \textit{transpilato}: la funzione \texttt{transpile} riscrive il circuito nel gate set nativo del backend target (per \texttt{AerSimulator}: \texttt{cx}, \texttt{h}, \texttt{rz}, \texttt{x}, \texttt{swap}) e applica ottimizzazioni strutturali selezionabili tramite il parametro \texttt{optimization\_level} (da 0 a 3). Un livello di ottimizzazione elevato riduce il numero di gate e, di conseguenza, l'accumulo di errori, a scapito di un maggior tempo di compilazione. In questa tesi si usa \texttt{optimization\_level=3} per minimizzare la profondità del circuito eseguito.
-
-% -----------------------------------------------
-\section{Accelerazione GPU con Qiskit Aer}
-\label{sec:gpu}
-
-La libreria \texttt{qiskit-aer-gpu} estende \texttt{AerSimulator} con il supporto per l'accelerazione tramite \ac{GPU} NVIDIA attraverso CUDA. Il backend \texttt{statevector} è interamente eseguito sulla \ac{GPU}: il vettore di stato viene allocato nella memoria VRAM e le operazioni di gate sono eseguite come moltiplicazioni matrice-vettore parallelizzate su migliaia di core CUDA.
-
-\textbf{Motivazione pratica.} La parte sperimentale di questa tesi richiede la generazione di un dataset di addestramento per il classificatore del Metodo 2: migliaia di esecuzioni del circuito di Shor con parametri di rumore variabili. Su \ac{CPU}, ogni esecuzione richiede diversi secondi per circuiti a 15--18 qubit con $10^3$ shot; su \ac{GPU}, il tempo si riduce di un fattore tra 10 e 20 per circuiti ad alto numero di shot, rendendo praticabile la generazione dell'intero dataset in una singola sessione di lavoro.
-
-\textbf{Specifiche hardware.} La \ac{GPU} utilizzata è una NVIDIA GeForce RTX 4070 con 12 GB di memoria VRAM e 5888 core CUDA (architettura Ada Lovelace). La capacità di memoria consente di simulare circuiti fino a circa 30 qubit in modalità statevector, sufficiente per tutti gli use case di questa tesi.\footnote{Il limite teorico di VRAM per la simulazione statevector è $2^n \times 16$ byte per $n$ qubit (ampiezze \texttt{complex128}). Con 12 GB: $\lfloor\log_2(12 \times 10^9 / 16)\rfloor = 29.8$ qubit.}
-
-% -----------------------------------------------
-\section{scikit-learn: la Libreria per il Classificatore}
-\label{sec:scikit}
-
-Il Metodo 2 richiede l'addestramento di un classificatore binario. La libreria scelta è scikit-learn \cite{scikit_learn}, una delle librerie di machine learning più consolidate nell'ecosistema Python scientifico.
-
-La motivazione principale è pragmatica: scikit-learn espone un'interfaccia unificata (\texttt{fit} / \texttt{predict}) per un ampio catalogo di classificatori — Random Forest, \ac{SVM}, \ac{MLP}, e altri — permettendo di confrontarli sullo stesso dataset con minime modifiche al codice. Questo facilita la selezione sperimentale del modello migliore senza dover introdurre dipendenze da framework più pesanti (TensorFlow, PyTorch) per un classificatore che, per il problema in esame, si prevede non richieda architetture profonde.
-
-% -----------------------------------------------
-\section{Ambiente di Esecuzione: WSL con Ubuntu}
-\label{sec:wsl}
-
-Le simulazioni vengono eseguite in ambiente Linux tramite \ac{WSL} (versione 2) su Windows 11. La scelta è motivata dalla necessità di mantenere la compatibilità con l'ecosistema Linux di Qiskit e delle librerie scientifiche Python, garantendo al contempo l'integrazione con i driver CUDA per \ac{WSL} forniti da NVIDIA.
-
-\ac{WSL} 2 esegue un kernel Linux completo in una macchina virtuale leggera, con accesso diretto alle \ac{GPU} NVIDIA tramite i driver \texttt{cuda-wsl-ubuntu}. L'ambiente Python è isolato in un virtual environment dedicato (Ubuntu 22.04 LTS, Python 3.11), garantendo la riproducibilità delle dipendenze e la compatibilità delle versioni tra le librerie usate.
-
-Con l'ambiente così definito, il Capitolo~\ref{chap:metodologia} descrive come Qiskit, Aer e scikit-learn si integrano nell'architettura del pipeline sperimentale: dalla costruzione del circuito di Shor alla generazione del dataset di addestramento, fino all'inferenza del classificatore sui quattro use case.
+\textbf{Machine learning e ambiente.} Il classificatore del Metodo 2 è addestrato con \textbf{scikit-learn} \cite{scikit_learn}, scelto per l'interfaccia unificata \texttt{fit}/\texttt{predict} che consente di confrontare più modelli sullo stesso dataset. Le simulazioni girano in \textbf{WSL2} (Ubuntu 22.04, Python 3.11) con accelerazione \textbf{GPU} (NVIDIA RTX 4070, 12\,GB) tramite \texttt{qiskit-aer-gpu}, che riduce di 10--20$\times$ i tempi di generazione del dataset. Su questa base, il Capitolo~\ref{chap:metodologia} descrive l'architettura del pipeline sperimentale.
 
 \end{onehalfspace}

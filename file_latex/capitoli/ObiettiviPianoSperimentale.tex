@@ -2,29 +2,7 @@
 
 Il Capitolo~\ref{chap:introduzione} ha inquadrato il contesto storico e tecnologico del calcolo quantistico. Il presente capitolo costruisce su quel fondamento e svolge una funzione duplice: da un lato motiva e definisce gli obiettivi scientifici del lavoro; dall'altro stabilisce il contratto sperimentale completo --- requisiti, parametri, use case e metriche --- che guiderà tutta la parte implementativa. Il lettore che avrà letto questo capitolo avrà una visione completa di \textit{perché} il lavoro esiste, \textit{cosa} si propone di dimostrare e \textit{come} intende farlo.
 
-\section{Motivazione: la Vulnerabilità della Crittografia Attuale}
-\label{sec:motivazione}
-
-La quasi totalità delle comunicazioni digitali sicure --- dalle transazioni bancarie alle connessioni \ac{HTTPS}, dai protocolli \ac{SSH} ai certificati digitali --- è protetta da sistemi crittografici la cui sicurezza si fonda su un presupposto computazionale: la difficoltà di fattorizzare il prodotto di due grandi numeri primi. Il sistema \ac{RSA}, ad esempio, costruisce la propria chiave pubblica come $N = p \cdot q$, dove $p$ e $q$ sono primi di centinaia o migliaia di bit. Finché non esiste un algoritmo classico efficiente per recuperare $p$ e $q$ a partire da $N$, la chiave privata rimane al sicuro.
-
-Per comprendere perché i sistemi crittografici attuali siano strutturalmente vulnerabili all'algoritmo di Shor, è necessario mettere a confronto le complessità computazionali in gioco. Il miglior algoritmo classico per la fattorizzazione, il \ac{GNFS}, richiede un tempo:
-\begin{equation}
-    T_{\text{classico}}(N) = O\!\left(\exp\!\left((c+o(1))(\log N)^{1/3}(\log\log N)^{2/3}\right)\right)
-    \label{eq:gnfs_obiettivi}
-\end{equation}
-che, pur crescendo più lentamente di un esponenziale puro, rimane del tutto impraticabile per i valori di $N$ usati in crittografia. A titolo di esempio, fattorizzare un numero RSA a 2048 bit con algoritmi classici richiederebbe un tempo stimato superiore all'età dell'universo, anche impiegando l'intera potenza di calcolo disponibile sul pianeta.
-
-Nel 1994, Peter Shor dimostrò che un computer quantistico è in grado di eseguire la stessa operazione in tempo \textbf{polinomiale}~\cite{shor1994}:
-\begin{equation}
-    T_{\text{Shor}}(N) = O\!\left((\log N)^3\right)
-    \label{eq:shor_obiettivi}
-\end{equation}
-Lo scarto tra le due espressioni non è una differenza di grado, ma una differenza di \textit{natura}: il tempo classico cresce in modo super-polinomiale con la lunghezza della chiave, mentre il tempo quantistico cresce polinomialmente. Ciò significa che \textbf{aumentare la lunghezza della chiave RSA non è una contromisura efficace} contro Shor: raddoppiare $n$ (i bit di $N$) porta il tempo classico da impraticabile a ancora più impraticabile, ma porta il tempo quantistico da $O(n^3)$ a $O((2n)^3) = 8\,O(n^3)$ --- un fattore costante, del tutto gestibile. La sicurezza di RSA è quindi \textbf{irrecuperabilmente compromessa} dalla disponibilità di un computer quantistico fault-tolerant, indipendentemente dalla lunghezza della chiave scelta. La stessa rottura si estende a tutti i sistemi basati sul logaritmo discreto (Diffie-Hellman, \ac{ECDSA}), per i quali Shor fornisce un algoritmo analogamente efficiente.
-
-La minaccia non è futura in senso astratto. Il fenomeno del \textit{harvest now, decrypt later} --- già documentato in ambito di intelligence --- consiste nel raccogliere oggi grandi quantità di dati cifrati con RSA, conservarli, e decifrarli non appena sarà disponibile un computer quantistico fault-tolerant. I dati cifrati oggi con chiavi RSA-2048 potrebbero quindi diventare leggibili in un orizzonte di dieci-quindici anni, secondo le roadmap pubblicate da \ac{IBM} e da altri produttori di hardware quantistico~\cite{ibm_roadmap2025}.
-
-Il problema pratico che impedisce questa minaccia di materializzarsi oggi è il \textbf{rumore}. I processori quantistici attuali operano in regime \ac{NISQ}: dispongono di decine o centinaia di qubit fisici, ma sono affetti da decoerenza, errori di gate e readout error che degradano l'output dell'algoritmo di Shor fino a renderlo inaffidabile senza un numero elevato di ripetizioni. Comprendere questo limite e sviluppare strategie per superarlo --- anche parzialmente, tramite modelli di machine learning --- è la ragione d'essere del presente lavoro.
-
+La motivazione crittografica in forma estesa --- il confronto tra la complessità sub-esponenziale del \ac{GNFS} e quella polinomiale $O((\log N)^3)$ di Shor, la conseguente compromissione irrecuperabile di \ac{RSA} indipendentemente dalla lunghezza della chiave, e lo scenario \emph{harvest now, decrypt later} --- è sviluppata nell'Appendice~\ref{app:obiettivi} (Sez.~\ref{sec:motivazione}). In sintesi: la sicurezza di RSA cade con la disponibilità di un computer quantistico fault-tolerant, e l'unico ostacolo che oggi impedisce alla minaccia di materializzarsi è il \textbf{rumore} dei dispositivi \ac{NISQ} --- la cui comprensione e mitigazione è la ragione d'essere di questo lavoro.
 \section{Obiettivi Generali}
 
 Partendo dal contesto delineato, il presente lavoro si propone di analizzare in profondità l'algoritmo di Shor per la fattorizzazione di interi e di affrontare il problema della sua esecuzione su hardware quantistico reale, afflitto da rumore e decoerenza.
@@ -105,84 +83,7 @@ Rispetto alla letteratura esistente sull'algoritmo di Shor e sulla mitigazione d
 
 \textbf{Caratterizzazione sperimentale end-to-end della correzione d'errore su Shor.} La seconda fase costruisce e simula una progressione di codici correttori --- ripetizione, Steane $[[7,1,3]]$, surface code con decodifica \ac{MWPM} --- misurandone il logical error rate con protocollo di validazione a flag, e li integra con l'algoritmo di Shor in un modello a livelli. Il risultato è una \textbf{figura conclusiva} che colloca sullo stesso grafico la probabilità di successo di Shor in funzione dell'errore per i tre regimi (fisico non corretto, Steane, surface), quantificando in un'unica misura il beneficio della correzione. Rispetto alla letteratura, che tratta separatamente la stima di soglia e l'esecuzione dell'algoritmo, il contributo è l'integrazione esplicita dei due livelli su un'istanza trattabile, con una discussione critica dei limiti del modello di rumore Clifford-Pauli adottato.
 
-\section{Requisiti Funzionali}
-\label{sec:requisiti}
-
-Definiti gli obiettivi e il contributo originale, è possibile formalizzare cosa il sistema sperimentale deve concretamente fare. I requisiti seguenti traducono le ipotesi di ricerca in vincoli tecnici verificabili, e costituiscono il riferimento rispetto al quale l'implementazione descritta nel Capitolo~\ref{chap:sviluppo} verrà valutata.
-
-Il sistema sperimentale deve soddisfare i seguenti requisiti funzionali:
-
-\begin{enumerate}
-
-    \item \textbf{Esecuzione configurabile del circuito di Shor.}
-    Dato un intero $N$ da fattorizzare e una base $a$ con $\gcd(a, N) = 1$, il sistema costruisce il circuito dell'algoritmo di Shor a partire dall'implementazione di riferimento \cite{github_shor}, lo configura con il numero di qubit $n_{\text{count}}$ specificato e lo esegue tramite \texttt{AerSimulator} con il noise model attivo per un numero di shot $M_{\text{shots}}$ configurabile.
-
-    \item \textbf{Modello di rumore parametrizzabile.}
-    Il sistema permette di configurare in modo indipendente tutti i parametri del noise model --- tassi di errore depolarizzante per gate a singolo e doppio qubit, tempi di rilassamento $T_1$ e $T_2$, probabilità di readout error --- in modo da poter riprodurre diverse condizioni operative e generare dataset con distribuzione di rumore variabile. Questo requisito è fondamentale per la creazione di un dataset di addestramento sufficientemente ricco per il Metodo 2, come indicato dalla metodologia di selezione dei noise model proposta in letteratura \cite{epjqt_noise2024}.
-
-    \item \textbf{Raccolta e archiviazione degli output.}
-    Il sistema registra la distribuzione di misura del registro di controllo per ogni esecuzione e la archivia in formato strutturato, garantendo la riproducibilità degli esperimenti tramite seed fisso per il generatore di numeri casuali di Qiskit Aer.
-
-    \item \textbf{Analisi statistica del Metodo 1.}
-    Il sistema implementa la pipeline del Metodo 1: identificazione dei picchi della distribuzione tramite filtraggio a soglia, stima del periodo $r$ tramite frazioni continue, verifica della correttezza dei fattori estratti. Misura e registra il numero di iterazioni necessarie per raggiungere il primo risultato corretto.
-
-    \item \textbf{Training, validazione e inferenza del Metodo 2.}
-    Il sistema genera il dataset dal simulatore rumoroso, addestra il classificatore con divisione training/validation/test, ne valuta le metriche di accuratezza e lo utilizza in modalità inferenza: dopo ogni esecuzione del circuito, il classificatore decide se il risultato è corretto e, in caso affermativo, interrompe il processo.
-
-    \item \textbf{Confronto sistematico sui quattro use case.}
-    Entrambi i metodi vengono eseguiti sugli stessi quattro use case, nelle medesime condizioni di rumore, producendo metriche confrontabili secondo i criteri definiti nella Sezione~\ref{sec:metriche}.
-
-    \item \textbf{Riproducibilità.}
-    Tutti gli esperimenti sono riproducibili: seed fisso, parametri esplicitati, codice disponibile nel repository del progetto. Questo requisito è condizione necessaria per la validazione accademica dei risultati \cite{shor_hpec2023}.
-
-\end{enumerate}
-
-% -----------------------------------------------
-\section{Parametri di Input e Output}
-\label{sec:input_output}
-
-\subsection{Parametri di Input}
-
-La Tabella~\ref{tab:input_params} elenca i parametri di configurazione del sistema. I loro valori vengono fissati per ciascun use case prima dell'esecuzione e rimangono costanti per tutta la durata dell'esperimento corrispondente.
-
-\begin{table}[H]
-\centering
-\begin{tabular}{@{}lll@{}}
-\toprule
-\textbf{Parametro}  & \textbf{Unità} & \textbf{Descrizione} \\
-\midrule
-$N$                 & intero         & Numero da fattorizzare \\
-$a$                 & intero         & Base della moltiplicazione modulare ($\gcd(a,N)=1$) \\
-$n_{\text{count}}$  & intero         & Qubit del registro di controllo \\
-$M_{\text{shots}}$  & intero         & Shot per esecuzione del simulatore \\
-$\epsilon_{1q}$     & adimensionale  & Tasso di errore depolarizzante su gate a 1 qubit \\
-$\epsilon_{2q}$     & adimensionale  & Tasso di errore depolarizzante su gate a 2 qubit \\
-$T_1$               & ns             & Tempo di rilassamento (amplitude damping) \\
-$T_2$               & ns             & Tempo di dephasing \\
-$p_{\text{ro}}$     & adimensionale  & Probabilità di readout error \\
-\bottomrule
-\end{tabular}
-\caption{Parametri di input del sistema sperimentale. I valori di $\epsilon_{1q}$, $\epsilon_{2q}$, $T_1$, $T_2$ e $p_{\text{ro}}$ definiscono il noise model e vengono variati tra i use case per coprire scenari di rumore diversi.}
-\label{tab:input_params}
-\end{table}
-
-\subsection{Output del Sistema}
-
-Per ogni use case e per ciascuno dei due metodi, il sistema produce le seguenti quantità:
-
-\begin{itemize}
-    \item I fattori trovati $p$ e $q$ tali che $p \cdot q = N$, con verifica esplicita della correttezza ($p \neq 1$, $q \neq 1$, $p \cdot q = N$);
-    \item Il numero di iterazioni necessarie per il primo risultato corretto;
-    \item La distribuzione di frequenza completa degli output del registro di controllo su $M_{\text{shots}}$ esecuzioni;
-    \item Le metriche di confronto tra i due metodi definite nella Sezione~\ref{sec:metriche}.
-\end{itemize}
-
-Per il solo Metodo 2, vengono prodotte in aggiunta:
-\begin{itemize}
-    \item L'accuratezza del classificatore e il punteggio F1 sul test set;
-    \item La curva ROC con l'area sottostante (\ac{AUC}).
-\end{itemize}
-
+I \textbf{requisiti funzionali} del sistema sperimentale e la specifica completa dei \textbf{parametri di input e output} sono formalizzati nell'Appendice~\ref{app:obiettivi} (Sez.~\ref{sec:requisiti} e Sez.~\ref{sec:input_output}): esecuzione configurabile del circuito di Shor, noise model parametrizzabile, raccolta riproducibile degli output e le pipeline dei due metodi. I quattro use case e le metriche di valutazione, che costituiscono il nucleo del contratto sperimentale, sono definiti qui di seguito.
 % -----------------------------------------------
 \section{I Quattro Use Case}
 \label{sec:use_case}

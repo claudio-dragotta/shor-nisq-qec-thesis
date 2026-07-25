@@ -8,180 +8,7 @@ Parallelamente al problema fisico dell'hardware, esiste una barriera di natura p
 
 È in questo contesto che nasce il \textbf{calcolo quantistico}: la visione radicale che i principi della meccanica quantistica -- \textit{sovrapposizione}, \textit{entanglement} e \textit{interferenza} -- possano essere sfruttati non come ostacoli da evitare, ma come risorse computazionali di straordinaria potenza. L'intuizione originale fu di Richard Feynman\footnote{\textbf{Richard Phillips Feynman} (1918--1988), fisico teorico statunitense, Premio Nobel per la Fisica nel 1965. Nel suo celebre articolo del 1982 \textit{``Simulating Physics with Computers''} \cite{feynman1982}, Feynman argomentò che un computer classico non può simulare efficientemente un sistema quantistico senza un overhead esponenziale, e propose che un ``computer quantistico'' -- uno che segua le leggi della meccanica quantistica -- potrebbe farlo in modo naturalmente efficiente.}, che nel 1982 osservò come la simulazione di sistemi quantistici richiedesse risorse esponenziali su macchine classiche, e propose che un computer basato sugli stessi principi fisici potesse simulare la natura stessa in modo efficiente \cite{feynman1982}. David Deutsch formalizzò nel 1985 il primo modello teorico rigoroso di computer quantistico universale \cite{deutsch1985}, aprendo la strada a un nuovo paradigma computazionale.
 
-% -----------------------------------------------
-\section{Dal Bit al Qubit: i Principi Fisici del Calcolo Quantistico}
-
-Per comprendere appieno le potenzialità e i limiti del calcolo quantistico, è necessario esaminare le differenze fisiche fondamentali tra l'unità di informazione classica e quella quantistica.
-
-\subsection{Il Qubit e la Sovrapposizione}
-
-Un computer classico elabora l'informazione attraverso \textbf{bit} -- unità fisiche che possono trovarsi in uno di due stati discreti, convenzionalmente 0 e 1, realizzati come livelli di tensione in circuiti elettronici. L'unità fondamentale del calcolo quantistico è invece il \textbf{qubit} (\textit{quantum bit}): un sistema fisico a due livelli che obbedisce alle leggi della meccanica quantistica.
-
-Matematicamente, lo stato di un qubit è descritto da un vettore nello spazio di Hilbert $\mathcal{H} \cong \mathbb{C}^2$:
-\begin{equation}
-    \ket{\psi} = \alpha\ket{0} + \beta\ket{1}, \qquad \alpha,\beta \in \mathbb{C}, \quad |\alpha|^2 + |\beta|^2 = 1
-    \label{eq:qubit_state}
-\end{equation}
-dove $\ket{0}$ e $\ket{1}$ sono i due stati della base computazionale, analoghi ai valori 0 e 1 del bit classico. La differenza fondamentale è che $\alpha$ e $\beta$ possono essere simultaneamente diversi da zero: il qubit si trova in una \textbf{sovrapposizione} dei due stati base, con probabilità $|\alpha|^2$ di essere misurato in $\ket{0}$ e probabilità $|\beta|^2$ di essere misurato in $\ket{1}$.
-
-È cruciale sottolineare che la sovrapposizione non equivale a ignoranza sullo stato del sistema: il qubit non è ``segretamente'' in uno stato definito che non conosciamo. Si tratta di una proprietà fisica genuina, verificata sperimentalmente con precisione straordinaria, che non ha analogo nella fisica classica.
-
-\subsection{La Sfera di Bloch}
-
-Poiché la norma è unitaria e la fase globale è fisicamente irrilevante, lo stato di un qubit puro può essere parametrizzato da soli due angoli reali:
-\begin{equation}
-    \ket{\psi} = \cos\!\frac{\theta}{2}\ket{0} + e^{i\phi}\sin\!\frac{\theta}{2}\ket{1}, \qquad \theta \in [0,\pi],\quad \phi \in [0,2\pi)
-    \label{eq:bloch_parametrization}
-\end{equation}
-Questo definisce un punto sulla superficie di una sfera unitaria -- la \textbf{sfera di Bloch} -- dove il polo nord corrisponde a $\ket{0}$, il polo sud a $\ket{1}$, e i punti equatoriali a sovrapposizioni equiprobabili con fasi diverse. Questa rappresentazione geometrica è di grande utilità pratica: le operazioni su un singolo qubit corrispondono a \textbf{rotazioni rigide} della sfera di Bloch, e il rumore -- come si vedrà nel Capitolo~\ref{chap:rumore} -- corrisponde alla contrazione progressiva del vettore di Bloch verso il centro, fino a ridurlo a zero (stato completamente misto, massima incertezza).
-
-\subsection{L'Entanglement}
-
-Quando due o più qubit interagiscono tramite porte quantistiche opportune, possono formare stati \textbf{entangled}: stati del sistema composto che non possono essere scritti come prodotto tensoriale di stati individuali. Il prototipo è lo stato di Bell:
-\begin{equation}
-    \ket{\Phi^+} = \frac{1}{\sqrt{2}}\bigl(\ket{00} + \ket{11}\bigr)
-    \label{eq:bell_state}
-\end{equation}
-In questo stato, misurare il primo qubit in $\ket{0}$ collassa istantaneamente il secondo in $\ket{0}$, e viceversa per $\ket{1}$, indipendentemente dalla distanza fisica tra i due qubit. L'entanglement crea correlazioni impossibili da replicare con qualunque modello classico a variabili nascoste locali, come dimostrato teoricamente da Bell nel 1964 \cite{bell1964} e verificato sperimentalmente con crescente precisione negli anni successivi \cite{aspect1982}. Nel contesto del calcolo quantistico, l'entanglement è la risorsa che permette agli algoritmi di elaborare esponenzialmente più informazione rispetto ai circuiti classici: un registro di $n$ qubit entangled descrive uno stato nello spazio $\mathbb{C}^{2^n}$, inaccessibile a qualunque rappresentazione classica di dimensione polinomiale in $n$.
-
-\subsection{L'Interferenza Quantistica}
-
-Il terzo pilastro del calcolo quantistico è l'\textbf{interferenza}: la capacità di far sommare costruttivamente o annullare distruttivamente le ampiezze di probabilità di percorsi computazionali diversi. Le ampiezze $\alpha$ e $\beta$ in \eqref{eq:qubit_state} sono numeri complessi, e possono quindi avere segni opposti o sfasamenti arbitrari: quando si sommano, possono amplificarsi o cancellarsi esattamente come onde fisiche.
-
-Un algoritmo quantistico ben progettato sfrutta sistematicamente questo meccanismo: attraverso una sequenza opportuna di porte quantistiche, si costruisce un'interferenza \textit{costruttiva} sui percorsi che portano alla risposta corretta e \textit{distruttiva} su quelli errati, concentrando la probabilità di misura sull'output desiderato. È esattamente questo il meccanismo alla base della ricerca quadraticamente accelerata di Grover e della fattorizzazione polinomiale di Shor.
-
-\subsection{Implementazione Fisica: i Qubit Superconduttori di IBM}
-
-Un qubit può essere realizzato con qualunque sistema fisico a due livelli: la polarizzazione di un fotone, lo spin di un elettrone, i livelli energetici di un atomo intrappolato. I \textbf{qubit superconduttori} utilizzati da IBM -- la piattaforma adottata nel presente lavoro -- sono circuiti elettrici macroscopici che operano nel regime quantistico grazie al raffreddamento a temperature criogeniche estreme.
-
-Il componente chiave è la \textbf{giunzione di Josephson} \cite{josephson1962}: una sottile barriera isolante (spessa $\sim 1$--$2\,$nm) interposta tra due materiali superconduttori. Questo elemento introduce una non-linearità nell'energia del circuito che rompe la degenerazione dei livelli energetici, isolando i due stati computazionali $\ket{0}$ e $\ket{1}$ da tutti gli altri. Il risultato è il \textbf{transmon} \cite{koch2007} -- il tipo di qubit superconduttore adottato da IBM -- un oscillatore anelastico con frequenza tipica $4$--$6\,$GHz, controllato da impulsi a microonde.
-
-Per operare nel regime quantistico, questi circuiti devono essere raffreddati a temperature dell'ordine di $15\,\text{mK}$ ($-273.13\,°$C), più fredde dello spazio cosmico a $2.7\,\text{K}$, tramite refrigeratori a diluizione. A queste temperature la resistenza elettrica scompare per effetto della superconduttività, eliminando la dissipazione termica che causerebbe la distruzione dello stato quantistico. 
-\clearpage
-I parametri operativi tipici dei processori IBM (serie Eagle, Heron) sono:
-
-\begin{itemize}
-    \item \textbf{Temperatura operativa}: $\sim 15\,\text{mK}$
-    \item \textbf{Tempi di coerenza}: $T_1, T_2 \sim 50$--$500\,\mu$s
-    \item \textbf{Durata gate a singolo qubit}: $\sim 50\,\text{ns}$
-    \item \textbf{Durata gate a due qubit (ECR/CNOT)}: $\sim 300$--$500\,\text{ns}$
-    \item \textbf{Fedeltà gate a singolo qubit}: $\sim 99.9$--$99.97\%$
-    \item \textbf{Fedeltà gate a due qubit}: $\sim 99$--$99.7\%$
-\end{itemize}
-
-Il rapporto tra il tempo di coerenza e la durata di un gate determina quante operazioni possono essere eseguite prima che il qubit perda il proprio stato quantistico -- ed è proprio questo rapporto il principale collo di bottiglia per l'esecuzione di algoritmi profondi come Shor sui processori attuali.
-
-% -----------------------------------------------
-\section{La Rivoluzione Algoritmica degli Anni Novanta}
-
-Negli anni successivi alla proposta di Deutsch, la comunità scientifica si interrogò sulla effettiva esistenza di problemi che un computer quantistico potesse risolvere in modo \textit{probabilmente} più efficiente di qualunque macchina classica. La risposta arrivò in forma dirompente nel corso di pochi anni.
-
-Nel 1992, Daniel Simon\footnote{L'\textbf{algoritmo di Simon} (1994, pubblicato nel 1997) fu il primo a dimostrare uno speedup \textit{esponenziale} rispetto a qualunque algoritmo classico probabilistico, stabilendo la prova di principio che i computer quantistici potessero essere genuinamente più potenti. Shor riconobbe che la sua tecnica si ispirava direttamente alle idee di Simon.} identificò un problema artificiale per il quale un algoritmo quantistico era esponenzialmente più veloce di qualunque algoritmo classico. Questo risultato rimase per alcuni anni una curiosità teorica, fino a quando, nel \textbf{1994}, Peter Shor pubblicò un risultato che scosse le fondamenta della sicurezza informatica mondiale: un algoritmo quantistico in grado di fattorizzare un intero di $n$ bit in tempo \textit{polinomiale} $O(n^3)$ \cite{shor1994}, a fronte della complessità sub-esponenziale ma super-polinomiale dei migliori algoritmi classici noti. Le implicazioni furono immediate e devastanti: l'intero edificio della crittografia a chiave pubblica -- \ac{RSA}, Diffie-Hellman, le firme digitali \ac{ECDSA} -- si fondava proprio sull'assunzione che la fattorizzazione fosse computazionalmente intrattabile. Un computer quantistico sufficientemente grande avrebbe reso obsoleta, in un solo colpo, l'intera infrastruttura crittografica su cui poggia Internet.
-
-Due anni dopo, nel \textbf{1996}, Lov Grover presentò un algoritmo di tutt'altra natura, ma di eguale importanza \cite{grover1996}. Mentre Shor aveva risolto un problema specifico della teoria dei numeri, Grover affrontò una sfida universale: la \textbf{ricerca non strutturata}. Dato un insieme di $N$ elementi senza alcuna struttura o ordinamento, trovare quello che soddisfa una certa proprietà richiede, nel caso classico, un numero di interrogazioni proporzionale a $N$. Grover dimostrò che un algoritmo quantistico può fare lo stesso lavoro in sole $O(\sqrt{N})$ interrogazioni -- uno \textit{speedup quadratico} -- e che questo risultato è \textit{ottimale}: nessun algoritmo quantistico può fare di meglio \cite{zalka1999}. Sebbene meno spettacolare dello speedup esponenziale di Shor, il vantaggio di Grover è universale, applicabile a qualunque problema di ricerca, e porta con sé implicazioni profonde per la crittografia simmetrica, l'ottimizzazione combinatoria e la ricerca in grandi basi di dati.
-
-Questi due algoritmi -- Shor e Grover -- rappresentano ancora oggi i pilastri dell'informatica algoritmica quantistica: il primo come dimostrazione del potere \textit{esponenziale} del calcolo quantistico su problemi strutturati, il secondo come strumento \textit{universale} di accelerazione quadratica applicabile al problema computazionale più fondamentale.
-
-% -----------------------------------------------
-\section{RSA e le Implicazioni Crittografiche dell'Algoritmo di Shor}
-
-Per comprendere appieno la portata rivoluzionaria dell'algoritmo di Shor è necessario esaminare la struttura matematica del sistema crittografico che esso minaccia. Il sistema \textbf{RSA}, proposto nel 1977 da Rivest, Shamir e Adleman \cite{rsa1978}, è la pietra angolare della crittografia a chiave pubblica e il fondamento di praticamente ogni protocollo sicuro su Internet.
-
-\subsection{Struttura del Protocollo RSA}
-
-La sicurezza di RSA si basa sulla \textbf{asimmetria computazionale} tra due operazioni inverse: moltiplicare due numeri primi grandi $p$ e $q$ per ottenere $N = p \cdot q$ è un'operazione elementare (complessità $O(n^2)$ per numeri a $n$ bit), mentre fattorizzare $N$ per recuperare $p$ e $q$ è computazionalmente intrattabile con gli algoritmi classici noti. La generazione delle chiavi segue i passi seguenti:
-
-\begin{enumerate}
-    \item Scegliere due primi grandi $p$ e $q$ (tipicamente a 1024--2048 bit ciascuno) e calcolare $N = p \cdot q$;
-    \item Calcolare la funzione di Eulero $\phi(N) = (p-1)(q-1)$;
-    \item Scegliere $e$ coprimo con $\phi(N)$ (convenzionalmente $e = 65537 = 2^{16}+1$, primo di Fermat);
-    \item Calcolare $d \equiv e^{-1} \pmod{\phi(N)}$ tramite l'algoritmo di Euclide esteso.
-\end{enumerate}
-
-La \textbf{chiave pubblica} è la coppia $(N,\, e)$; la \textbf{chiave privata} è $d$. Cifrare un messaggio $m < N$ produce il crittogramma $c = m^e \bmod N$; decifrarlo richiede $m = c^d \bmod N$. La correttezza si fonda sul piccolo teorema di Fermat: $(m^e)^d = m^{ed} \equiv m \pmod{N}$ poiché $ed \equiv 1 \pmod{\phi(N)}$. Tutta la sicurezza risiede nell'impossibilità di calcolare $d$ da $(N, e)$ senza conoscere la fattorizzazione di $N$.
-
-\subsection{Perché l'Algoritmo di Shor Rompe RSA}
-
-Il miglior algoritmo classico per la fattorizzazione di un intero a $n$ bit è il \textit{General Number Field Sieve} (GNFS) \cite{lenstra1993gnfs}, con complessità sub-esponenziale:
-\begin{equation}
-    T_{\text{GNFS}}(N) = O\!\left(\exp\!\left[c\cdot(\log N)^{1/3}(\log\log N)^{2/3}\right]\right)
-    \label{eq:gnfs_complexity_intro}
-\end{equation}
-Per $N$ a 2048 bit, questa espressione implica circa $2^{112}$ operazioni classiche -- un numero astronomico, ben oltre la capacità di qualunque infrastruttura computazionale esistente o prevedibile in ambito classico. I migliori risultati pratici al 2020 hanno raggiunto la fattorizzazione di RSA-250 (829 bit) \cite{rsa250_2020}, impiegando circa 2700 anni-CPU di calcolo distribuito.
-
-L'algoritmo di Shor riduce questa complessità a $O(n^3)$ -- un salto da sub-esponenziale a \textbf{polinomiale} -- rendendo la fattorizzazione di chiavi RSA-2048 un problema risolvibile in ore su un computer quantistico fault-tolerant con qualche migliaio di qubit logici. La struttura dell'algoritmo, descritta in dettaglio nel Capitolo~\ref{chap:shor}, sfrutta la Quantum Fourier Transform per trovare il periodo di una funzione modulare, problema che si riduce efficientemente alla fattorizzazione.
-
-\clearpage
-\subsection{Implicazioni Pratiche per la Sicurezza Informatica}
-
-Le conseguenze sono sistemiche. RSA-2048 e le sue varianti sono il fondamento di:
-
-\begin{itemize}
-    \item \textbf{HTTPS e TLS}: proteggono oltre il 95\% del traffico web mondiale, incluse operazioni bancarie, sanitarie e governative;
-    \item \textbf{Certificati X.509}: l'infrastruttura a chiave pubblica (PKI) su cui si basa l'autenticità di ogni sito web;
-    \item \textbf{SSH}: il protocollo standard per l'accesso remoto sicuro ai server;
-    \item \textbf{Firme digitali}: documenti legali, transazioni finanziarie, aggiornamenti software firmati.
-\end{itemize}
-
-Un computer quantistico scalabile renderebbe retroattivamente vulnerabili anche le comunicazioni \textit{storicamente registrate}, attraverso il cosiddetto attacco \textit{``harvest now, decrypt later''} (HNDL): avversari statali raccolgono oggi grandi volumi di traffico cifrato con RSA, conservandoli in attesa di poterli decifrare quando l'hardware quantistico raggiungerà la scala necessaria. Questo scenario non è teorico: rapporti di intelligence statunitensi e cinesi documentano campagne di raccolta massiva di traffico cifrato attive da almeno un decennio. Stime dell'NSA e del \ac{NIST} indicano che chiavi RSA-2048 potrebbero diventare vulnerabili entro il 2030--2035 con il proseguire dell'avanzamento tecnologico quantistico \cite{nsa_cnsa2022}.
-
-\clearpage
-\section{Crittografia Post-Quantistica: la Risposta dell'Industria}
-
-La consapevolezza della minaccia quantistica ha spinto il \ac{NIST} a lanciare nel 2016 un processo di standardizzazione internazionale per la \textbf{crittografia post-quantistica} (\ac{PQC}) -- algoritmi crittografici resistenti agli attacchi di computer quantistici, progettati per essere eseguiti su hardware classico convenzionale e quindi immediatamente distribuibili.
-
-\subsection{Gli Standard NIST 2024}
-
-Dopo otto anni di valutazione pubblica, crittoanalisi internazionale e tre successivi turni di selezione tra 69 candidati iniziali, nel luglio 2024 il NIST ha pubblicato i primi tre standard definitivi \cite{nist2024pqc}:
-
-\begin{itemize}
-    \item \textbf{ML-KEM} (FIPS 203, ex CRYSTALS-Kyber): meccanismo di incapsulamento di chiavi basato sul problema \textit{Module Learning With Errors} (MLWE) su reticoli. È il sostituto designato per lo scambio di chiavi RSA e Diffie-Hellman nei protocolli TLS;
-
-    \item \textbf{ML-DSA} (FIPS 204, ex CRYSTALS-Dilithium): schema di firma digitale basato sullo stesso fondamento matematico di ML-KEM. Sostituisce RSA e ECDSA per le firme digitali;
-
-    \item \textbf{SLH-DSA} (FIPS 205, ex SPHINCS+): schema di firma basato esclusivamente su funzioni hash, senza assunzioni algebriche. Più conservativo per sicurezza, adottato come backup contro potenziali attacchi futuri ai reticoli.
-\end{itemize}
-
-La sicurezza di questi schemi si fonda su problemi matematici -- trovare vettori corti in reticoli ad alta dimensione, o invertire funzioni hash -- per i quali non sono noti algoritmi quantistici con speedup esponenziale. In particolare, l'algoritmo di Grover fornisce al più uno speedup quadratico sui problemi basati su hash, motivando l'aumento dei parametri di sicurezza (es. passaggio da 128 a 256 bit di sicurezza classica equivalente).
-
-\subsection{La Sfida della Migrazione}
-
-La transizione verso la crittografia post-quantistica è un'operazione di ingegneria su scala globale, paragonabile per complessità alla migrazione da IPv4 a IPv6, ma con urgenza maggiore. Le principali sfide includono:
-
-\begin{itemize}
-    \item \textbf{Eterogeneità dei sistemi}: miliardi di dispositivi embedded, sensori industriali e infrastrutture legacy con cicli di vita decennali che non riceveranno aggiornamenti software;
-    \item \textbf{Overhead computazionale}: le chiavi ML-KEM sono significativamente più grandi delle chiavi RSA (768 byte vs. 256 byte per sicurezza a 128 bit), con impatto su protocolli a bassa latenza;
-    \item \textbf{Migrazione a doppio binario}: nella fase transitoria, molte implementazioni adottano schemi \textit{ibridi} (classico + post-quantistico in parallelo) per mantenere compatibilità con sistemi non aggiornati.
-\end{itemize}
-
-Aziende come Google (Chrome 131), Apple (iMessage PQ3) \cite{apple_pq3_2024} e Cloudflare hanno già avviato implementazioni ibride nei loro protocolli di produzione. La coesistenza di questa transizione con la ricerca attiva su algoritmi quantistici come Shor definisce il contesto strategico in cui si inserisce il presente lavoro: comprendere i limiti reali di Shor su hardware NISQ è rilevante non solo teoricamente, ma anche per calibrare con maggiore precisione le tempistiche e le priorità della transizione crittografica globale.
-
-\clearpage
-\section{Lo Stato dell'Arte: dall'Era NISQ ai Computer Fault-Tolerant}
-
-Nonostante la solidità teorica di questi risultati, la realizzazione pratica di computer quantistici di scala sufficiente ad eseguirli su istanze realmente significative incontra ostacoli formidabili. I sistemi quantistici fisici sono intrinsecamente fragili: qualunque interazione non controllata con l'ambiente esterno -- vibrazioni termiche, campi elettromagnetici, imperfezioni nei materiali -- provoca fenomeni di \textbf{decoerenza} -- ossia la perdita progressiva della coerenza quantistica causata dall'entanglement indesiderato tra il qubit e i gradi di libertà ambientali, che sopprime le interferenze quantistiche riducendo il sistema a una miscela statistica classica -- degradando lo stato quantistico in modo irreversibile prima che il calcolo possa completarsi. A differenza di un bit classico, che può essere protetto dalla ridondanza, un qubit non può essere copiato (teorema del no-cloning \cite{wootters1982}) né letto senza distruggerlo: questo rende la correzione degli errori quantistici un problema radicalmente diverso e molto più complesso di quella classica.
-
-Il panorama tecnologico attuale è dominato da un insieme variegato di piattaforme hardware in competizione, ciascuna con vantaggi e svantaggi distinti:
-
-\begin{itemize}
-    \item \textbf{Qubit superconduttori} (IBM, Google, Rigetti): alta velocità dei gate ($\sim 50$--$500\,$ns), scalabilità su chip in silicio, ma tempi di coerenza limitati a $\sim 100$--$500\,\mu$s e necessità di raffreddamento a $15\,\text{mK}$;
-    \item \textbf{Ioni intrappolati} (IonQ, Quantinuum): tempi di coerenza eccellenti ($>1\,$s), fedeltà dei gate superiore al $99.9\%$ anche su due qubit, ma gate lenti ($\sim 10$--$100\,\mu$s) e scalabilità più complessa;
-    \item \textbf{Fotoni} (PsiQuantum, Xanadu): operano a temperatura ambiente, naturalmente adatti alla comunicazione quantistica, ma la generazione deterministica di fotoni entangled rimane una sfida aperta;
-    \item \textbf{Spin in silicio} (Intel, UNSW): compatibili con i processi di fabbricazione CMOS esistenti, potenzialmente scalabili a milioni di qubit, ma con tecnologia di controllo ancora in fase di sviluppo.
-\end{itemize}
-
-Un momento simbolico di questa corsa fu raggiunto nel \textbf{2019}, quando il team di Google rivendicò il raggiungimento della cosiddetta \textit{quantum supremacy}\footnote{Il termine \textit{quantum supremacy}, coniato da John Preskill nel 2012, indica il punto in cui un computer quantistico esegue un calcolo specifico in un tempo che nessun supercomputer classico potrebbe eguagliare in modo pratico. La rivendicazione di Google con il processore Sycamore è rimasta controversa: IBM sostenne che il calcolo avrebbe potuto essere eseguito classicamente in 2.5 giorni anziché 10.000 anni, con un algoritmo migliorato. Questo dibattito evidenzia la difficoltà di definire e misurare il vantaggio quantistico.} con il processore Sycamore a 53 qubit \cite{arute2019}: un calcolo specifico fu completato in 200 secondi, mentre le stime attribuivano al più potente supercomputer classico un tempo di circa 10.000 anni per lo stesso compito. Nel 2023, IBM ha presentato il processore \textit{Condor} a 1.121 qubit e ha delineato una roadmap \cite{ibm_roadmap2025} verso sistemi con architettura fault-tolerant entro la fine del decennio, con il target \textit{Quantum Starling} previsto per il 2029.
-
-Tuttavia, la distanza tra i dispositivi attuali e un computer quantistico \textit{fault-tolerant} -- in grado di eseguire Shor su istanze RSA reali -- è ancora enorme. I processori odierni operano nel regime cosiddetto \ac{NISQ}, un termine coniato da John Preskill nel 2018 \cite{preskill2018} per descrivere macchine con decine o centinaia di qubit fisici, affette da errori significativi che limitano la profondità dei circuiti eseguibili. In questo scenario, la ricerca si concentra su due direzioni parallele e complementari:
-
-\begin{itemize}
-    \item \textbf{\ac{QEC}}: tecniche per codificare qubit logici in qubit fisici ridondanti, in modo da rilevare e correggere gli errori durante il calcolo, a costo di un overhead fisico significativo (centinaia o migliaia di qubit fisici per qubit logico);
-
-    \item \textbf{Noise mitigation}: tecniche che, senza richiedere overhead hardware, riducono l'effetto del rumore a livello di post-processing classico, estendendo la portata dei circuiti eseguibili su hardware NISQ.
-\end{itemize}
-
-\clearpage
-
+I principi fisici che rendono possibile questo paradigma --- il qubit e la sovrapposizione, la sfera di Bloch, l'entanglement e l'interferenza --- insieme alla loro realizzazione sui qubit superconduttori di IBM, sono ripresi nell'Appendice~\ref{app:introduzione} (Sez.~\ref{app:intro:qubit}); la trattazione formale completa è nel Capitolo~\ref{chap:fondamenti}. La rivoluzione algoritmica degli anni Novanta --- da Simon fino all'algoritmo di Shor (1994) e a quello di Grover (1996) --- è ripercorsa nella Sez.~\ref{app:intro:algoritmi}. La portata dirompente di Shor si misura sulla crittografia che minaccia: la struttura del protocollo RSA e il motivo per cui Shor lo rompe (Sez.~\ref{app:intro:rsa}), la risposta della crittografia post-quantistica con gli standard NIST 2024 (Sez.~\ref{app:intro:pqc}) e lo stato dell'arte dell'hardware dall'era NISQ verso i sistemi fault-tolerant (Sez.~\ref{app:intro:nisq}) delineano il contesto strategico in cui si colloca questo lavoro: comprendere i limiti reali dell'algoritmo di Shor su hardware rumoroso.
 % -----------------------------------------------
 \section{Motivazione e Contributo del Presente Lavoro}
 
@@ -204,41 +31,52 @@ L'elaborato si sviluppa dalle fondamenta teoriche del calcolo quantistico, attra
 %   controlla se la sua descrizione qui è ancora accurata.
 \section{Struttura della Tesi}
 
-L'elaborato è organizzato in quattordici capitoli, più un'appendice sperimentale. Il Capitolo~2 svolge una funzione trasversale di raccordo tra teoria e pratica; i Capitoli~3--6 costituiscono la parte teorica; i Capitoli~7--14 la parte sperimentale.
+L'elaborato è organizzato in quattordici capitoli, seguiti da sei appendici (A--F) che raccolgono il contesto esteso e il materiale di dettaglio richiamati in forma sintetica nel corpo. Il Capitolo~2 svolge una funzione trasversale di raccordo tra teoria e pratica; i Capitoli~3--6 costituiscono la parte teorica; i Capitoli~7--14 la parte sperimentale.
 
 \medskip
-Il \textbf{Capitolo~\ref{chap:obiettivi}} (\textit{Obiettivi e Piano Sperimentale}) ha una funzione duplice: motiva il lavoro mostrando perché i sistemi crittografici attuali siano strutturalmente vulnerabili all'algoritmo di Shor --- attraverso il confronto diretto tra la complessità del \ac{GNFS} e quella polinomiale di Shor --- e stabilisce il contratto sperimentale completo: obiettivi, ipotesi di ricerca (in particolare $\rho = \bar{M}_1/\bar{M}_2 \gg 1$), contributo originale, requisiti funzionali, parametri dei quattro use case e metriche di valutazione.
+Il \textbf{Capitolo~\ref{chap:obiettivi}} (\textit{Obiettivi e Piano Sperimentale}) motiva la vulnerabilità di RSA all'algoritmo di Shor e fissa il contratto sperimentale: obiettivi, ipotesi di ricerca, contributo, use case e metriche.
 
 \medskip
 \textbf{Parte teorica (Capitoli 3--6).}
 
-Il \textbf{Capitolo~\ref{chap:fondamenti}} (\textit{Fondamenti del Calcolo Quantistico}) introduce il formalismo dei qubit, la sovrapposizione, le porte logiche quantistiche e il modello a circuiti. Una sezione dedicata tratta l'entanglement come \textit{risorsa fisica fragile}: l'interazione con l'ambiente trasferisce l'entanglement computazionale verso gradi di libertà esterni, distruggendo la coerenza di fase nel tempo caratteristico $T_2$, anticipando così la trattazione del rumore nel Capitolo~\ref{chap:rumore}.
+Il \textbf{Capitolo~\ref{chap:fondamenti}} (\textit{Fondamenti del Calcolo Quantistico}) richiama qubit, sovrapposizione, porte e circuiti, e l'entanglement come \textit{risorsa fisica fragile} che anticipa la trattazione del rumore.
 
-Il \textbf{Capitolo~\ref{chap:shor}} (\textit{L'Algoritmo di Shor}) presenta la riduzione della fattorizzazione al \textit{period finding}, la Quantum Phase Estimation e la complessità polinomiale $O((\log N)^3)$. Una sezione dedicata esplicita il ruolo dell'entanglement: dopo la moltiplicazione modulare controllata i due registri formano uno stato non separabile la cui correlazione bidirezionale --- analoga agli stati di Bell --- trasferisce la periodicità di $f(x) = a^x \bmod N$ verso il registro di controllo, dove la QFT$^{-1}$ la rende misurabile. Il capitolo discute inoltre le implicazioni per RSA e la transizione verso gli standard post-quantum del NIST.
+Il \textbf{Capitolo~\ref{chap:shor}} (\textit{L'Algoritmo di Shor}) presenta la riduzione al \textit{period finding}, la Quantum Phase Estimation e la complessità polinomiale $O((\log N)^3)$, con le implicazioni per RSA e la transizione post-quantum.
 
-Il \textbf{Capitolo~\ref{chap:rumore}} (\textit{Rumore Quantistico nei Sistemi NISQ}) parte dall'anatomia fisica di una \ac{QPU} --- il chip criogenico che contiene solo i qubit, i gate realizzati come impulsi a microonde dall'elettronica esterna, la lettura che distrugge fisicamente lo stato, il ``bordo di coerenza'' e il ruolo della topologia --- per poi analizzare le quattro fonti fisiche di degrado (decoerenza $T_1$/$T_2$, errori di gate, readout errors e crosstalk) e formalizzarle tramite i quattro canali matematici fondamentali (bit flip, phase flip, depolarizzante, amplitude damping). Esplicita il legame tra $T_2$ e la perdita dell'entanglement tra i registri di Shor, localizza le quattro fonti sulle fasi dell'algoritmo, e quantifica come la probabilità di successo crolli al $3.4\%$ già per $N=15$ su hardware NISQ.
+Il \textbf{Capitolo~\ref{chap:rumore}} (\textit{Rumore Quantistico nei Sistemi NISQ}) analizza le quattro fonti fisiche di errore e i canali di rumore fondamentali, fino al crollo della probabilità di successo (${\sim}3.4\%$) già per $N=15$.
 
-Il \textbf{Capitolo~\ref{chap:strategie}} (\textit{Strategie per la Riduzione del Rumore Quantistico}) descrive e confronta le quattro macro-strategie di mitigazione del rumore nell'era NISQ, approfondisce la Correzione degli Errori Quantistici --- dai codici stabilizzatori al surface code --- inquadrandola come sottocategoria del Quantum Machine Learning, e motiva la scelta di quest'ultimo come approccio adottato in questa tesi.
+Il \textbf{Capitolo~\ref{chap:strategie}} (\textit{Strategie per la Riduzione del Rumore Quantistico}) confronta le quattro macro-strategie anti-rumore nell'era NISQ e motiva l'approccio adottato.
 
 \medskip
 \textbf{Parte sperimentale (Capitoli 7--14).}
 
-Il \textbf{Capitolo~\ref{chap:strumenti}} (\textit{Strumenti e Ambiente di Simulazione}) descrive il framework Qiskit e il simulatore Qiskit Aer con accelerazione GPU, illustra la costruzione del noise model parametrizzato e la procedura di transpilazione dei circuiti.
+Il \textbf{Capitolo~\ref{chap:strumenti}} (\textit{Strumenti e Ambiente di Simulazione}) descrive Qiskit, il simulatore Aer con GPU, il noise model parametrizzato e la transpilazione.
 
-Il \textbf{Capitolo~\ref{chap:metodologia}} (\textit{Metodologia e Architettura}) descrive la pipeline sperimentale a tre stadi (circuito ideale, simulatore rumoroso, analisi con Metodo 1 e Metodo 2) e motiva le scelte architetturali. Una sezione dedicata analizza operativamente le tecniche di mitigazione del rumore disponibili --- transpilazione e decomposizione Beauregard, readout mitigation, \ac{ZNE} --- e riporta i risultati di una campagna di sensibilità sperimentale su tutti i parametri del noise model: $\varepsilon_{2q}$ emerge come unico parametro dominante per $N=15$, mentre $T_1/T_2$, $\varepsilon_{1q}$, $p_{\text{ro}}$ e il livello di ottimizzazione della traspilazione risultano privi di effetto misurabile, motivando empiricamente la scelta della strategia TOP-K come meccanismo di mitigazione principale.
+Il \textbf{Capitolo~\ref{chap:metodologia}} (\textit{Metodologia e Architettura}) presenta la pipeline sperimentale a tre stadi, le tecniche di mitigazione del rumore e i due metodi confrontati.
 
-Il \textbf{Capitolo~\ref{chap:sviluppo}} (\textit{Sviluppo e Implementazione}) presenta il codice sviluppato: l'ambiente di simulazione WSL2 con \texttt{AerSimulator} in modalità statevector, l'implementazione della \ac{QFT} inversa, del circuito di Shor, del noise model parametrizzato e delle pipeline di entrambi i metodi, con particolare attenzione alla procedura di traspilazione critica (\texttt{optimization\_level=2} con noise model nel costruttore) necessaria per la corretta decomposizione delle porte Toffoli.
+Il \textbf{Capitolo~\ref{chap:sviluppo}} (\textit{Sviluppo e Implementazione}) descrive l'implementazione: ambiente WSL2, QFT inversa, circuito di Shor, noise model e pipeline dei due metodi.
 
-Il \textbf{Capitolo~\ref{chap:risultati}} (\textit{Verifica Sperimentale dell'Ipotesi Iniziale: dal Classificatore ML alla Strategia TOP-K}) è il ponte tra la parte teorica e il nucleo della tesi: mette alla prova l'ipotesi di partenza e ne documenta l'esito. Stabilisce la baseline del Metodo 1 sui quattro use case ($\bar{M}_1 = 6.43$ iterazioni per UC1, $\bar{M}_1 = 2.42$ per UC2; UC3 e UC4 inaccessibili per l'elevata profondità di circuito prodotta dalla decomposizione \texttt{UnitaryGate}) e isola il contributo del classificatore \ac{ML} tramite analisi di ablazione: il guadagno ($\rho = 6.44$ su UC1, $p = 0.0002$) è interamente attribuibile alla strategia di ricerca multi-candidato TOP-4, mentre il classificatore risulta statisticamente irrilevante su UC1 ($p = 0.849$) e controproducente su UC2. Quanto appurato --- l'\ac{ML} a valle dell'esecuzione non serve --- motiva il cambio di prospettiva del capitolo successivo; il dettaglio della campagna parametrica e del confronto con la Zero-Noise Extrapolation è riportato nell'Appendice~\ref{app:parametrica}.
+Il \textbf{Capitolo~\ref{chap:risultati}} (\textit{Verifica Sperimentale dell'Ipotesi Iniziale: dal Classificatore ML alla Strategia TOP-K}) stabilisce la baseline e, tramite analisi di ablazione, dimostra che il guadagno è della strategia TOP-4 e non del classificatore \ac{ML} --- il risultato che motiva il pivot alla QEC.
 
-Il \textbf{Capitolo~\ref{chap:qec}} (\textit{La Correzione d'Errore Quantistico: dal Codice a Ripetizione al Codice di Steane}) apre il nucleo della tesi. Presenta il ciclo completo della correzione --- codifica, stabilizzatori, sindrome, decoder, Pauli frame --- e lo mette alla prova in due laboratori a complessità crescente: il codice a ripetizione a 3 qubit, che introduce l'estrazione di sindrome nel caso più leggibile, e il codice di Steane $[[7,1,3]]$, primo codice capace di correggere un errore arbitrario su un singolo qubit, con verifica sistematica sindrome$\rightarrow$correzione per errori X, Z e Y su ciascuno dei sette qubit.
+Il \textbf{Capitolo~\ref{chap:qec}} (\textit{La Correzione d'Errore Quantistico: dal Codice a Ripetizione al Codice di Steane}) presenta il ciclo di correzione e lo verifica sul codice a ripetizione e sul codice di Steane $[[7,1,3]]$.
 
-Il \textbf{Capitolo~\ref{chap:surface}} (\textit{Il Surface Code e la Stima dell'Errore Logico}) estende la correzione al codice scalabile di riferimento industriale: descrive la griglia di qubit dati e di misura, i detection events e la decodifica \ac{MWPM}, e presenta l'esperimento centrale della parte \ac{QEC} --- le curve errore fisico $p$ contro errore logico $p_L$ per distanze $d = 3, 5, 7$, ottenute con i simulatori specializzati Stim e PyMatching, alla ricerca del comportamento di soglia. Una sezione conclusiva discute i limiti del modello di rumore Clifford-Pauli su cui questi simulatori si fondano --- che sottostima gli errori coerenti e il leakage --- con una verifica diretta del divario su scala trattabile e un confronto con l'approccio \textit{channel-first} della letteratura più recente.
+Il \textbf{Capitolo~\ref{chap:surface}} (\textit{Il Surface Code e la Stima dell'Errore Logico}) estende la correzione al surface code e ne misura sperimentalmente l'errore logico e la soglia con Stim e PyMatching.
 
-Il \textbf{Capitolo~\ref{chap:integrazione}} (\textit{Integrazione: lo Shor Logico e i Requisiti di Correzione}) chiude il cerchio tramite l'architettura a quattro livelli: il circuito di Shor viene eseguito con un errore logico residuo $p_L$ per gate --- il valore misurato al capitolo precedente, iniettato come modello efficace e non come simulazione fault-tolerant completa --- e la domanda conclusiva del lavoro (quale $p_L$ serve perché la probabilità di successo, eventualmente cumulata su poche esecuzioni indipendenti, superi l'80\%) viene tradotta in requisiti fisici di hardware, collocando i risultati nel contesto delle stime di risorse della letteratura per Shor fault-tolerant.
+Il \textbf{Capitolo~\ref{chap:integrazione}} (\textit{Integrazione: lo Shor Logico e i Requisiti di Correzione}) esegue lo Shor logico con l'errore residuo misurato e traduce il livello di correzione necessario in requisiti di hardware.
 
-Il \textbf{Capitolo~\ref{chap:sviluppi}} (\textit{Sviluppi Futuri}) delinea le direzioni di ricerca oltre il perimetro sperimentale della tesi: test su hardware reale, decomposizioni efficienti per la moltiplicazione modulare (approccio Beauregard), generalizzazione ad altri algoritmi NISQ, estrazione di sindrome fault-tolerant e reti neurali a supporto della decodifica.
+Il \textbf{Capitolo~\ref{chap:sviluppi}} (\textit{Sviluppi Futuri}) delinea le direzioni di ricerca oltre il perimetro sperimentale della tesi.
 
-L'\textbf{Appendice~\ref{app:parametrica}} (\textit{Campagna Parametrica Dettagliata e Confronto ZNE}) riporta integralmente le sette sweep parametriche su $M_{\text{TOP4}}$, con il confronto previsione--esito per ciascun parametro, e il dettaglio metodologico del confronto con la Zero-Noise Extrapolation.
+\medskip
+\textbf{Appendici.} L'\textbf{Appendice~\ref{app:parametrica}} (\textit{Campagna Parametrica Dettagliata e Confronto ZNE}) riporta integralmente le sette sweep parametriche su $M_{\text{TOP4}}$, con il confronto previsione--esito per ciascun parametro, e il dettaglio metodologico del confronto con la Zero-Noise Extrapolation.
+
+L'\textbf{Appendice~\ref{app:fondamenti}} (\textit{Fondamenti del Calcolo Quantistico --- Trattazione Estesa}) riporta per esteso i postulati della meccanica quantistica, l'insieme completo delle porte, le figure e il modello di complessità sintetizzati nel Capitolo~\ref{chap:fondamenti}.
+
+L'\textbf{Appendice~\ref{app:strumenti}} (\textit{Strumenti e Ambiente di Simulazione --- Trattazione Estesa}) motiva in dettaglio le scelte tecnologiche --- confronto tra framework, metodi di simulazione di Aer, specifiche GPU e ambiente WSL --- sintetizzate nel Capitolo~\ref{chap:strumenti}.
+
+L'\textbf{Appendice~\ref{app:introduzione}} (\textit{Contesto Esteso dell'Introduzione}) sviluppa i principi fisici del calcolo quantistico, la rivoluzione algoritmica degli anni Novanta, il protocollo RSA e la sua vulnerabilità, la crittografia post-quantistica e lo stato dell'arte dell'hardware quantistico.
+
+L'\textbf{Appendice~\ref{app:obiettivi}} (\textit{Dettaglio degli Obiettivi e del Piano Sperimentale}) raccoglie la motivazione crittografica estesa, i requisiti funzionali del sistema sperimentale e la specifica completa dei parametri di input e di output.
+
+L'\textbf{Appendice~\ref{app:classificatore}} (\textit{Il Classificatore ML: Architettura, Addestramento e Metriche}) riporta il dettaglio del classificatore valutato nella prima fase sperimentale --- le tre architetture confrontate, l'addestramento e le metriche di classificazione --- il cui verdetto operativo è discusso nel Capitolo~\ref{chap:risultati}.
 
 \end{onehalfspace}
