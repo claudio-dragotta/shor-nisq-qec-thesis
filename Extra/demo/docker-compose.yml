@@ -1,9 +1,0 @@
-services:
-  demo:
-    build:
-      context: ../..
-      dockerfile: Extra/demo/Dockerfile
-    ports:
-      - "8501:8501"
-    environment:
-      - PORT=8501
