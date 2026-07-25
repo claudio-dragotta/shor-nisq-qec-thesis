@@ -39,12 +39,13 @@
   doi       = {10.1109/SFCS.1994.365700}
 }
 
-@article{grover1996,
+@inproceedings{grover1996,
   author    = {Lov K. Grover},
   title     = {A Fast Quantum Mechanical Algorithm for Database Search},
-  journal   = {Proceedings of the 28th Annual ACM Symposium on Theory of Computing (STOC)},
+  booktitle = {Proceedings of the 28th Annual ACM Symposium on Theory of Computing (STOC)},
   year      = {1996},
   pages     = {212--219},
+  publisher = {ACM},
   doi       = {10.1145/237814.237866}
 }
 
@@ -120,12 +121,12 @@
   doi       = {10.1038/s41598-021-95973-w}
 }
 
-@article{regev2023,
-  author    = {Oded Regev},
-  title     = {An Efficient Quantum Factoring Algorithm},
-  journal   = {arXiv preprint},
-  year      = {2023},
-  note      = {arXiv:2308.06572}
+@misc{regev2023,
+  author        = {Oded Regev},
+  title         = {An Efficient Quantum Factoring Algorithm},
+  year          = {2023},
+  eprint        = {2308.06572},
+  archiveprefix = {arXiv}
 }
 
 @misc{ibm_roadmap2025,
@@ -137,25 +138,27 @@
 }
 
 @misc{shor_challenges2025,
-  author       = {Aditya Singh and Aakash Khochare and Subhadeep Palit},
-  title        = {Practical Challenges in Executing {S}hor's Algorithm on Existing Quantum Platforms},
-  year         = {2025},
-  note         = {arXiv:2512.15330}
+  author        = {Aditya Singh and Aakash Khochare and Subhadeep Palit},
+  title         = {Practical Challenges in Executing {S}hor's Algorithm on Existing Quantum Platforms},
+  year          = {2025},
+  eprint         = {2512.15330},
+  archiveprefix = {arXiv}
 }
 
-@article{ml_mitigation2023,
-  author    = {Haoran Liao and Derek S. Wang and Iskandar Sitdikov and Ciro Salcedo-Gallo and Alireza Seif and Zlatko K. Minev},
-  title     = {Machine Learning for Practical Quantum Error Mitigation},
-  journal   = {arXiv preprint},
-  year      = {2023},
-  note      = {arXiv:2309.17368}
+@misc{ml_mitigation2023,
+  author        = {Haoran Liao and Derek S. Wang and Iskandar Sitdikov and Ciro Salcedo-Gallo and Alireza Seif and Zlatko K. Minev},
+  title         = {Machine Learning for Practical Quantum Error Mitigation},
+  year          = {2023},
+  eprint        = {2309.17368},
+  archiveprefix = {arXiv}
 }
 
 @inproceedings{shor_hpec2023,
-  author    = {Franz Franchetti and others},
+  author    = {Dewang Sun and Naifeng Zhang and Franz Franchetti},
   title     = {Optimization and Performance Analysis of {S}hor's Algorithm in {Q}iskit},
   booktitle = {IEEE High Performance Extreme Computing Conference (HPEC)},
   year      = {2023},
+  publisher = {IEEE},
   note      = {Available at \url{https://users.ece.cmu.edu/~franzf/papers/hpec_2023_Quantum_final.pdf}}
 }
 
@@ -355,16 +358,17 @@
   note      = {AlphaQubit: decoder neurale sviluppato da Google DeepMind e Google Quantum AI. Supera i decoder analitici classici su hardware Sycamore a 241 qubit}
 }
 
-@article{transformer_decoder2023,
-  author    = {Hannes Bausch and Andrew Senior and others},
-  title     = {Learning to Decode the Surface Code with a Recurrent, Transformer-Based Neural Network},
-  journal   = {arXiv preprint},
-  year      = {2023},
-  note      = {arXiv:2310.05900. Decoder transformer per surface code; supera i decoder state-of-the-art su hardware Google Sycamore per distanze 3--11}
+@misc{transformer_decoder2023,
+  author        = {Johannes Bausch and Andrew W. Senior and others},
+  title         = {Learning to Decode the Surface Code with a Recurrent, Transformer-Based Neural Network},
+  year          = {2023},
+  eprint        = {2310.05900},
+  archiveprefix = {arXiv},
+  note          = {Decoder transformer per surface code; supera i decoder state-of-the-art su hardware Google Sycamore per distanze 3--11}
 }
 
 @article{epjqt_noise2024,
-  author    = {Ballinas-Play and others},
+  author    = {J. A. Bravo-Montes and Miriam Bastante and Guillermo Botella and Alberto del Barrio and F. Garc{\'i}a-Herrero},
   title     = {A Methodology to Select and Adjust Quantum Noise Models Through Emulators: Benchmarking Against Real Backends},
   journal   = {EPJ Quantum Technology},
   year      = {2024},
@@ -567,4 +571,70 @@
   eprint       = {2607.08767},
   archiveprefix = {arXiv},
   note         = {arXiv:2607.08767}
+}
+
+% --- FONDAMENTI QEC: CSS, STABILIZZATORI, SURFACE CODE (ORIGINE) ---
+
+@article{calderbankShor1996,
+  author    = {A. R. Calderbank and Peter W. Shor},
+  title     = {Good Quantum Error-Correcting Codes Exist},
+  journal   = {Physical Review A},
+  year      = {1996},
+  volume    = {54},
+  number    = {2},
+  pages     = {1098--1105},
+  doi       = {10.1103/PhysRevA.54.1098}
+}
+
+@phdthesis{gottesman1997,
+  author        = {Daniel Gottesman},
+  title         = {Stabilizer Codes and Quantum Error Correction},
+  school        = {California Institute of Technology},
+  year          = {1997},
+  eprint        = {quant-ph/9705052},
+  archiveprefix = {arXiv}
+}
+
+@article{kitaev2003,
+  author    = {A. Yu. Kitaev},
+  title     = {Fault-tolerant quantum computation by anyons},
+  journal   = {Annals of Physics},
+  year      = {2003},
+  volume    = {303},
+  number    = {1},
+  pages     = {2--30},
+  doi       = {10.1016/S0003-4916(02)00018-0}
+}
+
+% --- DECODER NEURALE (SEMINALE) ---
+
+@article{torlaiMelko2017,
+  author    = {Giacomo Torlai and Roger G. Melko},
+  title     = {Neural Decoder for Topological Codes},
+  journal   = {Physical Review Letters},
+  year      = {2017},
+  volume    = {119},
+  number    = {3},
+  pages     = {030501},
+  doi       = {10.1103/PhysRevLett.119.030501}
+}
+
+% --- ALGORITMI VARIAZIONALI NISQ (VQE, QAOA) ---
+
+@article{peruzzo2014,
+  author    = {Alberto Peruzzo and Jarrod McClean and Peter Shadbolt and Man-Hong Yung and Xiao-Qi Zhou and Peter J. Love and Al{\'a}n Aspuru-Guzik and Jeremy L. O'Brien},
+  title     = {A variational eigenvalue solver on a photonic quantum processor},
+  journal   = {Nature Communications},
+  year      = {2014},
+  volume    = {5},
+  pages     = {4213},
+  doi       = {10.1038/ncomms5213}
+}
+
+@misc{farhi2014,
+  author        = {Edward Farhi and Jeffrey Goldstone and Sam Gutmann},
+  title         = {A Quantum Approximate Optimization Algorithm},
+  year          = {2014},
+  eprint        = {1411.4028},
+  archiveprefix = {arXiv}
 }
