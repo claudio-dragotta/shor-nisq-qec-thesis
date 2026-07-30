@@ -153,8 +153,8 @@ run**, with no separate training or calibration pass. Proposed as future work.
 
 This repository contains the study's **own** material (thesis sources, code, results, demo).
 It intentionally **excludes** third-party and private items that were part of the private
-working tree: downloaded third-party papers, other students' theses, meeting recordings and
-private working notes. Their absence does not affect the reproducibility of any result: all
+working tree: downloaded third-party papers, other students' theses, meeting recordings,
+presentation slides and private working notes. Their absence does not affect the reproducibility of any result: all
 scripts, seeds and JSON outputs needed to regenerate the thesis figures and numbers are here.
 
 ---
