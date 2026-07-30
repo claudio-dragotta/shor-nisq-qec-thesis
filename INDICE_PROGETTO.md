@@ -13,7 +13,9 @@ tesi_magistrale_quantum/
 ├── file_latex/          ← SORGENTI TESI (questo si carica su Overleaf, niente altro)
 ├── figure_src/          ← script Python che GENERANO le figure di file_latex/figure/
 ├── Extra/experiments/   ← codice sperimentale (Qiskit): Shor, noise, QEC, campagne
-├── Extra/articoli|tesi_esterne|thesis_images/  ← materiale di riferimento
+├── Extra/articoli|tesi_esterne/  ← materiale di riferimento
+├── Extra/Info Incontri/ ← materiale degli incontri col relatore (audio, note, notebook)
+├── Extra/slide/         ← slide di presentazione (fuori dal mirror pubblico)
 ├── _archivio/           ← documenti e capitoli SUPERATI (storico, non cancellati)
 ├── *.md                 ← documenti di lavoro attivi (piano, diario, questo indice)
 └── tesi_compilata.pdf   ← ultimo PDF compilato (output, non è un sorgente)
@@ -121,7 +123,9 @@ spiega cosa fa, cosa aspettarsi e come leggere i risultati. Indice generale in
 |---|---|
 | `Extra/articoli/` | Articoli scientifici (PDF) |
 | `Extra/tesi_esterne/` | Tesi di altri usate come riferimento |
-| `Extra/thesis_images/` | Immagini varie di lavoro |
+| `Extra/Info Incontri/` | Materiale degli incontri col relatore: audio, note, `shors-algorithm.ipynb` |
+| `Extra/slide/` | Slide e mockup di presentazione — **escluse dal mirror pubblico** |
+| `Extra/shor-demo/` | Demo live su Render — **repo git separato**, ignorato da questo repo |
 
 ---
 

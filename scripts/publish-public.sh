@@ -32,6 +32,7 @@ _archivio
 diario_relatore.md
 Extra/articoli
 Extra/tesi_esterne
+Extra/slide
 tesi_esterne
 glob:*grover-Seminar.pdf
 glob:*grover-art.1.pdf

@@ -8,7 +8,7 @@
 # File cambiati in questo commit, ESCLUSI quelli che non finiscono nel pubblico.
 # Se non resta nulla, il commit non interessa il repo pubblico -> niente sync.
 changed=$(git diff-tree --no-commit-id --name-only -r HEAD 2>/dev/null | grep -viE \
-  '(^_archivio/|^Extra/(articoli|tesi_esterne)/|^diario_relatore\.md$|\.(docx|mp4|mp3|m4a|wav|mov)$)' || true)
+  '(^_archivio/|^Extra/(articoli|tesi_esterne|slide)/|^diario_relatore\.md$|\.(docx|mp4|mp3|m4a|wav|mov)$)' || true)
 
 if [ -z "$changed" ]; then
   echo "[post-commit] nessun file rilevante per il pubblico: mirror non aggiornato."
