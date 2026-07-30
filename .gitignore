@@ -1,4 +1,8 @@
 .vscode/
+
+# Repo git separato (mirror pubblico della demo su Render)
+Extra/shor-demo/
+
 __pycache__/
 *.pyc
 *.pyo
