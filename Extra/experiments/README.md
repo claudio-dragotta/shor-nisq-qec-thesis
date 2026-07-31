@@ -15,7 +15,8 @@ pip install -r requirements.txt
 ```
 
 `requirements.txt` (in questa cartella) fissa le versioni: qiskit 2.5.0, qiskit-aer 0.17.2,
-numpy, scipy, matplotlib. Per M7 servirà in aggiunta `pip install stim pymatching`.
+numpy, scipy, matplotlib. Per M7 servirà in aggiunta `pip install stim pymatching`
+(stim 1.16.0, PyMatching 2.4.0), e per M10 anche `pip install scikit-learn`.
 
 ## Mappa dei blocchi
 
@@ -26,6 +27,7 @@ numpy, scipy, matplotlib. Per M7 servirà in aggiunta `pip install stim pymatchi
 | `M6_steane_code/` | M6 | Codice di Steane [[7,1,3]] (codice QEC centrale) | ✅ completo |
 | `M7_surface_code/` | M7 | Surface code con Stim + PyMatching (soglia p_th≈0.8%) | ✅ completo |
 | `M8_shor_logico/` | M8 | Shor logico: P_success vs p_L + figura conclusiva | ✅ completo |
+| `M10_neural_decoder/` | M10 | Decodifica appresa vs MWPM: confronto leale, rumore correlato, validatore, decoder ibrido | ✅ completo |
 | `extra_rumore_coerente/` | extra | Errore coerente vs Pauli (limite del modello Clifford-Pauli, cfr. Plaquette) | ✅ completo |
 
 ## Regola di validazione (dal documento del relatore)

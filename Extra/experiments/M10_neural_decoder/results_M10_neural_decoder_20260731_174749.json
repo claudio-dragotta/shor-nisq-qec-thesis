@@ -1,0 +1,161 @@
+{
+  "milestone": "M10_neural_decoder",
+  "timestamp": "2026-07-31T17:43:43.252894",
+  "basis": "z",
+  "shots_per_config": 60000,
+  "distances": [
+    3
+  ],
+  "train_frac": 0.75,
+  "p_phys": 0.003,
+  "nn": "MLPClassifier(128,64) relu, batch 4096, early_stopping",
+  "stim": "1.16.0",
+  "pymatching": "2.4.0",
+  "E2_crosstalk": {
+    "points": [
+      {
+        "d": 3,
+        "p": 0.003,
+        "p_crosstalk": 0.0,
+        "shots": 60000,
+        "seed": 2300,
+        "n_detectors": 24,
+        "n_train": 45000,
+        "n_test": 15000,
+        "base_rate": 0.04755,
+        "pL_mwpm": 0.0032,
+        "pL_mwpm_se": 0.00046114061485263546,
+        "pL_nn": 0.007533333333333334,
+        "pL_nn_se": 0.0007060019934920969,
+        "gain_vs_mwpm": 0.4247787610619469,
+        "nn_epochs": 30,
+        "secs": 37.7
+      },
+      {
+        "d": 3,
+        "p": 0.003,
+        "p_crosstalk": 0.005,
+        "shots": 60000,
+        "seed": 2301,
+        "n_detectors": 24,
+        "n_train": 45000,
+        "n_test": 15000,
+        "base_rate": 0.08418333333333333,
+        "pL_mwpm": 0.0328,
+        "pL_mwpm_se": 0.001454284703900856,
+        "pL_mwpm_oracle": 0.057133333333333335,
+        "pL_mwpm_oracle_se": 0.0018950657957892572,
+        "pL_nn": 0.034133333333333335,
+        "pL_nn_se": 0.0014825259725412096,
+        "gain_vs_mwpm": 0.9609375,
+        "nn_epochs": 27,
+        "secs": 30.9
+      },
+      {
+        "d": 3,
+        "p": 0.003,
+        "p_crosstalk": 0.01,
+        "shots": 60000,
+        "seed": 2302,
+        "n_detectors": 24,
+        "n_train": 45000,
+        "n_test": 15000,
+        "base_rate": 0.1162,
+        "pL_mwpm": 0.0602,
+        "pL_mwpm_se": 0.0019420944020996163,
+        "pL_mwpm_oracle": 0.09233333333333334,
+        "pL_mwpm_oracle_se": 0.0023637243055383158,
+        "pL_nn": 0.059,
+        "pL_nn_se": 0.0019238676323143093,
+        "gain_vs_mwpm": 1.0203389830508474,
+        "nn_epochs": 42,
+        "secs": 48.3
+      },
+      {
+        "d": 3,
+        "p": 0.003,
+        "p_crosstalk": 0.02,
+        "shots": 60000,
+        "seed": 2303,
+        "n_detectors": 24,
+        "n_train": 45000,
+        "n_test": 15000,
+        "base_rate": 0.17268333333333333,
+        "pL_mwpm": 0.11333333333333333,
+        "pL_mwpm_se": 0.002588292730596611,
+        "pL_mwpm_oracle": 0.14973333333333333,
+        "pL_mwpm_oracle_se": 0.0029133401474621557,
+        "pL_nn": 0.10366666666666667,
+        "pL_nn_se": 0.002488907241995824,
+        "gain_vs_mwpm": 1.0932475884244373,
+        "nn_epochs": 46,
+        "secs": 54.7
+      },
+      {
+        "d": 3,
+        "p": 0.003,
+        "p_crosstalk": 0.04,
+        "shots": 60000,
+        "seed": 2304,
+        "n_detectors": 24,
+        "n_train": 45000,
+        "n_test": 15000,
+        "base_rate": 0.2648,
+        "pL_mwpm": 0.20473333333333332,
+        "pL_mwpm_se": 0.0032946177882070588,
+        "pL_mwpm_oracle": 0.25393333333333334,
+        "pL_mwpm_oracle_se": 0.0035538823424114234,
+        "pL_nn": 0.18626666666666666,
+        "pL_nn_se": 0.003178798468557531,
+        "gain_vs_mwpm": 1.099141016463851,
+        "nn_epochs": 77,
+        "secs": 75.0
+      }
+    ],
+    "p": 0.003,
+    "pct_list": [
+      0.005,
+      0.01,
+      0.02,
+      0.04
+    ],
+    "nn_wins_2sigma": 2,
+    "n_configs": 4
+  },
+  "E3_validatore": {
+    "config": {
+      "d": 3,
+      "p": 0.003,
+      "p_crosstalk": 0.01
+    },
+    "auc_flag": 0.9315246656392966,
+    "n_mwpm_errors": 903,
+    "n_test": 15000,
+    "soglie": [
+      {
+        "soglia": 0.5,
+        "flag_rate": 0.0408,
+        "precision": 0.5147058823529411,
+        "recall": 0.3488372093023256
+      },
+      {
+        "soglia": 0.3,
+        "flag_rate": 0.0224,
+        "precision": 0.625,
+        "recall": 0.23255813953488372
+      },
+      {
+        "soglia": 0.2,
+        "flag_rate": 0.0136,
+        "precision": 0.75,
+        "recall": 0.16943521594684385
+      },
+      {
+        "soglia": 0.1,
+        "flag_rate": 0.004533333333333334,
+        "precision": 0.8088235294117647,
+        "recall": 0.06090808416389812
+      }
+    ]
+  }
+}

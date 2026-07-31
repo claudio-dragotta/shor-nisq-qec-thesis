@@ -98,7 +98,9 @@ La libreria \texttt{qiskit-aer-gpu} estende \texttt{AerSimulator} con il support
 
 \textbf{Motivazione pratica.} La parte sperimentale di questa tesi richiede la generazione di un dataset di addestramento per il classificatore del Metodo 2: migliaia di esecuzioni del circuito di Shor con parametri di rumore variabili. Su \ac{CPU}, ogni esecuzione richiede diversi secondi per circuiti a 15--18 qubit con $10^3$ shot; su \ac{GPU}, il tempo si riduce di un fattore tra 10 e 20 per circuiti ad alto numero di shot, rendendo praticabile la generazione dell'intero dataset in una singola sessione di lavoro.
 
-\textbf{Specifiche hardware.} La \ac{GPU} utilizzata è una NVIDIA GeForce RTX 4070 con 12 GB di memoria VRAM e 5888 core CUDA (architettura Ada Lovelace). La capacità di memoria consente di simulare circuiti fino a circa 30 qubit in modalità statevector, sufficiente per tutti gli use case di questa tesi.\footnote{Il limite teorico di VRAM per la simulazione statevector è $2^n \times 16$ byte per $n$ qubit (ampiezze \texttt{complex128}). Con 12 GB: $\lfloor\log_2(12 \times 10^9 / 16)\rfloor = 29.8$ qubit.}
+\textbf{Specifiche hardware.} La \ac{GPU} prevista è una NVIDIA GeForce RTX 4070 con 12 GB di memoria VRAM e 5888 core CUDA (architettura Ada Lovelace). La capacità di memoria consentirebbe di simulare circuiti fino a circa 30 qubit in modalità statevector, sufficiente per tutti gli use case di questa tesi.\footnote{Il limite teorico di VRAM per la simulazione statevector è $2^n \times 16$ byte per $n$ qubit (ampiezze \texttt{complex128}). Con 12 GB: $\lfloor\log_2(12 \times 10^9 / 16)\rfloor = 29.8$ qubit.}
+
+\textbf{Esito: l'accelerazione non è stata utilizzabile.} Quanto sopra descrive il piano iniziale. In sede di implementazione il backend \ac{GPU} si è rivelato inutilizzabile nell'ambiente \ac{WSL} adottato --- il driver CUDA riconosce la scheda, ma il backend C++ di Aer solleva un errore a runtime sull'esecuzione dei circuiti --- e \textbf{tutti gli esperimenti riportati in questa tesi sono stati eseguiti su \ac{CPU}}. La diagnosi completa e le conseguenze sui tempi di esecuzione sono nella Sezione~\ref{sec:gpu_limit}. Il vincolo di memoria resta quello indicato, riferito però alla memoria di sistema anziché alla VRAM.
 
 % -----------------------------------------------
 \section{scikit-learn: la Libreria per il Classificatore}
@@ -114,8 +116,8 @@ La motivazione principale è pragmatica: scikit-learn espone un'interfaccia unif
 
 Le simulazioni vengono eseguite in ambiente Linux tramite \ac{WSL} (versione 2) su Windows 11. La scelta è motivata dalla necessità di mantenere la compatibilità con l'ecosistema Linux di Qiskit e delle librerie scientifiche Python, garantendo al contempo l'integrazione con i driver CUDA per \ac{WSL} forniti da NVIDIA.
 
-\ac{WSL} 2 esegue un kernel Linux completo in una macchina virtuale leggera, con accesso diretto alle \ac{GPU} NVIDIA tramite i driver \texttt{cuda-wsl-ubuntu}. L'ambiente Python è isolato in un virtual environment dedicato (Ubuntu 22.04 LTS, Python 3.11), garantendo la riproducibilità delle dipendenze e la compatibilità delle versioni tra le librerie usate.
+\ac{WSL} 2 esegue un kernel Linux completo in una macchina virtuale leggera. L'ambiente Python è isolato in un virtual environment dedicato, garantendo la riproducibilità delle dipendenze e la compatibilità delle versioni tra le librerie usate; le versioni esatte sono versionate nel file \texttt{requirements.txt} della repository. È in questo stesso ambiente che l'accesso alla \ac{GPU} si è rivelato non praticabile (Sezione~\ref{sec:gpu_limit}).
 
-Con l'ambiente così definito, il Capitolo~\ref{chap:metodologia} descrive come Qiskit, Aer e scikit-learn si integrano nell'architettura del pipeline sperimentale: dalla costruzione del circuito di Shor alla generazione del dataset di addestramento, fino all'inferenza del classificatore sui quattro use case.
+Con l'ambiente così definito, il Capitolo~\ref{chap:metodologia} descrive come Qiskit, Aer e scikit-learn si integrano nell'architettura del pipeline sperimentale: dalla costruzione del circuito di Shor alla generazione del dataset di addestramento, fino all'inferenza del classificatore.
 
 \end{onehalfspace}

@@ -20,11 +20,11 @@ EXP_DIR = os.path.join(os.path.dirname(__file__), '..', 'Extra', 'experiments', 
 # Regimi (errore logico p_L per gate) — valori dai risultati M6/M7:
 #   fisico nudo:  errore fisico non corretto, ~ epsilon_2q NISQ
 #   Steane:       M6, Steane a p_fisico=0.01 -> p_L≈1.7e-3
-#   surface d=7:  M7, a p_fisico sotto soglia (p=0.002) -> p_L≈1e-4
+#   surface d=7:  M7, a p_fisico sotto soglia (p=0.002) -> p_L≈9e-5
 REGIMES = [
     ('Shor fisico nudo\n(nessuna correzione)', 1.0e-2, 'C3'),
     ('Steane [[7,1,3]]', 1.7e-3, 'C1'),
-    ('surface code $d=7$', 1.0e-4, 'C2'),
+    ('surface code $d=7$', 9.0e-5, 'C2'),
 ]
 
 

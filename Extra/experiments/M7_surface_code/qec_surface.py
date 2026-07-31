@@ -24,8 +24,12 @@ import stim
 import pymatching
 
 
-def logical_error_rate(d, p, shots, basis='z', rounds=None):
-    """p_L per un memory experiment del surface code ruotato."""
+def logical_error_rate(d, p, shots, basis='z', rounds=None, seed=None):
+    """p_L per un memory experiment del surface code ruotato.
+
+    seed: passato a compile_detector_sampler, altrimenti il campionamento non e'
+    riproducibile (il parametro era accettato da run_curve ma non arrivava fin qui).
+    """
     rounds = rounds or d
     circuit = stim.Circuit.generated(
         f'surface_code:rotated_memory_{basis}',
@@ -34,7 +38,7 @@ def logical_error_rate(d, p, shots, basis='z', rounds=None):
         after_reset_flip_probability=p,
         before_measure_flip_probability=p,
     )
-    sampler = circuit.compile_detector_sampler()
+    sampler = circuit.compile_detector_sampler(seed=seed)
     det, obs = sampler.sample(shots, separate_observables=True)
     dem = circuit.detector_error_model(decompose_errors=True)
     matching = pymatching.Matching.from_detector_error_model(dem)
@@ -50,10 +54,12 @@ def run_curve(distances, p_list, shots, basis, seed=42):
     header = "p".ljust(10) + "".join(f"d={d}".ljust(20) for d in distances)
     print(header)
     table = {d: [] for d in distances}
-    for p in p_list:
+    for i, p in enumerate(p_list):
         row = f"{p:<10g}"
         for d in distances:
-            pL, se = logical_error_rate(d, p, shots, basis=basis, rounds=d)
+            # seed deterministico per (punto, distanza): l'esperimento e' rigenerabile
+            pL, se = logical_error_rate(d, p, shots, basis=basis, rounds=d,
+                                        seed=seed + i * 10 + d)
             table[d].append({'p': p, 'p_L': pL, 'p_L_se': se})
             row += f"{f'{pL:.5f}±{se:.5f}':<20}"
         print(row)
