@@ -90,7 +90,7 @@ su $q_1$  & $(1,1)$ & $q_1$ & \checkmark \\
 su $q_2$  & $(0,1)$ & $q_2$ & \checkmark \\
 \bottomrule
 \end{tabular}
-\caption[Verifica della sindrome del codice a ripetizione]{Verifica della sindrome: iniezione deterministica di un errore su ciascun qubit e sindrome osservata (senza rumore). Vale identicamente per il codice bit-flip (errore $X$, stabilizzatori $Z_0Z_1$, $Z_1Z_2$) e per il duale phase-flip (errore $Z$, stabilizzatori $X_0X_1$, $X_1X_2$): la simmetria X/Z è confermata sperimentalmente. L'ancilla $a_0$ misura la parità dei qubit $\{0,1\}$, l'ancilla $a_1$ quella di $\{1,2\}$.}
+\caption[Verifica della sindrome del codice a ripetizione]{Verifica della sindrome: iniezione deterministica di un errore su ciascun qubit e sindrome osservata (senza rumore). Vale identicamente per il codice bit-flip (errore $X$, stabilizzatori $Z_0Z_1$, $Z_1Z_2$) e per il duale phase-flip (errore $Z$, stabilizzatori $X_0X_1$, $X_1X_2$): il duale si ottiene dal primo per coniugazione di Hadamard, e a parità di seed le due simulazioni producono esiti identici cifra per cifra. La coincidenza non è quindi una conferma indipendente della dualità --- che è un fatto algebrico --- ma la verifica che l'implementazione la rispetti. L'ancilla $a_0$ misura la parità dei qubit $\{0,1\}$, l'ancilla $a_1$ quella di $\{1,2\}$.}
 \label{tab:sindrome_repetition}
 \end{table}
 

@@ -31,7 +31,7 @@ La profondità del circuito determina l'effetto cumulativo del rumore e definisc
 \hline
 \textbf{Use Case} & \textbf{N} & \textbf{Profondità} & \textbf{Porte CX} & \textbf{$P_{\text{surv}} = (1-\epsilon_{2q})^{\#\text{CX}}$} & \textbf{Metodi applicabili} \\
 \hline
-UC1 & 15 & 309    & 162    & $\approx 0.197$          & M1, $M_{\text{TOP4}}$, M2 \\
+UC1 & 15 & 309    & 162    & $\approx 0.196$          & M1, $M_{\text{TOP4}}$, M2 \\
 UC2 & 15 & 309    & 162    & $\approx 2\times10^{-4}$ & M1, $M_{\text{TOP4}}$, M2 \\
 UC3 & 21 & 19\,816 & 10\,040 & $\approx 1.5\times10^{-44}$ & Nessuno \\
 UC4 & 35 & 25\,779 & 13\,064 & $\approx 9.5\times10^{-58}$ & Nessuno \\
@@ -39,7 +39,9 @@ UC4 & 35 & 25\,779 & 13\,064 & $\approx 9.5\times10^{-58}$ & Nessuno \\
 \end{tabular}
 \end{table}
 
-Per UC1 e UC2 il circuito traspilato conta 162 porte \texttt{cx} (profondità 309); la probabilità di sopravvivenza coerente $P_{\text{surv}}$ --- la frazione di run in cui nessun gate a 2 qubit introduce errore --- vale $\approx 19.7\%$ per UC1 e $\approx 0.02\%$ per UC2. Per UC3 e UC4 la porta \texttt{UnitaryGate} di Qiskit sintetizza la moltiplicazione modulare come matrice densa, con costo $O(4^k)$ porte elementari su $k$ qubit~\cite{Barenco1995}: le profondità risultanti (10\,040 e 13\,064 porte CX) portano $P_{\text{surv}}$ a valori in cui l'output è indistinguibile dal rumore uniforme e $P_{\text{succ}} = 0\%$ per qualsiasi strategia di estrazione. La barriera non è un limite degli algoritmi di analisi ma della decomposizione del circuito: l'approccio di Beauregard~\cite{beauregard2002}, implementato nel modulo \texttt{beauregard.py}, riduce il circuito per $N=21$ a $\sim$2\,594 porte CX, ma la sua validazione richiede risorse di calcolo avanzate ed è discussa tra gli sviluppi futuri (Capitolo~\ref{chap:sviluppi}). Il confronto sperimentale è quindi condotto su UC1 e UC2.
+Per UC1 e UC2 il circuito traspilato conta 162 porte \texttt{cx} (profondità 309); la probabilità di sopravvivenza coerente $P_{\text{surv}}$ --- la frazione di run in cui nessun gate a 2 qubit introduce errore --- vale $\approx 19.6\%$ per UC1 e $\approx 0.02\%$ per UC2. Per UC3 e UC4 la porta \texttt{UnitaryGate} di Qiskit sintetizza la moltiplicazione modulare come matrice densa, con costo $O(4^k)$ porte elementari su $k$ qubit~\cite{Barenco1995}: le profondità risultanti (10\,040 e 13\,064 porte CX) portano $P_{\text{surv}}$ a valori in cui l'output è indistinguibile dal rumore uniforme e $P_{\text{succ}} = 0\%$ per qualsiasi strategia di estrazione. La barriera non è un limite degli algoritmi di analisi ma della decomposizione del circuito: l'approccio di Beauregard~\cite{beauregard2002}, implementato nel modulo \texttt{beauregard.py}, riduce il circuito per $N=21$ a $\sim$2\,594 porte CX, ma la sua validazione richiede risorse di calcolo avanzate ed è discussa tra gli sviluppi futuri (Capitolo~\ref{chap:sviluppi}). Il confronto sperimentale è quindi condotto su UC1 e UC2.
+
+Ne discende una conseguenza che va dichiarata subito, perché riguarda il perimetro di validità di tutto il capitolo: l'\textbf{Ipotesi secondaria 2} formulata nel Capitolo~\ref{chap:obiettivi} --- che il vantaggio del Metodo 2 si mantenga al crescere dell'istanza ($N = 15 \to 21 \to 35$) --- \textbf{resta non verificata}, e non perché sia stata smentita, ma perché su UC3 e UC4 nessuna strategia di estrazione produce un risultato da confrontare. Il piano sperimentale prevedeva quattro use case come requisito di validazione; la barriera di scalabilità ne rende misurabili due. La generalizzazione del risultato a istanze maggiori richiede quindi la decomposizione efficiente della moltiplicazione modulare, ed è propriamente un lavoro futuro, non una conclusione di questa tesi.
 
 \begin{figure}[H]
 \centering

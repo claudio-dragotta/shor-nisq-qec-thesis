@@ -1,0 +1,19 @@
+==============================================================================
+E4 — DECODER IBRIDO: la rete non sostituisce MWPM, impara quando ribaltarlo
+    p fisico = 0.003; soglia scelta in validazione, riportata sul test set
+==============================================================================
+  d=3 p_ct=0       MWPM=0.00415  rete=0.00409  IBRIDO=0.00417  (soglia 0.35, ribalta 0.10%)  |  ibrido/MWPM=0.99x  [114.8s]
+  d=3 p_ct=0.005   MWPM=0.03089  rete=0.02680  IBRIDO=0.02607  (soglia 0.45, ribalta 1.19%)  |  ibrido/MWPM=1.18x  [149.6s]
+  d=3 p_ct=0.01    MWPM=0.05829  rete=0.04917  IBRIDO=0.04851  (soglia 0.50, ribalta 2.69%)  |  ibrido/MWPM=1.20x  [145.3s]
+  d=3 p_ct=0.02    MWPM=0.11144  rete=0.09248  IBRIDO=0.09183  (soglia 0.50, ribalta 5.38%)  |  ibrido/MWPM=1.21x  [194.7s]
+  d=3 p_ct=0.04    MWPM=0.20750  rete=0.17615  IBRIDO=0.17455  (soglia 0.50, ribalta 11.04%)  |  ibrido/MWPM=1.19x  [174.6s]
+  d=5 p_ct=0       MWPM=0.00165  rete=0.01900  IBRIDO=0.00165  (soglia 0.10, ribalta 0.00%)  |  ibrido/MWPM=1.00x  [197.5s]
+  d=5 p_ct=0.005   MWPM=0.03561  rete=0.06311  IBRIDO=0.03521  (soglia 0.55, ribalta 0.32%)  |  ibrido/MWPM=1.01x  [286.3s]
+  d=5 p_ct=0.01    MWPM=0.08704  rete=0.12874  IBRIDO=0.08428  (soglia 0.60, ribalta 1.17%)  |  ibrido/MWPM=1.03x  [247.0s]
+  d=5 p_ct=0.02    MWPM=0.20231  rete=0.25198  IBRIDO=0.19662  (soglia 0.55, ribalta 2.88%)  |  ibrido/MWPM=1.03x  [229.4s]
+  d=5 p_ct=0.04    MWPM=0.37581  rete=0.44182  IBRIDO=0.37385  (soglia 0.55, ribalta 2.96%)  |  ibrido/MWPM=1.01x  [148.2s]
+
+FLAG E4: l'ibrido batte MWPM (oltre 2 sigma) in 6/10 configurazioni
+
+Tempo totale: 31.5 min
+Risultati salvati in: results_M10_hybrid_20260731_190423.json
