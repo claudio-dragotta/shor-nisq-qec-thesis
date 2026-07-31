@@ -23,6 +23,8 @@ Questo lavoro affronta tale sfida in due fasi. La \textbf{prima fase} è una ver
 
 L'esito della verifica --- l'\ac{ML} applicato all'output, in quel punto e in quel modo, non serve --- delimita con precisione dove va cercata la soluzione: se l'informazione distrutta dal rumore non è recuperabile a valle, l'errore va corretto \emph{durante} il calcolo. La \textbf{seconda fase}, che costituisce il nucleo della tesi, è quindi dedicata alla \ac{QEC}: la costruzione e la simulazione dei codici correttori --- dal codice a ripetizione al codice di Steane $[[7,1,3]]$, fino al surface code con decodifica \ac{MWPM} --- e la misura sperimentale del \textbf{logical error rate} $p_L$ in funzione dell'errore fisico $p$ e della distanza di codice $d$. L'integrazione finale avviene a livelli: lo \textbf{Shor logico}, in cui ogni gate del circuito subisce l'errore logico residuo $p_L$ misurato sperimentalmente, risponde alla domanda conclusiva del lavoro: \emph{quale livello di correzione è necessario perché Shor mantenga una probabilità di successo accettabile?}
 
+È in questa seconda fase che l'intelligenza artificiale viene ripresa, e nel punto in cui l'esito della prima indica che possa servire: non più sull'output, dove l'informazione sull'errore è già andata perduta, ma sulla \textbf{sindrome}, dove è ancora interamente presente. Un decoder appreso viene messo a confronto con il \ac{MWPM} sugli stessi campioni, e il risultato precisa il criterio che regge l'intero lavoro. Sostituire il decoder analitico non conviene: a parità di modello di rumore la rete lo pareggia soltanto, e a costo di volumi di dati considerevoli. Affiancarglielo sì: un decoder \textbf{ibrido}, in cui la rete apprende unicamente \emph{quando ribaltare} la decisione del matching, riduce l'errore logico fino al $21\%$ quando il dispositivo presenta errori correlati che il decoder analitico non è in grado di rappresentare --- e ricade esattamente su di esso quando il rumore è quello previsto. L'apprendimento automatico, dunque, non ottimizza l'esecuzione di Shor ovunque lo si applichi: lo fa dove dispone di informazione che nessun metodo più semplice sa sfruttare, e questa tesi ne individua sperimentalmente il confine.
+
 L'elaborato si sviluppa dalle fondamenta teoriche del calcolo quantistico, attraverso la verifica sperimentale su simulatori rumorosi, fino alla correzione d'errore quantistica e allo Shor logico. Gli obiettivi specifici e la struttura dettagliata del lavoro sono descritti nel Capitolo~\ref{chap:obiettivi}.
 
 \medskip
@@ -34,7 +36,7 @@ L'elaborato si sviluppa dalle fondamenta teoriche del calcolo quantistico, attra
 %   controlla se la sua descrizione qui è ancora accurata.
 \section{Struttura della Tesi}
 
-L'elaborato è organizzato in quattordici capitoli, seguiti da sei appendici (A--F) che raccolgono il contesto esteso e il materiale di dettaglio richiamati in forma sintetica nel corpo. Il Capitolo~2 svolge una funzione trasversale di raccordo tra teoria e pratica; i Capitoli~3--6 costituiscono la parte teorica; i Capitoli~7--14 la parte sperimentale.
+L'elaborato è organizzato in quindici capitoli, seguiti da sei appendici (A--F) che raccolgono il contesto esteso e il materiale di dettaglio richiamati in forma sintetica nel corpo. Il Capitolo~2 svolge una funzione trasversale di raccordo tra teoria e pratica; i Capitoli~3--6 costituiscono la parte teorica; i Capitoli~7--13 la parte sperimentale; i Capitoli~14 e~15 chiudono il lavoro.
 
 \medskip
 Il \textbf{Capitolo~\ref{chap:obiettivi}} (\textit{Obiettivi e Piano Sperimentale}) motiva la vulnerabilità di RSA all'algoritmo di Shor e fissa il contratto sperimentale: obiettivi, ipotesi di ricerca, contributo, use case e metriche.
@@ -46,7 +48,7 @@ Il \textbf{Capitolo~\ref{chap:fondamenti}} (\textit{Fondamenti del Calcolo Quant
 
 Il \textbf{Capitolo~\ref{chap:shor}} (\textit{L'Algoritmo di Shor}) presenta la riduzione al \textit{period finding}, la Quantum Phase Estimation e la complessità polinomiale $O((\log N)^3)$, con le implicazioni per RSA e la transizione post-quantum.
 
-Il \textbf{Capitolo~\ref{chap:rumore}} (\textit{Rumore Quantistico nei Sistemi NISQ}) analizza le quattro fonti fisiche di errore e i canali di rumore fondamentali, fino al crollo della probabilità di successo (${\sim}3.4\%$) già per $N=15$.
+Il \textbf{Capitolo~\ref{chap:rumore}} (\textit{Rumore Quantistico nei Sistemi NISQ}) analizza le quattro fonti fisiche di errore e i canali di rumore fondamentali, fino al crollo della probabilità di successo (${\sim}3.4\%$) già per un modulo di soli 15 bit.
 
 Il \textbf{Capitolo~\ref{chap:strategie}} (\textit{Strategie per la Riduzione del Rumore Quantistico}) confronta le quattro macro-strategie anti-rumore nell'era NISQ e motiva l'approccio adottato.
 
@@ -63,11 +65,13 @@ Il \textbf{Capitolo~\ref{chap:risultati}} (\textit{Verifica Sperimentale dell'Ip
 
 Il \textbf{Capitolo~\ref{chap:qec}} (\textit{La Correzione d'Errore Quantistico: dal Codice a Ripetizione al Codice di Steane}) presenta il ciclo di correzione e lo verifica sul codice a ripetizione e sul codice di Steane $[[7,1,3]]$.
 
-Il \textbf{Capitolo~\ref{chap:surface}} (\textit{Il Surface Code e la Stima dell'Errore Logico}) estende la correzione al surface code e ne misura sperimentalmente l'errore logico e la soglia con Stim e PyMatching.
+Il \textbf{Capitolo~\ref{chap:surface}} (\textit{Il Surface Code e la Stima dell'Errore Logico}) estende la correzione al surface code e ne misura sperimentalmente l'errore logico e la soglia con Stim e PyMatching; le due sezioni conclusive mettono alla prova le assunzioni su cui quella stima poggia --- il modello di rumore con cui il codice è simulato e quello con cui è decodificato --- ed è nella seconda che il confronto fra decodifica appresa e \ac{MWPM} individua il regime in cui l'apprendimento automatico produce un guadagno misurabile.
 
 Il \textbf{Capitolo~\ref{chap:integrazione}} (\textit{Integrazione: lo Shor Logico e i Requisiti di Correzione}) esegue lo Shor logico con l'errore residuo misurato e traduce il livello di correzione necessario in requisiti di hardware.
 
 Il \textbf{Capitolo~\ref{chap:sviluppi}} (\textit{Sviluppi Futuri}) delinea le direzioni di ricerca oltre il perimetro sperimentale della tesi.
+
+Il \textbf{Capitolo~\ref{chap:conclusioni}} (\textit{Conclusioni}) verifica una per una le sei ipotesi e le sei domande di ricerca fissate nel Capitolo~\ref{chap:obiettivi}, dichiara i contributi e i limiti del lavoro e isola il criterio che unifica le due fasi sperimentali.
 
 \medskip
 \textbf{Appendici.} L'\textbf{Appendice~\ref{app:parametrica}} (\textit{Campagna Parametrica Dettagliata e Confronto ZNE}) riporta integralmente le sette sweep parametriche su $M_{\text{TOP4}}$, con il confronto previsione--esito per ciascun parametro, e il dettaglio metodologico del confronto con la Zero-Noise Extrapolation.

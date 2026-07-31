@@ -1,0 +1,62 @@
+
+==============================================================================
+E1 — CONFRONTO LEALE (MWPM con DEM esatto, rumore uniforme)
+Domanda: a parita' di informazione la rete recupera cio' che il matching scarta?
+==============================================================================
+  d=3 p=0.002  p_ct=0      tr= 300000  banale=0.0332  MWPM=0.00187  NN=0.00224  |  NN/MWPM=0.83x  [53.3s]
+  d=3 p=0.003  p_ct=0      tr= 300000  banale=0.0499  MWPM=0.00402  NN=0.00428  |  NN/MWPM=0.94x  [50.8s]
+  d=3 p=0.004  p_ct=0      tr= 300000  banale=0.0649  MWPM=0.00657  NN=0.00695  |  NN/MWPM=0.95x  [39.9s]
+  d=3 p=0.005  p_ct=0      tr= 300000  banale=0.0786  MWPM=0.01063  NN=0.01100  |  NN/MWPM=0.97x  [37.8s]
+  d=3 p=0.006  p_ct=0      tr= 300000  banale=0.0939  MWPM=0.01482  NN=0.01475  |  NN/MWPM=1.00x  [29.9s]
+  d=3 p=0.008  p_ct=0      tr= 300000  banale=0.1206  MWPM=0.02586  NN=0.02550  |  NN/MWPM=1.01x  [70.9s]
+  d=3 p=0.01   p_ct=0      tr= 300000  banale=0.1476  MWPM=0.03938  NN=0.03915  |  NN/MWPM=1.01x  [75.7s]
+  d=5 p=0.002  p_ct=0      tr= 300000  banale=0.0818  MWPM=0.00058  NN=0.01225  |  NN/MWPM=0.05x  [89.5s]
+  d=5 p=0.003  p_ct=0      tr= 300000  banale=0.1188  MWPM=0.00164  NN=0.02391  |  NN/MWPM=0.07x  [80.8s]
+  d=5 p=0.004  p_ct=0      tr= 300000  banale=0.1513  MWPM=0.00386  NN=0.03798  |  NN/MWPM=0.10x  [151.4s]
+  d=5 p=0.005  p_ct=0      tr= 300000  banale=0.1801  MWPM=0.00674  NN=0.04832  |  NN/MWPM=0.14x  [98.1s]
+  d=5 p=0.006  p_ct=0      tr= 300000  banale=0.2071  MWPM=0.01171  NN=0.07595  |  NN/MWPM=0.15x  [142.5s]
+  d=5 p=0.008  p_ct=0      tr= 300000  banale=0.2554  MWPM=0.02711  NN=0.11591  |  NN/MWPM=0.23x  [81.6s]
+  d=5 p=0.01   p_ct=0      tr= 300000  banale=0.2966  MWPM=0.04777  NN=0.16350  |  NN/MWPM=0.29x  [86.7s]
+
+FLAG E1: la rete batte MWPM (oltre 2 sigma) in 0/14 configurazioni
+
+==============================================================================
+E1b — SCALING COL VOLUME DI DATI (d=3, p=0.003)
+Quanto della distanza da MWPM e' fame di dati?
+==============================================================================
+  d=3 p=0.003  p_ct=0      tr=  25000  banale=0.0488  MWPM=0.00408  NN=0.00815  |  NN/MWPM=0.50x  [8.2s]
+  d=3 p=0.003  p_ct=0      tr=  50000  banale=0.0491  MWPM=0.00396  NN=0.00635  |  NN/MWPM=0.62x  [12.8s]
+  d=3 p=0.003  p_ct=0      tr= 100000  banale=0.0493  MWPM=0.00405  NN=0.00603  |  NN/MWPM=0.67x  [15.1s]
+  d=3 p=0.003  p_ct=0      tr= 300000  banale=0.0490  MWPM=0.00402  NN=0.00434  |  NN/MWPM=0.93x  [53.6s]
+  d=3 p=0.003  p_ct=0      tr= 800000  banale=0.0490  MWPM=0.00404  NN=0.00398  |  NN/MWPM=1.02x  [149.4s]
+
+==============================================================================
+E2 — RUMORE CORRELATO (CROSSTALK): il modello del decoder e' STRUTTURALMENTE
+    sbagliato, non solo mal calibrato. p fisico = 0.003.
+==============================================================================
+  d=3 p=0.003  p_ct=0      tr= 300000  banale=0.0494  MWPM=0.00383  NN=0.00424  |  NN/MWPM=0.90x  [47.9s]
+  d=3 p=0.003  p_ct=0.005  tr= 300000  banale=0.0845  MWPM=0.03097  NN=0.02707  oracolo=0.05656  |  NN/MWPM=1.14x  [70.0s]
+  d=3 p=0.003  p_ct=0.01   tr= 300000  banale=0.1163  MWPM=0.05966  NN=0.05012  oracolo=0.08975  |  NN/MWPM=1.19x  [61.7s]
+  d=3 p=0.003  p_ct=0.02   tr= 300000  banale=0.1746  MWPM=0.11184  NN=0.09547  oracolo=0.15107  |  NN/MWPM=1.17x  [35.3s]
+  d=3 p=0.003  p_ct=0.04   tr= 300000  banale=0.2652  MWPM=0.20806  NN=0.17568  oracolo=0.25481  |  NN/MWPM=1.18x  [54.1s]
+  d=5 p=0.003  p_ct=0      tr= 300000  banale=0.1178  MWPM=0.00192  NN=0.02359  |  NN/MWPM=0.08x  [76.9s]
+  d=5 p=0.003  p_ct=0.005  tr= 300000  banale=0.2007  MWPM=0.03521  NN=0.08266  oracolo=0.02796  |  NN/MWPM=0.43x  [128.8s]
+  d=5 p=0.003  p_ct=0.01   tr= 300000  banale=0.2648  MWPM=0.08655  NN=0.13957  oracolo=0.06526  |  NN/MWPM=0.62x  [114.5s]
+  d=5 p=0.003  p_ct=0.02   tr= 300000  banale=0.3565  MWPM=0.19933  NN=0.28906  oracolo=0.15662  |  NN/MWPM=0.69x  [92.9s]
+  d=5 p=0.003  p_ct=0.04   tr= 300000  banale=0.4459  MWPM=0.37458  NN=0.44634  oracolo=0.32515  |  NN/MWPM=0.84x  [48.2s]
+
+FLAG E2: la rete batte MWPM (oltre 2 sigma) in 4/8 configurazioni con crosstalk
+
+==============================================================================
+E3 — LA RETE CONFERMA O NEGA LA CORREZIONE DI MWPM
+==============================================================================
+  soglia 0.5 : segnala  2.92% degli shot | precision 0.664 | recall 0.324
+  soglia 0.3 : segnala  1.54% degli shot | precision 0.783 | recall 0.202
+  soglia 0.2 : segnala  1.16% degli shot | precision 0.825 | recall 0.160
+  soglia 0.1 : segnala  0.59% degli shot | precision 0.859 | recall 0.085
+
+  AUC del flag nel predire 'MWPM sbaglia': 0.9414
+  configurazione: d=3, p=0.003, crosstalk=0.01, errori MWPM nel test set: 5966/100000
+
+Tempo totale: 34.3 min
+Risultati salvati in: results_M10_neural_decoder_20260731_182402.json

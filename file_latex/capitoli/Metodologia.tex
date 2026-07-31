@@ -1,6 +1,6 @@
 \begin{onehalfspace}
 
-Il capitolo precedente ha concluso la parte teorica della tesi con una scelta precisa: il \ac{QML}, nella sua declinazione di classificatore addestrato per la rilevazione degli errori, è l'approccio adottato per mitigare il rumore nell'algoritmo di Shor. L'ipotesi di lavoro, motivata dalla letteratura, è che questo approccio riduca il numero medio di esecuzioni necessarie da $\bar{M}_1 \approx 6$--$7$ a circa tre. Come si vedrà nei capitoli dei risultati, il guadagno effettivo supera questa aspettativa. Ciò che resta da definire è come questa scelta si traduce concretamente in un sistema sperimentale funzionante.
+Il capitolo precedente ha concluso la parte teorica della tesi con un'ipotesi precisa da mettere alla prova: che il \ac{QML}, nella sua declinazione di classificatore addestrato per la rilevazione degli errori, riduca il numero medio di esecuzioni necessarie da $\bar{M}_1 \approx 6$--$7$ a circa tre. Il presente capitolo definisce il sistema sperimentale costruito per verificarla. Si tratta dell'architettura della \emph{prima fase} del lavoro: l'esito della verifica --- che il guadagno osservato è reale ma attribuibile alla ricerca multi-candidato e non al classificatore (Capitolo~\ref{chap:risultati}) --- motiva la seconda fase, la cui metodologia sperimentale è descritta direttamente nei capitoli sulla correzione d'errore (Capitoli~\ref{chap:qec}--\ref{chap:integrazione}), dove protocollo e strumenti sono specifici di ciascun codice.
 
 Questo capitolo ha questo scopo. Vengono descritte l'architettura del pipeline, le tecnologie adottate e la struttura dei due metodi che verranno confrontati nella parte sperimentale. Non si entra ancora nella descrizione del codice né dei risultati: quelli sono oggetto dei capitoli successivi. Qui si stabilisce il \textit{perché} di ciascuna scelta progettuale e il \textit{come} i componenti si raccordano tra loro.
 
@@ -10,11 +10,11 @@ Questo capitolo ha questo scopo. Vengono descritte l'architettura del pipeline, 
 
 La parte sperimentale di questa tesi ha due obiettivi distinti ma complementari, che corrispondono ai due metodi sviluppati.
 
-Il primo obiettivo è costruire una \textbf{baseline affidabile}: una misura quantitativa del numero di esecuzioni che l'approccio classico, privo di qualunque modello appreso, richiede per ricavare il risultato corretto dell'algoritmo di Shor in presenza di rumore. Questo primo metodo --- chiamato nel seguito \textbf{Metodo 1} --- opera raccogliendo la distribuzione statistica degli output su molte esecuzioni, identificando i picchi della distribuzione e stimando il periodo $r$ dal valore più probabile. Il Metodo 1 non introduce ipotesi sul profilo di errore del sistema: funziona su qualunque noise model e non richiede dati di addestramento. È il punto di partenza naturale e il termine di paragone contro cui misurare il miglioramento.
+Il primo obiettivo è costruire una \textbf{baseline affidabile}: una misura quantitativa del numero di esecuzioni che l'approccio classico, privo di qualunque modello appreso, richiede per ricavare il risultato corretto dell'algoritmo di Shor in presenza di rumore. Questo primo metodo --- chiamato nel seguito \textbf{Metodo 1} --- opera su una singola esecuzione per volta: raccoglie l'istogramma degli output, ne prende la misura più frequente e tenta da quella l'estrazione dei fattori (strategia \textbf{TOP-1}); se il tentativo fallisce, l'iterazione viene ripetuta. Il Metodo 1 non introduce ipotesi sul profilo di errore del sistema: funziona su qualunque noise model e non richiede dati di addestramento. È il punto di partenza naturale e il termine di paragone contro cui misurare il miglioramento.
 
 Il secondo obiettivo è dimostrare che un \textbf{classificatore addestrato} può sostituire l'accumulazione statistica con una decisione informata basata su una singola esecuzione. Questo secondo metodo --- chiamato \textbf{Metodo 2} --- apprende la firma degli output corretti e di quelli distorti dal rumore, e decide dopo ogni esecuzione se il risultato è affidabile o meno. L'ipotesi, motivata teoricamente nel Capitolo~\ref{chap:strategie} e corroborata dalla letteratura recente sull'uso del \ac{ML} per la mitigazione degli errori quantistici \cite{ml_mitigation2023}, è che bastino poche iterazioni --- tipicamente dell'ordine di tre --- per convergere.
 
-Entrambi i metodi vengono valutati su \textbf{quattro use case} indipendenti, scelti per coprire diverse configurazioni di istanza e livello di rumore. La scelta di almeno quattro configurazioni risponde a un requisito metodologico consolidato per la validazione accademica dei risultati sperimentali in questo dominio \cite{shor_hpec2023}.
+Entrambi i metodi vengono valutati su \textbf{quattro use case} indipendenti, scelti per coprire diverse configurazioni di istanza e livello di rumore, secondo un requisito metodologico consolidato per la validazione accademica dei risultati sperimentali in questo dominio \cite{shor_hpec2023}. Come documentato nel Capitolo~\ref{chap:risultati}, il confronto quantitativo risulterà praticabile sui due use case per $N=15$: per $N=21$ e $N=35$ la profondità del circuito traspilato azzera la probabilità di successo di qualunque strategia, esito che il presente lavoro quantifica come barriera di scalabilità.
 
 % -----------------------------------------------
 \section{Architettura del Pipeline Sperimentale}
@@ -35,7 +35,7 @@ Il sistema è strutturato come un pipeline a tre stadi sequenziali, illustrato i
 % Nodi
 \node[box, fill=blue!12]   (shor)  at (0,    0)   {Algoritmo di Shor\\{\footnotesize circuito ideale}};
 \node[box, fill=orange!18] (noise) at (5.0,  0)   {Simulatore Rumoroso\\{\footnotesize Qiskit Aer}};
-\node[box, fill=green!15]  (m1)    at (10.0, 1.2) {Metodo 1\\{\footnotesize analisi gaussiana}};
+\node[box, fill=green!15]  (m1)    at (10.0, 1.2) {Metodo 1\\{\footnotesize strategia TOP-1}};
 \node[box, fill=green!15]  (m2)    at (10.0,-1.2) {Metodo 2\\{\footnotesize classificatore ML}};
 \node[box, fill=gray!12]   (out)   at (14.2, 0)   {Risultati\\{\footnotesize fattori + metriche}};
 % Frecce
@@ -46,7 +46,7 @@ Il sistema è strutturato come un pipeline a tre stadi sequenziali, illustrato i
 \draw[arrow] (m2)    -- (out);
 \end{tikzpicture}%
 }
-\caption[Pipeline sperimentale]{Pipeline sperimentale. Il circuito ideale dell'algoritmo di Shor viene eseguito sul simulatore rumoroso \texttt{AerSimulator} di Qiskit. L'output è elaborato in parallelo dal Metodo 1 (analisi della distribuzione statistica) e dal Metodo 2 (classificatore ML). Entrambi producono i fattori di $N$ e le metriche di confronto.}
+\caption[Pipeline sperimentale]{Pipeline sperimentale. Il circuito ideale dell'algoritmo di Shor viene eseguito sul simulatore rumoroso \texttt{AerSimulator} di Qiskit. L'output è elaborato in parallelo dal Metodo 1 (estrazione dalla sola misura più frequente, TOP-1) e dal Metodo 2 (classificatore ML seguito da ricerca multi-candidato TOP-K). Entrambi producono i fattori di $N$ e le metriche di confronto.}
 \label{fig:pipeline_architettura}
 \end{figure}
 
@@ -191,14 +191,14 @@ Il Metodo 1 è l'approccio di riferimento: non richiede alcun addestramento, non
 In condizioni ideali, la distribuzione degli output del registro di controllo presenta picchi netti a multipli di $2^{n_{\text{count}}}/r$, dove $r$ è il periodo della funzione modulare. Il rumore appiattisce questi picchi, allarga la loro base e introduce un fondo uniforme di misure errate. Il metodo recupera il risultato attraverso i seguenti passi:
 
 \begin{enumerate}
-    \item Eseguire il circuito per $M$ shot, raccogliendo il conteggio di frequenza di ogni stringa di output del registro di controllo.
-    \item Identificare le cime della distribuzione attraverso un filtraggio a soglia: si mantengono solo i valori con frequenza superiore a una percentuale del massimo osservato.
-    \item Verificare se i valori rimanenti sono compatibili con la struttura attesa $k \cdot 2^{n_{\text{count}}}/r$ per qualche intero $k$ e $r < N$.
-    \item Stimare $r$ tramite l'algoritmo delle frazioni continue applicato al rapporto $y / 2^{n_{\text{count}}}$, dove $y$ è il valore al picco.
+    \item Eseguire il circuito per $M_{\text{shots}}$ shot, raccogliendo il conteggio di frequenza di ogni stringa di output del registro di controllo.
+    \item Selezionare la misura $y$ \textbf{più frequente} dell'istogramma. Non si applica alcuna sogliatura né alcun filtro preliminare: l'estrazione opera direttamente sulle misure ordinate per frequenza decrescente (Capitolo~\ref{chap:obiettivi}, Sezione~\ref{sec:metriche}).
+    \item Stimare $r$ tramite l'algoritmo delle frazioni continue applicato al rapporto $y / 2^{n_{\text{count}}}$.
     \item Calcolare $p = \gcd(a^{r/2} - 1,\, N)$ e $q = \gcd(a^{r/2} + 1,\, N)$ e verificare che siano fattori non banali di $N$.
+    \item Se il tentativo fallisce, ripetere l'iterazione con un nuovo seed, fino a un massimo di $M_{\text{max}}$ iterazioni.
 \end{enumerate}
 
-Il numero di esecuzioni $M$ necessarie per raggiungere una risposta con confidenza sufficiente cresce al crescere del livello di rumore e, per ambienti fortemente rumorosi, può raggiungere le centinaia. Questa quantità --- misurata sperimentalmente per ciascun use case --- costituisce la baseline del confronto.
+Il numero di iterazioni necessarie per ottenere il primo risultato corretto cresce al crescere del livello di rumore. Questa quantità --- $\bar{M}_1$, misurata sperimentalmente per ciascun use case --- costituisce la baseline del confronto.
 
 % -----------------------------------------------
 \section{Il Metodo 2: Classificatore ML}
