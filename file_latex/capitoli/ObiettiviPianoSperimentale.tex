@@ -197,7 +197,7 @@ Ogni stima di $p_L$ è accompagnata dal numero di campioni, dal seed e dall'inte
 
 Il noise model incorpora il readout error come matrice di confusione simmetrica (parametro $p_{\text{ro}}$) direttamente nel simulatore. Non viene applicata una correzione post-hoc tramite matrice di calibrazione: la robustezza dei metodi al readout error viene invece verificata sperimentalmente nella campagna parametrica (Sezione~\ref{subsec:sweep_secondari} dell'Appendice~\ref{app:parametrica}), che mostra invarianza di $M_{\text{TOP4}}$ fino a $p_{\text{ro}} = 20\%$.
 
-Il Metodo 1 identifica i candidati per la fattorizzazione selezionando le misure più frequenti dall'istogramma senza sogliatura preliminare: la funzione \texttt{extract\_factors} è applicata direttamente alle misure ordinate per frequenza decrescente. Questo approccio è sufficiente in presenza del noise model adottato, come confermato dai risultati sperimentali.
+Il Metodo 1 identifica il candidato per la fattorizzazione selezionando la sola misura più frequente dell'istogramma, senza alcuna sogliatura preliminare: la funzione \texttt{extract\_factors} è applicata direttamente alla moda della distribuzione. Le varianti multi-candidato ($M_{\text{TOP4}}$ e Metodo 2) estendono il tentativo ai $K$ esiti più frequenti in ordine decrescente, ed è precisamente questa differenza che l'analisi di ablazione isola.
 
 \section{Approccio Metodologico}
 

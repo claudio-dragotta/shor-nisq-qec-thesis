@@ -19,14 +19,14 @@ La \textbf{fattorizzazione intera} consiste nel trovare i fattori primi di un nu
     \label{eq:gnfs_complexity}
 \end{equation}
 
-Questo problema è classificato in NP ma non è noto se appartenga a P: non esiste alcun algoritmo classico polinomiale per risolverlo, e si congettura fortemente che non esista.
+Nella sua formulazione decisionale il problema appartiene a NP, e più precisamente a $\text{NP} \cap \text{co-NP}$: sia l'esistenza sia l'assenza di un fattore in un dato intervallo ammettono un certificato verificabile in tempo polinomiale. È questa collocazione a rendere improbabile che la fattorizzazione sia NP-completa --- lo fosse, ne seguirebbe $\text{NP} = \text{co-NP}$, contro l'opinione prevalente. Non è però noto se appartenga a P: nessun algoritmo classico polinomiale è \emph{conosciuto}, e si congettura che non esista, ma una dimostrazione di questa impossibilità manca.
 
 \subsection{Rilevanza Crittografica: RSA}
 
 Il sistema crittografico \textbf{RSA} (Rivest-Shamir-Adleman, 1977) \cite{rsa1978} è il più diffuso algoritmo a chiave pubblica, alla base di \ac{HTTPS}, \ac{TLS}, \ac{SSH} e di gran parte delle comunicazioni digitali sicure. La sua sicurezza si fonda interamente sulla difficoltà computazionale della fattorizzazione:
 
 \begin{itemize}
-    \item Si scelgono due grandi primi $p$ e $q$ (tipicamente 1024--4096 bit ciascuno);
+    \item Si scelgono due grandi primi $p$ e $q$, ciascuno di circa metà della lunghezza desiderata per il modulo: 1024 bit ciascuno per un modulo RSA-2048, 2048 per un RSA-4096;
     \item Si calcola il modulo $N = p \cdot q$ (la \textit{chiave pubblica} include $N$ ed un esponente $e$);
     \item La \textit{chiave privata} è determinata da $d$ tale che $ed \equiv 1 \pmod{\lambda(N)}$, dove $\lambda$ è la funzione di Carmichael;
     \item Decifrare un messaggio senza conoscere $p$ e $q$ equivale, in pratica, a fattorizzare $N$.
@@ -100,7 +100,9 @@ dove $\hat{\alpha}_k = \frac{1}{\sqrt{2^n}}\sum_j \alpha_j e^{2\pi i jk/2^n}$ so
 
 \subsection{Implementazione Efficiente}
 
-La DFT classica su $N = 2^n$ elementi richiede $O(N \log N)$ operazioni (con il Fast Fourier Transform). La QFT, invece, richiede solo $O(n^2) = O((\log N)^2)$ porte quantistiche, ottenendo uno speedup esponenziale.
+La DFT classica su $N = 2^n$ elementi richiede $O(N \log N)$ operazioni (con il Fast Fourier Transform), mentre la QFT si realizza con $O(n^2) = O((\log N)^2)$ porte quantistiche: un conteggio esponenzialmente inferiore.
+
+Questo confronto va però interpretato correttamente, perché la formulazione ingenua --- ``la QFT calcola la trasformata di Fourier esponenzialmente più in fretta'' --- è fuorviante. La QFT non restituisce i coefficienti $\hat{\alpha}_k$: li lascia \emph{codificati nelle ampiezze} di uno stato quantistico, e la misura ne estrae un solo valore per esecuzione, con probabilità $|\hat{\alpha}_k|^2$. Non esiste quindi alcun modo di leggere lo spettro completo, e la QFT non sostituisce la FFT come strumento di calcolo generale. Il vantaggio è utilizzabile soltanto quando l'informazione cercata è una \emph{proprietà globale} dello spettro che una singola misura è sufficiente a rivelare --- ed è esattamente il caso della periodicità nell'algoritmo di Shor, dove i picchi della distribuzione trasformata cadono sui multipli di $2^n/r$ e una manciata di misure basta a ricostruire $r$.
 
 Il circuito della QFT è costruito ricorsivamente tramite porte di Hadamard e porte di fase controllate $CR_k$ dove:
 \begin{equation}
@@ -199,7 +201,7 @@ L'algoritmo si articola in tre fasi: un preprocessing classico, l'esecuzione del
     \item Inizializzare $n = 2\lceil\log_2 N\rceil$ qubit nel registro di controllo: $\ket{0}^{\otimes n}\ket{1}$.
     \item Applicare $H^{\otimes n}$ al registro di controllo, creando la sovrapposizione uniforme $\frac{1}{\sqrt{2^n}}\sum_{x=0}^{2^n-1}\ket{x}$.
     \item Applicare la moltiplicazione modulare controllata: $\ket{x}\ket{1} \mapsto \ket{x}\ket{a^x \bmod N}$.
-    \item Misurare il registro di lavoro: il registro di controllo collassa in una sovrapposizione periodica di passo $r$.
+    \item Misurare il registro di lavoro: il registro di controllo collassa in una sovrapposizione periodica di passo $r$. Il passo è \emph{concettuale} --- serve a rendere evidente l'origine della periodicità --- e nell'implementazione viene omesso, come chiarito nella Sezione~\ref{sec:entanglement_shor}.
     \item Applicare la QFT$^{-1}$ al registro di controllo.
     \item Misurare il registro di controllo: ottenere un intero proporzionale a $s/r$, con $s \in \{0,\ldots,r-1\}$.
 \end{enumerate}
@@ -294,12 +296,12 @@ In sintesi: l'entanglement tra i due registri è il meccanismo che \textit{trasf
 
 La complessità dell'algoritmo di Shor è \textbf{polinomiale} nel numero di bit di $N$:
 \begin{itemize}
-    \item Il circuito quantistico richiede $O((\log N)^2 \log\log N)$ porte elementari;
-    \item Il numero di qubit necessari è $O(\log N)$; l'implementazione ottimizzata di Beauregard \cite{beauregard2002} riduce questo a $2n+3$ qubit tramite addizione modulare in-place;
+    \item Il circuito quantistico richiede $O(n^3)$ porte elementari con aritmetica modulare elementare, dove $n = \log N$; ricorrendo alla moltiplicazione veloce il conteggio scende a $O(n^2 \log n \log\log n)$;
+    \item Il numero di qubit necessari è $O(\log N)$; l'implementazione ottimizzata di Beauregard \cite{beauregard2002} lo riduce a $2n+3$ tramite addizione modulare in-place;
     \item Il numero atteso di iterazioni (con basi $a$ diverse) prima del successo è $O(1)$.
 \end{itemize}
 
-Complessivamente: $T_{\text{Shor}}(N) = O\!\left((\log N)^3\right)$, a fronte del $O(\exp((\log N)^{1/3}))$ del miglior algoritmo classico. Si tratta di uno \textbf{speedup esponenziale}.
+Complessivamente, nella versione con aritmetica elementare, $T_{\text{Shor}}(N) = O\!\left((\log N)^3\right)$, a fronte della complessità sub-esponenziale dell'Equazione~\eqref{eq:gnfs_complexity} del miglior algoritmo classico. Si tratta di uno \textbf{speedup esponenziale}.
 
 \section{Impatto sulla Crittografia e Prospettive Post-Quantum}
 
