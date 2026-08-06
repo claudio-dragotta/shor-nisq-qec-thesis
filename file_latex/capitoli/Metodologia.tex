@@ -1,6 +1,6 @@
 \begin{onehalfspace}
 
-Il capitolo precedente ha concluso la parte teorica della tesi con un'ipotesi precisa da mettere alla prova: che il \ac{QML}, nella sua declinazione di classificatore addestrato per la rilevazione degli errori, riduca il numero medio di esecuzioni necessarie da $\bar{M}_1 \approx 6$--$7$ a circa tre. Il presente capitolo definisce il sistema sperimentale costruito per verificarla. Si tratta dell'architettura della \emph{prima fase} del lavoro: l'esito della verifica --- che il guadagno osservato è reale ma attribuibile alla ricerca multi-candidato e non al classificatore (Capitolo~\ref{chap:risultati}) --- motiva la seconda fase, la cui metodologia sperimentale è descritta direttamente nei capitoli sulla correzione d'errore (Capitoli~\ref{chap:qec}--\ref{chap:integrazione}), dove protocollo e strumenti sono specifici di ciascun codice.
+Il capitolo precedente ha concluso la parte teorica della tesi con un'ipotesi precisa da mettere alla prova: che il \ac{QML}, nella sua declinazione di classificatore addestrato per la rilevazione degli errori, riduca il numero medio di esecuzioni necessarie da $\bar{M}_1 \approx 6$--$7$ a circa tre. Il presente capitolo definisce il sistema sperimentale costruito per verificarla. Si tratta dell'architettura della \emph{prima fase} del lavoro: l'esito della verifica --- che il guadagno osservato è reale ma attribuibile alla ricerca multi-candidato e non al classificatore (Capitolo~\ref{chap:risultati}) --- motiva la seconda fase, che adotta un'architettura diversa perché diversa ne è la natura. Il protocollo sperimentale di ciascun codice correttore, essendo specifico del codice, è descritto nel capitolo che lo introduce (Capitoli~\ref{chap:qec}--\ref{chap:integrazione}); l'infrastruttura comune --- organizzazione del codice, divisione degli strumenti fra Qiskit, Stim e PyMatching, e disciplina di riproducibilità --- è nella Sezione~\ref{sec:impl_qec} del capitolo seguente.
 
 Questo capitolo ha questo scopo. Vengono descritte l'architettura del pipeline, le tecnologie adottate e la struttura dei due metodi che verranno confrontati nella parte sperimentale. Non si entra ancora nella descrizione del codice né dei risultati: quelli sono oggetto dei capitoli successivi. Qui si stabilisce il \textit{perché} di ciascuna scelta progettuale e il \textit{come} i componenti si raccordano tra loro.
 
@@ -148,21 +148,21 @@ Questo risultato ha un'interpretazione fisica precisa. Il circuito di Shor per N
 
 \begin{table}[H]
 \centering
-\begin{tabular}{@{}lrrrr@{}}
+\begin{tabular}{@{}lrrr@{}}
 \toprule
-\textbf{Livello} & \textbf{Gate CX} & \textbf{Profondità} & $\bar{M}_1$ & \textbf{Success rate} \\
+\textbf{Livello} & \textbf{Gate CX} & \textbf{Profondità} & $P_{\text{surv}}$ ($\varepsilon_{2q}=10^{-2}$) \\
 \midrule
-0 & 168 & 319 & 1.00 & 100\% \\
-1 & 162 & 313 & 1.00 & 100\% \\
-2 & 162 & 309 & 1.00 & 100\% \\
-3 & 162 & 309 & 1.00 & 100\% \\
+0            & 168 & 319 & 18.5\% \\
+1            & 162 & 313 & 19.6\% \\
+2 (adottato) & 162 & 309 & 19.6\% \\
+3            & 162 & 309 & 19.6\% \\
 \bottomrule
 \end{tabular}
-\caption{Sweep di \texttt{optimization\_level} su UC1 (N=15, a=7, K=30). Il passaggio da livello 0 a 1 riduce i gate CX del 3.6\% (168→162); i livelli 2 e 3 non apportano ulteriori riduzioni. Il success rate rimane 100\% a tutti i livelli.}
+\caption[Sweep di \texttt{optimization\_level}]{Sweep di \texttt{optimization\_level} sul circuito di UC1 ($N=15$, $a=7$). Il passaggio dal livello 0 al livello 1 elimina sei porte \ac{CX} (168$\rightarrow$162); i livelli 2 e 3 non apportano ulteriori riduzioni del conteggio e differiscono solo per una lieve diminuzione di profondità. Si riportano le sole metriche di transpilazione: le metriche di convergenza raccolte in questo sweep non sono comparabili con quelle degli altri, perché l'implementazione usata al suo interno seleziona i candidati con una sogliatura al 30\% del massimo anziché la sola moda, e non corrisponde quindi al Metodo 1 definito nella Sezione~\ref{sec:metodo1}.}
 \label{tab:sweep_optlevel}
 \end{table}
 
-La riduzione è marginale perché la decomposizione \texttt{c\_amod15} adottata per N=15 sfrutta matrici di permutazione già quasi ottimali: il transpiler trova poco margine di miglioramento. L'effetto dell'\texttt{optimization\_level} diventerebbe significativo per N=21 con la decomposizione Beauregard, dove il circuito ha struttura più complessa e maggiore spazio per la cancellazione di gate e il riordinamento delle operazioni. Anche in questo caso, tuttavia, il dato empirico conferma che il controllo del numero di gate CX tramite la \textit{scelta della decomposizione} è la leva dominante, non il livello di ottimizzazione del transpiler.
+La riduzione è marginale perché la decomposizione \texttt{c\_amod15} adottata per N=15 sfrutta matrici di permutazione già quasi ottimali: il transpiler trova poco margine di miglioramento. Si adotta il livello 2 per tutti gli esperimenti, in quanto raggiunge il conteggio minimo di porte a due qubit senza il costo della ricerca esaustiva del livello 3, che su questo circuito non trova alcun margine ulteriore. L'effetto dell'\texttt{optimization\_level} diventerebbe significativo per N=21 con la decomposizione Beauregard, dove il circuito ha struttura più complessa e maggiore spazio per la cancellazione di gate e il riordinamento delle operazioni. Il dato conferma per via indipendente ciò che la barriera di scalabilità del Capitolo~\ref{chap:risultati} mostrerà: la leva dominante sul numero di porte \ac{CX} è la \textit{scelta della decomposizione}, non il livello di ottimizzazione del transpiler.
 \end{enumerate}
 
 La strategia TOP-4 --- che mantiene success rate = 100\% sull'intero range di $\varepsilon_{2q}$ --- emerge come la scelta ottimale per N=15. Il classificatore ML del Metodo 2 si inserisce in questo framework come strumento per ridurre ulteriormente il numero di iterazioni necessarie prima di convergere a un risultato affidabile, completando la catena di ottimizzazione descritta nella sezione seguente.
