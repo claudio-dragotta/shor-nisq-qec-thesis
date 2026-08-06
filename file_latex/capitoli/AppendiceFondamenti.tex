@@ -195,7 +195,7 @@ Applica una NOT sul qubit \textit{target} se e solo se il qubit \textit{control}
 
 Un \textbf{circuito quantistico} è una sequenza ordinata di porte quantistiche applicata a un registro di qubit. I circuiti si leggono da sinistra a destra, con ogni filo orizzontale che rappresenta l'evoluzione temporale di un qubit. La composizione di porte corrisponde al prodotto matriciale degli operatori unitari associati.
 
-L'equivalente quantistico del teorema di universalità classico afferma che qualunque trasformazione unitaria su $n$ qubit può essere decomposta in un numero finito di porte da un insieme universale, tipicamente $\{H, T, \text{CNOT}\}$.
+L'equivalente quantistico del teorema di universalità classico afferma che qualunque trasformazione unitaria su $n$ qubit può essere \textbf{approssimata con precisione arbitraria} da una sequenza finita di porte prese da un insieme universale, tipicamente $\{H, T, \text{CNOT}\}$. La distinzione fra approssimazione e decomposizione esatta non è pedanteria: le sequenze finite su un insieme di porte fissato sono numerabili, mentre le trasformazioni unitarie non lo sono, sicché una decomposizione esatta è impossibile in generale. Il teorema di Solovay--Kitaev garantisce che l'approssimazione a precisione $\varepsilon$ richiede $O(\log^c(1/\varepsilon))$ porte, con $c$ costante piccola: il costo dell'approssimazione cresce dunque solo polilogaritmicamente, ed è questa la ragione per cui l'universalità resta praticamente utile.
 
 \section{Misura Quantistica}
 
@@ -225,12 +225,12 @@ La complessità di un algoritmo quantistico è misurata in termini di numero di 
     \item \ac{QMA}: analogo quantistico di NP; problemi la cui soluzione può essere verificata efficientemente da un computer quantistico.
 \end{itemize}
 
-Si congettura che $\mathbf{P} \subseteq \mathbf{BPP} \subseteq \mathbf{BQP} \subseteq \mathbf{PSPACE}$, ma non è ancora dimostrato che BQP strettamente contenga P o BPP, né che sia contenuto strettamente in PSPACE.
+Le inclusioni $\mathbf{P} \subseteq \mathbf{BPP} \subseteq \mathbf{BQP} \subseteq \mathbf{PSPACE}$ sono \emph{dimostrate}; ciò che resta aperto è se siano \textbf{strette}. Non è noto se BQP contenga propriamente P o BPP --- cioè se esista davvero un problema che un computer quantistico risolva efficientemente e uno classico no --- né se sia propriamente contenuto in PSPACE. Una dimostrazione di separazione stretta fra BQP e BPP implicherebbe $\mathbf{P} \neq \mathbf{PSPACE}$, un risultato che la teoria della complessità non ha ancora raggiunto: è questa la ragione per cui il vantaggio quantistico, per Shor come per gli altri algoritmi, resta una congettura ampiamente creduta e non un teorema.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.68\textwidth]{complexity_classes.png}
-    \caption[Gerarchia delle classi di complessità quantistica]{Gerarchia congetturata delle classi di complessità nel calcolo quantistico. La classe BQP cattura i problemi efficientemente risolvibili da un computer quantistico; essa contiene P e BPP, ed è contenuta in PSPACE. Gli algoritmi di Shor e Grover risiedono in BQP ma si ritiene (senza dimostrazione) che non appartengano a P.}
+    \caption[Gerarchia delle classi di complessità quantistica]{Gerarchia delle classi di complessità nel calcolo quantistico. La classe BQP cattura i problemi efficientemente risolvibili da un computer quantistico; le inclusioni mostrate ($\mathrm{P} \subseteq \mathrm{BPP} \subseteq \mathrm{BQP} \subseteq \mathrm{PSPACE}$) sono dimostrate, mentre è congetturata --- e non dimostrata --- la loro \emph{strettezza}. Gli algoritmi di Shor e Grover risiedono in BQP; che la fattorizzazione non appartenga a P è ritenuto probabile ma non provato.}
     \label{fig:complexity}
 \end{figure}
 
