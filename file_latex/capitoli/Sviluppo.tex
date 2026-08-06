@@ -1,6 +1,6 @@
 \begin{onehalfspace}
 
-Il Capitolo~\ref{chap:obiettivi} ha formalizzato il contratto sperimentale: quattro use case, i parametri di rumore ipotizzati e le metriche di confronto. Il Capitolo~\ref{chap:metodologia} ha definito l'architettura del pipeline a tre stadi. Questo capitolo descrive cosa è stato concretamente costruito: il setup dell'ambiente di esecuzione, l'integrazione dell'algoritmo di Shor con il simulatore rumoroso, e l'implementazione dei due metodi di analisi. Non vengono qui riportati i risultati degli esperimenti --- quelli sono oggetto del Capitolo~\ref{chap:risultati} --- ma le scelte implementative, il codice sviluppato e la struttura del sistema che ha prodotto quei risultati.
+Il Capitolo~\ref{chap:obiettivi} ha formalizzato il contratto sperimentale: quattro use case, i parametri di rumore ipotizzati e le metriche di confronto. Il Capitolo~\ref{chap:metodologia} ha definito l'architettura del pipeline a tre stadi. Questo capitolo descrive cosa è stato concretamente costruito: il setup dell'ambiente di esecuzione, l'integrazione dell'algoritmo di Shor con il simulatore rumoroso, l'implementazione dei due metodi di analisi della prima fase e, nella Sezione~\ref{sec:impl_qec}, quella dei codici correttori che costituiscono il nucleo della seconda. Non vengono qui riportati i risultati degli esperimenti --- quelli sono oggetto dei Capitoli~\ref{chap:risultati} e~\ref{chap:qec}--\ref{chap:integrazione} --- ma le scelte implementative, il codice sviluppato e la struttura del sistema che li ha prodotti.
 
 % -----------------------------------------------
 \section{Setup dell'Ambiente di Esecuzione}
@@ -367,5 +367,120 @@ K_SCALABILITY = 10   # UC3/UC4: analisi profondita' circuito
 \end{lstlisting}
 
 Il seed di ogni ripetizione viene calcolato come \texttt{seed = rep} e propagato al simulatore come \texttt{seed\_simulator = rep * 10000 + iteration}, garantendo che ogni ripetizione e ogni iterazione interna abbiano realizzazioni di rumore indipendenti e riproducibili.
+
+% -----------------------------------------------
+\section{Implementazione della Correzione d'Errore}
+\label{sec:impl_qec}
+
+Quanto descritto finora realizza la prima fase sperimentale. La seconda --- i codici correttori e la loro integrazione con Shor --- richiede strumenti e strutture dati differenti, perché differente è la natura dei circuiti: non più un singolo circuito profondo di cui interessa l'istogramma finale, ma circuiti poco profondi eseguiti milioni di volte, di cui interessa la \emph{sindrome}. Questa sezione descrive come tale seconda infrastruttura è stata costruita.
+
+\subsection{Organizzazione del codice e divisione degli strumenti}
+
+Il codice sperimentale è organizzato in una cartella per milestone, ciascuna contenente il proprio script, i risultati in formato JSON e un file di documentazione che ne dichiara i criteri di validazione. La divisione degli strumenti segue la natura dei circuiti, secondo il criterio già motivato nel Capitolo~\ref{chap:strumenti}.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llll}
+\toprule
+\textbf{Cartella} & \textbf{Oggetto} & \textbf{Strumento} & \textbf{Costo dominante} \\
+\midrule
+\texttt{M5\_repetition\_code}  & codice a ripetizione   & Qiskit Aer        & trascurabile \\
+\texttt{M6\_steane\_code}      & Steane $[[7,1,3]]$     & Qiskit Aer        & Monte Carlo Pauli \\
+\texttt{M7\_surface\_code}     & surface code           & Stim + PyMatching & decodifica \\
+\texttt{M8\_shor\_logico}      & Shor logico            & Qiskit Aer        & simulazione statevector \\
+\texttt{M10\_neural\_decoder}  & decodifica appresa     & Stim + scikit-learn & addestramento \\
+\bottomrule
+\end{tabular}
+\caption[Organizzazione del codice della parte QEC]{Struttura del codice sperimentale della seconda fase. I circuiti dei codici correttori sono \emph{stabilizer} e vengono trattati con Stim dove la scala lo richiede; quelli che contengono operazioni non-Clifford --- lo Shor logico --- restano su Qiskit Aer.}
+\label{tab:organizzazione_qec}
+\end{table}
+
+\subsection{Il codice a ripetizione: sindrome senza collasso}
+
+L'implementazione del codice a ripetizione realizza in forma esplicita il ciclo descritto nel Capitolo~\ref{chap:qec}. Il punto delicato non è la codifica, ma il fatto che la misura di sindrome non deve collassare lo stato logico: per questo gli stabilizzatori sono misurati \emph{indirettamente}, copiandone la parità su due qubit ancillari che vengono poi letti al posto dei dati.
+
+\begin{lstlisting}[caption={Codifica ed estrazione di sindrome del codice a ripetizione. Il registro classico separa i due bit di sindrome dai tre di lettura dei dati. Il codice duale phase-flip si ottiene coniugando con Hadamard: la stessa struttura protegge dagli errori $Z$ anziché $X$.}, label={lst:qec_repetition}]
+# --- Codifica: |0_L> = |000>, |1_L> = |111> (stato entangled, non 3 copie)
+if logical_value == 1:
+    qc.x(0)
+qc.cx(0, 1)
+qc.cx(0, 2)
+if basis == 'X':
+    qc.h(DATA)          # |+_L> = H^3 |0_L>  -> duale phase-flip
+
+# --- Punto di iniezione del rumore: identita' "rumorose" sui data
+for q in DATA:
+    qc.id(q)
+
+# --- Estrazione della sindrome tramite ancilla (i data NON vengono misurati)
+if basis == 'Z':
+    qc.cx(0, 3); qc.cx(1, 3)      # stabilizzatore Z0Z1 -> ancilla 3
+    qc.cx(1, 4); qc.cx(2, 4)      # stabilizzatore Z1Z2 -> ancilla 4
+else:
+    qc.h(3); qc.cx(3, 0); qc.cx(3, 1); qc.h(3)   # X0X1
+    qc.h(4); qc.cx(4, 1); qc.cx(4, 2); qc.h(4)   # X1X2
+qc.measure(ANC[0], 0)
+qc.measure(ANC[1], 1)
+\end{lstlisting}
+
+Merita attenzione la scelta del \textbf{punto di iniezione del rumore}. Poiché il noise model di Aer associa gli errori alle \emph{porte}, e non al tempo trascorso, per applicare un canale d'errore a probabilità nota sui soli qubit dati si inseriscono porte identità in corrispondenza dell'istante in cui il rumore deve agire: l'identità non altera lo stato ideale ma costituisce l'aggancio a cui il modello di rumore associa il canale. È una tecnica standard e rende il parametro $p$ delle curve del Capitolo~\ref{chap:qec} esattamente la probabilità di errore per qubit, anziché una quantità effettiva da calibrare.
+
+\subsection{Il codice di Steane}
+
+Per lo Steane la difficoltà implementativa si sposta sulla \textbf{preparazione dello stato logico}. Lo stato $\ket{0_L}$ è la sovrapposizione uniforme degli otto \textit{codeword}, e si ottiene senza scriverli esplicitamente: si individuano i tre qubit che compaiono in un solo stabilizzatore di tipo X --- i ``semi'' --- li si pone in sovrapposizione con una porta di Hadamard, e si propaga ciascun seme sul proprio supporto con una rete di CNOT.
+
+\begin{lstlisting}[caption={Preparazione di $\ket{0_L}$ e misura dei sei stabilizzatori del codice di Steane. Le due famiglie richiedono schemi diversi: gli stabilizzatori di tipo Z si misurano portando la parità sui dati verso l'ancilla, quelli di tipo X operando nella base coniugata.}, label={lst:qec_steane}]
+def encode_zero_L(qc):
+    """|0_L> = sovrapposizione uniforme degli 8 codeword."""
+    for s in SEED:                    # H sui 3 qubit "seme"
+        qc.h(s)
+    for s, support in SEED.items():   # propaga il seme sul suo supporto
+        for d in support:
+            if d != s:
+                qc.cx(s, d)
+
+def measure_syndrome(qc):
+    for k, support in enumerate(GZ):      # tipo Z: rilevano errori X
+        for d in support:
+            qc.cx(d, ANC_Z[k])
+    for k, support in enumerate(GX):      # tipo X: rilevano errori Z
+        qc.h(ANC_X[k])
+        for d in support:
+            qc.cx(ANC_X[k], d)
+        qc.h(ANC_X[k])
+\end{lstlisting}
+
+La stima della curva $p \rightarrow p_L$ non viene condotta simulando il circuito completo per ogni campione, ma nel \textbf{formalismo di Pauli}: si campiona un errore di Pauli per qubit con probabilità $p$, se ne calcola la sindrome come prodotto scalare binario con le matrici di parità, si applica la correzione a peso minimo dalla lookup table e si verifica se il residuo contiene un operatore logico non banale. Questa scelta rende trattabili i $200\,000$ campioni per punto e non introduce approssimazioni, perché per errori di Pauli e circuiti Clifford il risultato coincide con quello della simulazione esplicita. Ne discende però il limite dichiarato nel Capitolo~\ref{chap:qec}: l'estrazione di sindrome così modellata è \emph{ideale}, cioè le ancilla non sono soggette a errore, e il protocollo non è fault-tolerant.
+
+\subsection{Il surface code e l'iniezione del crosstalk}
+
+Per il surface code la generazione del circuito e la decodifica sono demandate a Stim e PyMatching secondo lo schema riportato nel Capitolo~\ref{chap:surface} (Listato~\ref{lst:stim_pymatching}). L'unico intervento non standard riguarda l'esperimento sul rumore correlato della Sezione~\ref{sec:decodifica_appresa}, che richiede di aggiungere al circuito generato un canale a due qubit fra dati adiacenti. Poiché Stim rappresenta i cicli intermedi con un blocco \texttt{REPEAT}, l'inserimento deve procedere ricorsivamente sulla struttura del circuito:
+
+\begin{lstlisting}[caption={Iniezione del crosstalk nel circuito del surface code. L'inizio di ogni ciclo di sindrome è individuato dal primo \texttt{DEPOLARIZE1} che segue le porte di Hadamard sulle ancilla; la ricorsione tratta il blocco \texttt{REPEAT} con cui Stim rappresenta i cicli intermedi.}, label={lst:crosstalk}]
+def _inject(block, pairs, p_ct):
+    out = stim.Circuit()
+    first = True
+    for inst in block:
+        if isinstance(inst, stim.CircuitRepeatBlock):
+            out += _inject(inst.body_copy(), pairs, p_ct) * inst.repeat_count
+            continue
+        out.append(inst)
+        if inst.name == 'DEPOLARIZE1':
+            if first:
+                out.append('DEPOLARIZE2', pairs, p_ct)  # coppie di dati adiacenti
+            first = not first
+    return out
+\end{lstlisting}
+
+Le coppie su cui il canale agisce sono determinate dalle coordinate della griglia: due qubit dati adiacenti distano 2 nel sistema di riferimento del layout ruotato, poiché fra di essi si trova un qubit di misura. L'identificazione dei qubit di misura richiede una cautela: nel \textit{memory experiment} l'ultima operazione legge \emph{anche} i qubit dati, sicché l'insieme dei qubit misurati nel circuito completo non è discriminante; si usa quindi il primo \texttt{MR}, che corrisponde al primo ciclo di estrazione della sindrome.
+
+\subsection{Lo Shor logico e il decoder appreso}
+
+Il modello a livelli del Capitolo~\ref{chap:integrazione} è realizzato applicando un canale depolarizzante di intensità $p_L$ dopo ogni porta del circuito di Shor, con $p_L$ trattato come parametro libero: il circuito è quello della Sezione~\ref{sec:impl_shor}, e cambia soltanto il modello di rumore associato. Il decoder appreso, infine, non richiede alcuna infrastruttura di generazione del dataset, perché i dati di addestramento coincidono con l'output del campionatore di Stim --- la matrice dei \textit{detection events} come variabile indipendente, l'esito dell'osservabile logico come etichetta. È il motivo per cui il confronto con il \ac{MWPM} è leale per costruzione: i due decoder ricevono esattamente la stessa informazione, e differiscono solo per come la usano.
+
+\subsection{Riproducibilità}
+
+Ogni script accetta un seed che viene propagato a tutte le sorgenti di casualità --- il campionatore di Stim, il generatore Monte Carlo e l'inizializzazione della rete --- e lo registra nel JSON dei risultati insieme al numero di campioni e ai parametri del modello di rumore. Le figure dei Capitoli~\ref{chap:qec}--\ref{chap:integrazione} sono prodotte da script dedicati che leggono quei JSON, cosicché nessun valore riportato in tesi è trascritto a mano. Questa disciplina ha una motivazione concreta: durante la revisione finale si è scoperto che il seed della campagna sul surface code, pur essendo accettato e registrato, non veniva propagato al campionatore; l'anomalia è stata corretta e la campagna rieseguita, con risultati coincidenti entro l'errore statistico.
 
 \end{onehalfspace}
