@@ -94,7 +94,7 @@ La sicurezza di RSA si basa sulla \textbf{asimmetria computazionale} tra due ope
     \item Calcolare $d \equiv e^{-1} \pmod{\phi(N)}$ tramite l'algoritmo di Euclide esteso.
 \end{enumerate}
 
-La \textbf{chiave pubblica} è la coppia $(N,\, e)$; la \textbf{chiave privata} è $d$. Cifrare un messaggio $m < N$ produce il crittogramma $c = m^e \bmod N$; decifrarlo richiede $m = c^d \bmod N$. La correttezza si fonda sul piccolo teorema di Fermat: $(m^e)^d = m^{ed} \equiv m \pmod{N}$ poiché $ed \equiv 1 \pmod{\phi(N)}$. Tutta la sicurezza risiede nell'impossibilità di calcolare $d$ da $(N, e)$ senza conoscere la fattorizzazione di $N$.
+La \textbf{chiave pubblica} è la coppia $(N,\, e)$; la \textbf{chiave privata} è $d$. Cifrare un messaggio $m < N$ produce il crittogramma $c = m^e \bmod N$; decifrarlo richiede $m = c^d \bmod N$. La correttezza si fonda sul \textbf{teorema di Eulero} --- la generalizzazione del piccolo teorema di Fermat a moduli composti, secondo cui $m^{\phi(N)} \equiv 1 \pmod{N}$ per $m$ coprimo con $N$: essendo $ed \equiv 1 \pmod{\phi(N)}$, si ha $ed = 1 + k\phi(N)$ e quindi $(m^e)^d = m^{1+k\phi(N)} \equiv m \pmod{N}$. Tutta la sicurezza risiede nell'impossibilità di calcolare $d$ da $(N, e)$ senza conoscere la fattorizzazione di $N$.
 
 \subsection{Perché l'Algoritmo di Shor Rompe RSA}
 
@@ -129,7 +129,7 @@ La consapevolezza della minaccia quantistica ha spinto il \ac{NIST} a lanciare n
 
 \subsection{Gli Standard NIST 2024}
 
-Dopo otto anni di valutazione pubblica, crittoanalisi internazionale e tre successivi turni di selezione tra 69 candidati iniziali, nel luglio 2024 il NIST ha pubblicato i primi tre standard definitivi \cite{nist2024pqc}:
+Dopo otto anni di valutazione pubblica, crittoanalisi internazionale e tre successivi turni di selezione tra 69 candidati iniziali, nell'agosto 2024 il NIST ha pubblicato i primi tre standard definitivi \cite{nist2024pqc}:
 
 \begin{itemize}
     \item \textbf{ML-KEM} (FIPS 203, ex CRYSTALS-Kyber): meccanismo di incapsulamento di chiavi basato sul problema \textit{Module Learning With Errors} (MLWE) su reticoli. È il sostituto designato per lo scambio di chiavi RSA e Diffie-Hellman nei protocolli TLS;
@@ -147,7 +147,7 @@ La transizione verso la crittografia post-quantistica è un'operazione di ingegn
 
 \begin{itemize}
     \item \textbf{Eterogeneità dei sistemi}: miliardi di dispositivi embedded, sensori industriali e infrastrutture legacy con cicli di vita decennali che non riceveranno aggiornamenti software;
-    \item \textbf{Overhead computazionale}: le chiavi ML-KEM sono significativamente più grandi delle chiavi RSA (768 byte vs. 256 byte per sicurezza a 128 bit), con impatto su protocolli a bassa latenza;
+    \item \textbf{Overhead di banda}: il materiale crittografico post-quantistico è sensibilmente più voluminoso. Al livello di sicurezza più basso (ML-KEM-512), la chiave di incapsulamento occupa 800 byte e il crittogramma 768 byte, contro i circa 256 byte di una chiave pubblica RSA-2048: un fattore di crescita che pesa sui protocolli a bassa latenza e sui dispositivi con banda limitata;
     \item \textbf{Migrazione a doppio binario}: nella fase transitoria, molte implementazioni adottano schemi \textit{ibridi} (classico + post-quantistico in parallelo) per mantenere compatibilità con sistemi non aggiornati.
 \end{itemize}
 

@@ -23,7 +23,7 @@ Lo scarto tra le due espressioni non è una differenza di grado, ma una differen
 
 La minaccia non è futura in senso astratto. Il fenomeno del \textit{harvest now, decrypt later} --- già documentato in ambito di intelligence --- consiste nel raccogliere oggi grandi quantità di dati cifrati con RSA, conservarli, e decifrarli non appena sarà disponibile un computer quantistico fault-tolerant. I dati cifrati oggi con chiavi RSA-2048 potrebbero quindi diventare leggibili in un orizzonte di dieci-quindici anni, secondo le roadmap pubblicate da \ac{IBM} e da altri produttori di hardware quantistico~\cite{ibm_roadmap2025}.
 
-Il problema pratico che impedisce questa minaccia di materializzarsi oggi è il \textbf{rumore}. I processori quantistici attuali operano in regime \ac{NISQ}: dispongono di decine o centinaia di qubit fisici, ma sono affetti da decoerenza, errori di gate e readout error che degradano l'output dell'algoritmo di Shor fino a renderlo inaffidabile senza un numero elevato di ripetizioni. Comprendere questo limite e sviluppare strategie per superarlo --- anche parzialmente, tramite modelli di machine learning --- è la ragione d'essere del presente lavoro.
+Il problema pratico che impedisce questa minaccia di materializzarsi oggi è il \textbf{rumore}. I processori quantistici attuali operano in regime \ac{NISQ}: dispongono di decine o centinaia di qubit fisici, ma sono affetti da decoerenza, errori di gate e readout error che degradano l'output dell'algoritmo di Shor fino a renderlo inaffidabile senza un numero elevato di ripetizioni. Comprendere questo limite e stabilire quali strategie lo superino --- e in quale punto della pipeline di esecuzione i modelli di machine learning contribuiscano davvero --- è la ragione d'essere del presente lavoro.
 
 \section{Requisiti Funzionali}
 \label{sec:requisiti}
@@ -44,13 +44,13 @@ Il sistema sperimentale deve soddisfare i seguenti requisiti funzionali:
     Il sistema registra la distribuzione di misura del registro di controllo per ogni esecuzione e la archivia in formato strutturato, garantendo la riproducibilità degli esperimenti tramite seed fisso per il generatore di numeri casuali di Qiskit Aer.
 
     \item \textbf{Analisi statistica del Metodo 1.}
-    Il sistema implementa la pipeline del Metodo 1: identificazione dei picchi della distribuzione tramite filtraggio a soglia, stima del periodo $r$ tramite frazioni continue, verifica della correttezza dei fattori estratti. Misura e registra il numero di iterazioni necessarie per raggiungere il primo risultato corretto.
+    Il sistema implementa la pipeline del Metodo 1: selezione della misura più frequente dell'istogramma (strategia TOP-1, senza sogliatura preliminare), stima del periodo $r$ tramite frazioni continue, verifica della correttezza dei fattori estratti. Misura e registra il numero di iterazioni necessarie per raggiungere il primo risultato corretto.
 
     \item \textbf{Training, validazione e inferenza del Metodo 2.}
-    Il sistema genera il dataset dal simulatore rumoroso, addestra il classificatore con divisione training/validation/test, ne valuta le metriche di accuratezza e lo utilizza in modalità inferenza: dopo ogni esecuzione del circuito, il classificatore decide se il risultato è corretto e, in caso affermativo, interrompe il processo.
+    Il sistema genera il dataset dal simulatore rumoroso, addestra il classificatore con divisione training/validation/test, ne valuta le metriche di accuratezza e lo utilizza in modalità inferenza: dopo ogni esecuzione del circuito, il classificatore decide se l'istogramma contiene segnale \ac{QPE} recuperabile e, in caso affermativo, la ricerca multi-candidato TOP-K tenta l'estrazione dei fattori dai $K$ esiti più frequenti.
 
-    \item \textbf{Confronto sistematico sui quattro use case.}
-    Entrambi i metodi vengono eseguiti sugli stessi quattro use case, nelle medesime condizioni di rumore, producendo metriche confrontabili secondo i criteri definiti nella Sezione~\ref{sec:metriche}.
+    \item \textbf{Confronto sistematico sui use case previsti.}
+    Entrambi i metodi vengono eseguiti sugli stessi use case, nelle medesime condizioni di rumore, producendo metriche confrontabili secondo i criteri definiti nella Sezione~\ref{sec:metriche}. Come documentato nel Capitolo~\ref{chap:risultati}, il confronto risulterà praticabile sui due use case per $N=15$: per $N=21$ e $N=35$ la profondità del circuito traspilato azzera la probabilità di successo di qualunque strategia di estrazione.
 
     \item \textbf{Riproducibilità.}
     Tutti gli esperimenti sono riproducibili: seed fisso, parametri esplicitati, codice disponibile nel repository del progetto. Questo requisito è condizione necessaria per la validazione accademica dei risultati \cite{shor_hpec2023}.

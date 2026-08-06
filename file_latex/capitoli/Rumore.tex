@@ -171,9 +171,9 @@ Poiché l'algoritmo di Shor per un intero a $n$ bit richiede una profondità $O(
 
 Le porte quantistiche fisiche non implementano perfettamente l'operazione unitaria ideale $U$, bensì un'operazione perturbata $\tilde{U} = U + \delta E$. L'\textbf{errore di gate} è quantificato dalla \textbf{gate infidelity}:
 \begin{equation}
-    r(U,\tilde{U}) = 1 - F(U,\tilde{U}), \qquad F(U,\tilde{U}) = \frac{1}{d}\left|\mathrm{Tr}(U^\dagger\tilde{U})\right|
+    r(U,\tilde{U}) = 1 - F(U,\tilde{U}), \qquad F(U,\tilde{U}) = \frac{1}{d^2}\left|\mathrm{Tr}(U^\dagger\tilde{U})\right|^2
 \end{equation}
-dove $d$ è la dimensione dello spazio di Hilbert. Le cause principali sono le imprecisioni nel controllo di ampiezza e frequenza dei pulse a microonde, l'accoppiamento residuo \textit{always-on} tra qubit adiacenti, e il \textit{leakage} verso stati non computazionali ($\ket{2}$, $\ket{3}$, \ldots) negli oscillatori di Josephson. Su hardware IBM (2024--2025) i valori tipici sono: $r \approx 0.03$--$0.1\%$ per gate a singolo qubit ($F \approx 99.9$--$99.97\%$) e $r \approx 0.3$--$1\%$ per gate a due qubit come CNOT ed ECR ($F \approx 99$--$99.7\%$).
+dove $d$ è la dimensione dello spazio di Hilbert e $F$ è la \textit{process fidelity}, pari a 1 quando $\tilde{U}=U$. Le cause principali sono le imprecisioni nel controllo di ampiezza e frequenza dei pulse a microonde, l'accoppiamento residuo \textit{always-on} tra qubit adiacenti, e il \textit{leakage} verso stati non computazionali ($\ket{2}$, $\ket{3}$, \ldots) negli oscillatori di Josephson. Su hardware IBM (2024--2025) i valori tipici sono: $r \approx 0.03$--$0.1\%$ per gate a singolo qubit ($F \approx 99.9$--$99.97\%$) e $r \approx 0.3$--$1\%$ per gate a due qubit come CNOT ed ECR ($F \approx 99$--$99.7\%$).
 
 % ---
 \subsection{Errori di Misura (Readout Errors)}
@@ -191,7 +191,7 @@ dove $e_0^{(k)}$ è la probabilità di leggere $1$ dato $\ket{0}$ per il $k$-esi
 % ---
 \subsection{Crosstalk}
 
-Il \textbf{crosstalk} è l'interferenza indesiderata tra qubit adiacenti durante l'esecuzione di operazioni parallele. Origina dall'accoppiamento capacitivo residuo tra qubit vicini nel chip superconduttore: quando si applica un gate su un qubit, le perturbazioni del campo si propagano ai qubit circostanti causando rotazioni parassite non intenzionali. Il crosstalk è particolarmente dannoso nei circuiti profondi con molte operazioni parallele ed è difficile da modellare analiticamente~\cite{sarovar2020}, il che rende i modelli di apprendimento automatico particolarmente adatti a caratterizzarlo.
+Il \textbf{crosstalk} è l'interferenza indesiderata tra qubit adiacenti durante l'esecuzione di operazioni parallele. Origina dall'accoppiamento capacitivo residuo tra qubit vicini nel chip superconduttore: quando si applica un gate su un qubit, le perturbazioni del campo si propagano ai qubit circostanti causando rotazioni parassite non intenzionali. Il crosstalk è particolarmente dannoso nei circuiti profondi con molte operazioni parallele ed è difficile da modellare analiticamente~\cite{sarovar2020}, il che rende i modelli di apprendimento automatico particolarmente adatti a caratterizzarlo. Questa affermazione, qui anticipata, riceve verifica sperimentale nella Sezione~\ref{sec:decodifica_appresa}: è precisamente in presenza di errori correlati fra qubit adiacenti --- il crosstalk --- che un decoder appreso supera quello analitico, perché tali errori non sono rappresentabili nella struttura su cui quest'ultimo si fonda.
 
 \begin{table}[H]
 \centering
@@ -282,7 +282,7 @@ Il canale \textbf{depolarizzante} è il modello isotropico più usato per gli er
     \mathcal{E}_{dep}(\rho) = \left(1-p\right)\rho + \frac{p}{3}\left(X\rho X + Y\rho Y + Z\rho Z\right)
     \label{eq:depolarizing}
 \end{equation}
-Usando l'identità $X\rho X + Y\rho Y + Z\rho Z = 2\,I/2 - \rho$ (valida per $\mathrm{Tr}(\rho)=1$), si ottiene la forma compatta:
+Usando l'identità $X\rho X + Y\rho Y + Z\rho Z = 2\,\mathrm{Tr}(\rho)\,I - \rho = 2I - \rho$ (valida per $\mathrm{Tr}(\rho)=1$), si ottiene la forma compatta:
 \begin{equation}
     \mathcal{E}_{dep}(\rho) = \left(1 - \frac{4p}{3}\right)\rho + \frac{4p}{3}\,\frac{I}{2}
     \label{eq:depolarizing_compact}
@@ -326,7 +326,7 @@ Per $t \to \infty$ ($\gamma \to 1$), qualsiasi stato converge a $\ket{0}\bra{0}$
 \toprule
 \textbf{Canale} & \textbf{Parametro} & \textbf{Effetto coerenze} & \textbf{Effetto popolazioni} & \textbf{Modella} \\
 \midrule
-Bit Flip          & $p$       & Contrae $r_y$, $r_z$    & Invariate       & Errori $X$ / leakage \\
+Bit Flip          & $p$       & Contrae $r_y$, $r_z$    & Invariate       & Errori $X$ (inversione di bit) \\
 Phase Flip        & $p$       & Sopprime $\rho_{01}$    & Invariate       & Dephasing ($T_2$) \\
 Depolarizzante    & $p$       & Contrae isotropicamente & Verso $I/2$     & Errori di gate generici \\
 Amplitude Damping & $\gamma$  & Sopprime $\rho_{01}$    & Verso $\ket{0}$ & Decadimento $T_1$ \\
