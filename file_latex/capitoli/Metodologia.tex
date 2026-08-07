@@ -74,7 +74,7 @@ Nel contesto dell'algoritmo di Shor, il collo di bottiglia è la \textbf{modular
 
 La \textbf{decomposizione di Beauregard} \cite{beauregard2002} evita la sintesi densa costruendo l'aritmetica modulare nel dominio della \ac{QFT} con addizionatori di Draper, e ottiene un circuito di $O(n^3)$ porte elementari su $2n+3$ qubit per un modulo di $n$ bit. Il guadagno è di ordini di grandezza: per $N=21$ il modulo \texttt{beauregard.py} sviluppato in questa tesi produce circa $2\,594$ porte \ac{CX}, contro le oltre $10\,000$ della sintesi densa.
 
-Va però dichiarato con precisione lo stato di questa ottimizzazione nel presente lavoro: \textbf{gli esperimenti riportati nei capitoli seguenti non la utilizzano}. I circuiti effettivamente eseguiti impiegano la decomposizione densa, ed è questa la ragione per cui i use case UC3 e UC4 risultano fuori portata (Capitolo~\ref{chap:risultati}, Tabella~\ref{tab:circuit_depth}). Il modulo Beauregard è stato implementato e verificato sul conteggio delle porte, ma la sua validazione sperimentale completa eccede le risorse di calcolo disponibili ed è discussa fra gli sviluppi futuri (Capitolo~\ref{chap:sviluppi}). Per $N=15$, l'istanza su cui il confronto è condotto, la decomposizione adottata resta comunque efficiente --- 114 porte \ac{CX} --- perché sfrutta matrici di permutazione già quasi ottimali.
+Va però dichiarato con precisione lo stato di questa ottimizzazione nel presente lavoro: \textbf{gli esperimenti riportati nei capitoli seguenti non la utilizzano}. I circuiti effettivamente eseguiti impiegano la decomposizione densa, ed è questa la ragione per cui i use case UC3 e UC4 risultano fuori portata (Capitolo~\ref{chap:risultati}, Tabella~\ref{tab:circuit_depth}). Il modulo Beauregard è stato implementato e verificato sul conteggio delle porte, ma la sua validazione sperimentale completa eccede le risorse di calcolo disponibili ed è discussa fra gli sviluppi futuri (Capitolo~\ref{chap:sviluppi}). Per $N=15$, l'istanza su cui il confronto è condotto, la decomposizione adottata resta comunque efficiente --- $166$ porte a due qubit in tutto --- perché sfrutta matrici di permutazione già quasi ottimali.
 
 Un ulteriore livello di riduzione è offerto dalla \textbf{transpilazione} di Qiskit: il transpiler decompone le porte nel gate set nativo del backend target, cancella sequenze identità e riordina i gate commutanti. Tutti gli esperimenti adottano \texttt{optimization\_level=2}, per le ragioni discusse nella Sezione~\ref{subsec:sensitivity}.
 
@@ -123,19 +123,23 @@ I risultati mostrano con nettezza che \textbf{nessun parametro del modello di ru
 \toprule
 $\varepsilon_{2q}$ & $P_{\text{surv}}$ & $\bar{M}_1$ & $\sigma_{M_1}$ & Success rate & TOP-4 $\bar{M}$ \\
 \midrule
-$10^{-3}$        & $8.9\times10^{-1}$ & 1.70 & 0.94 & 100\% & 1.00 \\
-$5\times10^{-3}$ & $5.6\times10^{-1}$ & 1.97 & 1.47 & 100\% & 1.00 \\
-$10^{-2}$        & $3.2\times10^{-1}$ & 1.97 & 1.66 & 100\% & 1.00 \\
-$2\times10^{-2}$ & $1.0\times10^{-1}$ & 1.53 & 0.62 & 100\% & 1.00 \\
-$5\times10^{-2}$ & $2.9\times10^{-3}$ & 1.53 & 1.28 & 100\% & 1.00 \\
-$10^{-1}$        & $6.1\times10^{-6}$ & 1.30 & 0.78 & 100\% & 1.00 \\
+$10^{-3}$        & $8.5\times10^{-1}$ & 1.70 & 0.94 & 100\% & 1.00 \\
+$5\times10^{-3}$ & $4.4\times10^{-1}$ & 1.97 & 1.47 & 100\% & 1.00 \\
+$10^{-2}$        & $1.9\times10^{-1}$ & 1.97 & 1.66 & 100\% & 1.00 \\
+$2\times10^{-2}$ & $3.5\times10^{-2}$ & 1.53 & 0.62 & 100\% & 1.00 \\
+$5\times10^{-2}$ & $2.0\times10^{-4}$ & 1.53 & 1.28 & 100\% & 1.00 \\
+$10^{-1}$        & $2.5\times10^{-8}$ & 1.30 & 0.78 & 100\% & 1.00 \\
 \bottomrule
 \end{tabular}
-\caption[Sweep di $\varepsilon_{2q}$ su UC1]{Sweep di $\varepsilon_{2q}$ su UC1 ($N=15$, $a=7$, $K_{\text{rep}}=30$). $P_{\text{surv}} = (1-\varepsilon_{2q})^{114}$ è la probabilità che nessuna delle $114$ porte \ac{CX} del circuito traspilato subisca errore. Entrambe le strategie mantengono success rate $=100\%$ su tutto il range, e $\bar{M}_1$ resta compreso fra $1.3$ e $2.0$ anche là dove $P_{\text{surv}}$ scende a sei parti su un milione.}
+\caption[Sweep di $\varepsilon_{2q}$ su UC1]{Sweep di $\varepsilon_{2q}$ su UC1 ($N=15$, $a=7$, $K_{\text{rep}}=30$). $P_{\text{surv}} = (1-\varepsilon_{2q})^{166}$ è la probabilità che nessuna delle porte soggette all'errore a due qubit subisca errore; si veda la nota seguente sul conteggio. Entrambe le strategie mantengono success rate $=100\%$ su tutto il range, e $\bar{M}_1$ resta compreso fra $1.3$ e $2.0$ anche là dove $P_{\text{surv}}$ scende a due parti su cento milioni.}
 \label{tab:sweep_eps2q}
 \end{table}
 
-Il dato più istruttivo della tabella è il confronto fra la seconda colonna e le successive. Passando da $\varepsilon_{2q}=10^{-3}$ a $\varepsilon_{2q}=10^{-1}$, la probabilità che il circuito attraversi tutte le sue porte a due qubit senza alcun errore crolla da quasi il $90\%$ a sei parti su un milione: in altre parole, nel regime peggiore \emph{praticamente ogni singola esecuzione} contiene almeno un errore. Ciononostante $\bar{M}_1$ non peggiora --- anzi, decresce leggermente --- e il tasso di successo resta pieno. La spiegazione sta nella natura della \ac{QPE}: il segnale non è concentrato in un unico esito che il rumore può distruggere, ma distribuito su un picco largo attorno ai valori $k \approx j\,2^{n}/r$, e la procedura delle frazioni continue tollera uno scostamento apprezzabile dal massimo esatto. Un errore che sposta la misura di qualche unità lascia il periodo recuperabile. È lo stesso meccanismo che, portato alle sue conseguenze, rende efficace la strategia TOP-K.
+\begin{samepage}
+\paragraph{Come va contato $P_{\text{surv}}$.} Il modello di rumore adottato (Sezione~\ref{sec:noise_model}) applica l'errore depolarizzante a due qubit non alle sole porte \texttt{cx}, ma all'insieme \texttt{[cx, swap, cp]}. L'esponente di $P_{\text{surv}}$ è quindi il numero \emph{complessivo} di porte soggette a quell'errore, non il conteggio delle \texttt{cx}. Per il circuito di UC1 traspilato a \texttt{optimization\_level=2} la composizione è $114$ \texttt{cx} $+\ 52$ \texttt{cp} $+\ 0$ \texttt{swap}, da cui $k = 166$ e $P_{\text{surv}} = (1-\varepsilon_{2q})^{166}$. Le porte \texttt{cp} provengono dalla \ac{QFT} inversa, che il transpiler conserva nel gate set nativo anziché decomporle: trascurarle sottostima l'errore accumulato di un terzo abbondante. La distinzione è tanto più rilevante per le istanze maggiori, dove la decomposizione di Beauregard costruisce l'aritmetica modulare interamente nel dominio della \ac{QFT} e le \texttt{cp} arrivano a superare di tre volte le \texttt{cx} (Capitolo~\ref{chap:risultati}, Tabella~\ref{tab:circuit_depth}).
+\end{samepage}
+
+Il dato più istruttivo della tabella è il confronto fra la seconda colonna e le successive. Passando da $\varepsilon_{2q}=10^{-3}$ a $\varepsilon_{2q}=10^{-1}$, la probabilità che il circuito attraversi tutte le sue porte a due qubit senza alcun errore crolla dall'$85\%$ a due parti su cento milioni: in altre parole, nel regime peggiore \emph{praticamente ogni singola esecuzione} contiene almeno un errore. Ciononostante $\bar{M}_1$ non peggiora --- anzi, decresce leggermente --- e il tasso di successo resta pieno. La spiegazione sta nella natura della \ac{QPE}: il segnale non è concentrato in un unico esito che il rumore può distruggere, ma distribuito su un picco largo attorno ai valori $k \approx j\,2^{n}/r$, e la procedura delle frazioni continue tollera uno scostamento apprezzabile dal massimo esatto. Un errore che sposta la misura di qualche unità lascia il periodo recuperabile. È lo stesso meccanismo che, portato alle sue conseguenze, rende efficace la strategia TOP-K.
 
 Questo risultato ha un'interpretazione fisica precisa anche per gli altri parametri. Il circuito di Shor per N=15 con la decomposizione a permutazione (\texttt{c\_amod15}) ha profondità ridotta: in queste condizioni il tempo totale di esecuzione è sufficientemente breve da rendere la decoerenza ($T_1$, $T_2$) trascurabile rispetto al contributo dei gate a due qubit. Analogamente, gli errori sui gate a singolo qubit e il readout error si trovano in un regime in cui il loro effetto è oscurato dall'errore CX. La fonte di degradazione dominante è quindi il numero e la qualità dei gate \ac{CX}.
 
@@ -152,24 +156,24 @@ Questo risultato ha un'interpretazione fisica precisa anche per gli altri parame
 
 \begin{table}[H]
 \centering
-\begin{tabular}{@{}lrrr@{}}
+\begin{tabular}{@{}lrrrrrr@{}}
 \toprule
-\textbf{Livello} & \textbf{Gate CX} & \textbf{Profondità} & $P_{\text{surv}}$ ($\varepsilon_{2q}=10^{-2}$) \\
+\textbf{Livello} & \texttt{cx} & \texttt{cp} & \texttt{swap} & $k$ & \textbf{Profondità} & $P_{\text{surv}}$ ($\varepsilon_{2q}=10^{-2}$) \\
 \midrule
-0            & 168 & 319 & 18.4\% \\
-1            & 162 & 313 & 19.6\% \\
-2 (adottato) & 114 & 311 & 31.8\% \\
-3            & 114 & 311 & 31.8\% \\
+0            & 168 & 28 & 4 & 200 & 319 & 13.4\% \\
+1            & 162 & 28 & 4 & 194 & 313 & 14.2\% \\
+2 (adottato) & 114 & 52 & 0 & 166 & 311 & 18.9\% \\
+3            & 114 & 52 & 0 & 166 & 311 & 18.9\% \\
 \bottomrule
 \end{tabular}
-\caption[Sweep di \texttt{optimization\_level}]{Sweep di \texttt{optimization\_level} sul circuito di UC1 ($N=15$, $a=7$). Il passaggio dal livello 0 al livello 1 elimina sei porte \ac{CX} (168$\rightarrow$162); il livello 2 ne elimina altre quarantotto (162$\rightarrow$114), portando $P_{\text{surv}}$ da $19.6\%$ a $31.8\%$; il livello 3 non apporta alcun miglioramento ulteriore. Si riportano le sole metriche di transpilazione: le metriche di convergenza raccolte in questo sweep non sono comparabili con quelle degli altri, perché l'implementazione usata al suo interno seleziona i candidati con una sogliatura al 30\% del massimo anziché la sola moda, e non corrisponde quindi al Metodo 1 definito nella Sezione~\ref{sec:metodo1}.}
+\caption[Sweep di \texttt{optimization\_level}]{Sweep di \texttt{optimization\_level} sul circuito di UC1 ($N=15$, $a=7$); $k = \texttt{cx} + \texttt{cp} + \texttt{swap}$ è il numero di porte soggette all'errore a due qubit. La tabella mostra perché il conteggio delle sole \texttt{cx} è fuorviante: passando dal livello 1 al livello 2 le \texttt{cx} scendono di quarantotto unità ($162 \rightarrow 114$), ma quasi metà della riduzione è compensata dalla comparsa di ventiquattro \texttt{cp} in più, e il guadagno effettivo su $P_{\text{surv}}$ è di soli $4.7$ punti percentuali anziché dei $12$ che il solo conteggio \texttt{cx} suggerirebbe. Il livello 3 non apporta alcun miglioramento ulteriore. Si riportano le sole metriche di transpilazione: le metriche di convergenza raccolte in questo sweep non sono comparabili con quelle degli altri, perché l'implementazione usata al suo interno seleziona i candidati con una sogliatura al 30\% del massimo anziché la sola moda, e non corrisponde quindi al Metodo 1 definito nella Sezione~\ref{sec:metodo1}.}
 \label{tab:sweep_optlevel}
 \end{table}
 
-Si adotta il livello 2 per tutti gli esperimenti, in quanto raggiunge il conteggio minimo di porte a due qubit senza il costo della ricerca esaustiva del livello 3, che su questo circuito non trova alcun margine ulteriore. Il guadagno complessivo --- un terzo delle porte \ac{CX} eliminate --- resta comunque di un ordine di grandezza inferiore a quello ottenibile cambiando decomposizione: per $N=21$, il passaggio da \texttt{UnitaryGate} naïve a Beauregard riduce il conteggio di un fattore quattro (Sezione~\ref{subsec:transpilazione}). Il dato conferma per via indipendente ciò che la barriera di scalabilità del Capitolo~\ref{chap:risultati} mostrerà: la leva dominante sul numero di porte \ac{CX} è la \textit{scelta della decomposizione}, non il livello di ottimizzazione del transpiler.
+Si adotta il livello 2 per tutti gli esperimenti, in quanto raggiunge il valore minimo di $k$ senza il costo della ricerca esaustiva del livello 3, che su questo circuito non trova alcun margine ulteriore. Il guadagno complessivo è però modesto --- $17\%$ di porte rumorose in meno fra il livello 0 e il livello 2 --- e resta di gran lunga inferiore a quello ottenibile cambiando decomposizione. Il dato conferma per via indipendente ciò che la barriera di scalabilità del Capitolo~\ref{chap:risultati} mostrerà: la leva dominante sul numero di porte a due qubit è la \textit{scelta della decomposizione}, non il livello di ottimizzazione del transpiler.
 
 \begin{samepage}
-\paragraph{Nota sulla dipendenza dalla versione del transpiler.} Il conteggio di porte \ac{CX} prodotto ai livelli 2 e 3 dipende dalla versione di Qiskit: le campagne di questa tesi sono state eseguite con \textbf{Qiskit 2.x} e riportano $114$ porte \ac{CX}, mentre versioni precedenti della stessa pipeline ne producevano $162$. Poiché $P_{\text{surv}}$ entra in tutte le stime analitiche di sopravvivenza del circuito, ogni valore riportato nel seguito si riferisce al conteggio $114$; il dato va inteso come proprietà della coppia (circuito, transpiler) e non del solo algoritmo.
+\paragraph{Nota sulla dipendenza dalla versione del transpiler.} La ripartizione fra \texttt{cx} e \texttt{cp} ai livelli 2 e 3 dipende dalla versione di Qiskit: le campagne di questa tesi sono state eseguite con \textbf{Qiskit 2.x}, mentre versioni precedenti della stessa pipeline producevano $162$ \texttt{cx} anche al livello 2. Il valore di $k$, e con esso $P_{\text{surv}}$, ne risente assai meno del conteggio delle sole \texttt{cx} --- $166$ contro $194$, ossia $18.9\%$ contro $14.2\%$ --- il che è un'ulteriore ragione per riportare $k$ anziché il numero di \texttt{cx}. Ogni valore di $P_{\text{surv}}$ nel seguito si riferisce a $k$; il dato va inteso come proprietà della coppia (circuito, transpiler) e non del solo algoritmo.
 \end{samepage}
 \end{enumerate}
 
