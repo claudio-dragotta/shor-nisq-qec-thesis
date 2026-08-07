@@ -1,0 +1,93 @@
+Backend: fake_sherbrooke | sottografi fissati: 12 | 8192 shot
+
+  sg  strategia            readout misurati   P_success   ECR
+  --------------------------------------------------------------
+  0   conteggio-migliore   0.05756           0.4109     424
+  0   conteggio-peggiore   0.05402           0.5138     402
+  0   transpiler           0.05179           0.4442     349
+  0   casuale-1            0.05670           0.5032     424
+  0   casuale-2            0.05670           0.4771     443
+
+  1   conteggio-migliore   0.02716           0.4650     482
+  1   conteggio-peggiore   0.03253           0.4883     444
+  1   transpiler           0.03415           0.4761     355
+  1   casuale-1            0.03427           0.4967     427
+  1   casuale-2            0.03503           0.4531     451
+
+  2   conteggio-migliore   0.01828           0.5037     441
+  2   conteggio-peggiore   0.01520           0.4808     435
+  2   transpiler           0.01520           0.5035     360
+  2   casuale-1            0.01828           0.4752     464
+  2   casuale-2            0.01743           0.5339     424
+
+  3   conteggio-migliore   0.03528           0.2981     435
+  3   conteggio-peggiore   0.04941           0.2322     405
+  3   transpiler           0.03476           0.5957     354
+  3   casuale-1            0.03714           0.3743     431
+  3   casuale-2            0.05460           0.2468     433
+
+  4   conteggio-migliore   0.06406           0.3774     436
+  4   conteggio-peggiore   0.09647           0.2502     422
+  4   transpiler           0.09647           0.2427     359
+  4   casuale-1            0.05441           0.2841     443
+  4   casuale-2            0.05460           0.3700     441
+
+  5   conteggio-migliore   0.01828           0.5493     428
+  5   conteggio-peggiore   0.02103           0.5616     420
+  5   transpiler           0.01547           0.5879     359
+  5   casuale-1            0.01547           0.5475     479
+  5   casuale-2            0.01828           0.5233     450
+
+  6   conteggio-migliore   0.04529           0.4999     433
+  6   conteggio-peggiore   0.04022           0.5096     426
+  6   transpiler           0.03894           0.4810     349
+  6   casuale-1            0.04752           0.4576     425
+  6   casuale-2            0.04752           0.4230     420
+
+  7   conteggio-migliore   0.02130           0.5720     389
+  7   conteggio-peggiore   0.01590           0.5452     422
+  7   transpiler           0.01434           0.5826     349
+  7   casuale-1            0.01746           0.5546     445
+  7   casuale-2            0.01746           0.5493     425
+
+  8   conteggio-migliore   0.04034           0.5984     403
+  8   conteggio-peggiore   0.06903           0.2589     400
+  8   transpiler           0.06903           0.2443     359
+  8   casuale-1            0.05194           0.2435     426
+  8   casuale-2            0.03970           0.2351     409
+
+  9   conteggio-migliore   0.02902           0.4614     463
+  9   conteggio-peggiore   0.02707           0.4753     471
+  9   transpiler           0.05331           0.4854     352
+  9   casuale-1            0.02686           0.5507     459
+  9   casuale-2            0.05331           0.4274     480
+
+  10  conteggio-migliore   0.02655           0.5549     437
+  10  conteggio-peggiore   0.03555           0.4109     446
+  10  transpiler           0.03555           0.4739     349
+  10  casuale-1            0.02817           0.5460     435
+  10  casuale-2            0.03555           0.4154     479
+
+  11  conteggio-migliore   0.03345           0.4873     405
+  11  conteggio-peggiore   0.03125           0.5302     434
+  11  transpiler           0.03345           0.4952     343
+  11  casuale-1            0.03345           0.4723     396
+  11  casuale-2            0.03345           0.4850     399
+
+====================================================================
+ESITO M11b
+====================================================================
+  sottografi validi                    : 12
+  P_success conteggio-MIGLIORE (media) : 0.4815
+  P_success conteggio-PEGGIORE (media) : 0.4381
+  P_success transpiler         (media) : 0.4677
+  P_success casuale            (media) : 0.4435
+
+  differenza appaiata migliore-peggiore: +0.0434 (+4.34 p.p.)
+  errore standard sulla differenza     : 0.0335
+  rapporto t                           : +1.29
+  sottografi in cui MIGLIORE > PEGGIORE: 6/12
+
+  FLAG: ROSSO — nessuna differenza sistematica: il ruolo dei qubit non conta quanto ipotizzato
+
+Risultati salvati in: results_M11b_ruoli_20260807_022458.json

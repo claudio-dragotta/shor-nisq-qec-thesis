@@ -1,0 +1,144 @@
+\begin{onehalfspace}
+
+Il criterio stabilito nel Capitolo~\ref{chap:conclusioni} --- un modello appreso produce valore dove il metodo esistente è strutturalmente cieco a una classe di informazione --- ha la forma di una regola generale, e come tale può essere messo alla prova su casi che il corpo della tesi non ha trattato. Questa appendice riporta una di queste prove, condotta sulla \textbf{terza posizione} in cui è possibile intervenire sull'effetto del rumore.
+
+Il lavoro principale ne ha esplorate due: \emph{dopo} l'esecuzione, dove il Capitolo~\ref{chap:risultati} ha dimostrato che non resta informazione da sfruttare; \emph{durante} il calcolo, con la correzione d'errore dei Capitoli~\ref{chap:qec}--\ref{chap:integrazione}. Ne resta una terza: \emph{prima} dell'esecuzione, nel modo in cui il circuito viene mappato sui qubit fisici del dispositivo. È l'unica che agisce sull'hardware \ac{NISQ} odierno senza richiedere il regime sotto-soglia, ed è l'unica che sfugge per costruzione al risultato negativo della prima fase --- non ricostruisce l'informazione perduta, ma riduce la probabilità che venga perduta.
+
+% -----------------------------------------------
+\section{La Previsione e il suo Fondamento}
+\label{sec:app_comp_previsione}
+
+Il transpiler di Qiskit non è ingenuo rispetto al rumore: ai livelli di ottimizzazione superiori sceglie la mappatura tenendo conto dei tempi di coerenza e degli errori per arco. Esistono inoltre strumenti dedicati al solo ordinamento dei layout, che assegnano a ciascuno un punteggio di fedeltà ricavato dai dati di calibrazione, e ranker appresi che li superano. Qualunque proposta va confrontata con questi, non con il layout predefinito: superare quest'ultimo dimostrerebbe soltanto che il transpiler svolge il proprio compito.
+
+Il margine ipotizzato sta altrove. Tutti quei metodi ottimizzano la \textbf{fedeltà del circuito}; per l'algoritmo di Shor, però, l'obiettivo non è la fedeltà ma che \emph{escano i fattori}, e le due cose non coincidono per ragioni strutturali: i qubit di conteggio portano la fase da cui si estrae il periodo e sono gli unici misurati, mentre il registro di lavoro viene scartato; e il post-processing con frazioni continue tollera fasi lievemente spostate. Il transpiler ignora questa asimmetria perché minimizza un costo generico, indipendente dall'algoritmo. Da qui la previsione, conforme al criterio del Capitolo~\ref{chap:conclusioni}: \emph{esiste un margine accessibile a chi conosce la struttura di Shor e inaccessibile a un criterio di sola fedeltà}.
+
+\paragraph{Condizione sperimentale necessaria.}
+La verifica richiede rumore \textbf{eterogeneo per qubit e per arco}: sotto rumore uniforme non esiste informazione topologica da sfruttare, e un esito nullo sarebbe conseguenza del disegno anziché proprietà del metodo. Si adottano perciò i dati di calibrazione reali di un processore a 127 qubit, la cui disomogeneità è considerevole: fra il qubit migliore e il peggiore l'errore di lettura varia di un fattore $171$, l'errore di gate a due qubit di un fattore $288$ e il tempo di coerenza $T_2$ di un fattore $185$.
+
+% -----------------------------------------------
+\section{Primo Esperimento: la Fedeltà è un Buon Criterio di Scelta?}
+\label{sec:app_comp_pilota}
+
+Si campionano sessanta sottoinsiemi connessi di dodici qubit fisici. Per ciascuno si costruisce il modello di rumore dai parametri reali di quei qubit e di quegli archi, si traspila il circuito di Shor per $N=15$ e si misurano due grandezze: il \textbf{punteggio di fedeltà} $s = 1 - \prod_x (1 - e_x)$ calcolato dai soli dati di calibrazione, senza eseguire nulla, e la \textbf{probabilità di successo} della fattorizzazione, misurata su $8\,192$ campioni.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lc}
+\toprule
+\textbf{Grandezza} & \textbf{Valore} \\
+\midrule
+Sottografi valutati & 60 \\
+$P_{\text{success}}$ minima / mediana / massima & 0.196 / 0.549 / 0.631 \\
+\textbf{Forbice fra migliore e peggiore} & \textbf{43.5 punti percentuali} \\
+Correlazione di Spearman (fedeltà, successo) & $-0.460$ \\
+$P_{\text{success}}$ del layout migliore \emph{per fedeltà} & 0.611 \\
+$P_{\text{success}}$ del layout migliore \emph{in assoluto} & 0.631 \\
+\textbf{Perdita usando il criterio di fedeltà} & \textbf{1.9 punti percentuali} \\
+\bottomrule
+\end{tabular}
+\caption[Fedeltà stimata contro successo misurato nella scelta del layout]{Scelta del layout su calibrazione reale. La forbice fra il migliore e il peggiore sottografo è larghissima, ma il criterio di fedeltà --- pur essendo un predittore mediocre --- seleziona un layout quasi ottimale.}
+\label{tab:app_comp_pilota}
+\end{table}
+
+Il risultato è duplice e va letto per intero. Da un lato \textbf{la scelta del layout conta enormemente}: fra il sottografo migliore e il peggiore corrono più di quaranta punti percentuali di probabilità di successo --- più di quanto qualunque tecnica esaminata in questa tesi abbia mai recuperato. Dall'altro, \textbf{il criterio di fedeltà quella scelta la compie già bene}: sbaglia di meno di due punti su quarantatré, e tale perdita è per di più sovrastimata, poiché il ``migliore su sessanta'' è il massimo di sessanta stime rumorose ed è quindi affetto da distorsione di selezione.
+
+Ne discende una distinzione che vale la pena isolare, perché è la stessa che il Capitolo~\ref{chap:risultati} ha incontrato in forma speculare: il punteggio di fedeltà è un \emph{predittore} mediocre --- con una correlazione di rango di $-0.46$ spiega meno di un terzo della variabilità --- ma un \emph{selettore} efficace. Nella prima fase sperimentale il classificatore era eccellente come predittore e inutile come decisore; qui accade l'opposto. In entrambi i casi la lezione è che \textbf{la qualità di una stima e la sua utilità operativa sono grandezze distinte}, e che confonderle porta a conclusioni sbagliate in entrambe le direzioni.
+
+\paragraph{Quali grandezze predicono davvero il successo.}
+L'analisi delle singole componenti chiarisce il quadro e riserva una sorpresa.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lc}
+\toprule
+\textbf{Grandezza del layout} & \textbf{Correlazione di Spearman con} $P_{\text{success}}$ \\
+\midrule
+Errore di lettura medio & $\mathbf{-0.564}$ \\
+Errore di gate a due qubit medio & $-0.541$ \\
+Errore di lettura del qubit peggiore & $-0.518$ \\
+\emph{Punteggio di fedeltà composito} & \emph{$-0.460$} \\
+$T_2$ medio & $+0.221$ \\
+Profondità del circuito traspilato & $+0.098$ \\
+Numero di porte a due qubit (routing) & $+0.032$ \\
+\bottomrule
+\end{tabular}
+\caption[Potere predittivo delle singole grandezze del layout]{Il punteggio composito predice \emph{peggio} del solo errore di lettura, di cui è funzione: l'aggregazione moltiplicativa diluisce il segnale anziché concentrarlo. I tempi di coerenza risultano quasi irrilevanti, in accordo indipendente con la campagna parametrica dell'Appendice~\ref{app:parametrica}.}
+\label{tab:app_comp_predittori}
+\end{table}
+
+Tre osservazioni. La prima è che il punteggio composito predice \emph{peggio} del singolo ingrediente da cui dipende: aggregare moltiplicativamente tutti i contributi di errore diluisce l'informazione che conta. La seconda è che l'errore di lettura domina --- ed è coerente con la struttura dell'algoritmo, poiché gli unici qubit misurati sono gli otto di conteggio. La terza è una conferma incrociata di un risultato già acquisito: i tempi di coerenza risultano quasi ininfluenti, esattamente come la campagna parametrica dell'Appendice~\ref{app:parametrica} aveva trovato per via del tutto indipendente, con strumenti e modello di rumore diversi.
+
+% -----------------------------------------------
+\section{Secondo Esperimento: Conta il Ruolo Assegnato ai Qubit?}
+\label{sec:app_comp_ruoli}
+
+Il primo esperimento ha variato \emph{quale} gruppo di dodici qubit utilizzare, lasciando al transpiler la scelta del ruolo da assegnare a ciascuno. Non ha quindi messo alla prova l'ipotesi di partenza, che riguarda proprio l'assegnazione dei ruoli. Il secondo esperimento colma questa lacuna: si \textbf{fissa il sottografo} e si varia \textbf{soltanto} quali qubit fisici ricevano il registro di conteggio, confrontando l'assegnazione ai qubit a lettura migliore con quella ai qubit a lettura peggiore, con la scelta libera del transpiler e con permutazioni casuali. Il confronto è appaiato: stesso sottografo, stessi campioni, stesso seme.
+
+\paragraph{L'intervento non è affidabile, e i dati lo rivelano.}
+Il protocollo prevedeva un controllo di verifica: misurare, dopo la traspilazione, l'errore di lettura medio dei qubit fisici su cui le misure \emph{effettivamente} cadono, per accertare che la manipolazione avesse avuto l'effetto voluto. Il controllo ha rivelato che l'intervento riesce solo in circa metà dei casi. La ragione è strutturale: imporre la mappatura iniziale non determina la mappatura \emph{finale}, perché l'instradamento inserisce porte di scambio che permutano i qubit lungo il circuito. Su circuiti con oltre quattrocento porte a due qubit la permutazione è sostanziale, e il qubit che porta il registro di conteggio al momento della misura non è quello a cui era stato assegnato in partenza.
+
+Il confronto fra le due strategie intenzionali, di conseguenza, non mette alla prova l'ipotesi: su dodici sottografi l'assegnazione ai qubit a lettura migliore prevale in sei casi su dodici, con una differenza appaiata media di $+4.3$ punti percentuali ma un rapporto $t$ di $1.29$, non significativo. L'esito non è una smentita: è una misura priva di potere informativo, perché la variabile indipendente non è stata controllata.
+
+\paragraph{L'analisi corretta.}
+Si abbandona quindi l'intervento e si utilizza la grandezza effettivamente misurata --- l'errore di lettura dei qubit realmente misurati --- correlandola con la probabilità di successo su tutte le sessanta esecuzioni. Per isolare l'effetto del \emph{ruolo} da quello del gruppo di qubit impiegato, entrambe le variabili sono centrate sulla media del proprio sottografo, ottenendo una correlazione parziale che controlla per il sottografo.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Grandezza} & \textbf{Correlazione grezza} & \textbf{Correlazione parziale} \\
+ & (sottografi confusi) & (entro sottografo) \\
+\midrule
+Errore di lettura dei qubit misurati & $-0.685$ & $\mathbf{-0.465}$ \\
+Numero di porte di instradamento & $-0.081$ & $-0.188$ \\
+\bottomrule
+\end{tabular}
+\caption[Effetto del ruolo dei qubit, a sottografo fissato]{Correlazione di Spearman con la probabilità di successo, su 60 esecuzioni e 12 sottografi. La correlazione parziale isola l'effetto dell'assegnazione dei ruoli, a parità di gruppo di qubit fisici impiegato.}
+\label{tab:app_comp_ruoli}
+\end{table}
+
+Tre elementi convergono. Il primo: a sottografo fissato, la sola riassegnazione dei ruoli fa variare la probabilità di successo di \textbf{13.2 punti percentuali in media}, con un massimo di $36.4$ --- non è dunque una variabile marginale. Il secondo: la correlazione parziale con l'errore di lettura dei qubit misurati è $-0.465$, mentre quella con il costo di instradamento è meno della metà: \emph{a parità di sottografo è la lettura, non il routing, a governare l'esito}. Il terzo, non parametrico e quindi indipendente da assunzioni di forma: in \textbf{sei sottografi su dodici} la configurazione con l'errore di lettura più basso è anche quella che ottiene il successo massimo, contro i $2.4$ attesi per puro caso fra cinque configurazioni ($p = 0.019$).
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Strategia di assegnazione} & $P_{\text{success}}$ \textbf{media} & \textbf{Porte di instradamento} \\
+\midrule
+Conteggio sui qubit a lettura migliore & $0.482 \pm 0.025$ & 431 \\
+Scelta libera del transpiler           & $0.468 \pm 0.034$ & \textbf{353} \\
+Permutazione casuale (media)           & $0.444$           & 438 \\
+Conteggio sui qubit a lettura peggiore & $0.438 \pm 0.035$ & 427 \\
+\bottomrule
+\end{tabular}
+\caption[Prestazione media per strategia di assegnazione dei ruoli]{L'ordinamento medio segue la direzione prevista, ma le differenze non raggiungono la significatività con dodici sottografi. Si noti che il transpiler ottiene il costo di instradamento nettamente più basso senza ottenere il successo più alto: ottimizza la grandezza che sa misurare, non quella che conta per l'algoritmo.}
+\label{tab:app_comp_strategie}
+\end{table}
+
+% -----------------------------------------------
+\section{Conclusione: il Criterio va Precisato}
+\label{sec:app_comp_conclusione}
+
+I due esperimenti restituiscono un esito che non è né una conferma né una smentita, e la distinzione merita di essere formulata con precisione perché è proprio ciò che rende il caso istruttivo.
+
+\textbf{Il meccanismo ipotizzato esiste.} A parità di gruppo di qubit fisici, il ruolo assegnato a ciascuno muove la probabilità di successo di oltre tredici punti percentuali in media; la grandezza che governa quel movimento è l'errore di lettura dei qubit effettivamente misurati --- coerentemente con la struttura dell'algoritmo, dove gli unici qubit letti sono quelli del registro di conteggio --- e non il costo di instradamento. L'asimmetria fra registro di conteggio e registro di lavoro, che il criterio di sola fedeltà ignora, è dunque reale e misurabile.
+
+\textbf{Ma non è sfruttabile con lo strumento ovvio.} Imporre la mappatura iniziale non basta a determinare quali qubit portino il conteggio al momento della misura, perché l'instradamento li permuta. Controllare davvero la variabile richiederebbe di vincolare anche l'instradamento, e ogni vincolo aggiuntivo si paga in porte: il transpiler, lasciato libero, ottiene un costo di instradamento inferiore di circa un quinto rispetto a qualunque assegnazione imposta. È questo il compromesso che il primo esperimento aveva già lasciato intravedere, e che spiega perché il criterio di sola fedeltà --- pur essendo un predittore mediocre --- si riveli un selettore difficile da battere: bilancia implicitamente due grandezze in tensione fra loro.
+
+\paragraph{Che cosa se ne ricava per il criterio del Capitolo~\ref{chap:conclusioni}.}
+Il criterio afferma che un modello appreso produce valore dove il metodo esistente è strutturalmente cieco a una classe di informazione. Il caso qui esaminato ne mostra il limite: l'informazione mancava davvero, ed era davvero rilevante, eppure il guadagno non si è materializzato. La condizione va perciò integrata:
+
+\begin{quote}
+non basta che l'informazione sia \emph{assente} dal metodo esistente e \emph{predittiva} dell'esito; occorre anche che sia \textbf{sfruttabile senza costi compensativi}, ossia che agire su di essa non degradi un'altra grandezza che concorre al medesimo risultato.
+\end{quote}
+
+I due casi favorevoli incontrati nel corpo della tesi soddisfano la condizione aggiuntiva, e si vede ora che non è un caso: la ricerca multi-candidato non modifica il circuito e non costa nulla oltre al tentativo aggiuntivo, mentre la rete che corregge il decoder agisce dopo la decodifica, senza toccare né il circuito né la sindrome. Entrambe intervengono \emph{a valle} di ciò che hanno migliorato, e non ne alterano le condizioni. La mappatura consapevole della struttura, al contrario, agisce \emph{a monte} e modifica l'oggetto stesso su cui poi misura il guadagno: è questa la ragione strutturale per cui il vantaggio si annulla.
+
+\paragraph{Perimetro.}
+L'esplorazione riguarda una sola istanza ($N=15$), un solo dispositivo e dodici sottografi; con questa numerosità l'ordinamento medio fra strategie segue la direzione prevista ma non raggiunge la significatività statistica, ed è possibile che un campione più ampio, unito a un controllo effettivo dell'instradamento, riveli un effetto che qui resta sotto la soglia di rilevabilità. Ciò che l'esperimento stabilisce con sicurezza è di natura diversa e non dipende dalla potenza statistica: la scelta della mappatura è di gran lunga la leva più influente fra quelle esaminate in questa tesi --- oltre quaranta punti percentuali fra la migliore e la peggiore --- e il criterio di sola fedeltà, per quanto imperfetto, la sfrutta già quasi interamente.
+
+\end{onehalfspace}

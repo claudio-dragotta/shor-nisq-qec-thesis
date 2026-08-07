@@ -1,0 +1,12 @@
+{
+  "nota": "analisi correlazionale: la manipolazione via initial_layout non regge al routing",
+  "n_run": 60,
+  "n_sottografi": 12,
+  "spearman_grezzo_readout": -0.6848569046957489,
+  "spearman_grezzo_ecr": -0.08146707418727425,
+  "spearman_parziale_readout": -0.46451792164490147,
+  "spearman_parziale_ecr": -0.18771881078077246,
+  "forbice_entro_sottografo_media": 0.13172403971354166,
+  "forbice_entro_sottografo_max": 0.363525390625,
+  "n_readout_min_coincide_con_successo_max": 6
+}
