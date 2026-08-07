@@ -82,7 +82,18 @@ Campioni negativi con moda $y=0$                      & 103/103 & 67/67 \\
 \end{tabular}
 \end{table}
 
-Per UC1 il dato della Tabella~\ref{tab:struttura_negativi} è dirimente: gli istogrammi ``negativi'' concentrano il $75.8\%$ della propria massa sui quattro picchi della \ac{QPE} e hanno entropia $3.66$ bit su $8$ --- valori indistinguibili da quelli della classe positiva. Non sono affatto istogrammi privi di segnale: sono istogrammi in cui il segnale c'è tutto, e in cui il picco più alto è quello privo di contenuto informativo. In un campione tipico della classe negativa, il secondo, terzo e quarto valore per frequenza sono esattamente $192$, $128$ e $64$, e ciascuno dei tre conduce alla fattorizzazione corretta $(3,5)$.
+Per UC1 il dato della Tabella~\ref{tab:struttura_negativi} è dirimente: gli istogrammi ``negativi'' concentrano il $75.8\%$ della propria massa sui quattro picchi della \ac{QPE} e hanno entropia $3.66$ bit su $8$ --- valori indistinguibili da quelli della classe positiva. Non sono affatto istogrammi privi di segnale: sono istogrammi in cui il segnale c'è tutto, e in cui il picco più alto è quello privo di contenuto informativo. La Figura~\ref{fig:audit_istogramma_negativo} mostra un campione rappresentativo della classe negativa e rende la situazione immediata.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{audit_istogramma_negativo.pdf}
+    \caption[Un istogramma etichettato ``negativo'' nel dataset]{Campione della classe negativa del dataset di UC1 (quello di massa mediana sui picchi). I quattro picchi della \ac{QPE} sono tutti presenti e di altezza confrontabile; il più alto --- e quindi la moda, l'unico candidato che la regola TOP-1 valuta --- è l'esito $y=0$, che corrisponde a fase nulla e che la funzione di estrazione scarta per costruzione. Gli altri tre, in seconda, terza e quarta posizione, conducono tutti alla fattorizzazione corretta $(3,5)$. Il campione è stato etichettato negativo pur contenendo il segnale intatto: è la ragione per cui il classificatore ha appreso a riconoscere la posizione dell'argmax anziché la presenza del segnale. Figura rigenerabile da \texttt{figure\_src/gen\_audit\_classificatore.py}.}
+    \label{fig:audit_istogramma_negativo}
+\end{figure}
+
+Il caso illustrato merita un'osservazione ulteriore, perché mostra quanto sia fragile la distinzione su cui il modello è stato addestrato. In quel campione l'esito $y=0$ e l'esito $y=128$ raccolgono \textbf{esattamente lo stesso numero di conteggi}, $202$ su $1\,024$: quale dei due risulti la moda non è deciso dai dati ma dal criterio di spareggio della funzione che ne calcola il massimo. E non è un caso isolato: su $103$ campioni negativi, $14$ presentano un pareggio esatto fra $y=0$ e il picco utile più alto, $29$ differiscono di al più un conteggio, e lo scarto mediano è di quattro conteggi su circa duecento.
+
+In oltre un quarto dei casi, dunque, l'etichetta che separa la classe positiva dalla negativa è determinata da uno o due shot di differenza --- cioè da rumore di campionamento, non dal rumore quantistico che il classificatore avrebbe dovuto diagnosticare. Le metriche del modello misurano la sua capacità di riprodurre questa distinzione.
 
 \paragraph{Perché questo spiega tutti e tre gli esiti osservati.}
 L'audit ricompone in un'unica causa i tre fatti che il Capitolo~\ref{chap:risultati} registra separatamente.
@@ -149,7 +160,14 @@ TOP-16 & \phantom{0}$0.9\%$ & \phantom{0}$0.5\%$ \\
 \end{tabular}
 \end{table}
 
-\noindent Il $25.8\%$ osservato nel dataset originale si colloca ben sotto il tetto del $75.4\%$ proprio perché il segnale era presente: la moda cadeva sempre su uno dei quattro picchi, e di questi il solo $y=0$ fallisce, da cui una frazione negativa di circa un quarto. Il tetto sarebbe raggiunto solo se l'istogramma fosse privo di struttura.
+\noindent Il $25.8\%$ osservato nel dataset originale si colloca ben sotto il tetto del $75.4\%$ proprio perché il segnale era presente: la moda cadeva sempre su uno dei quattro picchi, e di questi il solo $y=0$ fallisce, da cui una frazione negativa di circa un quarto. Il tetto sarebbe raggiunto solo se l'istogramma fosse privo di struttura. La Figura~\ref{fig:tetto_classe_negativa} riassume la situazione.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.78\textwidth]{tetto_classe_negativa.pdf}
+    \caption[Tetto combinatorio alla classe negativa]{Frazione massima di campioni negativi ottenibile con la regola TOP-$K$, calcolata su un istogramma privo di segnale. Poiché $63$ dei $256$ esiti possibili conducono ai fattori, il tetto decade rapidamente con $K$: passare da $K=1$ a $K=16$ lo abbatte di quasi due ordini di grandezza. I due punti segnati sono le frazioni osservate --- $25.8\%$ con la regola effettivamente usata per l'addestramento, $0.5\%$ con quella documentata. Il primo sta sotto il proprio tetto perché il segnale era presente; il secondo vi aderisce, perché a quel valore di $K$ l'esito non dipende quasi più dal segnale. Figura rigenerabile da \texttt{figure\_src/gen\_audit\_classificatore.py}.}
+    \label{fig:tetto_classe_negativa}
+\end{figure}
 
 \paragraph{Il contrasto con la regola effettivamente usata.} Lo stesso conto spiega, per differenza, l'origine del $25.8\%$ di negativi del dataset originale. Con TOP-1 il solo candidato valutato è la moda, che cade sempre su uno dei quattro picchi $\{0,64,128,192\}$ (Capitolo~\ref{chap:risultati}): dei quattro, il solo $y=0$ fallisce, e la frazione negativa attesa è quindi dell'ordine di un quarto. È esattamente quanto si osserva. Le due regole non differiscono per una sfumatura di severità: l'una produce una classe negativa di un quarto del dataset, l'altra non può produrne più dell'uno per cento.
 

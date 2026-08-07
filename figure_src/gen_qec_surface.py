@@ -31,8 +31,8 @@ def main():
     distances = sorted(int(d) for d in table)
 
     fig, ax = plt.subplots(figsize=(6.2, 4.6))
-    colors = {3: 'C0', 5: 'C1', 7: 'C2'}
-    markers = {3: 'o', 5: 's', 7: '^'}
+    colors = {3: 'C0', 5: 'C1', 7: 'C2', 9: 'C3'}
+    markers = {3: 'o', 5: 's', 7: '^', 9: 'D'}
     for d in distances:
         pts = table[str(d)]
         p = np.array([r['p'] for r in pts])
@@ -43,9 +43,10 @@ def main():
 
     if p_th:
         ax.axvline(float(p_th), color='0.5', ls='--', lw=1)
-        ax.annotate(f'soglia\n$p_{{th}}\\approx{float(p_th):.3f}$',
-                    xy=(float(p_th), ax.get_ylim()[0]), xytext=(float(p_th) * 1.03, 2e-3),
-                    fontsize=8, color='0.4')
+        # a destra della linea resta poco spazio prima del bordo: l'etichetta va a sinistra
+        ax.annotate(f'soglia $p_{{th}}\\approx{float(p_th):.3f}$',
+                    xy=(float(p_th) * 0.97, 1.2e-4), fontsize=8.5, color='0.35',
+                    ha='right', rotation=90, va='bottom')
 
     ax.set_xscale('log'); ax.set_yscale('log')
     ax.set_xlabel(r'errore fisico $p$ (circuit-level)')

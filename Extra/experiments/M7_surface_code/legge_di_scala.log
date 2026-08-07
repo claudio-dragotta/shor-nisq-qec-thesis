@@ -1,0 +1,62 @@
+
+=== results_M7_surface_z_20260808_001903.json  (base Z, distanze [3, 5, 7, 9]) ===
+  Fattore di soppressione per incremento di distanza (sotto soglia):
+    p=0.002   p_L = 1.94e-03  5.10e-04  1.02e-04  2.01e-05   |  3->5:   3.8x  5->7:   5.0x  7->9:   5.1x
+    p=0.003   p_L = 4.00e-03  1.65e-03  5.46e-04  1.65e-04   |  3->5:   2.4x  5->7:   3.0x  7->9:   3.3x
+    p=0.004   p_L = 6.92e-03  3.79e-03  1.64e-03  7.70e-04   |  3->5:   1.8x  5->7:   2.3x  7->9:   2.1x
+    p=0.005   p_L = 1.08e-02  7.11e-03  4.42e-03  2.32e-03   |  3->5:   1.5x  5->7:   1.6x  7->9:   1.9x
+    p=0.006   p_L = 1.53e-02  1.23e-02  8.55e-03  5.49e-03   |  3->5:   1.2x  5->7:   1.4x  7->9:   1.6x
+
+  Modello  p_L = A (p/p_th)^((d+1)/2)   adattato sui punti con p <= 0.006:
+    A     = 0.0352
+    p_th  = 0.0086  (0.86%)
+    residuo RMS in ln p_L = 0.080
+
+  Distanza richiesta a p = 0.002:
+    p_L <= 1e-04  ->  d =  9  (  161 qubit fisici per qubit logico)
+    p_L <= 1e-06  ->  d = 15  (  449 qubit fisici per qubit logico)
+    p_L <= 1e-09  ->  d = 23  ( 1057 qubit fisici per qubit logico)
+    p_L <= 1e-12  ->  d = 33  ( 2177 qubit fisici per qubit logico)
+
+  Distanza richiesta a p = 0.001:
+    p_L <= 1e-04  ->  d =  5  (   49 qubit fisici per qubit logico)
+    p_L <= 1e-06  ->  d =  9  (  161 qubit fisici per qubit logico)
+    p_L <= 1e-09  ->  d = 17  (  577 qubit fisici per qubit logico)
+    p_L <= 1e-12  ->  d = 23  ( 1057 qubit fisici per qubit logico)
+
+  Distanza richiesta a p = 0.0005:
+    p_L <= 1e-04  ->  d =  5  (   49 qubit fisici per qubit logico)
+    p_L <= 1e-06  ->  d =  7  (   97 qubit fisici per qubit logico)
+    p_L <= 1e-09  ->  d = 13  (  337 qubit fisici per qubit logico)
+    p_L <= 1e-12  ->  d = 17  (  577 qubit fisici per qubit logico)
+
+=== results_M7_surface_x_20260808_002307.json  (base X, distanze [3, 5, 7, 9]) ===
+  Fattore di soppressione per incremento di distanza (sotto soglia):
+    p=0.002   p_L = 2.01e-03  5.66e-04  1.22e-04  2.63e-05   |  3->5:   3.6x  5->7:   4.7x  7->9:   4.6x
+    p=0.003   p_L = 4.43e-03  1.92e-03  6.78e-04  2.36e-04   |  3->5:   2.3x  5->7:   2.8x  7->9:   2.9x
+    p=0.004   p_L = 7.96e-03  4.18e-03  2.04e-03  9.77e-04   |  3->5:   1.9x  5->7:   2.0x  7->9:   2.1x
+    p=0.005   p_L = 1.22e-02  8.10e-03  4.94e-03  2.94e-03   |  3->5:   1.5x  5->7:   1.6x  7->9:   1.7x
+    p=0.006   p_L = 1.69e-02  1.37e-02  1.01e-02  7.47e-03   |  3->5:   1.2x  5->7:   1.4x  7->9:   1.4x
+
+  Modello  p_L = A (p/p_th)^((d+1)/2)   adattato sui punti con p <= 0.006:
+    A     = 0.0338
+    p_th  = 0.0081  (0.81%)
+    residuo RMS in ln p_L = 0.061
+
+  Distanza richiesta a p = 0.002:
+    p_L <= 1e-04  ->  d =  9  (  161 qubit fisici per qubit logico)
+    p_L <= 1e-06  ->  d = 15  (  449 qubit fisici per qubit logico)
+    p_L <= 1e-09  ->  d = 25  ( 1249 qubit fisici per qubit logico)
+    p_L <= 1e-12  ->  d = 35  ( 2449 qubit fisici per qubit logico)
+
+  Distanza richiesta a p = 0.001:
+    p_L <= 1e-04  ->  d =  5  (   49 qubit fisici per qubit logico)
+    p_L <= 1e-06  ->  d =  9  (  161 qubit fisici per qubit logico)
+    p_L <= 1e-09  ->  d = 17  (  577 qubit fisici per qubit logico)
+    p_L <= 1e-12  ->  d = 23  ( 1057 qubit fisici per qubit logico)
+
+  Distanza richiesta a p = 0.0005:
+    p_L <= 1e-04  ->  d =  5  (   49 qubit fisici per qubit logico)
+    p_L <= 1e-06  ->  d =  7  (   97 qubit fisici per qubit logico)
+    p_L <= 1e-09  ->  d = 13  (  337 qubit fisici per qubit logico)
+    p_L <= 1e-12  ->  d = 17  (  577 qubit fisici per qubit logico)
