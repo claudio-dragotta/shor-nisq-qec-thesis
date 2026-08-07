@@ -27,8 +27,11 @@ for nome, N, a, n_count, noise in CASI:
     nm = build_noise_model(**noise)
     sim = AerSimulator(noise_model=nm, method='statevector')
     t = transpile(shor_circuit(N, a, n_count), sim, optimization_level=2)
-    n_cx = t.count_ops().get('cx', 0)
-    p_surv = (1 - noise['eps_2q']) ** n_cx
+    ops = dict(t.count_ops())
+    n_cx = ops.get('cx', 0)
+    # k_2q = porte soggette all'errore a due qubit (cx + swap + cp), non le sole cx
+    k_2q = sum(ops.get(g, 0) for g in ('cx', 'swap', 'cp'))
+    p_surv = (1 - noise['eps_2q']) ** k_2q
 
     t0 = time.time()
     sim.run(t, shots=N_SHOT_PROVA, seed_simulator=1).result()

@@ -1,0 +1,22 @@
+=== UC1 — modello selezionato: RandomForest
+    test set 400 campioni, 297 positivi, 103 negativi (25.8%)
+    concordanza fra etichette salvate e regola ricalcolata:
+      TOP-1  : 399/400 ( 99.8%)
+      TOP-2  : 297/400 ( 74.2%)
+      TOP-4  : 297/400 ( 74.2%)
+      TOP-16 : 297/400 ( 74.2%)  <-- regola documentata
+    negativi con moda == 0 : 103/103
+    positivi con moda == 0 : 1/297
+    sui negativi: massa media sui quattro picchi QPE 0.758, entropia media 3.66 bit (uniforme = 8 bit)
+
+=== UC2 — modello selezionato: SVM
+    test set 400 campioni, 333 positivi, 67 negativi (16.8%)
+    concordanza fra etichette salvate e regola ricalcolata:
+      TOP-1  : 396/400 ( 99.0%)
+      TOP-2  : 333/400 ( 83.2%)
+      TOP-4  : 333/400 ( 83.2%)
+      TOP-16 : 333/400 ( 83.2%)  <-- regola documentata
+    negativi con moda == 0 : 67/67
+    positivi con moda == 0 : 4/333
+    sui negativi: massa media sui quattro picchi QPE 0.294, entropia media 6.37 bit (uniforme = 8 bit)
+

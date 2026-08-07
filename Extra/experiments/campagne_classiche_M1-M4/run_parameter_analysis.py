@@ -181,10 +181,25 @@ def sweep_eps2q():
     eps_values = [1e-3, 5e-3, 1e-2, 2e-2, 5e-2, 1e-1]
     results = {}
 
+    # P_surv ha per esponente il numero di porte a cui build_noise_model applica
+    # depolarizing_error(eps_2q, 2), cioe' ['cx', 'swap', 'cp'] — NON le sole 'cx'.
+    # Le 'cp' della QFT inversa appartengono al gate set nativo e sopravvivono alla
+    # traspilazione: per UC1 sono 52 contro 114 'cx', e trascurarle sottostima
+    # l'errore accumulato di un terzo. Per le istanze con Beauregard le 'cp'
+    # superano le 'cx' di oltre tre volte e l'errore diventa di decine di ordini
+    # di grandezza. Il conteggio va quindi letto dal circuito traspilato.
+    PORTE_2Q = ('cx', 'swap', 'cp')
+    _sim = AerSimulator(noise_model=build_noise_model(**BASE_NOISE),
+                        method='statevector')
+    _ops = dict(transpile(shor_circuit(N, A, N_COUNT), _sim,
+                          optimization_level=2).count_ops())
+    k_2q = sum(_ops.get(g, 0) for g in PORTE_2Q)
+    print(f'  porte soggette a errore 2q: k={k_2q}  ({_ops})')
+
     for eps in eps_values:
         noise  = {**BASE_NOISE, 'eps_2q': eps}
         nm     = build_noise_model(**noise)
-        p_surv = (1 - eps) ** 162
+        p_surv = (1 - eps) ** k_2q
 
         # M1 con questo livello di rumore
         m1_runs = []
