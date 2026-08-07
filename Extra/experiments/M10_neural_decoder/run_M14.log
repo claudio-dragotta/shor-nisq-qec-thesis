@@ -1,0 +1,32 @@
+==============================================================================
+M14 — il decoder appreso e' trasferibile fra profili di rumore?
+    surface code d=3, p fisico 0.003, 400000 shot per profilo
+==============================================================================
+  profilo p_ct=0.005  addestrato (MWPM p_L = 0.03232)
+  profilo p_ct=0.01   addestrato (MWPM p_L = 0.05742)
+  profilo p_ct=0.02   addestrato (MWPM p_L = 0.11172)
+  profilo p_ct=0.04   addestrato (MWPM p_L = 0.20853)
+
+  p_L dell'ibrido: righe = profilo di ADDESTRAMENTO, colonne = profilo di TEST
+  addestr.\test  0.005       0.01        0.02        0.04        MWPM
+  -------------------------------------------------------------------
+  0.005          0.02804     0.05000     0.09684     0.18749     
+  0.01           0.02800     0.04912     0.09492     0.18140     
+  0.02           0.02814     0.04915     0.09286     0.17800     
+  0.04           0.02841     0.04878     0.09312     0.17643     
+  MWPM           0.03232     0.05742     0.11172     0.20853     
+
+==============================================================================
+ESITO M14
+==============================================================================
+  test p_ct=0.005   MWPM 0.03232 | rete in casa 0.02804 | rete trasferita (media) 0.02818
+  test p_ct=0.01    MWPM 0.05742 | rete in casa 0.04912 | rete trasferita (media) 0.04931
+  test p_ct=0.02    MWPM 0.11172 | rete in casa 0.09286 | rete trasferita (media) 0.09496
+  test p_ct=0.04    MWPM 0.20853 | rete in casa 0.17643 | rete trasferita (media) 0.18230
+
+  reti trasferite che battono comunque MWPM: 12/12
+  costo medio del trasferimento (peggioramento vs rete in casa): +1.6%
+
+  FLAG: VERDE — il vantaggio sopravvive al trasferimento: la rete ha imparato una regola, non un profilo
+
+Risultati salvati in: results_M14_generalizzazione_20260807_041756.json

@@ -148,6 +148,22 @@ def _sim(noise_model=None):
     return AerSimulator(noise_model=noise_model, **kw) if noise_model else AerSimulator(**kw)
 
 
+# ---------------------------------------------------------------------------
+# SEEDING DELLE ITERAZIONI — leggere prima di modificare
+#
+# Aer deriva il seme di ogni shot da (seed_simulator + indice_shot). Con 1024 shot,
+# due esecuzioni con semi consecutivi condividono 1023 campioni su 1024: sono di fatto
+# LA STESSA esecuzione. Lo schema originario (seed * 10_000 + iterazione) rendeva quindi
+# le iterazioni di una ripetizione fortemente correlate: se la moda del campione non
+# produceva i fattori, non li produceva per nessuna delle 50 iterazioni, e la ripetizione
+# esauriva il budget. Ne risultavano M_bar sovrastimato e tasso di successo sottostimato.
+#
+# Le iterazioni vanno separate di PIU' del numero di shot. Schema adottato:
+#     seed_simulator = seed * 1_000_000 + iterazione * 10_000
+# Verifica empirica: sovrapposizione dei conteggi fra semi distanti ~90% (valore atteso
+# fra campioni indipendenti da una distribuzione concentrata), fra semi consecutivi 99.9%.
+# ---------------------------------------------------------------------------
+
 # --- Metodo 1 (TOP-1: picco più frequente per iterazione) ---
 def run_method1(N, a, n_count, noise_model, shots=1024,
                 max_iter=50, seed=42):
@@ -157,7 +173,7 @@ def run_method1(N, a, n_count, noise_model, shots=1024,
     transpiled = transpile(base_qc, sim, optimization_level=2)
     for iteration in range(1, max_iter + 1):
         counts = sim.run(transpiled, shots=shots,
-                         seed_simulator=seed * 10000 + iteration).result().get_counts()
+                         seed_simulator=seed * 1_000_000 + iteration * 10_000).result().get_counts()
         meas = int(max(counts, key=counts.get), 2)
         p, q = extract_factors(meas, n_count, N, a)
         if p is not None:
@@ -181,7 +197,7 @@ def run_method2(N, a, n_count, noise_model, classifier,
     transpiled = transpile(base_qc, sim, optimization_level=2)
     for iteration in range(1, max_iter + 1):
         counts = sim.run(transpiled, shots=shots,
-                         seed_simulator=seed * 10000 + iteration).result().get_counts()
+                         seed_simulator=seed * 1_000_000 + iteration * 10_000).result().get_counts()
         feature = np.zeros(2 ** n_count)
         for k, v in counts.items():
             feature[int(k, 2)] = v / shots

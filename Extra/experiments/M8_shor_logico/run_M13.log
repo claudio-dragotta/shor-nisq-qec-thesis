@@ -1,0 +1,25 @@
+============================================================
+M13 — TOP-4 a livello logico (N=15, a=7)
+    30 iterazioni x 1024 shot per punto
+============================================================
+  p_L      per-misura      TOP-4           TOP-1       
+  ----------------------------------------------------
+  0        0.7506          1.0000          0.7000      
+  0.002    0.6992          1.0000          0.0000      
+  0.005    0.6740          1.0000          0.0000      
+  0.01     0.6200          1.0000          0.0000      
+  0.02     0.5616          1.0000          0.0000      
+  0.05     0.4017          1.0000          0.7000      
+  0.1      0.2829          1.0000          0.0000      
+  0.2      0.2451          1.0000          1.0000      
+
+============================================================
+ESITO M13
+============================================================
+  escursione per-misura (p_L=0 -> max) : 0.5055
+  escursione TOP-4                    : 0.0000
+  la curva TOP-4 e' monotona decrescente: si
+
+  TOP-4 NON discrimina a livello logico su N=15: la curva resta sostanzialmente piatta (escursione 0.000). Confermata la nota di shor_logico.py; proporlo come estensione promettente su questa istanza sarebbe fuorviante.
+
+Risultati salvati in: results_M13_topk_logico_20260807_040701.json

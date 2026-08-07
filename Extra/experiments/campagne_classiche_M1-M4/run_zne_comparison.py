@@ -50,7 +50,7 @@ def run_topk(noise_model, shots=1024, max_iter=50, seed=42, top_k=4):
     transpiled = transpile(base_qc, sim, optimization_level=2)
     for iteration in range(1, max_iter + 1):
         counts = sim.run(transpiled, shots=shots,
-                         seed_simulator=seed * 10000 + iteration).result().get_counts()
+                         seed_simulator=seed * 1_000_000 + iteration * 10_000).result().get_counts()
         sorted_meas = sorted(counts.items(), key=lambda x: x[1], reverse=True)
         for meas_str, _ in sorted_meas[:top_k]:
             p, q = extract_factors(int(meas_str, 2), N_COUNT, N, A)
@@ -78,7 +78,7 @@ def _run_at_lambda(lam, shots, seed, iteration):
     sim        = AerSimulator(noise_model=nm, method='statevector')
     transpiled = transpile(base_qc, sim, optimization_level=2)
     counts     = sim.run(transpiled, shots=shots,
-                         seed_simulator=seed * 10000 + iteration).result().get_counts()
+                         seed_simulator=seed * 1_000_000 + iteration * 10_000).result().get_counts()
     hist = np.zeros(2 ** N_COUNT)
     for k, v in counts.items():
         hist[int(k, 2)] = v / shots

@@ -1,0 +1,49 @@
+{
+  "milestone": "M14_generalizzazione",
+  "timestamp": "2026-08-07T04:17:56.857186",
+  "d": 3,
+  "p_phys": 0.003,
+  "shots": 400000,
+  "profili": [
+    0.005,
+    0.01,
+    0.02,
+    0.04
+  ],
+  "matrice_trasferimento": [
+    [
+      0.02804,
+      0.05,
+      0.09684,
+      0.18749
+    ],
+    [
+      0.028,
+      0.04912,
+      0.09492,
+      0.1814
+    ],
+    [
+      0.02814,
+      0.04915,
+      0.09286,
+      0.178
+    ],
+    [
+      0.02841,
+      0.04878,
+      0.09312,
+      0.17643
+    ]
+  ],
+  "mwpm": [
+    0.03232,
+    0.05742,
+    0.11172,
+    0.20853
+  ],
+  "n_trasferite_meglio_di_mwpm": 12,
+  "n_totali": 12,
+  "costo_medio_trasferimento": 0.016211651126603846,
+  "flag": "VERDE \u2014 il vantaggio sopravvive al trasferimento: la rete ha imparato una regola, non un profilo"
+}

@@ -144,7 +144,7 @@ def _run_method_top4(N, a, n_count, noise_model, shots=1024, max_iter=50, seed=4
     tc = transpile(base_qc, sim, optimization_level=2)
     for iteration in range(1, max_iter + 1):
         counts = sim.run(tc, shots=shots,
-                         seed_simulator=seed * 10000 + iteration).result().get_counts()
+                         seed_simulator=seed * 1_000_000 + iteration * 10_000).result().get_counts()
         for meas_str, _ in sorted(counts.items(), key=lambda x: x[1], reverse=True)[:4]:
             p, q = extract_factors(int(meas_str, 2), n_count, N, a)
             if p is not None:

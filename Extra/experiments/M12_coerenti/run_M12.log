@@ -1,0 +1,24 @@
+============================================================================
+M12 — il decoder appreso guadagna di piu' sugli errori COERENTI?
+    surface code d=3, memory Z, 4 cicli, errore di lettura 0.01
+============================================================================
+  modo       p      banale   MWPM      rete      IBRIDO    ibrido/MWPM
+  --------------------------------------------------------------------
+  pauli      0.01   0.1077   0.01520   0.01552   0.01492   1.019x
+  coerente   0.01   0.1041   0.01425   0.01501   0.01385   1.029x
+  pauli      0.02   0.1929   0.04215   0.04284   0.04068   1.036x
+  coerente   0.02   0.1809   0.04372   0.04275   0.04172   1.048x
+  pauli      0.03   0.2619   0.07671   0.07667   0.07367   1.041x
+  coerente   0.03   0.2374   0.07892   0.07720   0.07501   1.052x
+
+============================================================================
+ESITO M12 — confronto del guadagno fra i due tipi di rumore
+============================================================================
+  p=0.01   guadagno su Pauli 1.019x | su coerente 1.029x | rapporto 1.01
+  p=0.02   guadagno su Pauli 1.036x | su coerente 1.048x | rapporto 1.01
+  p=0.03   guadagno su Pauli 1.041x | su coerente 1.052x | rapporto 1.01
+
+  guadagno medio  Pauli 1.032x   coerente 1.043x
+  FLAG: GIALLO — nessuna differenza apprezzabile fra i due tipi di rumore
+
+Risultati salvati in: results_M12_coerenti_20260807_034833.json

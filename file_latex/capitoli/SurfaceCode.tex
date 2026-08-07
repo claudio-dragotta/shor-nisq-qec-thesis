@@ -113,7 +113,14 @@ Il meccanismo alla base del divario si dimostra con un esperimento elementare, a
 \paragraph{Implicazioni per la stima di soglia.}
 Su un codice completo il divario si amplifica. Lo studio citato riporta, su esperimenti didattici controllati, che il modello Clifford-Pauli stima un errore logico dell'$1.7\%$ contro il $23.5\%$ della simulazione completa in presenza di leakage, e del $18.1\%$ contro il $38.7\%$ in presenza di errori coerenti; su un modello di gate CZ fra transmon con surface code a distanza $9$, l'errore logico reale può risultare da $25$ a $56$ volte superiore alla stima Clifford-Pauli, con la soglia sovrastimata di circa il $20\%$~\cite{plaquette2026}. La direzione metodologica che ne emerge è l'approccio \emph{channel-first}: descrivere il rumore fisico una sola volta come canale quantistico completo (operatori di Kraus, equazione di Lindblad) e scegliere di volta in volta la rappresentazione di simulazione più adatta, conservando gli effetti non-Pauli dove contano. La soglia cessa così di essere un singolo numero e diventa una \emph{superficie} nello spazio dei parametri fisici del dispositivo ($T_1$, $T_2$, durata di gate, leakage, crosstalk), che indica quale imperfezione limiti davvero la macchina.
 
-Per questa tesi la conseguenza è duplice e va dichiarata: i valori di soglia e di $p_L$ qui riportati vanno intesi come \textbf{baseline ottimistica} valida entro il modello Pauli, e il loro raffinamento verso un modello di rumore fisico più ricco --- nella linea del Capitolo~\ref{chap:integrazione} e degli sviluppi futuri --- è la naturale continuazione del lavoro.
+\paragraph{Quanto pesa davvero, dentro un ciclo di correzione.}
+I numeri citati sopra si riferiscono a regimi e distanze diversi da quelli qui studiati, e vale la pena misurare l'entità del divario sul proprio sistema anziché ereditarla. La verifica è stata condotta su un codice di distanza 3 simulato in \emph{full-state} --- Stim, essendo un simulatore a stabilizzatori, non può rappresentare una sovrarotazione coerente --- iniettando alternativamente errori di Pauli e sovrarotazioni $R_X$ di \emph{pari probabilità marginale} ($\sin^2(\theta/2) = p$), su quattro cicli di estrazione della sindrome.
+
+Il risultato è più contenuto di quanto la dimostrazione a singolo qubit lasci temere. A $p = 3\times10^{-2}$, il rumore coerente produce \emph{meno} flip logici grezzi del corrispondente rumore di Pauli ($0.237$ contro $0.262$, ossia il $9\%$ in meno), ma dopo la decodifica \ac{MWPM} l'errore logico risulta \emph{maggiore} ($0.0789$ contro $0.0767$): il decoder riceve una situazione di partenza migliore e ne restituisce una peggiore. La penalità complessiva imputabile al modello sbagliato è dunque di circa il $12\%$ in termini relativi --- significativa, ma di gran lunga inferiore agli ordini di grandezza che il confronto a singolo qubit suggerirebbe.
+
+La spiegazione è nel protocollo stesso. L'estrazione della sindrome entangla ripetutamente i qubit dati con le ancille e ne proietta lo stato a ogni ciclo: questa misura agisce come un \textbf{twirling parziale}, convertendo l'accumulo di ampiezza in statistica di Pauli prima che possa crescere quadraticamente. Il ciclo di correzione, in altre parole, si protegge in parte da solo dalla coerenza, e l'assunzione di Pauli del decoder è meno sbagliata \emph{dentro} un codice attivo di quanto non lo sia su un qubit lasciato evolvere liberamente.
+
+Per questa tesi la conseguenza è duplice e va dichiarata: i valori di soglia e di $p_L$ qui riportati vanno intesi come \textbf{baseline ottimistica} valida entro il modello Pauli --- ottimistica di circa il $12\%$ alla distanza esaminata, non di ordini di grandezza --- e il loro raffinamento verso un modello di rumore fisico più ricco, con distanze maggiori e cicli meno frequenti, è la naturale continuazione del lavoro.
 
 % -----------------------------------------------
 \section{La Decodifica Appresa: una Rete Neurale al Posto del Matching}
@@ -285,6 +292,38 @@ Due proprietà meritano attenzione perché riguardano il comportamento del siste
 \caption[Il decoder ibrido a confronto con matching e rete]{Errore logico dei tre decoder in funzione dell'intensità del crosstalk. L'ibrido (rosso) è il migliore a entrambe le distanze; la rete usata come sostituto (arancio) domina il matching a $d=3$ ma lo perde a $d=5$, dove l'ibrido continua invece a guadagnare.}
 \label{fig:qec_neural_ibrido}
 \end{figure}
+
+\subsection{E5 --- il decoder è trasferibile fra dispositivi?}
+\label{subsec:neural_generalizzazione}
+
+Gli esperimenti precedenti addestrano e valutano il decoder sul \emph{medesimo} profilo di rumore. È una scelta che lascia aperta l'obiezione più concreta che si possa muovere a un decoder appreso: se il modello funzionasse soltanto sul profilo su cui è stato addestrato, andrebbe riaddestrato per ogni esemplare di \ac{QPU} e a ogni deriva di calibrazione, e il costo pratico ne annullerebbe il vantaggio. La domanda decisiva è dunque se la rete abbia appreso una \emph{regola} o le idiosincrasie di un profilo.
+
+La verifica consiste nell'addestrare su un'intensità di rumore correlato e valutare su un'altra, senza alcun riaddestramento. Il confronto ha due termini di riferimento: il \ac{MWPM}, che non si addestra e resta quindi invariante, e la rete addestrata sullo stesso profilo di test, che rappresenta il limite superiore ottenibile conoscendo perfettamente il dominio.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Addestrata su} & \multicolumn{4}{c}{\textbf{Valutata su} $p_{ct}$} \\
+\cmidrule(lr){2-5}
+ & $5\times10^{-3}$ & $10^{-2}$ & $2\times10^{-2}$ & $4\times10^{-2}$ \\
+\midrule
+$5\times10^{-3}$ & \textit{0.02804} & 0.05000 & 0.09684 & 0.18749 \\
+$10^{-2}$        & \textbf{0.02800} & \textit{0.04912} & 0.09492 & 0.18140 \\
+$2\times10^{-2}$ & 0.02814 & 0.04915 & \textit{0.09286} & 0.17800 \\
+$4\times10^{-2}$ & 0.02841 & \textbf{0.04878} & 0.09312 & \textit{0.17643} \\
+\midrule
+\ac{MWPM} (nessun addestramento) & 0.03232 & 0.05742 & 0.11172 & 0.20853 \\
+\bottomrule
+\end{tabular}
+\caption[Trasferibilità del decoder appreso fra profili di rumore]{Errore logico dell'ibrido al variare del profilo di addestramento e di quello di valutazione. In corsivo la diagonale (addestramento e test sullo stesso profilo), in grassetto i due casi in cui una rete \emph{trasferita} supera quella addestrata in casa. Tutte e dodici le configurazioni fuori diagonale battono comunque il \ac{MWPM}.}
+\label{tab:neural_trasferimento}
+\end{table}
+
+L'esito è netto: \textbf{tutte e dodici} le reti trasferite mantengono il vantaggio sul decoder analitico, e il costo del trasferimento --- il peggioramento medio rispetto alla rete addestrata sul profilo di test --- è dell'$1.6\%$. In due casi la rete trasferita risulta addirittura migliore di quella addestrata in casa, differenza che rientra nella variabilità statistica ma che conferma l'assenza di una dipendenza sistematica dal profilo di addestramento.
+
+La regola appresa non è dunque il profilo di rumore, ma qualcosa di più generale: verosimilmente la struttura delle configurazioni di sindrome che il matching interpreta male, la quale dipende dalla geometria del codice e dalla natura correlata dell'errore più che dalla sua intensità. Ne discende che il modello non richiede riaddestramento a ogni ricalibrazione del dispositivo --- il che rimuove l'ostacolo pratico principale all'impiego di un decoder appreso, e distingue nettamente questo risultato da quello della prima fase, dove il classificatore richiedeva una fase di addestramento dedicata proprio per essere poi giudicato inutile.
 
 \subsection{Bilancio}
 \label{subsec:neural_bilancio}
