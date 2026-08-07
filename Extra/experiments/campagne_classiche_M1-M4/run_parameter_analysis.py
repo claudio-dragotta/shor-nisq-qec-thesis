@@ -59,7 +59,12 @@ MAX_ITER = 50
 
 # Risultati noti di M1 su UC1 (baseline, K=30)
 M1_UC1_ITERS = [1]*23 + [50]*7   # approssimazione: 23 successi, 7 fallimenti
-M1_UC1_MBAR  = 6.43
+# Baseline M1 su UC1, misurata con SEEDING CORRETTO (cfr. il commento in shor_core.py).
+# Il valore precedente (6.43) derivava da iterazioni non indipendenti: semi consecutivi
+# condividevano 1023 shot su 1024, per cui una ripetizione che falliva al primo tentativo
+# esauriva tutte le 50 iterazioni. Con iterazioni realmente indipendenti M1 non fallisce
+# mai (30/30) e richiede in media 1.97 esecuzioni.
+M1_UC1_MBAR  = 1.97
 
 
 # ─────────────────────────────────────────────
@@ -73,7 +78,7 @@ def run_topk(N, a, n_count, noise_model, shots=1024, max_iter=50, seed=42, top_k
     for iteration in range(1, max_iter + 1):
         counts = sim.run(
             transpiled, shots=shots,
-            seed_simulator=seed * 10000 + iteration
+            seed_simulator=seed * 1_000_000 + iteration * 10_000
         ).result().get_counts()
         sorted_meas = sorted(counts.items(), key=lambda x: x[1], reverse=True)
         for meas_str, _ in sorted_meas[:top_k]:
@@ -436,7 +441,7 @@ def sweep_opt_level():
             # M1 (TOP-1)
             counts = sim.run(
                 transpile(base_qc, sim, optimization_level=opt),
-                shots=1024, seed_simulator=rep * 10000
+                shots=1024, seed_simulator=rep * 1_000_000
             ).result().get_counts()
             max_count = max(counts.values())
             threshold = 0.3
@@ -453,7 +458,7 @@ def sweep_opt_level():
                     break
                 counts = sim.run(
                     transpile(base_qc, sim, optimization_level=opt),
-                    shots=1024, seed_simulator=rep * 10000 + it
+                    shots=1024, seed_simulator=rep * 1_000_000 + it * 10_000
                 ).result().get_counts()
                 max_count = max(counts.values())
                 peaks = {k: v for k, v in counts.items() if v >= threshold * max_count}
@@ -465,7 +470,7 @@ def sweep_opt_level():
             for it in range(1, MAX_ITER + 1):
                 counts = sim.run(
                     transpile(base_qc, sim, optimization_level=opt),
-                    shots=1024, seed_simulator=rep * 10000 + it + 5000
+                    shots=1024, seed_simulator=rep * 1_000_000 + it * 10_000 + 5_000_000
                 ).result().get_counts()
                 for bs, _ in sorted(counts.items(), key=lambda x: x[1], reverse=True)[:4]:
                     p, q = extract_factors(int(bs, 2), N_COUNT, N, A)
