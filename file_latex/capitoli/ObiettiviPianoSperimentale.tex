@@ -98,7 +98,7 @@ I quattro use case sono scelti per garantire che i risultati non dipendano da un
 \begin{itemize}
     \item \textbf{Asse rumore (Use Case 1 vs.\ 2)}: stesso numero $N = 15$, stessa base $a = 7$, stesso circuito --- livello di rumore diverso. Il confronto isola l'effetto del rumore sul numero di iterazioni necessarie, a parità di complessità circuitale. Il Use Case 2 utilizza parametri di errore circa cinque volte superiori a quelli del Use Case 1, per coprire sia un regime \textit{NISQ-realistico} sia uno \textit{NISQ-degradato}.
 
-    \item \textbf{Asse scalabilità (Use Case 1, 3, 4)}: numeri $N$ di dimensione crescente ($15 \to 21 \to 35$), stesso livello di rumore NISQ-realistico. Il confronto valuta come il numero medio di iterazioni e l'accuratezza del classificatore varino al crescere della profondità del circuito.
+    \item \textbf{Asse scalabilità (Use Case 1, 3, 4)}: numeri $N$ di dimensione crescente ($15 \to 21 \to 35$), stesso livello di rumore NISQ-realistico. Il confronto valuta come il numero medio di iterazioni e l'accuratezza del classificatore varino al crescere della profondità del circuito. Si vedrà più avanti (\S\ref{subsec:razionale_istanze}) che l'identificazione fra ``$N$ crescente'' e ``profondità crescente'' non è automatica, e che per Use Case 4 non vale.
 \end{itemize}
 
 La scelta di quattro use case soddisfa il requisito metodologico minimo per la validazione accademica dei risultati in questo dominio \cite{shor_hpec2023}.
@@ -134,6 +134,7 @@ $p_{\text{ro}}$              & $2\times10^{-2}$ & $5\times10^{-2}$ & $2\times10^
 \end{table}
 
 \subsection{Razionale per la Scelta delle Istanze}
+\label{subsec:razionale_istanze}
 
 \textbf{Use Case 1 --- $N=15$, NISQ-realistico.}
 È il caso di riferimento consolidato in letteratura: la prima dimostrazione sperimentale di Shor è avvenuta su $N=15$ con NMR a 7 qubit \cite{vandersypen2001}, e il tutorial ufficiale IBM riporta i dati di esecuzione per la stessa istanza su \texttt{ibm\_marrakesh} \cite{ibm_shor_tutorial}. La base $a=7$ produce un periodo $r=4$, sufficiente per estrarre i fattori $3$ e $5$ tramite l'algoritmo delle frazioni continue. Questo use case funge da baseline quantitativa per entrambi i metodi.
