@@ -98,6 +98,41 @@ Resta da chiedersi che cosa accadrebbe addestrando il classificatore sulla regol
 
 L'interpretazione è la seguente: al livello di rumore di UC1, e con una ricerca che consideri anche solo i primi sedici candidati, \emph{non esiste alcun istogramma da scartare}. La domanda a cui il classificatore avrebbe dovuto rispondere non ha istanze negative, e quindi non è una domanda. Il filtro a valle non è ridondante per una qualche insufficienza dell'architettura scelta o della quantità di dati: è ridondante perché il rumore depolarizzante, su questo circuito e a questa profondità, non produce mai la condizione che esso dovrebbe rilevare.
 
+\subsection{A quale livello di rumore la classe negativa comincia a esistere}
+\label{subsec:soglia_classe_negativa}
+
+Constatare che la classe negativa è vuota a un dato livello di rumore lascia aperta la domanda su \emph{dove} cominci a popolarsi: è quella soglia a delimitare il regime in cui un filtro a valle avrebbe qualcosa da apprendere. La si può stimare per via analitica e misurare direttamente, e le due strade convergono.
+
+\paragraph{Previsione.} Con $1\,024$ shot distribuiti su $256$ celle, una cella di fondo riceve in media $4(1-f)$ conteggi, dove $f$ è la frazione coerente efficace introdotta nella Sezione~\ref{subsec:frazione_coerente}; un picco \ac{QPE} ne riceve $256f + 4(1-f)$. Perché un picco entri fra i sedici valori più frequenti deve superare la sedicesima cella di fondo, il cui conteggio è il quantile superiore al $6.3\%$ di una Poisson di media $4$, ossia $8$. Imponendo $256f + 4(1-f) \geq 8$ si ottiene
+\begin{equation}
+    f \gtrsim 1.6\% ,
+    \label{eq:soglia_f}
+\end{equation}
+sotto il quale i picchi utili escono dai primi sedici candidati e l'istogramma diventa genuinamente inutilizzabile.
+
+\paragraph{Misura.} La Tabella~\ref{tab:soglia_negativi} riporta la frazione di campioni negativi su $200$ istogrammi per punto, con $\varepsilon_{2q}$ spinto ben oltre qualunque valore fisicamente sensato.
+
+\begin{table}[H]
+\centering
+\caption[Soglia di comparsa della classe negativa]{Frazione di istogrammi privi di segnale recuperabile nei primi sedici candidati, in funzione di $\varepsilon_{2q}$ ($200$ campioni per punto, regola TOP-16). La colonna $f$ riporta la frazione coerente efficace misurata indipendentemente (Sezione~\ref{subsec:frazione_coerente}).}
+\label{tab:soglia_negativi}
+\begin{tabular}{crrrr}
+\hline
+$\varepsilon_{2q}$ & rispetto a UC1 & $P_{\text{surv}}$ & $f$ & negativi \\
+\hline
+$5\times10^{-2}$ (UC2) & $5\times$  & $2.0\times10^{-4}$  & 0.372 & \phantom{00}0.0\% \\
+$8\times10^{-2}$       & $8\times$  & $9.7\times10^{-7}$  & ---   & \phantom{00}0.0\% \\
+$10^{-1}$              & $10\times$ & $2.5\times10^{-8}$  & 0.158 & \phantom{00}0.0\% \\
+$1.5\times10^{-1}$     & $15\times$ & $1.9\times10^{-12}$ & ---   & \phantom{00}0.0\% \\
+$2\times10^{-1}$       & $20\times$ & $8.2\times10^{-17}$ & 0.032 & \phantom{00}0.5\% \\
+\hline
+\end{tabular}
+\end{table}
+
+Il primo campione negativo compare a $\varepsilon_{2q} = 2\times10^{-1}$, ossia a \textbf{venti volte} il tasso di errore a due qubit dei dispositivi superconduttori attuali, e in quel punto la frazione coerente efficace misurata vale $3.2\%$ --- appena sopra la soglia $1.6\%$ prevista dalla~\eqref{eq:soglia_f}. Le due stime, ricavate da misure indipendenti, concordano entro un fattore due.
+
+\paragraph{Conclusione sul perimetro di validità.} Ne discende l'enunciato più preciso che questi dati consentono, ed è più forte di quello ricavato dal solo UC1. Il problema di classificazione su cui la prima fase della tesi ha investito \emph{non esiste in nessuno dei due use case previsti}: non a UC1, e neppure a UC2, che pure adotta un livello di rumore cinque volte superiore. Perché esso cominci ad avere istanze negative --- e dunque perché un filtro a valle abbia qualcosa da imparare --- occorre un errore di gate a due qubit venti volte peggiore di quello degli \ac{QPU} odierni, un regime in cui nessun algoritmo quantistico sarebbe comunque eseguibile. Il filtro applicato all'output non è quindi soltanto inutile ai livelli di rumore attuali: è \emph{mal posto per costruzione} su questo compito, perché la condizione che dovrebbe rilevare e il regime in cui l'algoritmo funziona sono insiemi disgiunti.
+
 È il risultato negativo nella sua forma più netta, e delimita con precisione il regime in cui vale: non ``l'apprendimento automatico non serve alla mitigazione degli errori quantistici'', bensì \emph{un filtro applicato a valle di un output già ricco di struttura ridondante non ha nulla da apprendere che la struttura non fornisca già gratuitamente}. È esattamente questa constatazione a motivare lo spostamento della seconda fase del lavoro sulla sindrome, dove l'informazione è disponibile \emph{durante} il calcolo e non dopo (Capitoli~\ref{chap:qec}--\ref{chap:integrazione}, e in particolare la decodifica appresa della Sezione~\ref{sec:decodifica_appresa}).
 
 \end{onehalfspace}
