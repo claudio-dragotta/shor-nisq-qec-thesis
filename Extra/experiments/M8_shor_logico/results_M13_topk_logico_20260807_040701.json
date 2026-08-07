@@ -1,0 +1,79 @@
+{
+  "milestone": "M13_topk_logico",
+  "timestamp": "2026-08-07T04:07:01.114062",
+  "N": 15,
+  "a": 7,
+  "K": 4,
+  "iters": 30,
+  "shots": 1024,
+  "escursione_per_misura": 0.50546875,
+  "escursione_topk": 0.0,
+  "topk_monotona": true,
+  "flag": "TOP-4 NON discrimina a livello logico su N=15: la curva resta sostanzialmente piatta (escursione 0.000). Confermata la nota di shor_logico.py; proporlo come estensione promettente su questa istanza sarebbe fuorviante.",
+  "punti": [
+    {
+      "p_L": 0.0,
+      "per_misura": 0.7505533854166667,
+      "topk": 1.0,
+      "top1": 0.7,
+      "iters": 30,
+      "shots": 1024
+    },
+    {
+      "p_L": 0.002,
+      "per_misura": 0.6991861979166667,
+      "topk": 1.0,
+      "top1": 0.0,
+      "iters": 30,
+      "shots": 1024
+    },
+    {
+      "p_L": 0.005,
+      "per_misura": 0.6739908854166666,
+      "topk": 1.0,
+      "top1": 0.0,
+      "iters": 30,
+      "shots": 1024
+    },
+    {
+      "p_L": 0.01,
+      "per_misura": 0.62001953125,
+      "topk": 1.0,
+      "top1": 0.0,
+      "iters": 30,
+      "shots": 1024
+    },
+    {
+      "p_L": 0.02,
+      "per_misura": 0.5615559895833333,
+      "topk": 1.0,
+      "top1": 0.0,
+      "iters": 30,
+      "shots": 1024
+    },
+    {
+      "p_L": 0.05,
+      "per_misura": 0.40166015625,
+      "topk": 1.0,
+      "top1": 0.7,
+      "iters": 30,
+      "shots": 1024
+    },
+    {
+      "p_L": 0.1,
+      "per_misura": 0.28294270833333335,
+      "topk": 1.0,
+      "top1": 0.0,
+      "iters": 30,
+      "shots": 1024
+    },
+    {
+      "p_L": 0.2,
+      "per_misura": 0.24508463541666667,
+      "topk": 1.0,
+      "top1": 1.0,
+      "iters": 30,
+      "shots": 1024
+    }
+  ]
+}

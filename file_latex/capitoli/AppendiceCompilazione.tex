@@ -120,6 +120,39 @@ Conteggio sui qubit a lettura peggiore & $0.438 \pm 0.035$ & 427 \\
 \end{table}
 
 % -----------------------------------------------
+\section{Un Terzo Caso: la Ricerca Multi-Candidato a Livello Logico}
+\label{sec:app_comp_topk}
+
+Il Capitolo~\ref{chap:sviluppi} propone come estensione naturale l'applicazione della strategia TOP-K allo Shor logico, dove essa non dovrebbe più compensare il rumore fisico dei gate --- compito del codice correttore --- ma l'errore logico residuo. La verifica è riportata qui perché il suo esito, negativo, è istruttivo quanto i precedenti.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{cccc}
+\toprule
+\textbf{Errore logico} $p_L$ & \textbf{Per singola misura} & \textbf{TOP-4} & \textbf{TOP-1} \\
+\midrule
+0                  & 0.751 & 1.000 & 0.700 \\
+$2\times10^{-3}$   & 0.699 & 1.000 & 0.000 \\
+$5\times10^{-3}$   & 0.674 & 1.000 & 0.000 \\
+$10^{-2}$          & 0.620 & 1.000 & 0.000 \\
+$2\times10^{-2}$   & 0.562 & 1.000 & 0.000 \\
+$5\times10^{-2}$   & 0.402 & 1.000 & 0.700 \\
+$10^{-1}$          & 0.283 & 1.000 & 0.000 \\
+$2\times10^{-1}$   & 0.245 & 1.000 & 1.000 \\
+\bottomrule
+\end{tabular}
+\caption[Comportamento della ricerca multi-candidato a livello logico]{Frazione di iterazioni risolte al variare dell'errore logico per gate ($N=15$, 30 iterazioni da $1\,024$ shot per punto). La metrica per singola misura decresce in modo monotòno di oltre cinquanta punti percentuali; la strategia TOP-4 resta invece a 1.000 su tutto l'intervallo.}
+\label{tab:app_comp_topk}
+\end{table}
+
+La strategia TOP-4 risolve la totalità delle iterazioni per ogni valore di $p_L$ esaminato, compreso quello a cui la probabilità per singola misura è già scesa al livello del caso: l'escursione della curva è \emph{esattamente nulla}. Il criterio non discrimina, e non perché la strategia sia particolarmente efficace, ma perché l'istanza è degenere --- con periodo $r=4$ una frazione elevata degli esiti conduce ai fattori attraverso le frazioni continue, sicché è sufficiente guardare quattro candidati per trovarne uno valido quale che sia il livello di rumore.
+
+La colonna TOP-1 mostra il rovescio della stessa medaglia, con un andamento erratico che non dipende dal rumore: la misura più frequente coincide spesso con l'esito $y=0$, che non porta informazione sul periodo ed è scartato per costruzione. È la medesima osservazione riportata nel Capitolo~\ref{chap:risultati} a livello fisico, e conferma che la differenza fra TOP-1 e TOP-K non è primariamente una questione di robustezza al rumore, ma di quale candidato la strategia guardi per primo.
+
+Ne segue che la proposta del Capitolo~\ref{chap:sviluppi} non è, come poteva sembrare, un'estensione a basso costo: richiede un'istanza con periodo meno degenere, e ricade quindi nella barriera di scalabilità. Le due limitazioni --- degenerazione dell'istanza piccola e intrattabilità di quelle grandi --- non sono indipendenti, ma lo stesso ostacolo che si manifesta due volte.
+
+% -----------------------------------------------
 \section{Conclusione: il Criterio va Precisato}
 \label{sec:app_comp_conclusione}
 
