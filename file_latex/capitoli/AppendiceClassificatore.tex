@@ -94,7 +94,7 @@ L'audit ricompone in un'unica causa i tre fatti che il Capitolo~\ref{chap:risult
 \end{itemize}
 
 \paragraph{Il problema di classificazione, così come documentato, non esiste.}
-Resta da chiedersi che cosa accadrebbe addestrando il classificatore sulla regola dichiarata anziché su quella applicata. La rigenerazione del dataset di UC1 con $\text{TOP\_K} = 16$, a parità di ogni altro parametro, produce \textbf{2000 campioni positivi su 2000}: la classe negativa è vuota e la procedura di addestramento si interrompe segnalando l'assenza di una seconda classe. Il risultato non è un artefatto dello schema di seeding --- la rigenerazione ripetuta con il seeding originale dà lo stesso esito --- né della versione del transpiler, verificata riportando il livello di rumore a quello che riproduce la profondità efficace precedente.
+Resta da chiedersi che cosa accadrebbe addestrando il classificatore sulla regola dichiarata anziché su quella applicata. La rigenerazione dei dataset con $\text{TOP\_K} = 16$, a parità di ogni altro parametro, produce \textbf{2000 campioni positivi su 2000 per entrambi gli use case}: la classe negativa è vuota e la procedura di addestramento si interrompe segnalando l'assenza di una seconda classe. Che l'esito sia identico su UC2, il cui livello di rumore è cinque volte superiore, è già di per sé indicativo. Il risultato non è un artefatto dello schema di seeding --- la rigenerazione ripetuta con il seeding originale dà lo stesso esito --- né della versione del transpiler, verificata riportando il livello di rumore a quello che riproduce la profondità efficace precedente.
 
 L'interpretazione è la seguente: al livello di rumore di UC1, e con una ricerca che consideri anche solo i primi sedici candidati, \emph{non esiste alcun istogramma da scartare}. La domanda a cui il classificatore avrebbe dovuto rispondere non ha istanze negative, e quindi non è una domanda. Il filtro a valle non è ridondante per una qualche insufficienza dell'architettura scelta o della quantità di dati: è ridondante perché il rumore depolarizzante, su questo circuito e a questa profondità, non produce mai la condizione che esso dovrebbe rilevare.
 
@@ -130,6 +130,26 @@ La soglia non esiste. Portando il tasso di errore a trenta volte il valore dei d
 \end{equation}
 
 La regola TOP-16 etichetta quindi come positivo il $99.1\%$ degli istogrammi \emph{anche in assenza totale di informazione}, per puro effetto combinatorio: pescando sedici celle su un insieme in cui un quarto è utile, è quasi impossibile mancarle tutte. La classe negativa non può superare lo $0.9\%$ a nessun livello di rumore --- ed è precisamente lo $0.5\%$ misurato ai due punti estremi.
+
+Il medesimo calcolo, ripetuto al variare di $K$, mostra che la scelta di questo parametro non è una sfumatura di severità ma determina l'ordine di grandezza del problema posto.
+
+\begin{table}[H]
+\centering
+\caption[Tetto combinatorio alla classe negativa in funzione di $K$]{Frazione massima di campioni negativi ottenibile con la regola TOP-$K$ su un istogramma privo di segnale, calcolata come $\binom{256-63}{K} / \binom{256}{K}$. Il valore osservato è quello del dataset di UC1.}
+\label{tab:tetto_topk}
+\begin{tabular}{ccc}
+\hline
+\textbf{Regola} & \textbf{Tetto ai negativi} & \textbf{Osservato} \\
+\hline
+TOP-1  & $75.4\%$ & $25.8\%$ \\
+TOP-2  & $56.8\%$ & --- \\
+TOP-4  & $32.1\%$ & --- \\
+TOP-16 & \phantom{0}$0.9\%$ & \phantom{0}$0.5\%$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\noindent Il $25.8\%$ osservato nel dataset originale si colloca ben sotto il tetto del $75.4\%$ proprio perché il segnale era presente: la moda cadeva sempre su uno dei quattro picchi, e di questi il solo $y=0$ fallisce, da cui una frazione negativa di circa un quarto. Il tetto sarebbe raggiunto solo se l'istogramma fosse privo di struttura.
 
 \paragraph{Il contrasto con la regola effettivamente usata.} Lo stesso conto spiega, per differenza, l'origine del $25.8\%$ di negativi del dataset originale. Con TOP-1 il solo candidato valutato è la moda, che cade sempre su uno dei quattro picchi $\{0,64,128,192\}$ (Capitolo~\ref{chap:risultati}): dei quattro, il solo $y=0$ fallisce, e la frazione negativa attesa è quindi dell'ordine di un quarto. È esattamente quanto si osserva. Le due regole non differiscono per una sfumatura di severità: l'una produce una classe negativa di un quarto del dataset, l'altra non può produrne più dell'uno per cento.
 
