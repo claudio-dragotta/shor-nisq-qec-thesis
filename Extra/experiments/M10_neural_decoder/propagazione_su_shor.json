@@ -1,0 +1,86 @@
+{
+  "nota": "interpolazione della curva M8 nei p_L di M10/E4; nessuna nuova simulazione",
+  "P_ideal": 0.751953125,
+  "punti": [
+    {
+      "d": 3,
+      "p_crosstalk": 0.005,
+      "pL_mwpm": 0.03089,
+      "pL_hybrid": 0.02607,
+      "P_success_mwpm": 0.49052591890438135,
+      "P_success_hybrid": 0.5184717983714396,
+      "delta_punti_percentuali": 2.7945879467058288,
+      "mcnemar_p": 3.395757716337544e-87
+    },
+    {
+      "d": 3,
+      "p_crosstalk": 0.01,
+      "pL_mwpm": 0.058295,
+      "pL_hybrid": 0.04851,
+      "P_success_mwpm": 0.38429726163456707,
+      "P_success_hybrid": 0.4161774106289483,
+      "delta_punti_percentuali": 3.188014899438124,
+      "mcnemar_p": 9.57776077023006e-157
+    },
+    {
+      "d": 3,
+      "p_crosstalk": 0.02,
+      "pL_mwpm": 0.111435,
+      "pL_hybrid": 0.091835,
+      "P_success_mwpm": 0.28264416673693127,
+      "P_success_hybrid": 0.30465937243096775,
+      "delta_punti_percentuali": 2.2015205694036477,
+      "mcnemar_p": 2.445352422987e-312
+    },
+    {
+      "d": 3,
+      "p_crosstalk": 0.04,
+      "pL_mwpm": 0.207495,
+      "pL_hybrid": 0.174545,
+      "P_success_mwpm": 0.24857579254499787,
+      "P_success_hybrid": 0.2559814221238289,
+      "delta_punti_percentuali": 0.7405629578831036,
+      "mcnemar_p": 0.0
+    },
+    {
+      "d": 5,
+      "p_crosstalk": 0.005,
+      "pL_mwpm": 0.03561,
+      "pL_hybrid": 0.03521,
+      "P_success_mwpm": 0.467102400771399,
+      "P_success_hybrid": 0.46896324305592185,
+      "delta_punti_percentuali": 0.1860842284522879,
+      "mcnemar_p": 0.001487014319930068
+    },
+    {
+      "d": 5,
+      "p_crosstalk": 0.01,
+      "pL_mwpm": 0.087035,
+      "pL_hybrid": 0.084275,
+      "P_success_mwpm": 0.3140662541508333,
+      "P_success_hybrid": 0.31971304392266686,
+      "delta_punti_percentuali": 0.5646789771833582,
+      "mcnemar_p": 2.935552588869819e-30
+    },
+    {
+      "d": 5,
+      "p_crosstalk": 0.02,
+      "pL_mwpm": 0.20231,
+      "pL_hybrid": 0.196615,
+      "P_success_mwpm": 0.24921957325174077,
+      "P_success_hybrid": 0.25032295128317844,
+      "delta_punti_percentuali": 0.1103378031437674,
+      "mcnemar_p": 6.415945458263496e-51
+    },
+    {
+      "d": 5,
+      "p_crosstalk": 0.04,
+      "pL_mwpm": 0.37581,
+      "pL_hybrid": 0.373855,
+      "P_success_mwpm": 0.24339625748703148,
+      "P_success_hybrid": 0.24329904042510156,
+      "delta_punti_percentuali": -0.00972170619299162,
+      "mcnemar_p": 3.8158512192102366e-07
+    }
+  ]
+}

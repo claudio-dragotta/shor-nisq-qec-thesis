@@ -1,0 +1,89 @@
+% ═══════════════════════════════════════════════════════════════════════════
+% ⚠ CAPITOLO NON ANCORA INCLUSO IN main.tex — proposta, non lavoro svolto.
+%
+%   Va incluso SOLTANTO se la milestone M11 (pilota sul margine di layout) dà
+%   flag verde e la direzione è concordata col relatore.
+%   Piano operativo e criteri di decisione: piano_azione_layout_ml.md
+%
+%   PRECEDENTE DA TENERE PRESENTE: NuovoApproccio.tex fu scritto il 2026-07-03
+%   in forma definitiva per lavoro non ancora svolto, e finì in _archivio/ cinque
+%   giorni dopo, al cambio di direzione. Un capitolo di intenzioni dentro la tesi
+%   è un capitolo da rimuovere se l'esperimento non conferma.
+% ═══════════════════════════════════════════════════════════════════════════
+\begin{onehalfspace}
+
+I capitoli precedenti hanno esaurito due delle tre posizioni in cui è possibile intervenire sull'effetto del rumore. Il Capitolo~\ref{chap:risultati} ha stabilito, per via sperimentale, che intervenire \emph{dopo} l'esecuzione non paga: sull'output l'informazione utile è già interamente catturata da una ricerca multi-candidato elementare, e ciò che il rumore ha distrutto non è recuperabile da alcun post-processing. I Capitoli~\ref{chap:qec}--\ref{chap:integrazione} hanno percorso la seconda posizione --- intervenire \emph{durante} il calcolo, con la correzione d'errore --- mostrando che funziona, ma a una condizione che l'hardware odierno non soddisfa: operare al di sotto della soglia del codice.
+
+Resta una terza posizione, che nessuna delle due campagne ha esplorato: intervenire \textbf{prima} che il circuito venga eseguito, sul modo in cui esso viene mappato sui qubit fisici del dispositivo. È l'unica delle tre che agisce sull'hardware \ac{NISQ} attuale, ed è l'unica che sfugge per costruzione al risultato negativo della prima fase: non tenta di ricostruire l'informazione perduta, ma riduce la probabilità che venga perduta.
+
+% -----------------------------------------------
+\section{Ciò che il Transpiler non Sa}
+\label{sec:cosa_ignora_transpiler}
+
+Il transpiler di Qiskit non è ingenuo rispetto al rumore. Ai livelli di ottimizzazione superiori esegue un layout \textit{noise-aware}: conosce i tempi di coerenza di ciascun qubit e il tasso d'errore di ciascun arco della \textit{coupling map}, e sceglie la mappatura in modo da minimizzare l'errore complessivo atteso. Qualunque proposta di miglioramento deve dunque confrontarsi con questo avversario, e non con il layout di default: superare quest'ultimo dimostrerebbe soltanto che il transpiler svolge il proprio lavoro.
+
+Il margine, se esiste, sta altrove. Il transpiler minimizza un costo \textbf{generico}, perché non conosce l'algoritmo che sta mappando: per esso un qubit vale un altro, e un arco vale un altro, a parità di parametri di calibrazione. Nel circuito di Shor questa assunzione è falsa. I qubit del registro di conteggio portano la fase da cui la \ac{QPE} estrae il periodo, e un errore su di essi corrompe direttamente l'informazione cercata; i qubit del registro di lavoro, invece, vengono scartati al termine dell'esponenziazione modulare, e li colpisce un errore le cui conseguenze sono mediate dall'entanglement con il registro di controllo. Analogamente, gli archi che la moltiplicazione modulare attraversa ripetutamente pesano più di quelli toccati una volta sola.
+
+L'informazione mancante al transpiler è dunque la \textbf{struttura dell'algoritmo}, e la sua interazione con l'eterogeneità del dispositivo. È esattamente la configurazione che il criterio stabilito nel Capitolo~\ref{chap:conclusioni} identifica come favorevole a un modello appreso: non un metodo mal calibrato, ma un metodo strutturalmente cieco a una classe di informazione --- la stessa situazione in cui, nella Sezione~\ref{sec:decodifica_appresa}, il decoder appreso ha superato quello analitico.
+
+\paragraph{Una previsione falsificabile.}
+Ne discende una previsione che l'esperimento può smentire: \emph{esiste un margine di miglioramento accessibile a chi conosce la struttura di Shor e inaccessibile al transpiler generico}. Il valore del capitolo non dipende dal segno del risultato: se la previsione è confermata, il criterio del Capitolo~\ref{chap:conclusioni} riceve una verifica su un terzo caso indipendente; se è smentita, il criterio ne esce precisato, e la delimitazione del regime di utilità dell'apprendimento automatico si estende anche alla compilazione.
+
+% -----------------------------------------------
+\section{L'Approccio: un Surrogato Appreso per la Scelta della Mappatura}
+\label{sec:surrogato_layout}
+
+La caratterizzazione del dispositivo non richiede alcun esperimento: una \ac{QPU} reale \textbf{pubblica la propria calibrazione} come metadato. Tramite l'interfaccia del backend sono disponibili, senza eseguire alcun circuito, la \textit{coupling map}, i tempi $T_1$ e $T_2$ di ciascun qubit, l'errore di ciascun arco a due qubit e l'errore di lettura di ciascun qubit. La caratterizzazione del rumore è quindi \emph{un dato che si legge}, non una campagna da ripetere --- differenza sostanziale rispetto al classificatore della prima fase, che richiedeva una fase di addestramento dedicata prima di poter essere usato.
+
+Su questa base si costruisce un \textbf{modello surrogato}: dati la calibrazione del dispositivo e una mappatura candidata, esso predice la probabilità di successo dell'algoritmo \emph{senza eseguire il circuito}. La sua funzione non è sostituire il transpiler, ma rendere possibile ciò che il transpiler non può permettersi: esplorare molte mappature candidate a costo trascurabile, e selezionare la migliore prima di spendere una singola esecuzione.
+
+Le variabili che il modello riceve sono precisamente quelle che il costo generico ignora: su quali qubit fisici cadono i qubit di conteggio e con quali parametri di lettura, l'errore cumulato lungo gli archi effettivamente attraversati dalla moltiplicazione modulare, e il profilo di coerenza dei qubit che devono restare entangled per l'intera durata del blocco controllato.
+
+% -----------------------------------------------
+\section{Disegno Sperimentale}
+\label{sec:disegno_layout}
+
+Il confronto è condotto su un modello di rumore \textbf{eterogeneo per qubit e per arco}, costruito dai dati di calibrazione reali di un backend IBM. La condizione non è un dettaglio: sotto rumore uniforme non esiste alcuna informazione topologica da sfruttare, e un risultato nullo sarebbe una conseguenza del disegno sperimentale anziché una proprietà del metodo.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Braccio} & \textbf{Descrizione} & \textbf{Ruolo} \\
+\midrule
+Default        & layout predefinito del transpiler        & riferimento minimo \\
+\textbf{Noise-aware} & \textbf{layout noise-aware di Qiskit} & \textbf{avversario reale} \\
+Casuale        & mappatura estratta a caso                & controllo \\
+Oracolo        & migliore mappatura per ricerca esaustiva & limite superiore raggiungibile \\
+Surrogato      & mappatura scelta dal modello appreso     & metodo proposto \\
+\bottomrule
+\end{tabular}
+\caption[Bracci di confronto per la compilazione appresa]{Bracci del confronto. Il termine di paragone rispetto a cui il metodo deve dimostrare un guadagno è il layout \textit{noise-aware} di Qiskit; il braccio ``oracolo'' quantifica quanto margine esista in assoluto, e quindi quanto della distanza il modello riesca effettivamente a colmare.}
+\label{tab:bracci_layout}
+\end{table}
+
+La metrica primaria è la probabilità di successo a \textbf{singola esecuzione}, coerentemente con l'obiettivo di prevenire la perdita d'informazione anziché recuperarla a valle; il numero medio di iterazioni $\bar{M}$ è riportato come metrica secondaria. Il confronto fra bracci è appaiato sugli stessi seed e valutato con il test di McNemar, secondo lo stesso impianto statistico adottato nella Sezione~\ref{sec:decodifica_appresa}.
+
+\paragraph{Validazione fuori campione.}
+Il modello viene addestrato su un profilo di calibrazione e valutato su uno \emph{diverso}: è la sola prova che abbia appreso una regola generale anziché memorizzato le idiosincrasie di un singolo dispositivo. Un modello che non superasse questa prova sarebbe utilizzabile solo previa ri-calibrazione per ogni esemplare di QPU --- limite che andrebbe dichiarato apertamente.
+
+% -----------------------------------------------
+\section{Risultati del Pilota}
+\label{sec:risultati_pilota_layout}
+
+\emph{[DA COMPLETARE --- milestone M11.]} In questa sezione va riportato l'esito dell'esperimento preliminare che stabilisce se un margine esista: l'ampiezza della forbice fra la migliore e la peggiore mappatura a parità di circuito e di dispositivo, e la posizione occupata all'interno di quella forbice dal layout scelto dal transpiler \textit{noise-aware}. È questo dato --- e non un'ipotesi --- a giustificare o a escludere il seguito del capitolo.
+
+% -----------------------------------------------
+\section{Risultati del Modello Appreso}
+\label{sec:risultati_surrogato}
+
+\emph{[DA COMPLETARE --- milestone M13--M14.]} Vanno riportati: le prestazioni del surrogato nel predire la resa di una mappatura non vista; il guadagno in probabilità di successo del braccio ``surrogato'' rispetto al braccio \textit{noise-aware}, con significatività appaiata; la frazione del margine dell'oracolo effettivamente colmata; e l'esito della validazione su un profilo di calibrazione diverso da quello di addestramento.
+
+% -----------------------------------------------
+\section{Discussione}
+\label{sec:discussione_layout}
+
+\emph{[DA COMPLETARE.]} La discussione deve collocare l'esito rispetto al criterio del Capitolo~\ref{chap:conclusioni} --- confermandolo su un terzo caso o precisandone i limiti --- e dichiarare il perimetro: una sola istanza, un solo algoritmo, simulazione a partire da calibrazioni reali ma non esecuzione su hardware in coda. Va inoltre chiarito il rapporto con le tecniche di compilazione consapevoli del rumore già note in letteratura~\cite{murali2019, tannu2019}, rispetto alle quali l'elemento distintivo proposto è l'uso della struttura dell'algoritmo, e non dei soli parametri di calibrazione.
+
+\end{onehalfspace}
