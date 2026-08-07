@@ -1,9 +1,22 @@
 WARNING: all-qubit error already exists for instruction "h", composing with additional error.
 WARNING: all-qubit error already exists for instruction "x", composing with additional error.
-UC1: 12 qubit  CX   114  depth   311  P_surv 0.318  |    0.032 s/shot  ->     0.01 h/iterazione  ->       13.7 h protocollo
+--- UC1: 12 qubit, profondita 311, cx 114, cp 52, k_2q 166, P_surv 0.189
+        4 shot ->      0.02 s totali  =        4.60 ms/shot
+       64 shot ->      0.17 s totali  =        2.72 ms/shot
+      256 shot ->      0.29 s totali  =        1.12 ms/shot
+     1024 shot ->      4.24 s totali  =        4.14 ms/shot
+    => iterazione da 1024 shot: 4.2 s (0.00 h)   [estrapolato da 1024 shot, valore per eccesso se la curva non e' ancora piatta]
+
 WARNING: all-qubit error already exists for instruction "h", composing with additional error.
 WARNING: all-qubit error already exists for instruction "x", composing with additional error.
-UC3: 22 qubit  CX  3406  depth  9883  P_surv 1.36e-15  |  168.598 s/shot  ->    47.96 h/iterazione  ->    71935.3 h protocollo
+--- UC3: 22 qubit, profondita 9883, cx 3406, cp 11436, k_2q 14842, P_surv 1.65e-65
+        4 shot ->    145.56 s totali  =    36388.90 ms/shot
+       16 shot ->    292.57 s totali  =    18285.52 ms/shot
+       64 shot ->   1074.16 s totali  =    16783.76 ms/shot
+    => iterazione da 1024 shot: 17186.6 s (4.77 h)   [estrapolato da 64 shot, valore per eccesso se la curva non e' ancora piatta]
+
 WARNING: all-qubit error already exists for instruction "h", composing with additional error.
 WARNING: all-qubit error already exists for instruction "x", composing with additional error.
-UC4: 26 qubit  CX   516  depth  1480  P_surv 0.00559  |  492.422 s/shot  ->   140.07 h/iterazione  ->   210100.0 h protocollo
+--- UC4: 26 qubit, profondita 1480, cx 516, cp 1908, k_2q 2424, P_surv 2.63e-11
+        4 shot ->    338.48 s totali  =    84620.38 ms/shot
+       16 shot ->   1137.83 s totali  =    71114.19 ms/shot
