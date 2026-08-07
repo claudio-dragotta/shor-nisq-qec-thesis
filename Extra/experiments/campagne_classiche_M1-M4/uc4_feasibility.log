@@ -1,0 +1,3 @@
+WARNING: all-qubit error already exists for instruction "h", composing with additional error.
+WARNING: all-qubit error already exists for instruction "x", composing with additional error.
+qubit 26  CX 516  depth 1480

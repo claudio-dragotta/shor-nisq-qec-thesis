@@ -1,0 +1,9 @@
+WARNING: all-qubit error already exists for instruction "h", composing with additional error.
+WARNING: all-qubit error already exists for instruction "x", composing with additional error.
+UC1: 12 qubit  CX   114  depth   311  P_surv 0.318  |    0.032 s/shot  ->     0.01 h/iterazione  ->       13.7 h protocollo
+WARNING: all-qubit error already exists for instruction "h", composing with additional error.
+WARNING: all-qubit error already exists for instruction "x", composing with additional error.
+UC3: 22 qubit  CX  3406  depth  9883  P_surv 1.36e-15  |  168.598 s/shot  ->    47.96 h/iterazione  ->    71935.3 h protocollo
+WARNING: all-qubit error already exists for instruction "h", composing with additional error.
+WARNING: all-qubit error already exists for instruction "x", composing with additional error.
+UC4: 26 qubit  CX   516  depth  1480  P_surv 0.00559  |  492.422 s/shot  ->   140.07 h/iterazione  ->   210100.0 h protocollo

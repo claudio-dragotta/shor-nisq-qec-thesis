@@ -21,7 +21,11 @@ nm = build_noise_model(1e-3, 1e-2, 100_000, 80_000, 50, 0.02)
 qc = shor_circuit(N, A, N_COUNT)
 sim = AerSimulator(noise_model=nm, method='statevector')
 t = transpile(qc, sim, optimization_level=2)
-print(f'qubit {t.num_qubits}  CX {t.count_ops().get("cx", 0)}  depth {t.depth()}', flush=True)
+ops = dict(t.count_ops())
+# vedi nota in uc3_feasibility.py: k_2q = cx + swap + cp, non le sole cx
+k_2q = sum(ops.get(g, 0) for g in ('cx', 'swap', 'cp'))
+print(f'qubit {t.num_qubits}  cx {ops.get("cx", 0)}  cp {ops.get("cp", 0)}  '
+      f'k_2q {k_2q}  depth {t.depth()}  P_surv {(1 - 1e-2) ** k_2q:.3g}', flush=True)
 
 t0 = time.time()
 counts = sim.run(t, shots=SHOTS, seed_simulator=1).result().get_counts()
