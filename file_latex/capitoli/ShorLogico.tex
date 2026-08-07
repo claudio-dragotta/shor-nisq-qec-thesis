@@ -92,6 +92,35 @@ dove $P_s$ è la probabilità per singolo run. La Figura~\ref{fig:qec_shor_pk} m
 \paragraph{La barriera di scalabilità.}
 Il modello logico è stato applicato a $N=15$ perché l'estensione a istanze maggiori incontra un limite pratico netto, esplorato seguendo l'indicazione di procedere per $N$ crescenti finché la simulazione resta stabile. Già per $N=21$ il circuito, dopo la transpilazione della moltiplicazione modulare (decomposizione di Beauregard), raggiunge una profondità di circa $9\,500$ porte su $22$ qubit: la simulazione classica, anche in assenza di rumore, non completa una singola esecuzione in tempi ragionevoli. È la stessa barriera di scalabilità documentata nel Capitolo~\ref{chap:risultati} per gli use case UC3/UC4, e coincide con l'avvertenza del documento di indirizzo (istanze piccole, $N=21$ e $35$ solo ``se gestibili''). La finestra di $N$ simulabili si esaurisce dunque a $N=15$: è precisamente questo limite a motivare, sul piano metodologico, il ricorso alle stime di risorse della Sezione~\ref{sec:resource_estimates} anziché alla simulazione diretta per proiettare il costo su scala crittografica.
 
+\paragraph{Che cosa guadagna Shor da un decoder migliore.}
+Il modello a livelli consente di rispondere a una domanda che, formulata direttamente, resterebbe senza risposta: \emph{quanto vale, per l'algoritmo, migliorare la decodifica?} La Sezione~\ref{sec:decodifica_appresa} misura la riduzione di errore logico ottenuta dal decoder ibrido rispetto al \ac{MWPM} in presenza di rumore correlato; la curva della Figura~\ref{fig:qec_shor_logico} traduce un errore logico in una probabilità di successo. Componendo le due si ottiene il guadagno end-to-end, riportato nella Tabella~\ref{tab:decoder_su_shor}.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{clcccc}
+\toprule
+$d$ & $p_{ct}$ & \multicolumn{2}{c}{\textbf{errore logico} $p_L$} & \multicolumn{2}{c}{$P_{\text{success}}$ \textbf{di Shor}} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+ & & MWPM & ibrido & MWPM & ibrido \\
+\midrule
+\multirow{4}{*}{3} & $5\times10^{-3}$ & 0.0309 & 0.0261 & 0.490 & \textbf{0.519} \\
+                   & $1\times10^{-2}$ & 0.0583 & 0.0485 & 0.384 & \textbf{0.416} \\
+                   & $2\times10^{-2}$ & 0.1114 & 0.0918 & 0.283 & \textbf{0.305} \\
+                   & $4\times10^{-2}$ & 0.2075 & 0.1746 & 0.249 & \textbf{0.256} \\
+\midrule
+\multirow{2}{*}{5} & $5\times10^{-3}$ & 0.0356 & 0.0352 & 0.467 & 0.469 \\
+                   & $1\times10^{-2}$ & 0.0870 & 0.0843 & 0.314 & \textbf{0.320} \\
+\bottomrule
+\end{tabular}
+\caption[Effetto del decoder appreso sulla probabilità di successo di Shor]{Guadagno end-to-end della decodifica appresa. Le colonne $p_L$ riportano l'errore logico misurato nella Sezione~\ref{sec:decodifica_appresa}; quelle $P_{\text{success}}$ il corrispondente valore letto sulla curva della Figura~\ref{fig:qec_shor_logico}. Il guadagno massimo è di $3.2$ punti percentuali, da $0.384$ a $0.416$. \textbf{I valori di $P_{\text{success}}$ sono ottenuti per interpolazione della curva già misurata, non da nuove simulazioni}: la composizione eredita quindi tutte le approssimazioni del modello a livelli.}
+\label{tab:decoder_su_shor}
+\end{table}
+
+Il guadagno è reale ma modesto, e va letto per quello che è. Si manifesta a distanza 3, dove il decoder appreso è competitivo, e si assottiglia a distanza 5, dove --- come documentato nella Sezione~\ref{subsec:neural_ibrido} --- l'ibrido recupera poco rispetto al matching. Soprattutto, l'intero intervallo esplorato cade in un regime di errore logico elevato, in cui $P_{\text{success}}$ è comunque lontana dal limite dell'istanza: è il regime in cui il rumore correlato mette in difficoltà il decoder analitico, non un regime operativo desiderabile. L'affermazione corretta non è dunque che la decodifica appresa renda Shor affidabile, ma che \emph{recupera una frazione misurabile di ciò che il rumore correlato sottrae al decoder analitico}, e che tale frazione si traduce in un guadagno quantificabile sulla probabilità di fattorizzare.
+
+Il valore metodologico di questo passaggio è tuttavia maggiore del suo valore numerico: è il punto in cui la catena che attraversa l'intera tesi --- \emph{modello appreso $\rightarrow$ decodifica migliore $\rightarrow$ errore logico minore $\rightarrow$ algoritmo più affidabile} --- viene percorsa per intero con grandezze misurate, anziché essere argomentata a parole.
+
 \subsection{Discussione}
 \label{subsec:discussione_logico}
 
@@ -99,6 +128,8 @@ La domanda di ricerca conclusiva --- quale $p_L$ è necessario affinché Shor ma
 
 \paragraph{Il bilancio dell'intero percorso.}
 Questo risultato chiude un arco coerente. La prima campagna sperimentale (Capitolo~\ref{chap:risultati}) aveva stabilito, tramite ablazione, che l'apprendimento automatico applicato \emph{a valle} dell'esecuzione non aggiunge nulla: il guadagno era interamente della ricerca multi-candidato TOP-K. Quel risultato negativo, lungi dall'essere un vicolo cieco, indicava dove il problema andava affrontato --- non nel post-processing dell'output, ma nella \emph{struttura} del calcolo. La seconda parte ha percorso questa strada: la correzione d'errore quantistica codifica l'informazione in modo che l'errore possa essere rilevato e corretto prima che si propaghi, dal codice a ripetizione (che introduce la sindrome) al codice di Steane (che corregge un errore arbitrario) al surface code (che scala verso il regime fault-tolerant). La figura conclusiva riunisce le due parti: mostra quanto della fragilità di Shor sul rumore fisico venga recuperato passando ai qubit logici, e quantifica il prezzo --- in distanza di codice, e quindi in qubit fisici --- di quel recupero.
+
+Va però osservato che questo bilancio, così formulato, sarebbe incompleto: descrive un arco che va dall'apprendimento automatico \emph{alla} correzione d'errore, come se il primo fosse stato semplicemente abbandonato lungo la strada. Non è ciò che è accaduto. L'apprendimento automatico rientra nella seconda parte, e vi rientra nel punto che il risultato negativo della prima aveva indicato: non sull'output, ma sulla \textbf{sindrome}. La Sezione~\ref{sec:decodifica_appresa} lo documenta, e la Tabella~\ref{tab:decoder_su_shor} ne misura l'effetto fin quaggiù, sulla probabilità di successo dell'algoritmo. L'arco corretto non è dunque ``dal machine learning alla QEC'', ma \emph{dal machine learning applicato dove non serve a quello applicato dove serve} --- ed è la correzione d'errore ad aver fornito il luogo in cui applicarlo utilmente. Le due strategie che il Capitolo~\ref{chap:strategie} aveva selezionato come promettenti non sono alternative che si escludono: la seconda è la condizione perché la prima abbia qualcosa da fare.
 
 \paragraph{Limiti e perimetro.}
 I risultati vanno letti entro il perimetro dichiarato. Il modello logico è un'approssimazione: assume errori logici indipendenti e uniformi tra i gate, trascura le correlazioni residue del decoder, l'overhead dei gate logici non transversali e la distillazione degli stati magici necessari alle rotazioni non-Clifford. Le stime di errore logico di Steane e surface provengono da modelli di rumore non identici (depolarizzazione per qubit nel primo, \textit{circuit-level} nel secondo) e vanno intese come ordini di grandezza, non come misure direttamente commensurabili. Infine, l'estrazione di sindrome implementata non è fault-tolerant, e l'istanza $N=15$ è didattica. Ciò che i risultati dimostrano non è la fattibilità di Shor su scala crittografica --- che le stime di risorse~\cite{gidney2021} collocano a milioni di qubit fisici --- ma la \emph{relazione} quantitativa tra capacità di correzione ed affidabilità del calcolo, verificata end-to-end su un'istanza trattabile: è questa relazione, e non il singolo numero fattorizzato, il contributo del lavoro.
