@@ -39,14 +39,45 @@ def logical_error_rate(d, p, shots, basis='z', rounds=None, seed=None):
         before_measure_flip_probability=p,
     )
     sampler = circuit.compile_detector_sampler(seed=seed)
-    det, obs = sampler.sample(shots, separate_observables=True)
     dem = circuit.detector_error_model(decompose_errors=True)
     matching = pymatching.Matching.from_detector_error_model(dem)
-    pred = matching.decode_batch(det)
-    fails = int((pred != obs).any(axis=1).sum())
+
+    # Campionamento a blocchi: a d=9 il circuito ha ~720 detector, e chiedere
+    # decine di milioni di shot in un colpo solo alloca decine di GiB. Il conteggio
+    # dei fallimenti e' additivo, quindi si accumula blocco per blocco.
+    BLOCCO = 500_000
+    fails, fatti = 0, 0
+    while fatti < shots:
+        n = min(BLOCCO, shots - fatti)
+        det, obs = sampler.sample(n, separate_observables=True)
+        pred = matching.decode_batch(det)
+        fails += int((pred != obs).any(axis=1).sum())
+        fatti += n
+
     pL = fails / shots
     se = (pL * (1 - pL) / shots) ** 0.5
     return pL, se
+
+
+def logical_error_rate_adattivo(d, p, basis, seed, target_fallimenti=200,
+                                shots_min=200_000, shots_max=40_000_000):
+    """p_L con numero di shot scelto per ottenere ~target_fallimenti eventi logici.
+
+    Serve per le distanze grandi: a d=9 e p=2e-3 il tasso logico e' ~1e-5, e con
+    200k shot si osservano 2 fallimenti — incertezza relativa del 70%, inutilizzabile
+    per stimare una legge di scala. Il campionamento procede in due passate: la prima
+    a shots_min stima l'ordine di grandezza di p_L, la seconda dimensiona il campione
+    di conseguenza. Restituisce anche il numero di shot effettivamente usati, che va
+    riportato perche' varia da punto a punto.
+    """
+    pL, se = logical_error_rate(d, p, shots_min, basis=basis, seed=seed)
+    if pL * shots_min >= target_fallimenti:
+        return pL, se, shots_min
+
+    stima = max(pL, 1.0 / shots_min)          # se 0 fallimenti, limite superiore
+    shots = int(min(shots_max, max(shots_min, target_fallimenti / stima)))
+    pL, se = logical_error_rate(d, p, shots, basis=basis, seed=seed)
+    return pL, se, shots
 
 
 def run_curve(distances, p_list, shots, basis, seed=42):
@@ -58,10 +89,14 @@ def run_curve(distances, p_list, shots, basis, seed=42):
         row = f"{p:<10g}"
         for d in distances:
             # seed deterministico per (punto, distanza): l'esperimento e' rigenerabile
-            pL, se = logical_error_rate(d, p, shots, basis=basis, rounds=d,
-                                        seed=seed + i * 10 + d)
-            table[d].append({'p': p, 'p_L': pL, 'p_L_se': se})
-            row += f"{f'{pL:.5f}±{se:.5f}':<20}"
+            if shots is None:
+                pL, se, n = logical_error_rate_adattivo(d, p, basis, seed + i * 10 + d)
+            else:
+                pL, se = logical_error_rate(d, p, shots, basis=basis, rounds=d,
+                                            seed=seed + i * 10 + d)
+                n = shots
+            table[d].append({'p': p, 'p_L': pL, 'p_L_se': se, 'shots': n})
+            row += f"{f'{pL:.2e}±{se:.1e}':<20}"
         print(row)
 
     # --- flag 1: sanity a p piccolo (d maggiore => p_L minore) ---
@@ -92,7 +127,11 @@ def run_curve(distances, p_list, shots, basis, seed=42):
 def main():
     ap = argparse.ArgumentParser(description="M7 — surface code (Stim + PyMatching)")
     ap.add_argument('--basis', choices=['x', 'z'], default='z')
-    ap.add_argument('--shots', type=int, default=200000)
+    ap.add_argument('--shots', type=int, default=200000,
+                    help='numero fisso di shot per punto; usare --adattivo per '
+                         'dimensionarlo su ~200 fallimenti logici (serve a d>=9)')
+    ap.add_argument('--adattivo', action='store_true',
+                    help='ignora --shots e dimensiona il campione punto per punto')
     ap.add_argument('--distances', type=int, nargs='+', default=[3, 5, 7])
     ap.add_argument('--seed', type=int, default=42)
     args = ap.parse_args()
@@ -100,7 +139,9 @@ def main():
     p_list = [0.002, 0.003, 0.004, 0.005, 0.006, 0.008, 0.010]
     out = {'milestone': 'M7_surface', 'timestamp': datetime.now().isoformat(),
            'seed': args.seed}
-    out['curve'] = run_curve(args.distances, p_list, args.shots, args.basis, seed=args.seed)
+    out['curve'] = run_curve(args.distances, p_list,
+                             None if args.adattivo else args.shots,
+                             args.basis, seed=args.seed)
 
     fname = f"results_M7_surface_{args.basis}_{datetime.now():%Y%m%d_%H%M%S}.json"
     with open(fname, 'w') as f:
