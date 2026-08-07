@@ -29,8 +29,8 @@ The work answers one question in two phases:
 | Result | Value |
 |---|---|
 | Shor physical success rate, *N*=15, NISQ-realistic | crashes to **~3.4%** |
-| Baseline iterations M̄₁ (Method 1, TOP-1) | **6.43** (UC1), 2.42 (UC2) |
-| TOP-4 multi-candidate search | **M̄ = 1.00** (ρ = 6.44 on UC1, *p* = 0.0002) |
+| Baseline iterations M̄₁ (Method 1, TOP-1) | **1.97** (UC1), 1.60 (UC2) |
+| TOP-4 multi-candidate search | **M̄ = 1.00** (ρ = 1.97 on UC1, *p* < 0.001) |
 | ML classifier contribution (ablation) | **statistically irrelevant** on UC1 (*p* = 0.849), harmful on UC2 |
 | Repetition code | logical error `p_L = 3p² − 2p³` (verified) |
 | Steane `[[7,1,3]]` | **quadratic** suppression, pseudo-threshold ≈ 0.08 |

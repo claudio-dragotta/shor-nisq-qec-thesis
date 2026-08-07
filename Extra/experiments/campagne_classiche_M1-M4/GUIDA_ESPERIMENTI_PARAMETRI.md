@@ -64,7 +64,7 @@ K varia il numero di candidati tentati per iterazione.
 
 | K | Previsione |
 |---|---|
-| 1 | Identico a M1: M̄ ≈ 6.43, sr ≈ 77% |
+| 1 | Identico a M1: M̄ ≈ 1.97, sr = 100% |
 | 2 | Miglioramento parziale: M̄ tra 2 e 4 |
 | 3 | Miglioramento significativo: M̄ intorno a 1-2 |
 | 4 | M̄ = 1.00, sr = 100% (già noto) |

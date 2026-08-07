@@ -1,6 +1,6 @@
 \begin{onehalfspace}
 
-Il capitolo precedente ha concluso la parte teorica della tesi con un'ipotesi precisa da mettere alla prova: che il \ac{QML}, nella sua declinazione di classificatore addestrato per la rilevazione degli errori, riduca il numero medio di esecuzioni necessarie da $\bar{M}_1 \approx 6$--$7$ a circa tre. Il presente capitolo definisce il sistema sperimentale costruito per verificarla. Si tratta dell'architettura della \emph{prima fase} del lavoro: l'esito della verifica --- che il guadagno osservato è reale ma attribuibile alla ricerca multi-candidato e non al classificatore (Capitolo~\ref{chap:risultati}) --- motiva la seconda fase, che adotta un'architettura diversa perché diversa ne è la natura. Il protocollo sperimentale di ciascun codice correttore, essendo specifico del codice, è descritto nel capitolo che lo introduce (Capitoli~\ref{chap:qec}--\ref{chap:integrazione}); l'infrastruttura comune --- organizzazione del codice, divisione degli strumenti fra Qiskit, Stim e PyMatching, e disciplina di riproducibilità --- è nella Sezione~\ref{sec:impl_qec} del capitolo seguente.
+Il capitolo precedente ha concluso la parte teorica della tesi con un'ipotesi precisa da mettere alla prova: che il \ac{QML}, nella sua declinazione di classificatore addestrato per la rilevazione degli errori, riduca in misura significativa il numero medio di esecuzioni necessarie ($\rho = \bar{M}_1/\bar{M}_2 \gg 1$), portandolo a circa tre. Il presente capitolo definisce il sistema sperimentale costruito per verificarla. Si tratta dell'architettura della \emph{prima fase} del lavoro: l'esito della verifica --- che il guadagno osservato è reale ma attribuibile alla ricerca multi-candidato e non al classificatore (Capitolo~\ref{chap:risultati}) --- motiva la seconda fase, che adotta un'architettura diversa perché diversa ne è la natura. Il protocollo sperimentale di ciascun codice correttore, essendo specifico del codice, è descritto nel capitolo che lo introduce (Capitoli~\ref{chap:qec}--\ref{chap:integrazione}); l'infrastruttura comune --- organizzazione del codice, divisione degli strumenti fra Qiskit, Stim e PyMatching, e disciplina di riproducibilità --- è nella Sezione~\ref{sec:impl_qec} del capitolo seguente.
 
 Questo capitolo ha questo scopo. Vengono descritte l'architettura del pipeline, le tecnologie adottate e la struttura dei due metodi che verranno confrontati nella parte sperimentale. Non si entra ancora nella descrizione del codice né dei risultati: quelli sono oggetto dei capitoli successivi. Qui si stabilisce il \textit{perché} di ciascuna scelta progettuale e il \textit{come} i componenti si raccordano tra loro.
 
@@ -74,7 +74,7 @@ Nel contesto dell'algoritmo di Shor, il collo di bottiglia è la \textbf{modular
 
 La \textbf{decomposizione di Beauregard} \cite{beauregard2002} evita la sintesi densa costruendo l'aritmetica modulare nel dominio della \ac{QFT} con addizionatori di Draper, e ottiene un circuito di $O(n^3)$ porte elementari su $2n+3$ qubit per un modulo di $n$ bit. Il guadagno è di ordini di grandezza: per $N=21$ il modulo \texttt{beauregard.py} sviluppato in questa tesi produce circa $2\,594$ porte \ac{CX}, contro le oltre $10\,000$ della sintesi densa.
 
-Va però dichiarato con precisione lo stato di questa ottimizzazione nel presente lavoro: \textbf{gli esperimenti riportati nei capitoli seguenti non la utilizzano}. I circuiti effettivamente eseguiti impiegano la decomposizione densa, ed è questa la ragione per cui i use case UC3 e UC4 risultano fuori portata (Capitolo~\ref{chap:risultati}, Tabella~\ref{tab:circuit_depth}). Il modulo Beauregard è stato implementato e verificato sul conteggio delle porte, ma la sua validazione sperimentale completa eccede le risorse di calcolo disponibili ed è discussa fra gli sviluppi futuri (Capitolo~\ref{chap:sviluppi}). Per $N=15$, l'istanza su cui il confronto è condotto, la decomposizione adottata resta comunque efficiente --- 162 porte \ac{CX} --- perché sfrutta matrici di permutazione già quasi ottimali.
+Va però dichiarato con precisione lo stato di questa ottimizzazione nel presente lavoro: \textbf{gli esperimenti riportati nei capitoli seguenti non la utilizzano}. I circuiti effettivamente eseguiti impiegano la decomposizione densa, ed è questa la ragione per cui i use case UC3 e UC4 risultano fuori portata (Capitolo~\ref{chap:risultati}, Tabella~\ref{tab:circuit_depth}). Il modulo Beauregard è stato implementato e verificato sul conteggio delle porte, ma la sua validazione sperimentale completa eccede le risorse di calcolo disponibili ed è discussa fra gli sviluppi futuri (Capitolo~\ref{chap:sviluppi}). Per $N=15$, l'istanza su cui il confronto è condotto, la decomposizione adottata resta comunque efficiente --- 114 porte \ac{CX} --- perché sfrutta matrici di permutazione già quasi ottimali.
 
 Un ulteriore livello di riduzione è offerto dalla \textbf{transpilazione} di Qiskit: il transpiler decompone le porte nel gate set nativo del backend target, cancella sequenze identità e riordina i gate commutanti. Tutti gli esperimenti adottano \texttt{optimization\_level=2}, per le ragioni discusse nella Sezione~\ref{subsec:sensitivity}.
 
@@ -92,7 +92,7 @@ La \textbf{Zero-Noise Extrapolation} (\ac{ZNE}) \cite{temme2017} è una tecnica 
 
 Il pregio della \ac{ZNE} è che non richiede conoscenza del modello di rumore e produce una stima dell'output ideale direttamente dall'output rumoroso. Il limite, nel contesto di questa tesi, è duplice. Da un lato, richiede almeno $k \geq 2$ esecuzioni per ogni singola stima --- il che contrasta direttamente con l'obiettivo del Metodo 2 di convergere in circa tre iterazioni totali. Dall'altro, l'amplificazione del rumore degrada ulteriormente la fedeltà dei gate già ai livelli $\lambda = 2$ e $\lambda = 3$: per circuiti profondi come quello di Shor, il gate folding introduce errori aggiuntivi che non si distribuiscono linearmente e rendono l'estrapolazione inaffidabile.
 
-Per questi motivi la \ac{ZNE} non è stata adottata come tecnica principale. Essa compare però nel Capitolo~\ref{chap:risultati} come termine di confronto sperimentale: i risultati mostrano che ZNE-2 e ZNE-3 abbassano il tasso di successo dal 76.7\% (baseline M1) al 60\%, con un costo di 11\,776 shot contro 1\,024 per $M_{\text{TOP4}}$.
+Per questi motivi la \ac{ZNE} non è stata adottata come tecnica principale. Essa compare però nel Capitolo~\ref{chap:risultati} come termine di confronto sperimentale: i risultati mostrano che ZNE-2 e ZNE-3 non migliorano in modo significativo il numero di iterazioni rispetto alla baseline, a fronte di un costo in shot da due a tre volte superiore.
 
 \subsection{Analisi di Sensibilità ai Parametri di Rumore}
 \label{subsec:sensitivity}
@@ -115,27 +115,29 @@ $\varepsilon_{2q}$ (gate CX)      & $10^{-2}$  & $[10^{-3},\ 10^{-1}]$        & 
 \label{tab:sensitivity}
 \end{table}
 
-I risultati mostrano con nettezza che \textbf{il solo parametro che influenza $\bar{M}_1$ è il tasso di errore dei gate a due qubit $\varepsilon_{2q}$}. Tutti gli altri parametri --- errori sui gate a singolo qubit, tempi di decoerenza $T_1/T_2$ e readout error --- producono $\bar{M}_1 = 1.0$ con success rate $= 100\%$ sull'intero range testato, indistinguibili dal caso ideale.
+I risultati mostrano con nettezza che \textbf{nessun parametro del modello di rumore degrada la convergenza in modo apprezzabile}. Errori sui gate a singolo qubit, tempi di decoerenza $T_1/T_2$ e readout error producono $\bar{M}_1 = 1.0$ con success rate $= 100\%$ sull'intero range testato, indistinguibili dal caso ideale; il tasso di errore dei gate a due qubit $\varepsilon_{2q}$ --- l'unico che lascia una traccia --- fa oscillare $\bar{M}_1$ fra $1.3$ e $2.0$ senza alcun andamento monotono e senza mai far scendere il tasso di successo sotto il $100\%$, come mostra la Tabella~\ref{tab:sweep_eps2q}.
 
 \begin{table}[H]
 \centering
-\begin{tabular}{@{}lrrrr@{}}
+\begin{tabular}{@{}lrrrrr@{}}
 \toprule
-$\varepsilon_{2q}$ & $\bar{M}_1$ & $\sigma_{M_1}$ & Success rate & TOP-4 $\bar{M}$ \\
+$\varepsilon_{2q}$ & $P_{\text{surv}}$ & $\bar{M}_1$ & $\sigma_{M_1}$ & Success rate & TOP-4 $\bar{M}$ \\
 \midrule
-$10^{-3}$ & 2.27 & 5.22 & 73.3\% & 1.0 \\
-$5\times10^{-3}$ & 3.18 & 6.11 & 73.3\% & 1.0 \\
-$10^{-2}$ & 6.43 & 9.80 & 76.7\% & 1.0 \\
-$2\times10^{-2}$ & 4.77 & 8.14 & 86.7\% & 1.0 \\
-$5\times10^{-2}$ & 5.92 & 8.96 & 83.3\% & 1.0 \\
-$10^{-1}$ & 6.13 & 9.41 & 76.7\% & 1.0 \\
+$10^{-3}$        & $8.9\times10^{-1}$ & 1.70 & 0.94 & 100\% & 1.00 \\
+$5\times10^{-3}$ & $5.6\times10^{-1}$ & 1.97 & 1.47 & 100\% & 1.00 \\
+$10^{-2}$        & $3.2\times10^{-1}$ & 1.97 & 1.66 & 100\% & 1.00 \\
+$2\times10^{-2}$ & $1.0\times10^{-1}$ & 1.53 & 0.62 & 100\% & 1.00 \\
+$5\times10^{-2}$ & $2.9\times10^{-3}$ & 1.53 & 1.28 & 100\% & 1.00 \\
+$10^{-1}$        & $6.1\times10^{-6}$ & 1.30 & 0.78 & 100\% & 1.00 \\
 \bottomrule
 \end{tabular}
-\caption{Sweep di $\varepsilon_{2q}$ su UC1 (N=15, a=7, K=30). $\bar{M}_1$ cresce con il tasso di errore CX; la strategia TOP-4 mantiene success rate = 100\% su tutto il range.}
+\caption[Sweep di $\varepsilon_{2q}$ su UC1]{Sweep di $\varepsilon_{2q}$ su UC1 ($N=15$, $a=7$, $K_{\text{rep}}=30$). $P_{\text{surv}} = (1-\varepsilon_{2q})^{114}$ è la probabilità che nessuna delle $114$ porte \ac{CX} del circuito traspilato subisca errore. Entrambe le strategie mantengono success rate $=100\%$ su tutto il range, e $\bar{M}_1$ resta compreso fra $1.3$ e $2.0$ anche là dove $P_{\text{surv}}$ scende a sei parti su un milione.}
 \label{tab:sweep_eps2q}
 \end{table}
 
-Questo risultato ha un'interpretazione fisica precisa. Il circuito di Shor per N=15 con la decomposizione a permutazione (\texttt{c\_amod15}) ha profondità ridotta: in queste condizioni il tempo totale di esecuzione è sufficientemente breve da rendere la decoerenza ($T_1$, $T_2$) trascurabile rispetto al contributo dei gate a due qubit. Analogamente, gli errori sui gate a singolo qubit e il readout error si trovano in un regime in cui il loro effetto è oscurato dall'errore CX. La fonte di degradazione dominante è quindi il numero e la qualità dei gate \ac{CX}.
+Il dato più istruttivo della tabella è il confronto fra la seconda colonna e le successive. Passando da $\varepsilon_{2q}=10^{-3}$ a $\varepsilon_{2q}=10^{-1}$, la probabilità che il circuito attraversi tutte le sue porte a due qubit senza alcun errore crolla da quasi il $90\%$ a sei parti su un milione: in altre parole, nel regime peggiore \emph{praticamente ogni singola esecuzione} contiene almeno un errore. Ciononostante $\bar{M}_1$ non peggiora --- anzi, decresce leggermente --- e il tasso di successo resta pieno. La spiegazione sta nella natura della \ac{QPE}: il segnale non è concentrato in un unico esito che il rumore può distruggere, ma distribuito su un picco largo attorno ai valori $k \approx j\,2^{n}/r$, e la procedura delle frazioni continue tollera uno scostamento apprezzabile dal massimo esatto. Un errore che sposta la misura di qualche unità lascia il periodo recuperabile. È lo stesso meccanismo che, portato alle sue conseguenze, rende efficace la strategia TOP-K.
+
+Questo risultato ha un'interpretazione fisica precisa anche per gli altri parametri. Il circuito di Shor per N=15 con la decomposizione a permutazione (\texttt{c\_amod15}) ha profondità ridotta: in queste condizioni il tempo totale di esecuzione è sufficientemente breve da rendere la decoerenza ($T_1$, $T_2$) trascurabile rispetto al contributo dei gate a due qubit. Analogamente, gli errori sui gate a singolo qubit e il readout error si trovano in un regime in cui il loro effetto è oscurato dall'errore CX. La fonte di degradazione dominante è quindi il numero e la qualità dei gate \ac{CX}.
 
 \textbf{Implicazioni per le scelte implementative.} Questa analisi ha tre conseguenze dirette:
 
@@ -144,7 +146,7 @@ Questo risultato ha un'interpretazione fisica precisa. Il circuito di Shor per N
 
     \item \textbf{Readout mitigation e ottimizzazioni $T_1/T_2$ sono inutili per N=15.} Il risultato empirico conferma che nessuno dei due approcci porta benefici misurabili nel regime N=15. Adottarli avrebbe aggiunto complessità senza impatto sulle metriche.
 
-    \item \textbf{La ZNE è controproducente.} Il confronto sperimentale (Sezione~\ref{subsec:zne} e Capitolo~\ref{chap:risultati}) mostra che ZNE-2 e ZNE-3 abbassano il success rate dal 76.7\% al 60\%, confermando che l'amplificazione del rumore degrada ulteriormente un circuito già sensibile a $\varepsilon_{2q}$.
+    \item \textbf{La ZNE è inefficace su questo compito.} Il confronto sperimentale (Sezione~\ref{subsec:zne} e Capitolo~\ref{chap:risultati}) mostra che ZNE-2 e ZNE-3 non riducono in modo statisticamente significativo il numero di iterazioni, pur richiedendo da due a tre volte più shot per il campionamento ai livelli di rumore amplificato: il costo è certo, il beneficio non si manifesta. Il motivo è coerente con quanto appena osservato --- non c'è un bias sistematico da estrapolare via, perché la distribuzione rumorosa conserva già il segnale che serve.
 
     \item \textbf{L'\texttt{optimization\_level} ha effetto trascurabile per N=15.} È stato condotto un ulteriore sweep variando il livello di ottimizzazione del transpiler Qiskit da 0 a 3. I risultati sono riportati in Tabella~\ref{tab:sweep_optlevel}.
 
@@ -154,17 +156,21 @@ Questo risultato ha un'interpretazione fisica precisa. Il circuito di Shor per N
 \toprule
 \textbf{Livello} & \textbf{Gate CX} & \textbf{Profondità} & $P_{\text{surv}}$ ($\varepsilon_{2q}=10^{-2}$) \\
 \midrule
-0            & 168 & 319 & 18.5\% \\
+0            & 168 & 319 & 18.4\% \\
 1            & 162 & 313 & 19.6\% \\
-2 (adottato) & 162 & 309 & 19.6\% \\
-3            & 162 & 309 & 19.6\% \\
+2 (adottato) & 114 & 311 & 31.8\% \\
+3            & 114 & 311 & 31.8\% \\
 \bottomrule
 \end{tabular}
-\caption[Sweep di \texttt{optimization\_level}]{Sweep di \texttt{optimization\_level} sul circuito di UC1 ($N=15$, $a=7$). Il passaggio dal livello 0 al livello 1 elimina sei porte \ac{CX} (168$\rightarrow$162); i livelli 2 e 3 non apportano ulteriori riduzioni del conteggio e differiscono solo per una lieve diminuzione di profondità. Si riportano le sole metriche di transpilazione: le metriche di convergenza raccolte in questo sweep non sono comparabili con quelle degli altri, perché l'implementazione usata al suo interno seleziona i candidati con una sogliatura al 30\% del massimo anziché la sola moda, e non corrisponde quindi al Metodo 1 definito nella Sezione~\ref{sec:metodo1}.}
+\caption[Sweep di \texttt{optimization\_level}]{Sweep di \texttt{optimization\_level} sul circuito di UC1 ($N=15$, $a=7$). Il passaggio dal livello 0 al livello 1 elimina sei porte \ac{CX} (168$\rightarrow$162); il livello 2 ne elimina altre quarantotto (162$\rightarrow$114), portando $P_{\text{surv}}$ da $19.6\%$ a $31.8\%$; il livello 3 non apporta alcun miglioramento ulteriore. Si riportano le sole metriche di transpilazione: le metriche di convergenza raccolte in questo sweep non sono comparabili con quelle degli altri, perché l'implementazione usata al suo interno seleziona i candidati con una sogliatura al 30\% del massimo anziché la sola moda, e non corrisponde quindi al Metodo 1 definito nella Sezione~\ref{sec:metodo1}.}
 \label{tab:sweep_optlevel}
 \end{table}
 
-La riduzione è marginale perché la decomposizione \texttt{c\_amod15} adottata per N=15 sfrutta matrici di permutazione già quasi ottimali: il transpiler trova poco margine di miglioramento. Si adotta il livello 2 per tutti gli esperimenti, in quanto raggiunge il conteggio minimo di porte a due qubit senza il costo della ricerca esaustiva del livello 3, che su questo circuito non trova alcun margine ulteriore. L'effetto dell'\texttt{optimization\_level} diventerebbe significativo per N=21 con la decomposizione Beauregard, dove il circuito ha struttura più complessa e maggiore spazio per la cancellazione di gate e il riordinamento delle operazioni. Il dato conferma per via indipendente ciò che la barriera di scalabilità del Capitolo~\ref{chap:risultati} mostrerà: la leva dominante sul numero di porte \ac{CX} è la \textit{scelta della decomposizione}, non il livello di ottimizzazione del transpiler.
+Si adotta il livello 2 per tutti gli esperimenti, in quanto raggiunge il conteggio minimo di porte a due qubit senza il costo della ricerca esaustiva del livello 3, che su questo circuito non trova alcun margine ulteriore. Il guadagno complessivo --- un terzo delle porte \ac{CX} eliminate --- resta comunque di un ordine di grandezza inferiore a quello ottenibile cambiando decomposizione: per $N=21$, il passaggio da \texttt{UnitaryGate} naïve a Beauregard riduce il conteggio di un fattore quattro (Sezione~\ref{subsec:transpilazione}). Il dato conferma per via indipendente ciò che la barriera di scalabilità del Capitolo~\ref{chap:risultati} mostrerà: la leva dominante sul numero di porte \ac{CX} è la \textit{scelta della decomposizione}, non il livello di ottimizzazione del transpiler.
+
+\begin{samepage}
+\paragraph{Nota sulla dipendenza dalla versione del transpiler.} Il conteggio di porte \ac{CX} prodotto ai livelli 2 e 3 dipende dalla versione di Qiskit: le campagne di questa tesi sono state eseguite con \textbf{Qiskit 2.x} e riportano $114$ porte \ac{CX}, mentre versioni precedenti della stessa pipeline ne producevano $162$. Poiché $P_{\text{surv}}$ entra in tutte le stime analitiche di sopravvivenza del circuito, ogni valore riportato nel seguito si riferisce al conteggio $114$; il dato va inteso come proprietà della coppia (circuito, transpiler) e non del solo algoritmo.
+\end{samepage}
 \end{enumerate}
 
 La strategia TOP-4 --- che mantiene success rate = 100\% sull'intero range di $\varepsilon_{2q}$ --- emerge come la scelta ottimale per N=15. Il classificatore ML del Metodo 2 si inserisce in questo framework come strumento per ridurre ulteriormente il numero di iterazioni necessarie prima di convergere a un risultato affidabile, completando la catena di ottimizzazione descritta nella sezione seguente.
