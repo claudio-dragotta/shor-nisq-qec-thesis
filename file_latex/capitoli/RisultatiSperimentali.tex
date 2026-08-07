@@ -28,28 +28,36 @@ La profondità del circuito determina l'effetto cumulativo del rumore e definisc
 
 \begin{table}[H]
 \centering
-\caption{Caratteristiche del circuito traspilato e applicabilità dei metodi per ciascun use case}
+\caption[Caratteristiche del circuito traspilato per ciascun use case]{Caratteristiche del circuito traspilato e applicabilità dei metodi per ciascun use case. I valori si riferiscono all'implementazione adottata (\texttt{c\_amod15} per $N=15$, Beauregard per $N=21$ e $N=35$), con \texttt{optimization\_level=2} e Qiskit 2.x. Fra parentesi, per confronto, il conteggio della sintesi densa \texttt{UnitaryGate} usata nella prima versione del codice.}
 \label{tab:circuit_depth}
-\begin{tabular}{lccccc}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccc}
 \hline
-\textbf{Use Case} & \textbf{N} & \textbf{Profondità} & \textbf{Porte CX} & \textbf{$P_{\text{surv}} = (1-\epsilon_{2q})^{\#\text{CX}}$} & \textbf{Metodi applicabili} \\
+\textbf{Use Case} & \textbf{N} & \textbf{Qubit} & \textbf{Profondità} & \textbf{Porte CX} & \textbf{$P_{\text{surv}} = (1-\epsilon_{2q})^{\#\text{CX}}$} & \textbf{Metodi applicabili} \\
 \hline
-UC1 & 15 & 309    & 162    & $\approx 0.196$          & M1, $M_{\text{TOP4}}$, M2 \\
-UC2 & 15 & 309    & 162    & $\approx 2\times10^{-4}$ & M1, $M_{\text{TOP4}}$, M2 \\
-UC3 & 21 & 19\,816 & 10\,040 & $\approx 1.5\times10^{-44}$ & Nessuno \\
-UC4 & 35 & 25\,779 & 13\,064 & $\approx 9.5\times10^{-58}$ & Nessuno \\
+UC1 & 15 & 12 & 311    & 114    & $\approx 0.318$            & M1, $M_{\text{TOP4}}$, M2 \\
+UC2 & 15 & 12 & 311    & 114    & $\approx 2.9\times10^{-3}$ & M1, $M_{\text{TOP4}}$, M2 \\
+UC3 & 21 & 22 & 9\,883 & 3\,406 \ ($10\,040$) & $\approx 1.4\times10^{-15}$ & Nessuno \\
+UC4 & 35 & 26 & 1\,480 & \phantom{0}516 \ ($13\,064$) & $\approx 5.6\times10^{-3}$ & Nessuno \\
 \hline
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
-Per UC1 e UC2 il circuito traspilato conta 162 porte \texttt{cx} (profondità 309); la probabilità di sopravvivenza coerente $P_{\text{surv}}$ --- la frazione di run in cui nessun gate a 2 qubit introduce errore --- vale $\approx 19.6\%$ per UC1 e $\approx 0.02\%$ per UC2. Per UC3 e UC4 la porta \texttt{UnitaryGate} di Qiskit sintetizza la moltiplicazione modulare come matrice densa, con costo $O(4^k)$ porte elementari su $k$ qubit~\cite{Barenco1995}: le profondità risultanti (10\,040 e 13\,064 porte CX) portano $P_{\text{surv}}$ a valori in cui l'output è indistinguibile dal rumore uniforme e $P_{\text{succ}} = 0\%$ per qualsiasi strategia di estrazione. Una prima lettura attribuirebbe la barriera alla sola decomposizione del circuito: l'approccio di Beauregard~\cite{beauregard2002}, implementato nel modulo \texttt{beauregard.py}, riduce infatti in modo sostanziale il conteggio delle porte. Il paragrafo seguente mostra che questa lettura è incompleta. Il confronto sperimentale è comunque condotto su UC1 e UC2.
+Per UC1 e UC2 il circuito traspilato conta 114 porte \texttt{cx} (profondità 311); la probabilità di sopravvivenza coerente $P_{\text{surv}}$ --- la frazione di run in cui nessun gate a 2 qubit introduce errore --- vale $\approx 31.8\%$ per UC1 e $\approx 0.29\%$ per UC2. Per UC3 e UC4 la tabella richiede due precisazioni, perché il motivo per cui nessun metodo risulta applicabile è diverso nei due casi e in nessuno dei due coincide con quello che una prima lettura suggerirebbe.
 
-Ne discende una conseguenza che va dichiarata subito, perché riguarda il perimetro di validità di tutto il capitolo: l'\textbf{Ipotesi secondaria 2} formulata nel Capitolo~\ref{chap:obiettivi} --- che il vantaggio del Metodo 2 si mantenga al crescere dell'istanza ($N = 15 \to 21 \to 35$) --- \textbf{resta non verificata}, e non perché sia stata smentita, ma perché su UC3 e UC4 nessuna strategia di estrazione produce un risultato da confrontare. Il piano sperimentale prevedeva quattro use case come requisito di validazione; la barriera di scalabilità ne rende misurabili due.
+\textbf{UC3 è il caso genuinamente difficile.} Con $a=2$ e $N=21$ il periodo è $r=6$ e nessuno dei dieci gate controllati collassa nell'identità: il circuito è profondo per ragioni strutturali. La decomposizione di Beauregard~\cite{beauregard2002}, implementata nel modulo \texttt{beauregard.py}, porta il conteggio da $10\,040$ a $3\,406$ porte \ac{CX}, ma $P_{\text{surv}}$ resta dell'ordine di $10^{-15}$ e --- come mostra il paragrafo seguente --- il costo di simulazione diventa proibitivo proprio nel regime in cui la barriera fisica si attenuerebbe.
+
+\textbf{UC4 è un caso di natura diversa}, e la tabella lo rende evidente in modo che merita di essere esplicitato. Con $a=6$ e $N=35$ il periodo è $r=2$, ossia $6^2 \equiv 1 \pmod{35}$: tutti i gate controllati $U^{2^j}$ con $j \geq 1$ sono l'identità e vengono eliminati dal transpiler, lasciando \emph{un solo} gate non banale su dodici. Il circuito risultante conta 516 porte \ac{CX}, meno di un sesto di UC3 pur avendo un modulo più grande, e $P_{\text{surv}} \approx 5.6\times10^{-3}$ --- un valore che la campagna parametrica su UC1 colloca ampiamente nel regime in cui la strategia multi-candidato funziona. UC4 non è dunque fuori portata per il rumore: lo è soltanto per il costo di simulazione dei suoi 26 qubit, che rende ogni traiettoria proibitiva.
+
+Questo esito è coerente con il razionale dichiarato nel Capitolo~\ref{chap:obiettivi}, dove $r=2$ era stato scelto \emph{deliberatamente} per separare l'effetto della larghezza del registro da quello della profondità dell'esponenziazione modulare. La scelta è legittima e il risultato la conferma: UC4 misura la prima variabile a profondità minima. Ma proprio per questo UC4 \textbf{non appartiene all'asse di scalabilità} lungo cui l'Ipotesi secondaria 2 lo colloca. La difficoltà del circuito non cresce con $N$: cresce con il periodo $r$, che determina quanti dei gate controllati sopravvivono alla traspilazione. Lungo la sequenza $N = 15 \to 21 \to 35$ i periodi sono $4 \to 6 \to 2$, e con essi la profondità va $311 \to 9\,883 \to 1\,480$: non è una progressione monotòna, e trattarla come tale è un difetto di formulazione dell'ipotesi, non del disegno degli use case.
+
+Ne discende una conseguenza che va dichiarata subito, perché riguarda il perimetro di validità di tutto il capitolo: l'\textbf{Ipotesi secondaria 2} formulata nel Capitolo~\ref{chap:obiettivi} --- che il vantaggio del Metodo 2 si mantenga al crescere dell'istanza ($N = 15 \to 21 \to 35$) --- \textbf{resta non verificata}, e va inoltre riformulata. Non è stata smentita: su UC3, l'unico dei tre che aumenti davvero la difficoltà, la verifica è impedita da una barriera doppia, fisica e computazionale; su UC4 dal solo costo di simulazione, e comunque su un'istanza che per costruzione non mette alla prova la profondità. Il piano sperimentale prevedeva quattro use case come requisito di validazione; ne restano misurabili due. Il Capitolo~\ref{chap:sviluppi} riprende il punto indicando come andrebbe riformulata l'ipotesi perché l'asse di scalabilità sia quello effettivo.
 
 \paragraph{La barriera è doppia, e la decomposizione ne rimuove solo metà.}
-Poiché l'attribuzione della barriera alla sola decomposizione sarebbe incompleta, la si è verificata direttamente. Il modulo \texttt{beauregard.py} mantiene la promessa: per $N=21$ il circuito passa da $10\,040$ a $3\,206$ porte \ac{CX} su 22 qubit, una riduzione di un fattore $3.1$. Ciò nondimeno UC3 resta irraggiungibile, per due ragioni indipendenti che è utile separare.
+Poiché l'attribuzione della barriera alla sola decomposizione sarebbe incompleta, la si è verificata direttamente. Il modulo \texttt{beauregard.py} mantiene la promessa: per $N=21$ il circuito passa da $10\,040$ a $3\,406$ porte \ac{CX} su 22 qubit (profondità $9\,883$), una riduzione di un fattore $2.9$. Ciò nondimeno UC3 resta irraggiungibile, per due ragioni indipendenti che è utile separare.
 
-La prima è \textbf{fisica}: al livello di rumore previsto per UC3 ($\varepsilon_{2q} = 10^{-2}$) la probabilità di sopravvivenza coerente vale $P_{\text{surv}} = (1-10^{-2})^{3206} \approx 10^{-14}$. Anche disponendo di una simulazione istantanea, l'output resterebbe indistinguibile dal rumore uniforme: la decomposizione efficiente non basta, occorre \emph{anche} un errore di gate più basso. A $\varepsilon_{2q} = 10^{-3}$ la stessa espressione dà $P_{\text{surv}} \approx 4\%$, valore con cui la strategia multi-candidato è plausibilmente applicabile.
+La prima è \textbf{fisica}: al livello di rumore previsto per UC3 ($\varepsilon_{2q} = 10^{-2}$) la probabilità di sopravvivenza coerente vale $P_{\text{surv}} = (1-10^{-2})^{3406} \approx 1.4\times10^{-15}$. Anche disponendo di una simulazione istantanea, l'output resterebbe presumibilmente indistinguibile dal rumore uniforme: la decomposizione efficiente non basta, occorre \emph{anche} un errore di gate più basso. A $\varepsilon_{2q} = 10^{-3}$ la stessa espressione dà $P_{\text{surv}} \approx 3.3\%$, valore con cui la strategia multi-candidato è plausibilmente applicabile.\footnote{L'avverbio è d'obbligo: la campagna parametrica su UC1 (Sezione~\ref{sec:parametri_mitigazione}) ha mostrato che $P_{\text{surv}}$ \emph{sottostima} sistematicamente la recuperabilità del segnale --- a $P_{\text{surv}} = 6\times10^{-6}$ la strategia TOP-4 converge ancora al primo tentativo. La stima analitica indica quindi un ordine di grandezza, non una soglia di impossibilità; solo la seconda barriera, quella computazionale, impedisce di verificarlo per UC3.}
 
 La seconda è \textbf{computazionale}, e si manifesta proprio nel regime in cui la prima si attenua. In presenza di un modello di rumore il simulatore non può evolvere lo stato una volta sola e campionarlo: ogni shot richiede una traiettoria indipendente. Le misure condotte su questo circuito danno $\approx 100\,$s per una singola evoluzione priva di rumore e $\approx 50\,$s \emph{per shot} in presenza di rumore, da cui circa quattordici ore per una sola iterazione da $1\,024$ shot --- mentre il protocollo ne richiede fino a cinquanta per ciascuna delle trenta ripetizioni. Il metodo \textit{matrix product state}, che su circuiti poco entangled sarebbe più efficiente, risulta qui ancora più lento: l'algoritmo di Shor massimizza l'entanglement per costruzione, e la dimensione di legame cresce fino a rendere il vantaggio nullo.
 
@@ -101,11 +109,11 @@ UC4 ($N=35$)             &  0\%   & N/A  &  ---  & --- \\
 \end{tabular}
 \end{table}
 
-La distribuzione del numero di iterazioni è asimmetrica e approssimativamente geometrica: per UC1 ogni iterazione ha probabilità indipendente $p_{\text{iter}} \approx 60\%$ di produrre la misura corretta tramite TOP-1, da cui $\bar{M}_1 \approx 2$. Il dato saliente è che \textbf{la baseline non fallisce mai}: entro il budget di cinquanta iterazioni tutte e trenta le ripetizioni convergono, su entrambi gli use case. La differenza fra i metodi non riguarda dunque \emph{se} il risultato venga trovato, ma \emph{quante esecuzioni} servano per trovarlo --- ed è precisamente ciò che la metrica $\bar{M}$ misura.
+La distribuzione del numero di iterazioni è asimmetrica e approssimativamente geometrica: per UC1 ogni iterazione ha probabilità indipendente $p_{\text{iter}} = 58.3\%$ di produrre la misura corretta tramite TOP-1 (misura diretta su 60 esecuzioni), da cui $\bar{M}_1 \approx 2$. Il dato saliente è che \textbf{la baseline non fallisce mai}: entro il budget di cinquanta iterazioni tutte e trenta le ripetizioni convergono, su entrambi gli use case. La differenza fra i metodi non riguarda dunque \emph{se} il risultato venga trovato, ma \emph{quante esecuzioni} servano per trovarlo --- ed è precisamente ciò che la metrica $\bar{M}$ misura.
 
 Il confronto UC1 vs UC2 rivela un comportamento controintuitivo ($\bar{M}_1$ \emph{minore} sotto rumore maggiore), spiegato dalla banda di accettazione di \texttt{extract\_factors} (\texttt{Fraction.limit\_denominator}): il rumore allarga la distribuzione e aumenta la probabilità che la moda ricada nella banda.
 
-La ragione per cui TOP-1 richiede più di un tentativo è strutturale, e vale la pena isolarla perché anticipa il risultato della sezione seguente. Su sessanta esecuzioni indipendenti di UC1 la moda dell'istogramma coincide con l'esito $y=0$ nel $40\%$ dei casi --- ed è l'esito \emph{più frequente in assoluto} fra le mode osservate. Ma $y=0$ corrisponde a fase nulla e non porta alcuna informazione sul periodo: la funzione di estrazione lo scarta per costruzione. In altri termini, il candidato che TOP-1 seleziona è, in due casi su cinque, quello strutturalmente privo di contenuto informativo; i picchi utili $\{64, 128, 192\}$ sono comunque presenti nell'istogramma, ma in posizione successiva.
+La ragione per cui TOP-1 richiede più di un tentativo è strutturale, e vale la pena isolarla perché anticipa il risultato della sezione seguente. Su sessanta esecuzioni indipendenti di UC1 la moda dell'istogramma cade su uno solo di quattro valori --- $\{0,\,64,\,128,\,192\}$, ossia esattamente i picchi $j\,2^{8}/r$ attesi dalla \ac{QPE} per $r=4$ --- e coincide con l'esito $y=0$ in $25$ casi su $60$ ($41.7\%$), che ne fa l'esito \emph{più frequente in assoluto}. Ma $y=0$ corrisponde a fase nulla e non porta alcuna informazione sul periodo: la funzione di estrazione lo scarta per costruzione. In altri termini, il candidato che TOP-1 seleziona è, in due casi su cinque, quello strutturalmente privo di contenuto informativo; la moda conduce ai fattori nel $58.3\%$ delle esecuzioni, da cui $\bar{M}_1 \approx 1/0.583 = 1.7$, in accordo con il valore misurato $1.97$. Quando invece si considerano i quattro candidati più frequenti, i picchi utili sono presenti in \emph{tutte} e sessanta le esecuzioni: è questa la ragione per cui $M_{\text{TOP4}}$ converge al primo tentativo con deviazione standard nulla.
 
 I limiti della baseline sono dunque due, e motivano il passo successivo: (i) \textbf{spreco informativo} --- TOP-1 usa una sola misura dell'istogramma e scarta tutto il resto, incluso il caso in cui la misura selezionata sia l'esito banale; (ii) \textbf{variabilità} --- $\sigma_{M_1} = 1.66$ contro $\bar{M}_1 = 1.97$: il costo di una sessione resta imprevedibile a priori e non si riduce aumentando gli shot, poiché dipende da quale picco risulti dominante in quella specifica realizzazione del rumore.
 
@@ -139,7 +147,7 @@ L'ipotesi formalizzata nel Capitolo~\ref{chap:obiettivi} attribuiva la riduzione
 \end{tabular}
 
 \smallskip
-{\footnotesize Ablazione $M_{\text{TOP4}}$ vs M2 (Mann-Whitney): UC1 $p = 0.849$ (n.s.); UC2 M2 richiede significativamente più iterazioni di $M_{\text{TOP4}}$.}
+{\footnotesize Ablazione $M_{\text{TOP4}}$ vs M2 (Mann-Whitney): UC1 $p = 0.849$ (n.s.); UC2 $p < 0.001$, con M2 che richiede significativamente \emph{più} iterazioni di $M_{\text{TOP4}}$.}
 \end{table}
 
 \paragraph{UC1: il classificatore è superfluo.}
@@ -185,7 +193,9 @@ $p_{\text{ro}}$       & Rumore    & Basso               & Nullo su $[0\%, 20\%]$
 }
 \end{table}
 
-Su sette parametri, uno solo --- $K$ --- ha impatto, con soglia effettiva $K=2$ (più bassa del valore teorico $K=r=4$); tutti gli altri, incluso $\varepsilon_{2q}$ su tre ordini di grandezza, risultano irrilevanti. $M_{\text{TOP4}}$ è quindi applicabile su hardware NISQ senza alcuna calibrazione: il meccanismo non si basa sulla preservazione del segnale QPE \emph{in media} ma sulla sua recuperabilità \emph{per realizzazione}. Il confronto con la \ac{ZNE} sullo stesso task (Tabella~\ref{tab:confronto_zne}; dettaglio in Appendice~\ref{app:parametrica}) conferma il quadro: le tecniche di correzione dell'istogramma peggiorano la baseline, mentre la strategia che accetta il rumore e amplia la ricerca la domina.
+Su sette parametri, uno solo --- $K$ --- ha impatto, con soglia effettiva $K=2$ (più bassa del valore teorico $K=r=4$); tutti gli altri, incluso $\varepsilon_{2q}$ su tre ordini di grandezza, risultano irrilevanti. $M_{\text{TOP4}}$ è quindi applicabile su hardware NISQ senza alcuna calibrazione: il meccanismo non si basa sulla preservazione del segnale QPE \emph{in media} ma sulla sua recuperabilità \emph{per realizzazione} --- come mostra il caso estremo $\varepsilon_{2q}=10^{-1}$, dove la probabilità che nessuna porta a due qubit sbagli è di sei parti su un milione e ciononostante ogni ripetizione converge al primo tentativo.
+
+Il confronto con la \ac{ZNE} sullo stesso task (Tabella~\ref{tab:confronto_zne}; dettaglio in Appendice~\ref{app:parametrica}) completa il quadro. Nessuna delle due varianti di estrapolazione degrada il risultato --- tutte le strategie raggiungono il $100\%$ di successo --- ma nessuna lo migliora in modo significativo: $\bar{M}$ resta statisticamente indistinguibile da quello della baseline, mentre il costo in shot raddoppia o triplica per il campionamento ai livelli di rumore amplificato. La \ac{ZNE} è dunque \emph{inefficace}, non controproducente: paga un prezzo certo per un beneficio che su questo compito non si manifesta. La strategia che accetta il rumore e amplia la ricerca, al contrario, dimezza le iterazioni al costo di un solo campionamento.
 
 \begin{table}[H]
 \centering
@@ -196,10 +206,10 @@ Su sette parametri, uno solo --- $K$ --- ha impatto, con soglia effettiva $K=2$ 
 \hline
 \textbf{Strategia} & \textbf{$P_{\text{succ}}$} & \textbf{$\bar{M}$} & \textbf{Shot/iter} & \textbf{Shot totali} & \textbf{$\rho$ vs M1} & \textbf{p-value} \\
 \hline
-M1 (baseline)             & 76.7\% & 6.43 & 1024  & 6\,589  & ---   & --- \\
-ZNE-2 (lineare)           & 60.0\% & 2.94 & 2048  & 6\,030  & 2.185 & $0.761$ (n.s.) \\
-ZNE-3 (Richardson)        & 60.0\% & 3.83 & 3072  & 11\,776 & 1.679 & $0.809$ (n.s.) \\
-$M_{\text{TOP4}}$ ($K=4$) & 100\%  & 1.00 & 1024  & 1\,024  & 6.435 & ${<}0.001$ (sign.) \\
+M1 (baseline)             & 100\% & 1.97 & 1024  & 2\,014 & ---   & --- \\
+ZNE-2 (lineare)           & 100\% & 2.03 & 2048  & 4\,164 & 0.967 & $0.728$ (n.s.) \\
+ZNE-3 (Richardson)        & 100\% & 1.57 & 3072  & 4\,813 & 1.255 & $0.250$ (n.s.) \\
+$M_{\text{TOP4}}$ ($K=4$) & 100\% & 1.00 & 1024  & 1\,024 & 1.967 & ${<}0.001$ (sign.) \\
 \hline
 \end{tabular}%
 }
@@ -216,7 +226,7 @@ Questa prima fase sperimentale ha appurato tre fatti, tutti con significatività
 \begin{enumerate}
     \item la ricerca multi-candidato TOP-4 riduce $\bar{M}$ da 1.97 a 1.00 (UC1), portando ogni ripetizione a convergere al primo tentativo, ed è robusta su tutto il range di rumore NISQ testato, senza addestramento e senza calibrazione;
     \item il classificatore \ac{ML} a valle dell'esecuzione non aggiunge nulla (UC1) o peggiora (UC2): l'ipotesi iniziale, nella parte che attribuiva il guadagno all'apprendimento automatico, era sbagliata --- e l'ablazione lo dimostra;
-    \item le tecniche di correzione dell'output (ZNE) sono controproducenti su questo task.
+    \item le tecniche di correzione dell'output (ZNE) sono inefficaci su questo task: non degradano il risultato, ma non lo migliorano in modo significativo e costano da due a tre volte più shot.
 \end{enumerate}
 
 Il punto 2 merita di essere letto in positivo, perché delimita con precisione \emph{dove} si ferma ogni strategia a valle: sul solo output, l'informazione utile è già interamente catturata da una ricerca multi-candidato a costo zero --- e ciò che il rumore ha distrutto durante l'esecuzione non è più recuperabile da nessun post-processing, per quanto sofisticato. La conseguenza è strutturale: per andare oltre, l'errore va intercettato e corretto \emph{mentre} il calcolo è in corso, agendo sullo stato quantistico prima che l'informazione sia persa. È esattamente il programma dei prossimi capitoli, che costituiscono il nucleo di questa tesi: la correzione d'errore quantistica --- dal codice a ripetizione al codice di Steane (Capitolo~\ref{chap:qec}), al surface code con la stima sperimentale dell'errore logico (Capitolo~\ref{chap:surface}) --- fino allo Shor logico, che quantifica il livello di correzione necessario all'algoritmo (Capitolo~\ref{chap:integrazione}).

@@ -147,6 +147,10 @@ $N = 21 = 3 \times 7$ è la fattorizzazione più grande dimostrata su hardware s
 \textbf{Use Case 4 --- $N=35$, NISQ-realistico.}
 $N = 35 = 5 \times 7$ con base $a=6$ produce il periodo minimo $r=2$ (poiché $6^2 = 36 \equiv 1 \pmod{35}$), il che consente di fattorizzare direttamente con $\gcd(6-1,\, 35) = \gcd(5, 35) = 5$ e $\gcd(6+1,\, 35) = \gcd(7, 35) = 7$. La scelta di $r=2$ con $N$ maggiore permette di separare l'effetto della dimensione del registro (più qubit) dall'effetto della profondità della modular exponentiation, fornendo un punto di confronto complementare rispetto al Use Case 3.
 
+\begin{samepage}
+\paragraph{Una precisazione sull'asse di scalabilità.} Le due letture appena date --- Use Case 4 come punto sull'asse $N$ crescente e Use Case 4 come sonda della sola larghezza del registro --- non sono equivalenti, e la verifica sperimentale (Capitolo~\ref{chap:risultati}) mostrerà che la seconda è quella corretta. La profondità del circuito non è governata da $N$ ma dal periodo $r$: ogni gate controllato $U^{2^j}$ con $2^j \equiv 0 \pmod r$ collassa nell'identità e viene eliminato in fase di traspilazione. Con $r=2$ sopravvive un solo gate su dodici, e il circuito di Use Case 4 risulta più corto di quello di Use Case 1 nonostante il modulo maggiore. Lungo la sequenza $N = 15 \to 21 \to 35$ i periodi sono $4 \to 6 \to 2$: la difficoltà non cresce in modo monotòno. L'\textbf{Ipotesi secondaria 2} va quindi intesa nella forma verificabile ``il vantaggio si mantiene al crescere della profondità del circuito'', per la quale l'unica istanza informativa fra quelle previste è Use Case 3.
+\end{samepage}
+
 % -----------------------------------------------
 \section{Metriche di Valutazione}
 \label{sec:metriche}

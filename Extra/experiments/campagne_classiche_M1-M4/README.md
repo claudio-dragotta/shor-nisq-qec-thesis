@@ -55,7 +55,7 @@ consigliato: `GUIDA_ESPERIMENTI_PARAMETRI.md`.
 
 ## Risultato chiave (già in tesi)
 
-- **Metodo 1** (TOP-1): M̄₁ = 6.43 iterazioni (UC1).
+- **Metodo 1** (TOP-1): M̄₁ = 1.97 iterazioni (UC1), 1.60 (UC2).
 - **M_TOP4** (TOP-4 senza ML): M̄ = 1.00 — statisticamente equivalente a M2 (UC1, p=0.849).
 - **Conclusione**: il classificatore ML a valle **non serve**; il guadagno è della ricerca
   multi-candidato TOP-4. Motiva il pivot alla QEC (blocchi M5→M8).
