@@ -218,6 +218,47 @@ $p_{\text{ro}}$       & Rumore    & Basso               & Nullo su $[0\%, 20\%]$
 
 Su sette parametri, uno solo --- $K$ --- ha impatto, con soglia effettiva $K=2$ (più bassa del valore teorico $K=r=4$); tutti gli altri, incluso $\varepsilon_{2q}$ su tre ordini di grandezza, risultano irrilevanti. $M_{\text{TOP4}}$ è quindi applicabile su hardware NISQ senza alcuna calibrazione: il meccanismo non si basa sulla preservazione del segnale QPE \emph{in media} ma sulla sua recuperabilità \emph{per realizzazione} --- come mostra il caso estremo $\varepsilon_{2q}=10^{-1}$, dove la probabilità che nessuna porta a due qubit sbagli è di sei parti su un milione e ciononostante ogni ripetizione converge al primo tentativo.
 
+\subsection{Perché $P_{\text{surv}}$ sbaglia: la frazione coerente efficace}
+\label{subsec:frazione_coerente}
+
+L'insensibilità a $\varepsilon_{2q}$ è tanto marcata da mettere in discussione la grandezza con cui la si è finora descritta. Vale la pena quantificare lo scarto anziché limitarsi a constatarlo, perché la stima $P_{\text{surv}} = (1-\varepsilon_{2q})^{k}$ viene usata in tutta la letteratura NISQ come indicatore di fattibilità, e questo lavoro la impiega per giudicare l'accessibilità di UC3 e UC4.
+
+Sotto rumore depolarizzante l'istogramma osservato è descritto bene da una miscela fra la distribuzione ideale --- massa equipartita sui quattro picchi $\{0,64,128,192\}$ --- e la distribuzione uniforme sulle $256$ celle:
+\begin{equation}
+    P_{\text{oss}}(y) = f \cdot P_{\text{ideale}}(y) + (1-f)\,/\,256 ,
+    \label{eq:miscela_coerente}
+\end{equation}
+dove $f$ è la \textbf{frazione coerente efficace}, stimabile dalla massa osservata sui quattro picchi. Confrontando $f$ con $P_{\text{surv}}$ si misura direttamente di quanto la stima analitica sbagli.
+
+\begin{table}[H]
+\centering
+\caption[Frazione coerente efficace contro $P_{\text{surv}}$]{Frazione coerente efficace $f$ stimata da~\eqref{eq:miscela_coerente} su 20 esecuzioni per punto, confrontata con la stima analitica $P_{\text{surv}} = (1-\varepsilon_{2q})^{166}$. L'ultima colonna riporta l'esponente efficace $k_{\text{eff}} = \ln f / \ln(1-\varepsilon_{2q})$, cioè il numero di porte che si comporterebbero come critiche se il modello moltiplicativo fosse esatto.}
+\label{tab:frazione_coerente}
+\begin{tabular}{crrrr}
+\hline
+$\varepsilon_{2q}$ & $P_{\text{surv}}$ & $f$ & $f / P_{\text{surv}}$ & $k_{\text{eff}}$ \\
+\hline
+$10^{-3}$        & $8.5\times10^{-1}$  & 0.862 & $1.0$              & 148 \\
+$5\times10^{-3}$ & $4.3\times10^{-1}$  & 0.804 & $1.9$              & \phantom{0}44 \\
+$10^{-2}$ (UC1)  & $1.9\times10^{-1}$  & 0.739 & $3.9$              & \phantom{0}30 \\
+$2\times10^{-2}$ & $3.5\times10^{-2}$  & 0.622 & $17.8$             & \phantom{0}24 \\
+$5\times10^{-2}$ (UC2) & $2.0\times10^{-4}$ & 0.372 & $1.9\times10^{3}$ & \phantom{0}19 \\
+$10^{-1}$        & $2.5\times10^{-8}$  & 0.158 & $6.2\times10^{6}$  & \phantom{0}18 \\
+$2\times10^{-1}$ & $8.2\times10^{-17}$ & 0.032 & $3.9\times10^{14}$ & \phantom{0}15 \\
+$3\times10^{-1}$ & $1.9\times10^{-26}$ & 0.008 & $4.0\times10^{23}$ & \phantom{0}14 \\
+\hline
+\end{tabular}
+\end{table}
+
+Il quadro che ne esce è netto. Nel regime di rumore molto basso le due grandezze coincidono, come devono: a $\varepsilon_{2q}=10^{-3}$ il rapporto vale $1.0$ e l'esponente efficace $148$, prossimo alle $166$ porte reali. Ma già al valore nominale di UC1 la stima analitica sbaglia di un fattore quattro, e da lì in poi diverge senza limite: a $\varepsilon_{2q}=10^{-1}$ il rumore residuo conserva ancora il $16\%$ di segnale coerente là dove $P_{\text{surv}}$ prevedeva una parte su quaranta milioni.
+
+La lettura più informativa è quella dell'ultima colonna. L'esponente efficace \emph{non} è il numero di porte a due qubit del circuito: si stabilizza fra $14$ e $20$ per $\varepsilon_{2q} \geq 2\times10^{-2}$, ossia attorno a \textbf{un nono delle $166$ porte presenti}. In altre parole, la stragrande maggioranza degli errori a due qubit non distrugge l'informazione di fase. Il motivo è che $(1-\varepsilon)^k$ conta gli \emph{errori}, non i \emph{danni}: il canale depolarizzante applica una fra quindici Pauli non banali, molte delle quali agiscono sul registro di lavoro senza alterare il kickback di fase già accumulato sul registro di controllo, altre si compensano a vicenda, e la periodicità della moltiplicazione modulare --- da cui i picchi discendono --- sopravvive a gran parte di esse.\footnote{La stima di $f$ dipende dal modello di miscela~\eqref{eq:miscela_coerente}, che assume equipartizione sui quattro picchi e uniformità del fondo: è un'approssimazione, e i valori vanno letti come ordini di grandezza. La conclusione qualitativa --- divergenza crescente fra $f$ e $P_{\text{surv}}$, con esponente efficace di un ordine di grandezza inferiore al conteggio delle porte --- non dipende però dai dettagli del modello, essendo già implicata dal solo fatto che il tasso di successo resti al $100\%$ dove $P_{\text{surv}} \approx 10^{-8}$.}
+
+Questo risultato ha una conseguenza che va oltre la strategia TOP-K, e che il seguito della tesi deve tenere presente: \textbf{le stime di fattibilità basate su $P_{\text{surv}}$ sono pessimistiche di ordini di grandezza}, e tanto più quanto più il circuito è profondo. Là dove il presente capitolo la usa per dichiarare UC3 e UC4 fuori portata, essa va intesa come indicatore di un regime, non come dimostrazione di impossibilità: la conclusione su quei due use case regge sulla barriera computazionale, che è misurata, e non su quella analitica.
+
+% -----------------------------------------------
+\subsection{Confronto con la Zero-Noise Extrapolation}
+
 Il confronto con la \ac{ZNE} sullo stesso task (Tabella~\ref{tab:confronto_zne}; dettaglio in Appendice~\ref{app:parametrica}) completa il quadro. Nessuna delle due varianti di estrapolazione degrada il risultato --- tutte le strategie raggiungono il $100\%$ di successo --- ma nessuna lo migliora in modo significativo: $\bar{M}$ resta statisticamente indistinguibile da quello della baseline, mentre il costo in shot raddoppia o triplica per il campionamento ai livelli di rumore amplificato. La \ac{ZNE} è dunque \emph{inefficace}, non controproducente: paga un prezzo certo per un beneficio che su questo compito non si manifesta. La strategia che accetta il rumore e amplia la ricerca, al contrario, dimezza le iterazioni al costo di un solo campionamento.
 
 \begin{table}[H]
