@@ -47,8 +47,15 @@ def generate_dataset(N, a, n_count, noise_base, noise_factor=0.5,
         t2_ns  = np.clip(noise_base['t2_ns']  * factor, 5_000,  t1_ns)
 
         nm = build_noise_model(eps_1q, eps_2q, t1_ns, t2_ns, p_ro=noise_base['p_ro'])
+        # ATTENZIONE — non tornare a `seed_simulator=seed + i`.
+        # Aer deriva il generatore del singolo shot come seed_simulator + shot_index:
+        # con `shots=1024` due campioni consecutivi condividerebbero 1023 shot su 1024
+        # (99.9% di sovrapposizione), rendendo i campioni del dataset fortemente
+        # correlati. Lo split train/test finirebbe per separare quasi-duplicati,
+        # gonfiando F1 e AUC. Il passo di 10_000 > shots garantisce flussi disgiunti.
         counts = sim.run(transpiled_qc, noise_model=nm, shots=shots,
-                         seed_simulator=seed + i).result().get_counts()
+                         seed_simulator=seed * 1_000_000 + i * 10_000
+                         ).result().get_counts()
 
         # Label = 1 se almeno uno dei TOP_K=16 candidati dà fattori validi.
         # TOP_K=16 (coarse gate): classifica se l'istogramma contiene segnale QPE.
