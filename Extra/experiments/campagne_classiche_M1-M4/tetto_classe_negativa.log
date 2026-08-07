@@ -1,0 +1,18 @@
+=== UC1/UC2: N=15, a=7, n_count=8
+    esiti che conducono ai fattori: 63/256 (24.6%)
+    [18, 21, 22, 25, 26, 27, 42, 43, 44, 54, 55, 62, 63, 64, 65, 66, 75, 76, 77, 89, 90, 91, 92, 105, 106, 107, 108, 124, 125, 126, 127, 128, 129, 130, 131, 132, 148, 149, 150, 151, 164, 165, 166, 167, 179, 180, 181, 190, 191, 192, 193, 194, 201, 202, 212, 213, 214, 229, 230, 231, 234, 235, 238]
+
+    tetto alla frazione di negativi su istogramma uniforme:
+      TOP-1  :  75.39% di negativi al massimo
+      TOP-2  :  56.76% di negativi al massimo
+      TOP-4  :  32.06% di negativi al massimo
+      TOP-16 :   0.93% di negativi al massimo   <-- regola documentata
+
+    Nota: il tetto vale per un istogramma privo di segnale. Con segnale
+    presente la frazione e' ancora minore. La regola TOP-16 etichetta quindi
+    positivo il 99.1% degli istogrammi per puro effetto combinatorio.
+
+    Per contrasto, con TOP-1 il solo candidato valutato e' la moda, che
+    cade sempre su uno dei quattro picchi QPE {0, 64, 128, 192}: di questi
+    solo y=0 fallisce, da cui una frazione negativa attesa di circa un
+    quarto — ed e' il 25.8% osservato nel dataset originale.
