@@ -41,7 +41,7 @@ Il piano originale prevedeva l'uso di \texttt{qiskit-aer-gpu} con la scheda NVID
 RuntimeError: Simulation device "GPU" is not supported on this system
 \end{lstlisting}
 
-Questa limitazione è nota nell'ecosistema WSL: la modalità di accesso alla GPU tramite CUDA for WSL 2 non è ancora pienamente supportata dal backend \texttt{statevector} di Qiskit Aer nella versione installata. Tutti gli esperimenti sono stati eseguiti su CPU (modalità \texttt{statevector}), con un throughput medio di $\approx 0.19$\,s per campione su 12 qubit.
+Questa limitazione è nota nell'ecosistema WSL: la modalità di accesso alla GPU tramite CUDA for WSL 2 non è ancora pienamente supportata dal backend \texttt{statevector} di Qiskit Aer nella versione installata. Tutti gli esperimenti sono stati eseguiti su CPU (modalità \texttt{statevector}). Il throughput misurato su macchina dedicata (22 core) è di $\approx 0.5$\,s per campione da $1\,024$ shot su 12 qubit, ossia circa mezzo millisecondo per traiettoria; il costo cresce però di oltre quattro ordini di grandezza per le istanze maggiori, ed è quantificato nel Capitolo~\ref{chap:risultati} (Tabella~\ref{tab:costo_simulazione}).
 
 % -----------------------------------------------
 \section{L'Algoritmo di Shor: Implementazione di Riferimento}
