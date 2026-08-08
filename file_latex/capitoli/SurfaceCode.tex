@@ -381,6 +381,56 @@ Il risultato è negativo, ma corregge un'imprecisione nel modo in cui il criteri
 
 Ne discende anche un'indicazione pratica di segno opposto a quella che ci si potrebbe attendere: investire in una calibrazione più accurata del modello di rumore, entro un ordine di grandezza, non produce guadagni apprezzabili sulla decodifica. È un'osservazione che vale la pena tenere presente perché la calibrazione periodica è un costo operativo reale nei dispositivi attuali.
 
+\subsection{E7 --- e se si scegliesse semplicemente un decoder analitico migliore?}
+\label{subsec:neural_bposd}
+
+Resta l'obiezione più severa che si possa muovere a tutto l'impianto della sezione. Il \ac{MWPM} è lo standard di fatto, ma non è il miglior decoder analitico disponibile: esso richiede che ogni meccanismo di errore sia decomponibile in archi di un grafo, e il crosstalk fra qubit di dato adiacenti viola precisamente questa ipotesi. Un decoder che non la richieda --- \textbf{BP+OSD}, ossia \textit{belief propagation} seguita da \textit{ordered statistics decoding}, che opera direttamente sulla matrice di parità del detector error model \cite{panteleev2021, roffe2020} --- potrebbe catturare da solo il margine attribuito all'apprendimento. Se così fosse, il risultato di E4 non misurerebbe il valore di un modello appreso ma il costo di una scelta subottimale del decoder di riferimento.
+
+Il confronto è condotto sugli stessi circuiti e con la stessa mis-informazione: entrambi i decoder analitici ricevono il \ac{DEM} \emph{nominale}, privo di crosstalk, che è quanto un decoder reale avrebbe a disposizione. La significatività è valutata con il test di McNemar, appaiato sugli stessi shot.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{clccccc}
+\toprule
+$d$ & $p_{ct}$ & \textbf{MWPM} & \textbf{BP+OSD} & \textbf{BP+OSD/MWPM} & \textbf{ibrido/MWPM} & \textbf{McNemar} \\
+\midrule
+\multirow{5}{*}{3} & $0$              & 0.00428 & 0.00374 & \textbf{1.146} & 0.993 & $1\times10^{-9}$ \\
+                   & $5\times10^{-3}$ & 0.03193 & 0.03286 & 0.972          & \textbf{1.185} & $3\times10^{-7}$ \\
+                   & $1\times10^{-2}$ & 0.05912 & 0.06034 & 0.980          & \textbf{1.202} & $5\times10^{-7}$ \\
+                   & $2\times10^{-2}$ & 0.11176 & 0.11340 & 0.986          & \textbf{1.213} & $2\times10^{-6}$ \\
+                   & $4\times10^{-2}$ & 0.20811 & 0.20826 & 0.999          & \textbf{1.189} & $p = 0.77$ \\
+\midrule
+\multirow{5}{*}{5} & $0$              & 0.00192 & 0.00143 & \textbf{1.339} & 1.000 & $2\times10^{-7}$ \\
+                   & $5\times10^{-3}$ & 0.03565 & 0.02807 & \textbf{1.270} & 1.011 & $2\times10^{-113}$ \\
+                   & $1\times10^{-2}$ & 0.08638 & 0.07348 & \textbf{1.176} & 1.033 & $3\times10^{-140}$ \\
+                   & $2\times10^{-2}$ & 0.19998 & 0.18288 & \textbf{1.094} & 1.029 & $6\times10^{-108}$ \\
+                   & $4\times10^{-2}$ & 0.37561 & 0.36788 & \textbf{1.021} & 1.005 & $2\times10^{-12}$ \\
+\bottomrule
+\end{tabular}
+\caption[BP+OSD contro MWPM e contro il decoder ibrido]{Confronto fra il \ac{MWPM}, il decoder BP+OSD e il decoder ibrido appreso, tutti sul medesimo modello di rumore nominale. Le due colonne di guadagno sono rapporti rispetto al \ac{MWPM}: valori superiori a $1$ indicano un errore logico minore. In grassetto, per ciascuna riga, il migliore fra i due approcci alternativi. Il valore di significatività si riferisce al confronto BP+OSD contro \ac{MWPM}. Errore fisico $p = 3\times10^{-3}$, $2\times10^{5}$ campioni per configurazione.}
+\label{tab:confronto_bposd}
+\end{table}
+
+Il primo dato da registrare è che \textbf{BP+OSD è effettivamente un decoder migliore}: sul rumore nominale, quello per cui il modello è corretto, riduce l'errore logico del $14.6\%$ a distanza 3 e del $33.9\%$ a distanza 5, con significatività schiacciante. Il vantaggio cresce con la distanza, come atteso: più il codice è grande, più numerose sono le configurazioni di errore degeneri che il matching, vincolato alla decomposizione in archi, non sa distinguere.
+
+Il secondo dato è però quello che conta, ed è la struttura delle due colonne di guadagno letta lungo la colonna $p_{ct}$.
+
+\begin{quote}
+\emph{Il guadagno di BP+OSD \textbf{decresce} al crescere del crosstalk; quello del decoder ibrido \textbf{cresce}.}
+\end{quote}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{confronto_decoder.pdf}
+\caption[Ortogonalità delle due sorgenti di guadagno]{Guadagno rispetto al \ac{MWPM} dei due approcci alternativi, in funzione dell'intensità del crosstalk. La linea tratteggiata è il \ac{MWPM} stesso. BP+OSD (blu) parte dal guadagno massimo, quando il modello di rumore che riceve è corretto, e lo perde man mano che il crosstalk lo rende incompleto; il decoder ibrido (rosso) parte da zero, perché a modello corretto non ha nulla da aggiungere, e guadagna in misura crescente. A distanza 3 le due curve si incrociano immediatamente; a distanza 5 il vantaggio iniziale di BP+OSD è così ampio da mantenerlo davanti anche eroso. Figura rigenerabile da \texttt{figure\_src/gen\_confronto\_decoder.py}.}
+\label{fig:confronto_decoder}
+\end{figure}
+
+A distanza 5 il vantaggio di BP+OSD scende monotonamente da $1.339$ a $1.021$ mentre il crosstalk aumenta; a distanza 3 esso si annulla immediatamente, e il decoder diventa lievemente \emph{peggiore} del matching. Specularmente, il guadagno dell'ibrido è nullo in assenza di crosstalk e sale fino a $1.213$. I due metodi non competono sullo stesso asse: \textbf{BP+OSD sfrutta meglio il modello che riceve, il decoder appreso cattura ciò che al modello sfugge}. Il primo rende al massimo quando il modello è corretto e si degrada man mano che diventa incompleto --- perché fidarsi più a fondo di una descrizione sbagliata è un danno, non un vantaggio; il secondo rende zero quando il modello è corretto, perché non c'è nulla da aggiungere, e cresce esattamente nella misura in cui il modello si allontana dal dispositivo.
+
+Ne discende una conclusione più articolata di quella che l'esperimento si proponeva di verificare, e va enunciata riconoscendo entrambi i suoi lati. Da un lato l'obiezione è \textbf{in parte fondata}: a distanza 5, dove il vantaggio di partenza di BP+OSD è ampio, esso resta superiore all'ibrido in tutte le configurazioni, e adottare un decoder analitico migliore rende più che addestrare una rete. Chi disponga di un budget di ingegneria limitato dovrebbe spenderlo lì per primo, ed è una raccomandazione pratica che questa tesi non avrebbe potuto formulare senza l'esperimento. Dall'altro lato l'obiezione \textbf{non elimina il risultato}: a distanza 3 l'ibrido guadagna $18$--$21\%$ dove BP+OSD perde, e soprattutto le due sorgenti di guadagno restano ortogonali, sicché nulla impedisce di sommarle. La costruzione naturale --- BP+OSD come decoder di base e il residuo appreso della~\eqref{eq:decoder_ibrido} costruito sopra di esso anziché sopra il matching --- non è stata realizzata in questo lavoro ed è la sua estensione più immediata.
+
 \subsection{E5 --- il decoder è trasferibile fra dispositivi?}
 \label{subsec:neural_generalizzazione}
 
