@@ -12,6 +12,8 @@ Eseguire da WSL con quantum-env attivato:
   python generate_figures.py
 """
 
+from pathlib import Path
+
 import joblib
 import numpy as np
 import matplotlib
@@ -25,7 +27,10 @@ from shor_core import build_noise_model, shor_circuit, run_method1, run_method2
 from qiskit import transpile
 from qiskit_aer import AerSimulator
 
-OUT_DIR = '../file_latex/figure'
+# Percorso relativo alla posizione di questo file, non alla cwd: il riordino del
+# 2026-07-09 ha spostato lo script in Extra/experiments/campagne_classiche_M1-M4/,
+# e il vecchio '../file_latex/figure' non punta piu' alla cartella delle figure.
+OUT_DIR = str(Path(__file__).resolve().parents[3] / 'file_latex' / 'figure')
 FIGSIZE_WIDE  = (10, 4)
 FIGSIZE_SQUARE = (6, 5)
 FIGSIZE_BOX   = (6, 5)
@@ -187,8 +192,9 @@ def fig_iterazioni_m1_m2():
     bp['boxes'][1].set_facecolor('#a8d8a8')
     bp['boxes'][2].set_facecolor('#ffb347')
 
+    y_max = max(m1.max(), mt4.max(), m2.max())
     for i, arr in enumerate([m1, mt4, m2], start=1):
-        ax.text(i, arr.mean() + 0.8, f'$\\bar{{M}}={arr.mean():.2f}$',
+        ax.text(i, arr.mean() + 0.06 * y_max, f'$\\bar{{M}}={arr.mean():.2f}$',
                 ha='center', fontsize=9, color='black')
 
     # p-value M1 vs M_TOP4
@@ -204,9 +210,11 @@ def fig_iterazioni_m1_m2():
     ax.set_ylabel('Iterazioni per ottenere i fattori corretti', fontsize=10)
     ax.set_title('UC1 — Analisi di ablazione: M1, $M_{\\mathrm{TOP4}}$, M2\n'
                  '($N=15$, NISQ-realistico, $K=30$, $M_{\\mathrm{max}}=50$)', fontsize=11)
-    ax.set_ylim(0, 55)
-    ax.axhline(50, color='gray', linestyle=':', linewidth=1, alpha=0.6)
-    ax.text(3.35, 50.5, '$M_{\\mathrm{max}}$', fontsize=8, color='gray')
+    # Scala adattiva: con il seeding corretto le iterazioni restano sotto la decina,
+    # e un asse fisso a M_max = 50 schiaccerebbe i tre box sulla linea di base.
+    ax.set_ylim(0, y_max * 1.25)
+    ax.axhline(1, color='gray', linestyle=':', linewidth=1, alpha=0.6)
+    ax.text(3.38, 1.05, 'ottimo', fontsize=8, color='gray')
 
     plt.tight_layout()
     path = f'{OUT_DIR}/fig_iterazioni_m1_m2.pdf'
