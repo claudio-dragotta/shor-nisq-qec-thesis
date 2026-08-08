@@ -1,0 +1,14 @@
+==============================================================================
+E4 — DECODER IBRIDO: la rete non sostituisce MWPM, impara quando ribaltarlo
+    p fisico = 0.003; soglia scelta in validazione, riportata sul test set
+==============================================================================
+  d=7 p_ct=0       MWPM=0.00055  rete=0.06888  IBRIDO=0.00055  (soglia 0.15, ribalta 0.00%)  |  ibrido/MWPM=1.00x  McNemar p=1.0e+00  [1214.6s]
+  d=7 p_ct=0.005   MWPM=0.03707  rete=0.24671  IBRIDO=0.03707  (soglia 0.30, ribalta 0.00%)  |  ibrido/MWPM=1.00x  McNemar p=1.0e+00  [499.2s]
+  d=7 p_ct=0.01    MWPM=0.11319  rete=0.36749  IBRIDO=0.11318  (soglia 0.55, ribalta 0.00%)  |  ibrido/MWPM=1.00x  McNemar p=3.2e-01  [730.7s]
+  d=7 p_ct=0.02    MWPM=0.29048  rete=0.46219  IBRIDO=0.29048  (soglia 0.70, ribalta 0.00%)  |  ibrido/MWPM=1.00x  McNemar p=1.0e+00  [96.7s]
+  d=7 p_ct=0.04    MWPM=0.46741  rete=0.49980  IBRIDO=0.46741  (soglia 0.55, ribalta 0.00%)  |  ibrido/MWPM=1.00x  McNemar p=1.0e+00  [148.1s]
+
+FLAG E4: l'ibrido batte MWPM (oltre 2 sigma) in 0/5 configurazioni
+
+Tempo totale: 44.8 min
+Risultati salvati in: results_M10_hybrid_20260808_020928.json
