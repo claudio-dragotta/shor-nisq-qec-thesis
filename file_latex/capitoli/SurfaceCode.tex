@@ -305,13 +305,19 @@ $d$ & $p_{ct}$ & \textbf{MWPM} & \textbf{rete sola} & \textbf{ibrido} & \textbf{
                    & $1\times10^{-2}$ & 0.08704 & 0.12874 & \textbf{0.08428} & 1.17\%  & $3\times10^{-30}$ \\
                    & $2\times10^{-2}$ & 0.20231 & 0.25198 & \textbf{0.19662} & 2.88\%  & $6\times10^{-51}$ \\
                    & $4\times10^{-2}$ & 0.37581 & 0.44182 & \textbf{0.37385} & 2.96\%  & $4\times10^{-7}$ \\
+\midrule
+\multirow{5}{*}{7} & $0$              & 0.00055 & 0.06888 & 0.00055 & 0.00\%  & --- \\
+                   & $5\times10^{-3}$ & 0.03707 & 0.24671 & 0.03707 & 0.00\%  & --- \\
+                   & $1\times10^{-2}$ & 0.11319 & 0.36749 & 0.11318 & 0.00\%  & $p = 0.32$ \\
+                   & $2\times10^{-2}$ & 0.29048 & 0.46219 & 0.29048 & 0.00\%  & --- \\
+                   & $4\times10^{-2}$ & 0.46741 & 0.49980 & 0.46741 & 0.00\%  & --- \\
 \bottomrule
 \end{tabular}
 \caption[Prestazioni del decoder ibrido]{Errore logico del decoder ibrido \eqref{eq:decoder_ibrido} confrontato con il \ac{MWPM} e con la rete usata come sostituto. ``Ribalta'' è la frazione di shot in cui la rete inverte la decisione del matching. Il valore di significatività è quello del test di McNemar, appaiato sugli stessi campioni: poiché i due decoder differiscono \emph{soltanto} sugli shot ribaltati, le coppie discordanti coincidono con essi e il test è esatto.}
 \label{tab:neural_ibrido}
 \end{table}
 
-L'ibrido riduce l'errore logico in tutte e otto le configurazioni con crosstalk, con guadagni del $18$--$21\%$ a distanza 3 e dell'$1$--$3\%$ a distanza 5, tutti significativi al test di McNemar. Il dettaglio delle coppie discordanti rende l'effetto leggibile: a $d=3$ e $p_{ct} = 4\times10^{-2}$ la rete rompe $7\,745$ shot che il matching aveva risolto correttamente e ne aggiusta $14\,335$, un rapporto di quasi due a uno; a $d=5$ il bilancio si stringe ($2\,769$ contro $3\,160$), da cui il guadagno più contenuto ma comunque netto.
+L'ibrido riduce l'errore logico in tutte e otto le configurazioni con crosstalk a distanza 3 e 5, con guadagni del $18$--$21\%$ nel primo caso e dell'$1$--$3\%$ nel secondo, tutti significativi al test di McNemar. Il dettaglio delle coppie discordanti rende l'effetto leggibile: a $d=3$ e $p_{ct} = 4\times10^{-2}$ la rete rompe $7\,745$ shot che il matching aveva risolto correttamente e ne aggiusta $14\,335$, un rapporto di quasi due a uno; a $d=5$ il bilancio si stringe ($2\,769$ contro $3\,160$), da cui il guadagno più contenuto ma comunque netto.
 
 Due proprietà meritano attenzione perché riguardano il comportamento del sistema fuori dal regime per cui è stato addestrato. La prima è che la frazione di ribaltamenti \textbf{scala con l'intensità del crosstalk} (dallo $0.10\%$ all'$11.04\%$ a distanza 3): la rete non interviene a caso, ma in misura proporzionale a quanto il modello del matching è sbagliato. La seconda è il comportamento in assenza di crosstalk, dove il matching è già adeguato e non c'è nulla da correggere: a $d=5$ la rete effettua \textbf{zero ribaltamenti} e l'ibrido coincide cifra per cifra con il \ac{MWPM}, mentre a $d=3$ ribalta lo $0.10\%$ degli shot con effetto statisticamente nullo ($p = 0.67$). Il decoder ibrido \emph{degrada con grazia}: riconosce di non avere nulla da aggiungere e si fa da parte. Va detto con esattezza che questa garanzia riguarda il criterio di validazione e non ogni singolo punto dell'insieme di test --- il valore leggermente superiore a $d=3$, $p_{ct}=0$ ne è un esempio, entro il rumore statistico --- sicché la formulazione corretta è che l'ibrido non risulta \emph{mai peggiore del matching in modo statisticamente rilevabile}.
 
@@ -321,6 +327,59 @@ Due proprietà meritano attenzione perché riguardano il comportamento del siste
 \caption[Il decoder ibrido a confronto con matching e rete]{Errore logico dei tre decoder in funzione dell'intensità del crosstalk. L'ibrido (rosso) è il migliore a entrambe le distanze; la rete usata come sostituto (arancio) domina il matching a $d=3$ ma lo perde a $d=5$, dove l'ibrido continua invece a guadagnare.}
 \label{fig:qec_neural_ibrido}
 \end{figure}
+
+\paragraph{Il limite: il vantaggio non sopravvive alla distanza 7.}
+Il dato più importante della Tabella~\ref{tab:neural_ibrido} è però l'ultimo blocco, e va enunciato senza attenuazioni. A distanza 7 l'ibrido \textbf{non ribalta alcuno shot} in nessuna delle cinque configurazioni: la soglia scelta in validazione è ogni volta quella corrispondente a ``non ribaltare mai'', e il decoder ibrido coincide con il \ac{MWPM} cifra per cifra. Il guadagno svanisce, e la progressione lungo le tre distanze è inequivocabile: $18$--$21\%$ a $d=3$, $1$--$3\%$ a $d=5$, esattamente zero a $d=7$.
+
+Il meccanismo è misurabile ed è una difficoltà doppia. Da un lato lo spazio di ingresso cresce rapidamente con la distanza --- da $24$ detector a $d=3$, a $120$ a $d=5$, a $336$ a $d=7$ --- e con esso il numero di parametri che la rete deve stimare. Dall'altro, e in direzione opposta, ciò che va appreso diventa \emph{più raro}: l'evento da riconoscere è il fallimento del matching, la cui frequenza è $p_L$, e $p_L$ decresce esponenzialmente con $d$. In assenza di crosstalk, a $d=7$ si hanno $p_L = 5.5\times10^{-4}$ e $8\times10^5$ shot, ossia circa $440$ fallimenti nell'intero campione, di cui la metà destinata all'addestramento: \emph{duecento esempi positivi per un ingresso a $336$ dimensioni}. La rete non dispone dell'informazione necessaria, e il criterio di validazione lo riconosce correttamente rifiutandosi di intervenire.
+
+Questa è la delimitazione del risultato di M10, e conviene formularla in positivo. Il guadagno del decoder ibrido è reale e statisticamente schiacciante --- a $d=3$ il test di McNemar dà $p < 10^{-320}$ --- ma vive nel regime in cui il codice è piccolo abbastanza da lasciare al modello appreso abbastanza esempi da cui imparare. Poiché è proprio la crescita della distanza a costituire la strategia della correzione d'errore scalabile, il metodo così com'è non accompagna il codice nel regime che conta. Superare il limite richiederebbe un'architettura che sfrutti la simmetria traslazionale del reticolo --- una rete convoluzionale o a grafo, che condivide i pesi fra regioni equivalenti anziché trattare i $336$ detector come dimensioni indipendenti --- oppure un addestramento su campioni ordini di grandezza più numerosi. È l'estensione naturale, e la si indica fra gli sviluppi futuri (Capitolo~\ref{chap:sviluppi}).
+
+\subsection{E6 --- e se il modello del decoder fosse semplicemente sbagliato?}
+\label{subsec:neural_miscalibrato}
+
+Gli esperimenti fin qui condotti concedono al \ac{MWPM} un vantaggio che l'hardware non offre: il detector error model che ne pesa gli archi è generato da Stim \emph{dal circuito stesso}, ed è quindi una descrizione esatta del rumore. Un decoder in produzione lavora invece su un modello ricavato dalla calibrazione del dispositivo --- misurata a intervalli, soggetta a deriva, inevitabilmente diversa dal rumore del momento. Se il vantaggio del modello appreso nascesse da questa discrepanza, sarebbe un vantaggio molto più generale di quello osservato con il crosstalk, perché la mis-calibrazione è la condizione ordinaria di ogni \ac{QPU}.
+
+L'esperimento la isola: il circuito viene campionato con il rumore reale, mentre il matching è costruito su un modello in cui l'errore di \emph{misura} è sbagliato di un fattore $(1+\delta)$ e quello di gate resta corretto.
+
+\begin{samepage}
+\paragraph{Perché la perturbazione dev'essere sbilanciata.} Un primo tentativo scalava tutte le probabilità di errore dello stesso fattore, e non produceva alcun effetto misurabile: il costo rilevato era $1.000$, $1.004$ e $1.000$ per $\delta$ pari a $0$, $+100\%$ e $-50\%$. La ragione è istruttiva e merita di essere esplicitata, perché delimita ciò che una calibrazione errata può e non può fare. Il \ac{MWPM} minimizza il peso totale del matching, e il peso di un arco vale $\log\frac{1-p_e}{p_e} \approx -\log p_e$ per $p_e$ piccolo: moltiplicare tutte le $p_e$ per una costante trasla \emph{tutti} i pesi della stessa quantità, e un matching di peso minimo è invariante rispetto a una traslazione uniforme. Ciò che rende il matching vulnerabile non è dunque sbagliare la \emph{scala} del rumore, ma il suo \emph{bilanciamento}: il rapporto fra archi temporali, che rappresentano errori di misura, e archi spaziali, che rappresentano errori sui dati. È questo rapporto che l'esperimento perturba.
+\end{samepage}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{crccccc}
+\toprule
+$d$ & $\delta$ & \textbf{MWPM esatto} & \textbf{MWPM sbagliato} & \textbf{costo} & \textbf{rete} & \textbf{rete/MWPM} \\
+\midrule
+\multirow{6}{*}{3} & $-80\%$  & 0.00407 & 0.00415 & 1.018 & 0.00525 & 0.79 \\
+                   & $-50\%$  & 0.00435 & 0.00435 & 1.000 & 0.00493 & 0.88 \\
+                   & $0$      & 0.00427 & 0.00427 & 1.000 & 0.00558 & 0.77 \\
+                   & $+100\%$ & 0.00387 & 0.00382 & 0.987 & 0.00443 & 0.86 \\
+                   & $+300\%$ & 0.00388 & 0.00362 & 0.931 & 0.00429 & 0.84 \\
+                   & $+900\%$ & 0.00385 & 0.00392 & 1.017 & 0.00463 & 0.85 \\
+\midrule
+\multirow{6}{*}{5} & $-80\%$  & 0.00147 & 0.00153 & 1.034 & 0.02982 & 0.05 \\
+                   & $-50\%$  & 0.00172 & 0.00173 & 1.010 & 0.02855 & 0.06 \\
+                   & $0$      & 0.00163 & 0.00163 & 1.000 & 0.02784 & 0.06 \\
+                   & $+100\%$ & 0.00174 & 0.00175 & 1.005 & 0.02774 & 0.06 \\
+                   & $+300\%$ & 0.00169 & 0.00167 & 0.985 & 0.02888 & 0.06 \\
+                   & $+900\%$ & 0.00159 & 0.00191 & \textbf{1.199} & 0.03052 & 0.06 \\
+\bottomrule
+\end{tabular}
+\caption[Effetto di un modello di rumore mis-calibrato sul MWPM]{Errore logico del \ac{MWPM} quando il modello che ne pesa gli archi attribuisce all'errore di misura il valore $p\,(1+\delta)$ anziché quello vero. La colonna ``costo'' è il rapporto fra l'errore logico con modello sbagliato e quello con modello esatto; ``rete/MWPM'' confronta il decoder appreso con il matching mis-calibrato --- valori inferiori a $1$ indicano che la rete è peggiore. Errore fisico reale $p = 3\times10^{-3}$, $4\times10^{5}$ campioni per configurazione.}
+\label{tab:neural_miscalibrato}
+\end{table}
+
+L'esito è netto in entrambe le direzioni. Il \ac{MWPM} si rivela \textbf{notevolmente robusto}: sbagliando l'errore di misura di un fattore cinque in difetto o dieci in eccesso, l'errore logico cambia tipicamente dell'$1$--$3\%$, e in due configurazioni \emph{migliora} leggermente. L'unico caso in cui la mis-calibrazione morde davvero è $d=5$ con $\delta = +900\%$, dove il costo sale al $20\%$: sovrastimare di un ordine di grandezza l'errore di misura induce il matching a preferire spiegazioni temporali degli eventi rilevati anche quando la spiegazione corretta è spaziale. Ma occorre appunto un errore di calibrazione di un ordine di grandezza perché l'effetto sia visibile.
+
+La rete, dal canto suo, \textbf{non batte il matching in nessuna delle dodici configurazioni}, neppure quelle in cui esso lavora sul modello sbagliato. A $d=3$ resta indietro del $15$--$25\%$; a $d=5$ è peggiore di un fattore venti, in coerenza con il crollo osservato nell'esperimento precedente.
+
+\paragraph{Che cosa questo precisa del criterio.}
+Il risultato è negativo, ma corregge un'imprecisione nel modo in cui il criterio della tesi era stato finora formulato. Si era detto che il modello appreso produce valore dove il metodo analitico è ``cieco'' rispetto a una parte dell'informazione; questo esperimento mostra che la cecità rilevante non è quella dei \emph{parametri} ma quella della \emph{struttura}. Un modello con i parametri sbagliati continua a rappresentare le stesse classi di errore, e il matching che ne deriva resta quasi ottimale perché la geometria del problema --- quali eventi rilevati siano plausibilmente connessi --- non cambia. Un modello che non contempla affatto una classe di errore, come il crosstalk fra qubit di dato adiacenti dell'esperimento E2, sbaglia invece la geometria stessa, e lì il margine esiste. La formulazione corretta del criterio è dunque: \emph{l'apprendimento paga quando la classe di errore non è rappresentabile nella struttura del decoder, non quando è rappresentata con parametri imprecisi}.
+
+Ne discende anche un'indicazione pratica di segno opposto a quella che ci si potrebbe attendere: investire in una calibrazione più accurata del modello di rumore, entro un ordine di grandezza, non produce guadagni apprezzabili sulla decodifica. È un'osservazione che vale la pena tenere presente perché la calibrazione periodica è un costo operativo reale nei dispositivi attuali.
 
 \subsection{E5 --- il decoder è trasferibile fra dispositivi?}
 \label{subsec:neural_generalizzazione}
