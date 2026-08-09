@@ -8,7 +8,7 @@ Parallelamente al problema fisico dell'hardware, esiste una barriera di natura p
 
 È in questo contesto che nasce il \textbf{calcolo quantistico}: la visione radicale che i principi della meccanica quantistica -- \textit{sovrapposizione}, \textit{entanglement} e \textit{interferenza} -- possano essere sfruttati non come ostacoli da evitare, ma come risorse computazionali di straordinaria potenza. L'intuizione originale fu di Richard Feynman\footnote{\textbf{Richard Phillips Feynman} (1918--1988), fisico teorico statunitense, Premio Nobel per la Fisica nel 1965. Nel suo celebre articolo del 1982 \textit{``Simulating Physics with Computers''} \cite{feynman1982}, Feynman argomentò che un computer classico non può simulare efficientemente un sistema quantistico senza un overhead esponenziale, e propose che un ``computer quantistico'' -- uno che segua le leggi della meccanica quantistica -- potrebbe farlo in modo naturalmente efficiente.}, che nel 1982 osservò come la simulazione di sistemi quantistici richiedesse risorse esponenziali su macchine classiche, e propose che un computer basato sugli stessi principi fisici potesse simulare la natura stessa in modo efficiente \cite{feynman1982}. David Deutsch formalizzò nel 1985 il primo modello teorico rigoroso di computer quantistico universale \cite{deutsch1985}, aprendo la strada a un nuovo paradigma computazionale.
 
-I principi fisici che rendono possibile questo paradigma --- il qubit e la sovrapposizione, la sfera di Bloch, l'entanglement e l'interferenza --- insieme alla loro realizzazione sui qubit superconduttori di IBM, sono ripresi nella Sezione~\ref{app:introduzione} (Sez.~\ref{app:intro:qubit}); la trattazione formale completa è nel Capitolo~\ref{chap:fondamenti}. La rivoluzione algoritmica degli anni Novanta --- da Simon fino all'algoritmo di Shor (1994) e a quello di Grover (1996) --- è ripercorsa nella Sez.~\ref{app:intro:algoritmi}. La portata dirompente di Shor si misura sulla crittografia che minaccia: la struttura del protocollo RSA e il motivo per cui Shor lo rompe (Sez.~\ref{app:intro:rsa}), la risposta della crittografia post-quantistica con gli standard NIST 2024 (Sez.~\ref{app:intro:pqc}) e lo stato dell'arte dell'hardware dall'era NISQ verso i sistemi fault-tolerant (Sez.~\ref{app:intro:nisq}) delineano il contesto strategico in cui si colloca questo lavoro: comprendere i limiti reali dell'algoritmo di Shor su hardware rumoroso.
+I principi fisici che rendono possibile questo paradigma --- il qubit e la sovrapposizione, la sfera di Bloch, l'entanglement e l'interferenza --- insieme alla loro realizzazione sui qubit superconduttori di IBM, sono ripresi nella Sezione~\ref{app:introduzione} (Sez.~\ref{app:intro:qubit}); la trattazione formale completa è nella Sezione~\ref{chap:fondamenti}. La rivoluzione algoritmica degli anni Novanta --- da Simon fino all'algoritmo di Shor (1994) e a quello di Grover (1996) --- è ripercorsa nella Sez.~\ref{app:intro:algoritmi}. La portata dirompente di Shor si misura sulla crittografia che minaccia: la struttura del protocollo RSA e il motivo per cui Shor lo rompe (Sez.~\ref{app:intro:rsa}), la risposta della crittografia post-quantistica con gli standard NIST 2024 (Sez.~\ref{app:intro:pqc}) e lo stato dell'arte dell'hardware dall'era NISQ verso i sistemi fault-tolerant (Sez.~\ref{app:intro:nisq}) delineano il contesto strategico in cui si colloca questo lavoro: comprendere i limiti reali dell'algoritmo di Shor su hardware rumoroso.
 % -----------------------------------------------
 \section{Motivazione e Contributo del Presente Lavoro}
 
@@ -36,30 +36,24 @@ L'elaborato si sviluppa dalle fondamenta teoriche del calcolo quantistico, attra
 %   controlla se la sua descrizione qui è ancora accurata.
 \section{Struttura della Tesi}
 
-L'elaborato è organizzato in quindici capitoli, seguiti da sette appendici (A--G) che raccolgono il contesto esteso, il materiale di dettaglio richiamato in forma sintetica nel corpo e un'esplorazione condotta oltre il perimetro del lavoro principale. Il Capitolo~2 svolge una funzione trasversale di raccordo tra teoria e pratica; i Capitoli~3--6 costituiscono la parte teorica; i Capitoli~7--13 la parte sperimentale; i Capitoli~14 e~15 chiudono il lavoro.
+L'elaborato è organizzato in dodici capitoli, seguiti da cinque appendici (A--E) che raccolgono il contesto esteso, il materiale di dettaglio richiamato in forma sintetica nel corpo e un'esplorazione condotta oltre il perimetro del lavoro principale. Il Capitolo~2 svolge una funzione trasversale di raccordo tra teoria e pratica; i Capitoli~3--5 costituiscono la parte teorica; i Capitoli~6--10 la parte sperimentale; i Capitoli~11 e~12 chiudono il lavoro.
 
 \medskip
 Il \textbf{Capitolo~\ref{chap:obiettivi}} (\textit{Obiettivi e Piano Sperimentale}) motiva la vulnerabilità di RSA all'algoritmo di Shor e fissa il contratto sperimentale: obiettivi, ipotesi di ricerca, contributo, use case e metriche.
 
 \medskip
-\textbf{Parte teorica (Capitoli 3--6).}
+\textbf{Parte teorica (Capitoli 3--5).}
 
-Il \textbf{Capitolo~\ref{chap:fondamenti}} (\textit{Fondamenti del Calcolo Quantistico}) richiama qubit, sovrapposizione, porte e circuiti, e l'entanglement come \textit{risorsa fisica fragile} che anticipa la trattazione del rumore.
-
-Il \textbf{Capitolo~\ref{chap:shor}} (\textit{L'Algoritmo di Shor}) presenta la riduzione al \textit{period finding}, la Quantum Phase Estimation e la complessità polinomiale $O((\log N)^3)$, con le implicazioni per RSA e la transizione post-quantum.
+Il \textbf{Capitolo~\ref{chap:shor}} (\textit{L'Algoritmo di Shor}) si apre con i richiami di calcolo quantistico necessari a seguirlo (Sezione~\ref{chap:fondamenti}: qubit, sovrapposizione, porte e circuiti, e l'entanglement come \textit{risorsa fisica fragile} che anticipa la trattazione del rumore), quindi presenta la riduzione al \textit{period finding}, la Quantum Phase Estimation e la complessità polinomiale $O((\log N)^3)$, con le implicazioni per RSA e la transizione post-quantum.
 
 Il \textbf{Capitolo~\ref{chap:rumore}} (\textit{Rumore Quantistico nei Sistemi NISQ}) analizza le quattro fonti fisiche di errore e i canali di rumore fondamentali, fino al crollo della probabilità di successo (${\sim}3.4\%$) già per un modulo di soli 15 bit.
 
 Il \textbf{Capitolo~\ref{chap:strategie}} (\textit{Strategie per la Riduzione del Rumore Quantistico}) confronta le quattro macro-strategie anti-rumore nell'era NISQ e motiva l'approccio adottato.
 
 \medskip
-\textbf{Parte sperimentale (Capitoli 7--14).}
+\textbf{Parte sperimentale (Capitoli 6--10).}
 
-Il \textbf{Capitolo~\ref{chap:strumenti}} (\textit{Strumenti e Ambiente di Simulazione}) descrive Qiskit, il simulatore Aer con GPU, il noise model parametrizzato e la transpilazione.
-
-Il \textbf{Capitolo~\ref{chap:metodologia}} (\textit{Metodologia e Architettura}) presenta la pipeline sperimentale a tre stadi, le tecniche di mitigazione del rumore e i due metodi confrontati.
-
-Il \textbf{Capitolo~\ref{chap:sviluppo}} (\textit{Sviluppo e Implementazione}) descrive l'implementazione: ambiente WSL2, QFT inversa, circuito di Shor, noise model e pipeline dei due metodi.
+Il \textbf{Capitolo~\ref{chap:metodologia}} (\textit{Metodo e Implementazione}) risponde a tre domande in sequenza: con quali strumenti si lavora (Sezione~\ref{chap:strumenti}: Qiskit, il simulatore Aer con GPU, il noise model parametrizzato e la transpilazione), con quale disegno sperimentale --- la pipeline a tre stadi, le tecniche di mitigazione e i due metodi confrontati --- e come il disegno è stato realizzato in codice, dall'ambiente WSL2 alla QFT inversa, dal circuito di Shor alla pipeline dei due metodi.
 
 Il \textbf{Capitolo~\ref{chap:risultati}} (\textit{Verifica Sperimentale dell'Ipotesi Iniziale: dal Classificatore ML alla Strategia TOP-K}) stabilisce la baseline e, tramite analisi di ablazione, dimostra che il guadagno è della strategia TOP-4 e non del classificatore \ac{ML} --- il risultato che motiva il pivot alla QEC.
 
@@ -74,18 +68,16 @@ Il \textbf{Capitolo~\ref{chap:sviluppi}} (\textit{Sviluppi Futuri}) delinea le d
 Il \textbf{Capitolo~\ref{chap:conclusioni}} (\textit{Conclusioni}) verifica una per una le sei ipotesi e le sei domande di ricerca fissate nel Capitolo~\ref{chap:obiettivi}, dichiara i contributi e i limiti del lavoro e isola il criterio che unifica le due fasi sperimentali.
 
 \medskip
-\textbf{Appendici.} La \textbf{Sezione~\ref{app:parametrica}} (\textit{Campagna Parametrica Dettagliata e Confronto ZNE}) riporta integralmente le sette sweep parametriche su $M_{\text{TOP4}}$, con il confronto previsione--esito per ciascun parametro, e il dettaglio metodologico del confronto con la Zero-Noise Extrapolation.
+\textbf{Appendici.} Il corpo dell'elaborato è tenuto alla lunghezza di un argomento continuo; le cinque appendici raccolgono ciò che quel filo richiama ma non deve interrompere. Sono organizzate per tema, non per capitolo di provenienza, così che chi le consulti trovi in un solo luogo tutto il materiale di una stessa natura.
 
-L'\textbf{Appendice~\ref{app:fondamenti}} (\textit{Fondamenti del Calcolo Quantistico --- Trattazione Estesa}) riporta per esteso i postulati della meccanica quantistica, l'insieme completo delle porte, le figure e il modello di complessità sintetizzati nel Capitolo~\ref{chap:fondamenti}.
+L'\textbf{Appendice~\ref{app:teoria}} (\textit{Trattazione Teorica Estesa}) sviluppa per esteso la teoria sintetizzata nei Capitoli~\ref{chap:shor}--\ref{chap:rumore}: i postulati della meccanica quantistica e l'insieme completo delle porte (Sez.~\ref{app:fondamenti}), l'anatomia fisica di una \ac{QPU} e il confronto fra le tecnologie di qubit (Sez.~\ref{app:anatomia}), gli approfondimenti sull'algoritmo di Shor e sullo stato dell'arte della fattorizzazione quantistica (Sez.~\ref{app:shor_esteso}) e le derivazioni complete dei canali di rumore in forma di Kraus (Sez.~\ref{app:canali}).
 
-L'\textbf{Appendice~\ref{app:strumenti}} (\textit{Strumenti e Ambiente di Simulazione --- Trattazione Estesa}) motiva in dettaglio le scelte tecnologiche --- confronto tra framework, metodi di simulazione di Aer, specifiche GPU e ambiente WSL --- sintetizzate nel Capitolo~\ref{chap:strumenti}.
+L'\textbf{Appendice~\ref{app:strumentiecodice}} (\textit{Strumenti, Ambiente e Codice}) motiva in dettaglio le scelte tecnologiche --- confronto tra framework, metodi di simulazione di Aer, specifiche GPU e ambiente WSL (Sez.~\ref{app:strumenti}) --- e riporta il codice sorgente dei componenti implementati (Sez.~\ref{app:codice}), dal circuito di Shor ai codici correttori.
 
-La \textbf{Sezione~\ref{app:introduzione}} (\textit{Contesto Esteso dell'Introduzione}) sviluppa i principi fisici del calcolo quantistico, la rivoluzione algoritmica degli anni Novanta, il protocollo RSA e la sua vulnerabilità, la crittografia post-quantistica e lo stato dell'arte dell'hardware quantistico.
+L'\textbf{Appendice~\ref{app:contesto}} (\textit{Contesto e Motivazione}) sviluppa i principi fisici del calcolo quantistico, la rivoluzione algoritmica degli anni Novanta, il protocollo RSA e la sua vulnerabilità, la crittografia post-quantistica e lo stato dell'arte dell'hardware (Sez.~\ref{app:introduzione}); raccoglie inoltre la motivazione crittografica estesa, i requisiti funzionali e la specifica completa di input e output del sistema sperimentale (Sez.~\ref{app:obiettivi}).
 
-La \textbf{Sezione~\ref{app:obiettivi}} (\textit{Dettaglio degli Obiettivi e del Piano Sperimentale}) raccoglie la motivazione crittografica estesa, i requisiti funzionali del sistema sperimentale e la specifica completa dei parametri di input e di output.
+L'\textbf{Appendice~\ref{app:fase1}} (\textit{Fase 1: la Campagna Classica nel Dettaglio}) riporta integralmente le sette sweep parametriche su $M_{\text{TOP4}}$, con il confronto previsione--esito per ciascun parametro, e il dettaglio metodologico del confronto con la Zero-Noise Extrapolation (Sez.~\ref{app:parametrica}); documenta poi il classificatore valutato nella prima fase --- le tre architetture confrontate, l'addestramento e le metriche --- e l'audit delle etichette che ricostruisce quale domanda il modello abbia effettivamente appreso a rispondere (Sez.~\ref{app:classificatore}).
 
-La \textbf{Sezione~\ref{app:classificatore}} (\textit{Il Classificatore ML: Architettura, Addestramento e Metriche}) riporta il dettaglio del classificatore valutato nella prima fase sperimentale --- le tre architetture confrontate, l'addestramento e le metriche di classificazione --- il cui verdetto operativo è discusso nel Capitolo~\ref{chap:risultati}; contiene inoltre l'audit delle etichette di addestramento, che ricostruisce quale domanda il modello abbia effettivamente appreso a rispondere.
-
-L'\textbf{Appendice~\ref{app:compilazione}} (\textit{Compilazione Consapevole della Struttura: un'Esplorazione}) mette alla prova il criterio conclusivo del lavoro su un caso esterno al perimetro principale --- la scelta della mappatura del circuito sui qubit fisici, condotta su dati di calibrazione reali --- e ne ricava una precisazione.
+L'\textbf{Appendice~\ref{app:fase2}} (\textit{Fase 2: la Campagna QEC nel Dettaglio}) espone per intero la campagna sulla decodifica appresa --- architettura del decoder, protocollo di addestramento, confronto con \ac{MWPM} e con BP+OSD (Sez.~\ref{app:decodifica}) --- e mette alla prova il criterio conclusivo del lavoro su un caso esterno al perimetro principale, la scelta della mappatura del circuito sui qubit fisici condotta su dati di calibrazione reali (Sez.~\ref{app:compilazione}).
 
 \end{onehalfspace}

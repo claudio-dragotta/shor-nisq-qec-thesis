@@ -103,13 +103,11 @@
 \input{capitoli/ObiettiviPianoSperimentale}
 
 % -----------------------------------------------
-\chapter{Fondamenti del Calcolo Quantistico}
-\label{chap:fondamenti}
-\input{capitoli/Fondamenti}
-
-% -----------------------------------------------
+% Fondamenti accorpato in testa a Shor: due pagine non giustificavano un capitolo
+% numerato, e i richiami sono il presupposto immediato dell'algoritmo.
 \chapter{L'Algoritmo di Shor}
 \label{chap:shor}
+\input{capitoli/Fondamenti}
 \input{capitoli/Shor}
 
 % -----------------------------------------------
@@ -123,13 +121,13 @@
 \input{capitoli/StrategieAntiRumore}
 
 % -----------------------------------------------
-\chapter{Strumenti e Ambiente di Simulazione}
-\label{chap:strumenti}
-\input{capitoli/Strumenti}
-
-% -----------------------------------------------
-\chapter{Metodologia e Architettura}
+% Strumenti + Metodologia + Sviluppo accorpati: descrivono un unico blocco --- con che
+% cosa, con quale disegno, come realizzato. Le etichette dei tre capitoli originari
+% restano valide, cosi' i riferimenti esistenti non si rompono.
+\chapter{Metodo e Implementazione}
 \label{chap:metodologia}
+\label{chap:sviluppo}
+\input{capitoli/Strumenti}
 \input{capitoli/Metodologia}
 
 % -----------------------------------------------
@@ -139,9 +137,6 @@
 % \label{chap:specifiche}
 % \input{capitoli/SpecificheFunzionali}
 
-% -----------------------------------------------
-\chapter{Sviluppo e Implementazione}
-\label{chap:sviluppo}
 \input{capitoli/Sviluppo}
 
 % -----------------------------------------------

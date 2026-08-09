@@ -1,6 +1,6 @@
 \begin{onehalfspace}
 
-Il Capitolo~\ref{chap:obiettivi} ha formalizzato il contratto sperimentale: quattro use case, i parametri di rumore ipotizzati e le metriche di confronto. Il Capitolo~\ref{chap:metodologia} ha definito l'architettura del pipeline a tre stadi. Questo capitolo descrive cosa è stato concretamente costruito: il setup dell'ambiente di esecuzione, l'integrazione dell'algoritmo di Shor con il simulatore rumoroso, l'implementazione dei due metodi di analisi della prima fase e, nella Sezione~\ref{sec:impl_qec}, quella dei codici correttori che costituiscono il nucleo della seconda. Non vengono qui riportati i risultati degli esperimenti --- quelli sono oggetto dei Capitoli~\ref{chap:risultati} e~\ref{chap:qec}--\ref{chap:integrazione} --- ma le scelte implementative, il codice sviluppato e la struttura del sistema che li ha prodotti.
+Il Capitolo~\ref{chap:obiettivi} ha formalizzato il contratto sperimentale --- quattro use case, i parametri di rumore ipotizzati e le metriche di confronto --- e le sezioni precedenti hanno definito l'architettura della pipeline a tre stadi. Resta la terza domanda: che cosa è stato concretamente costruito. Le sezioni che seguono descrivono il setup dell'ambiente di esecuzione, l'integrazione dell'algoritmo di Shor con il simulatore rumoroso, l'implementazione dei due metodi di analisi della prima fase e, nella Sezione~\ref{sec:impl_qec}, quella dei codici correttori che costituiscono il nucleo della seconda. Non vengono qui riportati i risultati degli esperimenti --- quelli sono oggetto dei Capitoli~\ref{chap:risultati} e~\ref{chap:qec}--\ref{chap:integrazione} --- ma le scelte implementative, il codice sviluppato e la struttura del sistema che li ha prodotti.
 
 % -----------------------------------------------
 \section{Setup dell'Ambiente di Esecuzione}
@@ -80,7 +80,8 @@ L'addestramento confronta tre architetture con scikit-learn \cite{scikit_learn}:
 
 La selezione del modello è stata eseguita su 2000 campioni per ciascun use case, con split stratificato 80/20 e criterio di scelta basato sull'F1-score: risulta selezionato il Random Forest per UC1 e l'\ac{SVM} per UC2, entrambi con metriche di classificazione elevate (F1 fino a $0.98$, \ac{AUC} fino a $0.99$).
 
-\noindent Le metriche complete dei tre modelli sui due use case, con le curve ROC e laudit delle etichette di addestramento, sono nella Sezione~\ref{app:classificatore} dellAppendice~ef{app:fase1}.
+\noindent Le metriche complete dei tre modelli sui due use case, con le curve ROC e laudit delle etichette di addestramento, sono nella Sezione~\ref{app:classificatore} dellAppendice~
+ef{app:fase1}.
 
 Il \textbf{Random Forest} è il modello ottimale per UC1 (F1=0.949, \ac{AUC}=0.964), dove la maggiore variabilità dell'istogramma — il dataset ha il 25.8\% di esempi negativi — favorisce un classificatore ensemble capace di catturare relazioni non lineari tra le feature. Per UC2, tutti e tre i modelli raggiungono prestazioni quasi identiche (F1 $>$ 0.97): la scelta ricade sull'\textbf{\ac{SVM}} per il margine minimo di F1-score. In entrambi i casi, i valori di \ac{AUC}-ROC $>$ 0.96 indicano una buona separabilità delle classi nello spazio delle feature istogramma.
 
@@ -108,7 +109,7 @@ Quanto descritto finora realizza la prima fase sperimentale. La seconda --- i co
 
 \subsection{Organizzazione del codice e divisione degli strumenti}
 
-Il codice sperimentale è organizzato in una cartella per milestone, ciascuna contenente il proprio script, i risultati in formato JSON e un file di documentazione che ne dichiara i criteri di validazione. La divisione degli strumenti segue la natura dei circuiti, secondo il criterio già motivato nel Capitolo~\ref{chap:strumenti}.
+Il codice sperimentale è organizzato in una cartella per milestone, ciascuna contenente il proprio script, i risultati in formato JSON e un file di documentazione che ne dichiara i criteri di validazione. La divisione degli strumenti segue la natura dei circuiti, secondo il criterio già motivato nella Sezione~\ref{chap:strumenti}.
 
 \begin{table}[H]
 \centering

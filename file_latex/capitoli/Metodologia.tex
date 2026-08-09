@@ -1,8 +1,11 @@
 \begin{onehalfspace}
 
-Il capitolo precedente ha concluso la parte teorica della tesi con un'ipotesi precisa da mettere alla prova: che il \ac{QML}, nella sua declinazione di classificatore addestrato per la rilevazione degli errori, riduca in misura significativa il numero medio di esecuzioni necessarie ($\rho = \bar{M}_1/\bar{M}_2 \gg 1$), portandolo a circa tre. Il presente capitolo definisce il sistema sperimentale costruito per verificarla. Si tratta dell'architettura della \emph{prima fase} del lavoro: l'esito della verifica --- che il guadagno osservato è reale ma attribuibile alla ricerca multi-candidato e non al classificatore (Capitolo~\ref{chap:risultati}) --- motiva la seconda fase, che adotta un'architettura diversa perché diversa ne è la natura. Il protocollo sperimentale di ciascun codice correttore, essendo specifico del codice, è descritto nel capitolo che lo introduce (Capitoli~\ref{chap:qec}--\ref{chap:integrazione}); l'infrastruttura comune --- organizzazione del codice, divisione degli strumenti fra Qiskit, Stim e PyMatching, e disciplina di riproducibilità --- è nella Sezione~\ref{sec:impl_qec} del capitolo seguente.
-
-Questo capitolo ha questo scopo. Vengono descritte l'architettura del pipeline, le tecnologie adottate e la struttura dei due metodi che verranno confrontati nella parte sperimentale. Non si entra ancora nella descrizione del codice né dei risultati: quelli sono oggetto dei capitoli successivi. Qui si stabilisce il \textit{perché} di ciascuna scelta progettuale e il \textit{come} i componenti si raccordano tra loro.
+Stabiliti gli strumenti, la domanda successiva riguarda il disegno: quali componenti compongono
+il sistema, come si raccordano, e perché. Le sezioni che seguono descrivono l'architettura della
+pipeline e la struttura dei due metodi messi a confronto. Non si entra ancora nella descrizione
+del codice --- quella è oggetto della Sezione~\ref{sec:setup} e seguenti --- né dei risultati:
+qui si stabilisce il \textit{perché} di ciascuna scelta progettuale e il \textit{come} i
+componenti si raccordano tra loro.
 
 % -----------------------------------------------
 \section{Obiettivi della Parte Sperimentale}

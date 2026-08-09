@@ -2,6 +2,8 @@
 
 \section{Introduzione al Rumore Quantistico}
 
+Il capitolo precedente ha presentato l'algoritmo di Shor nella sua forma ideale: un circuito che, eseguito su un calcolatore quantistico perfetto, fattorizza in tempo polinomiale. Quel calcolatore non esiste. Questo capitolo descrive la distanza fra il modello e la macchina --- da dove nasce l'errore, come lo si rappresenta formalmente, e quanto costa all'algoritmo.
+
 I computer quantistici reali operano in regime \ac{NISQ} \cite{preskill2018}: dispongono di decine o centinaia di qubit fisici, ma sono affetti da errori significativi che limitano la profondità dei circuiti eseguibili in modo affidabile.
 
 Il rumore quantistico differisce fondamentalmente dal rumore nei sistemi classici: mentre un bit classico può essere protetto ridondando l'informazione, un qubit non può essere copiato (\textbf{teorema del no-cloning}) \cite{wootters1982}. Inoltre, gli errori quantistici non sono binari --- un qubit può subire rotazioni arbitrarie nello spazio di Hilbert --- rendendo la loro caratterizzazione intrinsecamente più ricca e più difficile di quella classica.
