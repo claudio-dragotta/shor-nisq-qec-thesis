@@ -3,7 +3,7 @@
 Questa appendice riporta integralmente la campagna sperimentale parametrica su $M_{\text{TOP4}}$ e il confronto quantitativo con la \textit{Zero-Noise Extrapolation}, di cui il Capitolo~\ref{chap:risultati} presenta la sintesi. Per ciascun parametro si confrontano esplicitamente \emph{previsione teorica} ed \emph{esito osservato}. Tutte le misure usano $K_{\text{rep}} = 30$ ripetizioni e il test Mann-Whitney a una coda; la metodologia è a variazione singola (\textit{one-factor-at-a-time}) rispetto alla configurazione di riferimento di UC1: $N=15$, $a=7$, $n_{\text{count}}=8$, $\varepsilon_{1q}=10^{-3}$, $\varepsilon_{2q}=10^{-2}$, $T_1=100\,\mu\text{s}$, $T_2=80\,\mu\text{s}$, $p_{\text{ro}}=2\%$, $M_{\text{shots}}=1024$, $K=4$, $M_{\text{max}}=50$.
 
 % -----------------------------------------------
-\section{Variazione di K (numero di candidati per iterazione)}
+\subsection{Variazione di K (numero di candidati per iterazione)}
 \label{subsec:sweep_k}
 
 \paragraph{Previsione.}
@@ -33,7 +33,7 @@ $K$ & $P_{\text{succ}}$ & $\bar{M}$ & $\sigma_M$ & $\rho$ vs M1 & p-value (vs M1
 La soglia effettiva non è $K=r=4$ ma $K=2$: il salto netto è tra $K=1$ (equivalente a M1, $\bar{M}=1.97$) e $K=2$ ($\bar{M}=1.00$ con deviazione standard nulla, cioè convergenza al primo tentativo in \emph{ogni} ripetizione); per $K \geq 2$ le prestazioni sono identiche e massime, e il fattore di riduzione si assesta a $\rho = 1.967$. La spiegazione è duplice: il rumore depolarizzante non distribuisce il segnale uniformemente sulle quattro fasi valide, ma tende a concentrarlo su uno o due valori dominanti dell'istogramma; inoltre \texttt{extract\_factors} con \texttt{limit\_denominator} è tollerante a fasi leggermente spostate, allargando il bacino di convergenza attorno a ciascun picco. Il criterio teorico $K=r$ resta un limite superiore garantito, ma nella pratica $K=2$ è sufficiente per questa istanza; per $r$ più grandi la soglia effettiva andrebbe riverificata.
 
 % -----------------------------------------------
-\section{Variazione di $\varepsilon_{2q}$ (tasso di errore a due qubit)}
+\subsection{Variazione di $\varepsilon_{2q}$ (tasso di errore a due qubit)}
 \label{subsec:sweep_eps}
 
 \paragraph{Previsione.}
@@ -63,7 +63,7 @@ $10^{-1}$          & $2.54\times10^{-8}$ & 1.30 & 1.00 & 1.300 & $0.006$    & 10
 Nessuna soglia critica è stata rilevata: $M_{\text{TOP4}}$ mantiene $\bar{M}=1.00$ e $P_{\text{succ}}=100\%$ su tutto il range, incluso $\varepsilon_{2q}=10^{-1}$ dove $P_{\text{surv}} \approx 2.5\times10^{-8}$. Il rumore depolarizzante, pur abbassando la probabilità \emph{media} di sopravvivenza del segnale, non produce istogrammi uniformemente piatti per ogni realizzazione (seed): in una frazione significativa delle esecuzioni uno o più dei quattro candidati più frequenti corrisponde comunque a una fase QPE valida. TOP-K sfrutta questa struttura residua: non richiede che il segnale sia forte in media, ma solo che sia recuperabile \emph{in quella specifica esecuzione}. La variazione di $\rho$ (fra 1.30 e 1.97) riflette il comportamento non monotòno di $\bar{M}_1$, non un degrado di $M_{\text{TOP4}}$: al crescere del rumore la baseline talvolta \emph{migliora}, perché l'allargamento della distribuzione aumenta la probabilità che la moda cada nella banda di accettazione delle frazioni continue.
 
 % -----------------------------------------------
-\section{Variazione di $M_{\text{shots}}$ (shot per iterazione)}
+\subsection{Variazione di $M_{\text{shots}}$ (shot per iterazione)}
 \label{subsec:sweep_shots}
 
 \paragraph{Previsione.}
@@ -91,7 +91,7 @@ $M_{\text{shots}}$ & $P_{\text{succ}}$ & $\bar{M}$ & $\sigma_M$ & $\rho$ vs M1 \
 La previsione è smentita: anche con 128 shot --- otto volte meno della soglia prevista --- $M_{\text{TOP4}}$ raggiunge $\bar{M}=1.00$ e $P_{\text{succ}}=100\%$. Il campionamento uniforme di tutte le celle non è necessario perché i picchi QPE validi occupano poche posizioni fisse e ben separate: anche un istogramma sparso è sufficiente a individuarle. Il costo per iterazione è dunque fino a 8 volte inferiore al riferimento.
 
 % -----------------------------------------------
-\section{Analisi Congiunta $K \times \varepsilon_{2q}$}
+\subsection{Analisi Congiunta $K \times \varepsilon_{2q}$}
 \label{subsec:sweep_joint}
 
 L'analisi congiunta verifica se esiste un'interazione tra $K$ e il livello di rumore: in regime di rumore elevato, un $K$ maggiore potrebbe compensare il degrado del picco QPE. Griglia $K \in \{2, 4, 6, 8\} \times \varepsilon_{2q} \in \{5\times10^{-3}, 10^{-2}, 2\times10^{-2}, 5\times10^{-2}\}$, $K_{\text{rep}}=30$ per cella.
@@ -116,7 +116,7 @@ $K$ & $5\times10^{-3}$ & $10^{-2}$ (UC1) & $2\times10^{-2}$ & $5\times10^{-2}$ (
 L'interazione è assente: ogni cella produce $\bar{M}=1.00$ con $P_{\text{succ}}=100\%$. Non esiste un regime in cui un $K$ più alto compensi un rumore più elevato, perché TOP-K non ne ha bisogno: anche a $\varepsilon_{2q}=5\times10^{-2}$ il picco corretto rientra già tra i primi due candidati.
 
 % -----------------------------------------------
-\section{Parametri Secondari: $T_1$/$T_2$, $\varepsilon_{1q}$ e $p_{\text{ro}}$}
+\subsection{Parametri Secondari: $T_1$/$T_2$, $\varepsilon_{1q}$ e $p_{\text{ro}}$}
 \label{subsec:sweep_secondari}
 
 I tempi di coerenza, il tasso di errore a singolo qubit e l'errore di lettura erano attesi come parametri secondari per $N=15$: il tempo di gate totale (${\approx}8\,\mu\text{s}$) è ben inferiore ai tempi di decoerenza tipici, le porte a singolo qubit sono confrontabili in numero con le 166 porte a due qubit ma con errore dieci volte minore, e $p_{\text{ro}}$ produce solo un allargamento simmetrico dell'istogramma.
@@ -177,7 +177,7 @@ $p_{\text{ro}}$ & $P_{\text{succ}}$ & $\bar{M}$ & $\sigma_M$ & $\rho$ vs M1 \\
 La previsione qualitativa (impatto marginale) è confermata, ma l'esito quantitativo è ancora più netto: l'impatto è \emph{nullo} su tutto il range testato per tutti i parametri. $T_1$ varia da $20$ a $500\,\mu\text{s}$, $\varepsilon_{1q}$ da $10^{-4}$ a $2\times10^{-2}$ (lo stesso ordine di grandezza di $\varepsilon_{2q}$), $p_{\text{ro}}$ da $0\%$ a $20\%$ (ben oltre i valori realistici $\lesssim 3\%$ dei dispositivi attuali): in nessun caso $\bar{M}_{\text{TOP4}}$ si discosta da 1.00. Un errore di lettura simmetrico allarga l'istogramma ma non sposta i picchi QPE; il basso numero di porte a singolo qubit rende $\varepsilon_{1q}$ trascurabile; il tempo di gate complessivo è inferiore anche al minimo $T_1$ testato.
 
 % -----------------------------------------------
-\section{Dettaglio del Confronto con Zero-Noise Extrapolation}
+\subsection{Dettaglio del Confronto con Zero-Noise Extrapolation}
 \label{sec:app_zne}
 
 La \ac{ZNE}~\cite{temme2017} opera in due fasi. Nella prima, il circuito viene eseguito a più livelli di rumore amplificato (noise scaling): si moltiplicano i parametri di errore $\varepsilon_{2q}$ e $\varepsilon_{1q}$ per fattori $\lambda \in \{1, 2, 3, \ldots\}$, ottenendo istogrammi progressivamente più degradati. Nella seconda, si applica la \textit{Richardson extrapolation} per stimare l'istogramma al rumore ideale $\lambda=0$:
@@ -194,3 +194,92 @@ L'esito del confronto (Tabella~\ref{tab:confronto_zne} nel Capitolo~\ref{chap:ri
 L'inefficacia è spiegabile strutturalmente, ed è istruttiva per il seguito della tesi. La \ac{ZNE} è progettata per stimare valori di aspettazione di osservabili scalari (es.\ $\langle Z \rangle$), dove la relazione fra intensità del rumore e output è regolare e l'estrapolazione è stabile. Nel caso di Shor l'output è una distribuzione di probabilità su $2^8 = 256$ stati: l'estrapolazione Richardson applicata componente per componente produce valori negativi in molte celle --- fisicamente privi di significato --- che vengono tagliati e rinormalizzati, un'operazione non lineare che l'analisi di errore dell'estrapolazione non contempla. Ma la ragione più profonda è un'altra: \emph{non c'è alcun bias sistematico da rimuovere}. La \ac{ZNE} corregge lo spostamento medio indotto dal rumore, e su questo compito quello spostamento non è ciò che fa fallire l'estrazione --- la sweep di $\varepsilon_{2q}$ ha mostrato che la moda resta nella banda di accettazione delle frazioni continue anche quando $P_{\text{surv}}$ scende a $6\times10^{-6}$. Spendere shot per stimare e sottrarre un bias irrilevante è lavoro sprecato. $M_{\text{TOP4}}$ segue la logica opposta: invece di correggere l'istogramma, accetta il rumore come dato di fatto e amplia la ricerca ai $K$ candidati più probabili.
 
 \end{onehalfspace}
+
+% Migrato dal Cap. 8: analisi di sensibilita\' e sweep optimization_level.
+\subsection{Analisi di Sensibilità ai Parametri e Scelta del Livello di Ottimizzazione}
+\label{subsec:sensibilita_metodo}
+
+\subsubsection{Analisi di Sensibilità ai Parametri di Rumore}
+
+Prima di fissare l'approccio definitivo, è stato condotto uno studio empirico sistematico per determinare quali parametri del modello di rumore influenzano effettivamente le prestazioni dell'algoritmo di Shor su N=15. Lo sweep è stato eseguito variando un parametro per volta mantenendo fissi tutti gli altri ai valori del profilo NISQ-realistico (Tabella~\ref{tab:use_case_params}), con K=30 ripetizioni per punto e SHOTS=1024.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Parametro} & \textbf{Valore base} & \textbf{Range testato} & \textbf{Effetto su $\bar{M}_1$} \\
+\midrule
+$\varepsilon_{1q}$ (gate 1-qubit) & $10^{-3}$ & $[10^{-4},\ 2\times10^{-2}]$ & \textbf{Nessuno} \\
+$T_1 / T_2$ (decoerenza)          & 100/80 µs  & $[20,\ 500]$ µs              & \textbf{Nessuno} \\
+$p_{\text{ro}}$ (readout error)   & $0.02$     & $[0,\ 0.20]$                 & \textbf{Nessuno} \\
+$\varepsilon_{2q}$ (gate CX)      & $10^{-2}$  & $[10^{-3},\ 10^{-1}]$        & \textbf{Dominante} \\
+\bottomrule
+\end{tabular}
+\caption{Risultati dell'analisi di sensibilità ai parametri di rumore per N=15, a=7, n\_count=8. Solo $\varepsilon_{2q}$ influenza le prestazioni di M1.}
+\label{tab:sensitivity}
+\end{table}
+
+I risultati mostrano con nettezza che \textbf{nessun parametro del modello di rumore degrada la convergenza in modo apprezzabile}. Errori sui gate a singolo qubit, tempi di decoerenza $T_1/T_2$ e readout error producono $\bar{M}_1 = 1.0$ con success rate $= 100\%$ sull'intero range testato, indistinguibili dal caso ideale; il tasso di errore dei gate a due qubit $\varepsilon_{2q}$ --- l'unico che lascia una traccia --- fa oscillare $\bar{M}_1$ fra $1.3$ e $2.0$ senza alcun andamento monotono e senza mai far scendere il tasso di successo sotto il $100\%$, come mostra la Tabella~\ref{tab:sweep_eps2q}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+$\varepsilon_{2q}$ & $P_{\text{surv}}$ & $\bar{M}_1$ & $\sigma_{M_1}$ & Success rate & TOP-4 $\bar{M}$ \\
+\midrule
+$10^{-3}$        & $8.5\times10^{-1}$ & 1.70 & 0.94 & 100\% & 1.00 \\
+$5\times10^{-3}$ & $4.4\times10^{-1}$ & 1.97 & 1.47 & 100\% & 1.00 \\
+$10^{-2}$        & $1.9\times10^{-1}$ & 1.97 & 1.66 & 100\% & 1.00 \\
+$2\times10^{-2}$ & $3.5\times10^{-2}$ & 1.53 & 0.62 & 100\% & 1.00 \\
+$5\times10^{-2}$ & $2.0\times10^{-4}$ & 1.53 & 1.28 & 100\% & 1.00 \\
+$10^{-1}$        & $2.5\times10^{-8}$ & 1.30 & 0.78 & 100\% & 1.00 \\
+\bottomrule
+\end{tabular}
+\caption[Sweep di $\varepsilon_{2q}$ su UC1]{Sweep di $\varepsilon_{2q}$ su UC1 ($N=15$, $a=7$, $K_{\text{rep}}=30$). $P_{\text{surv}} = (1-\varepsilon_{2q})^{166}$ è la probabilità che nessuna delle porte soggette all'errore a due qubit subisca errore; si veda la nota seguente sul conteggio. Entrambe le strategie mantengono success rate $=100\%$ su tutto il range, e $\bar{M}_1$ resta compreso fra $1.3$ e $2.0$ anche là dove $P_{\text{surv}}$ scende a due parti su cento milioni.}
+\label{tab:sweep_eps2q}
+\end{table}
+
+\begin{samepage}
+\subsubsection{Come va contato $P_{\text{surv}}$.} Il modello di rumore adottato (Sezione~\ref{sec:noise_model}) applica l'errore depolarizzante a due qubit non alle sole porte \texttt{cx}, ma all'insieme \texttt{[cx, swap, cp]}. L'esponente di $P_{\text{surv}}$ è quindi il numero \emph{complessivo} di porte soggette a quell'errore, non il conteggio delle \texttt{cx}. Per il circuito di UC1 traspilato a \texttt{optimization\_level=2} la composizione è $114$ \texttt{cx} $+\ 52$ \texttt{cp} $+\ 0$ \texttt{swap}, da cui $k = 166$ e $P_{\text{surv}} = (1-\varepsilon_{2q})^{166}$. Le porte \texttt{cp} provengono dalla \ac{QFT} inversa, che il transpiler conserva nel gate set nativo anziché decomporle: trascurarle sottostima l'errore accumulato di un terzo abbondante. La distinzione è tanto più rilevante per le istanze maggiori, dove la decomposizione di Beauregard costruisce l'aritmetica modulare interamente nel dominio della \ac{QFT} e le \texttt{cp} arrivano a superare di tre volte le \texttt{cx} (Capitolo~\ref{chap:risultati}, Tabella~\ref{tab:circuit_depth}).
+\end{samepage}
+
+Il dato più istruttivo della tabella è il confronto fra la seconda colonna e le successive. Passando da $\varepsilon_{2q}=10^{-3}$ a $\varepsilon_{2q}=10^{-1}$, la probabilità che il circuito attraversi tutte le sue porte a due qubit senza alcun errore crolla dall'$85\%$ a due parti su cento milioni: in altre parole, nel regime peggiore \emph{praticamente ogni singola esecuzione} contiene almeno un errore. Ciononostante $\bar{M}_1$ non peggiora --- anzi, decresce leggermente --- e il tasso di successo resta pieno. La spiegazione sta nella natura della \ac{QPE}: il segnale non è concentrato in un unico esito che il rumore può distruggere, ma distribuito su un picco largo attorno ai valori $k \approx j\,2^{n}/r$, e la procedura delle frazioni continue tollera uno scostamento apprezzabile dal massimo esatto. Un errore che sposta la misura di qualche unità lascia il periodo recuperabile. È lo stesso meccanismo che, portato alle sue conseguenze, rende efficace la strategia TOP-K.
+
+Questo risultato ha un'interpretazione fisica precisa anche per gli altri parametri. Il circuito di Shor per N=15 con la decomposizione a permutazione (\texttt{c\_amod15}) ha profondità ridotta: in queste condizioni il tempo totale di esecuzione è sufficientemente breve da rendere la decoerenza ($T_1$, $T_2$) trascurabile rispetto al contributo dei gate a due qubit. Analogamente, gli errori sui gate a singolo qubit e il readout error si trovano in un regime in cui il loro effetto è oscurato dall'errore CX. La fonte di degradazione dominante è quindi il numero e la qualità dei gate \ac{CX}.
+
+\textbf{Implicazioni per le scelte implementative.} Questa analisi ha tre conseguenze dirette:
+
+\begin{enumerate}
+    \item \textbf{La decomposizione Beauregard è la leva più efficace.} Ridurre $\varepsilon_{2q}$ non è controllabile (è una proprietà del backend), ma ridurre il \textit{numero} di gate \ac{CX} è possibile a livello di implementazione. La decomposizione Beauregard (Sezione~\ref{subsec:transpilazione}) fa esattamente questo, portando N=21 da ${\sim}10\,040$ gate \ac{CX} (UnitaryGate naïve) a ${\sim}2\,594$ (Beauregard).
+
+    \item \textbf{Readout mitigation e ottimizzazioni $T_1/T_2$ sono inutili per N=15.} Il risultato empirico conferma che nessuno dei due approcci porta benefici misurabili nel regime N=15. Adottarli avrebbe aggiunto complessità senza impatto sulle metriche.
+
+    \item \textbf{La ZNE è inefficace su questo compito.} Il confronto sperimentale (Sezione~\ref{subsec:zne} e Capitolo~\ref{chap:risultati}) mostra che ZNE-2 e ZNE-3 non riducono in modo statisticamente significativo il numero di iterazioni, pur richiedendo da due a tre volte più shot per il campionamento ai livelli di rumore amplificato: il costo è certo, il beneficio non si manifesta. Il motivo è coerente con quanto appena osservato --- non c'è un bias sistematico da estrapolare via, perché la distribuzione rumorosa conserva già il segnale che serve.
+
+    \item \textbf{L'\texttt{optimization\_level} ha effetto trascurabile per N=15.} È stato condotto un ulteriore sweep variando il livello di ottimizzazione del transpiler Qiskit da 0 a 3. I risultati sono riportati in Tabella~\ref{tab:sweep_optlevel}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+\textbf{Livello} & \texttt{cx} & \texttt{cp} & \texttt{swap} & $k$ & \textbf{Profondità} & $P_{\text{surv}}$ ($\varepsilon_{2q}=10^{-2}$) \\
+\midrule
+0            & 168 & 28 & 4 & 200 & 319 & 13.4\% \\
+1            & 162 & 28 & 4 & 194 & 313 & 14.2\% \\
+2 (adottato) & 114 & 52 & 0 & 166 & 311 & 18.9\% \\
+3            & 114 & 52 & 0 & 166 & 311 & 18.9\% \\
+\bottomrule
+\end{tabular}
+\caption[Sweep di \texttt{optimization\_level}]{Sweep di \texttt{optimization\_level} sul circuito di UC1 ($N=15$, $a=7$); $k = \texttt{cx} + \texttt{cp} + \texttt{swap}$ è il numero di porte soggette all'errore a due qubit. La tabella mostra perché il conteggio delle sole \texttt{cx} è fuorviante: passando dal livello 1 al livello 2 le \texttt{cx} scendono di quarantotto unità ($162 \rightarrow 114$), ma quasi metà della riduzione è compensata dalla comparsa di ventiquattro \texttt{cp} in più, e il guadagno effettivo su $P_{\text{surv}}$ è di soli $4.7$ punti percentuali anziché dei $12$ che il solo conteggio \texttt{cx} suggerirebbe. Il livello 3 non apporta alcun miglioramento ulteriore. Si riportano le sole metriche di transpilazione: le metriche di convergenza raccolte in questo sweep non sono comparabili con quelle degli altri, perché l'implementazione usata al suo interno seleziona i candidati con una sogliatura al 30\% del massimo anziché la sola moda, e non corrisponde quindi al Metodo 1 definito nella Sezione~\ref{sec:metodo1}.}
+\label{tab:sweep_optlevel}
+\end{table}
+
+Si adotta il livello 2 per tutti gli esperimenti, in quanto raggiunge il valore minimo di $k$ senza il costo della ricerca esaustiva del livello 3, che su questo circuito non trova alcun margine ulteriore. Il guadagno complessivo è però modesto --- $17\%$ di porte rumorose in meno fra il livello 0 e il livello 2 --- e resta di gran lunga inferiore a quello ottenibile cambiando decomposizione. Il dato conferma per via indipendente ciò che la barriera di scalabilità del Capitolo~\ref{chap:risultati} mostrerà: la leva dominante sul numero di porte a due qubit è la \textit{scelta della decomposizione}, non il livello di ottimizzazione del transpiler.
+
+\begin{samepage}
+\subsubsection{Nota sulla dipendenza dalla versione del transpiler.} La ripartizione fra \texttt{cx} e \texttt{cp} ai livelli 2 e 3 dipende dalla versione di Qiskit: le campagne di questa tesi sono state eseguite con \textbf{Qiskit 2.x}, mentre versioni precedenti della stessa pipeline producevano $162$ \texttt{cx} anche al livello 2. Il valore di $k$, e con esso $P_{\text{surv}}$, ne risente assai meno del conteggio delle sole \texttt{cx} --- $166$ contro $194$, ossia $18.9\%$ contro $14.2\%$ --- il che è un'ulteriore ragione per riportare $k$ anziché il numero di \texttt{cx}. Ogni valore di $P_{\text{surv}}$ nel seguito si riferisce a $k$; il dato va inteso come proprietà della coppia (circuito, transpiler) e non del solo algoritmo.
+\end{samepage}
+\end{enumerate}
+
+La strategia TOP-4 --- che mantiene success rate = 100\% sull'intero range di $\varepsilon_{2q}$ --- emerge come la scelta ottimale per N=15. Il classificatore ML del Metodo 2 si inserisce in questo framework come strumento per ridurre ulteriormente il numero di iterazioni necessarie prima di convergere a un risultato affidabile, completando la catena di ottimizzazione descritta nella sezione seguente.
+

@@ -3,12 +3,12 @@
 La scelta degli strumenti di simulazione non è neutrale. In informatica quantistica, il framework adottato determina quali modelli di rumore sono disponibili, verso quale hardware è possibile traslare i circuiti e con quali risultati della letteratura è possibile confrontarsi direttamente. Questo capitolo descrive gli strumenti utilizzati nella parte sperimentale di questa tesi, motivando ciascuna scelta e collocandola rispetto alle alternative disponibili.
 
 % -----------------------------------------------
-\section{Qiskit: il Framework Quantistico di Riferimento}
+\subsection{Qiskit: il Framework Quantistico di Riferimento}
 \label{sec:qiskit}
 
 \textbf{Qiskit} (\textit{Quantum Information Science Kit}) è un \ac{SDK} open-source sviluppato da \ac{IBM} Quantum per la programmazione, la simulazione e l'esecuzione di algoritmi su processori quantistici superconduttori \cite{qiskit2023}. Rilasciato pubblicamente nel 2017, è oggi il framework di riferimento per la ricerca e la sperimentazione su hardware \ac{IBM} ed è il più adottato nella letteratura scientifica sugli algoritmi quantistici a corto termine \cite{skosana2021, shor_hpec2023}.
 
-\subsection{Architettura del Framework}
+\subsubsection{Architettura del Framework}
 
 Qiskit è organizzato in tre componenti principali, ciascuno con un ruolo distinto nel ciclo di vita di un esperimento quantistico:
 
@@ -22,7 +22,7 @@ Qiskit è organizzato in tre componenti principali, ciascuno con un ruolo distin
 
 \end{itemize}
 
-\subsection{Perché Qiskit e non un'alternativa}
+\subsubsection{Perché Qiskit e non un'alternativa}
 \label{sec:confronto_framework}
 
 La scelta di Qiskit è stata formalizzata nell'incontro con il relatore del 18 marzo 2026, in seguito all'analisi del tutorial ufficiale \ac{IBM} per l'algoritmo di Shor \cite{ibm_shor_tutorial}. La decisione è motivata da quattro ragioni convergenti.
@@ -52,12 +52,12 @@ Forest / PyQuil     & Rigetti               & Parziale                          
 \end{table}
 
 % -----------------------------------------------
-\section{Qiskit Aer: il Simulatore}
+\subsection{Qiskit Aer: il Simulatore}
 \label{sec:qiskit_aer}
 
 Qiskit Aer è il modulo di simulazione classica di Qiskit. Il suo componente principale è \texttt{AerSimulator}, un simulatore ad alte prestazioni che supporta più metodi di simulazione selezionabili a seconda della dimensione del circuito e del tipo di analisi richiesta.
 
-\subsection{Metodi di Simulazione}
+\subsubsection{Metodi di Simulazione}
 
 \texttt{AerSimulator} espone i seguenti metodi principali tramite il parametro \texttt{method}:
 
@@ -73,7 +73,7 @@ Qiskit Aer è il modulo di simulazione classica di Qiskit. Il suo componente pri
 
 La scelta del metodo \texttt{statevector} è motivata dal numero di qubit delle istanze trattate (da 11 a 18 qubit nei quattro use case) e dalla necessità di un risultato esatto, non approssimato.
 
-\subsection{Modelli di Rumore}
+\subsubsection{Modelli di Rumore}
 
 Il modulo \texttt{qiskit\_aer.noise} fornisce le primitive per costruire modelli di rumore compositi. Ogni errore è rappresentato come un canale quantistico che viene applicato ai gate specificati, con la possibilità di assegnare errori diversi a qubit diversi (rumore eterogeneo) o un errore uniforme a tutti i qubit (\textit{all-qubit error}). I tipi di errore disponibili includono:
 
@@ -86,12 +86,12 @@ Il modulo \texttt{qiskit\_aer.noise} fornisce le primitive per costruire modelli
 
 Il modello di rumore usato in questa tesi combina errori depolarizzanti, rilassamento termico e readout error, con parametri calibrati sull'hardware \texttt{ibm\_marrakesh} secondo la metodologia descritta in \cite{epjqt_noise2024}. La configurazione dettagliata è riportata nel Capitolo~\ref{chap:obiettivi}.
 
-\subsection{Transpilazione}
+\subsubsection{Transpilazione}
 
 Prima dell'esecuzione, il circuito deve essere \textit{transpilato}: la funzione \texttt{transpile} riscrive il circuito nel gate set nativo del backend target (per \texttt{AerSimulator}: \texttt{cx}, \texttt{h}, \texttt{rz}, \texttt{x}, \texttt{swap}) e applica ottimizzazioni strutturali selezionabili tramite il parametro \texttt{optimization\_level} (da 0 a 3). Un livello di ottimizzazione elevato riduce il numero di gate e, di conseguenza, l'accumulo di errori, a scapito di un maggior tempo di compilazione. In questa tesi si usa \texttt{optimization\_level=3} per minimizzare la profondità del circuito eseguito.
 
 % -----------------------------------------------
-\section{Accelerazione GPU con Qiskit Aer}
+\subsection{Accelerazione GPU con Qiskit Aer}
 \label{sec:gpu}
 
 La libreria \texttt{qiskit-aer-gpu} estende \texttt{AerSimulator} con il supporto per l'accelerazione tramite \ac{GPU} NVIDIA attraverso CUDA. Il backend \texttt{statevector} è interamente eseguito sulla \ac{GPU}: il vettore di stato viene allocato nella memoria VRAM e le operazioni di gate sono eseguite come moltiplicazioni matrice-vettore parallelizzate su migliaia di core CUDA.
@@ -103,7 +103,7 @@ La libreria \texttt{qiskit-aer-gpu} estende \texttt{AerSimulator} con il support
 \textbf{Esito: l'accelerazione non è stata utilizzabile.} Quanto sopra descrive il piano iniziale. In sede di implementazione il backend \ac{GPU} si è rivelato inutilizzabile nell'ambiente \ac{WSL} adottato --- il driver CUDA riconosce la scheda, ma il backend C++ di Aer solleva un errore a runtime sull'esecuzione dei circuiti --- e \textbf{tutti gli esperimenti riportati in questa tesi sono stati eseguiti su \ac{CPU}}. La diagnosi completa e le conseguenze sui tempi di esecuzione sono nella Sezione~\ref{sec:gpu_limit}. Il vincolo di memoria resta quello indicato, riferito però alla memoria di sistema anziché alla VRAM.
 
 % -----------------------------------------------
-\section{scikit-learn: la Libreria per il Classificatore}
+\subsection{scikit-learn: la Libreria per il Classificatore}
 \label{sec:scikit}
 
 Il Metodo 2 richiede l'addestramento di un classificatore binario. La libreria scelta è scikit-learn \cite{scikit_learn}, una delle librerie di machine learning più consolidate nell'ecosistema Python scientifico.
@@ -111,7 +111,7 @@ Il Metodo 2 richiede l'addestramento di un classificatore binario. La libreria s
 La motivazione principale è pragmatica: scikit-learn espone un'interfaccia unificata (\texttt{fit} / \texttt{predict}) per un ampio catalogo di classificatori — Random Forest, \ac{SVM}, \ac{MLP}, e altri — permettendo di confrontarli sullo stesso dataset con minime modifiche al codice. Questo facilita la selezione sperimentale del modello migliore senza dover introdurre dipendenze da framework più pesanti (TensorFlow, PyTorch) per un classificatore che, per il problema in esame, si prevede non richieda architetture profonde.
 
 % -----------------------------------------------
-\section{Ambiente di Esecuzione: WSL con Ubuntu}
+\subsection{Ambiente di Esecuzione: WSL con Ubuntu}
 \label{sec:wsl}
 
 Le simulazioni vengono eseguite in ambiente Linux tramite \ac{WSL} (versione 2) su Windows 11. La scelta è motivata dalla necessità di mantenere la compatibilità con l'ecosistema Linux di Qiskit e delle librerie scientifiche Python, garantendo al contempo l'integrazione con i driver CUDA per \ac{WSL} forniti da NVIDIA.
