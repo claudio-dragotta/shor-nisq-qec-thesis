@@ -2,7 +2,7 @@
 
 Questa appendice raccoglie il materiale di dettaglio del Capitolo~\ref{chap:obiettivi}: la motivazione crittografica estesa, i requisiti funzionali del sistema sperimentale e la specifica completa dei parametri di input e di output.
 
-\section{Motivazione: la Vulnerabilità della Crittografia Attuale}
+\subsection{Motivazione: la Vulnerabilità della Crittografia Attuale}
 \label{sec:motivazione}
 
 La quasi totalità delle comunicazioni digitali sicure --- dalle transazioni bancarie alle connessioni \ac{HTTPS}, dai protocolli \ac{SSH} ai certificati digitali --- è protetta da sistemi crittografici la cui sicurezza si fonda su un presupposto computazionale: la difficoltà di fattorizzare il prodotto di due grandi numeri primi. Il sistema \ac{RSA}, ad esempio, costruisce la propria chiave pubblica come $N = p \cdot q$, dove $p$ e $q$ sono primi di centinaia o migliaia di bit. Finché non esiste un algoritmo classico efficiente per recuperare $p$ e $q$ a partire da $N$, la chiave privata rimane al sicuro.
@@ -25,7 +25,7 @@ La minaccia non è futura in senso astratto. Il fenomeno del \textit{harvest now
 
 Il problema pratico che impedisce questa minaccia di materializzarsi oggi è il \textbf{rumore}. I processori quantistici attuali operano in regime \ac{NISQ}: dispongono di decine o centinaia di qubit fisici, ma sono affetti da decoerenza, errori di gate e readout error che degradano l'output dell'algoritmo di Shor fino a renderlo inaffidabile senza un numero elevato di ripetizioni. Comprendere questo limite e stabilire quali strategie lo superino --- e in quale punto della pipeline di esecuzione i modelli di machine learning contribuiscano davvero --- è la ragione d'essere del presente lavoro.
 
-\section{Requisiti Funzionali}
+\subsection{Requisiti Funzionali}
 \label{sec:requisiti}
 
 Definiti gli obiettivi e il contributo originale, è possibile formalizzare cosa il sistema sperimentale deve concretamente fare. I requisiti seguenti traducono le ipotesi di ricerca in vincoli tecnici verificabili, e costituiscono il riferimento rispetto al quale l'implementazione descritta nel Capitolo~\ref{chap:sviluppo} verrà valutata.
@@ -58,10 +58,10 @@ Il sistema sperimentale deve soddisfare i seguenti requisiti funzionali:
 \end{enumerate}
 
 % -----------------------------------------------
-\section{Parametri di Input e Output}
+\subsection{Parametri di Input e Output}
 \label{sec:input_output}
 
-\subsection{Parametri di Input}
+\subsubsection{Parametri di Input}
 
 La Tabella~\ref{tab:input_params} elenca i parametri di configurazione del sistema. I loro valori vengono fissati per ciascun use case prima dell'esecuzione e rimangono costanti per tutta la durata dell'esperimento corrispondente.
 
@@ -86,7 +86,7 @@ $p_{\text{ro}}$     & adimensionale  & Probabilità di readout error \\
 \label{tab:input_params}
 \end{table}
 
-\subsection{Output del Sistema}
+\subsubsection{Output del Sistema}
 
 Per ogni use case e per ciascuno dei due metodi, il sistema produce le seguenti quantità:
 

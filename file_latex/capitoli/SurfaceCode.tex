@@ -24,26 +24,7 @@ Se la catena di correzione proposta dal decoder e la catena di errori reale diff
 \paragraph{Perché servono strumenti dedicati.}
 La stima di $p_L$ richiede milioni di esecuzioni di circuiti con centinaia di qubit: fuori portata per un simulatore statevector, il cui costo cresce come $2^n$ (Capitolo~\ref{chap:strumenti}). I circuiti del surface code, però, sono interamente \emph{stabilizer} (composti di sole operazioni Clifford e misure), e per questa classe il teorema di Gottesman-Knill garantisce la simulabilità classica efficiente. Stim~\cite{stim2021} sfrutta esattamente questa proprietà: campiona detection events di circuiti stabilizer a velocità di milioni di shot al secondo. Il rovescio della medaglia --- il fatto che Shor \emph{non} sia un circuito stabilizer --- è il punto di partenza del Capitolo~\ref{chap:integrazione}.
 
-\begin{lstlisting}[caption={Struttura concettuale della stima di $p_L$ con Stim e PyMatching (dal documento di indirizzo). Il circuito di memoria del surface code viene generato parametricamente, campionato, e decodificato con MWPM; $p_L$ è la frazione di shot in cui la predizione del decoder non coincide con l'osservabile logico.}, label={lst:stim_pymatching}]
-import stim
-import pymatching
-
-circuit = stim.Circuit.generated(
-    'surface_code:rotated_memory_x',
-    distance=d,
-    rounds=rounds,
-    after_clifford_depolarization=p,
-    after_reset_flip_probability=p,
-    before_measure_flip_probability=p,
-)
-sampler = circuit.compile_detector_sampler()
-events, observables = sampler.sample(shots, separate_observables=True)
-
-model = circuit.detector_error_model(decompose_errors=True)
-matching = pymatching.Matching.from_detector_error_model(model)
-predictions = matching.decode_batch(events)
-p_L = (predictions != observables).any(axis=1).mean()
-\end{lstlisting}
+\noindent La struttura del codice che realizza questa stima --- generazione parametrica del circuito, campionamento dei detection events, costruzione del \ac{DEM} e decodifica --- è riportata nel Listato~\ref{lst:stim_pymatching} (Sezione~\ref{app:codice}).
 
 % -----------------------------------------------
 \section{Disegno Sperimentale}
@@ -152,324 +133,44 @@ La spiegazione è nel protocollo stesso. L'estrazione della sindrome entangla ri
 Per questa tesi la conseguenza è duplice e va dichiarata: i valori di soglia e di $p_L$ qui riportati vanno intesi come \textbf{baseline ottimistica} valida entro il modello Pauli --- ottimistica di circa il $12\%$ alla distanza esaminata, non di ordini di grandezza --- e il loro raffinamento verso un modello di rumore fisico più ricco, con distanze maggiori e cicli meno frequenti, è la naturale continuazione del lavoro.
 
 % -----------------------------------------------
-\section{La Decodifica Appresa: una Rete Neurale al Posto del Matching}
+\section{La Decodifica Appresa: Sintesi della Campagna}
 \label{sec:decodifica_appresa}
 
-La sezione precedente ha mostrato che il modello di rumore usato per \emph{simulare} il codice è un'idealizzazione. Esiste però una seconda idealizzazione, indipendente dalla prima e altrettanto conseguente, che riguarda il modello di rumore usato per \emph{decodificare}. Il \ac{MWPM} non è un algoritmo generico: presuppone che gli errori si organizzino in un grafo, ossia che ogni meccanismo d'errore accenda al più due detection events e sia quindi rappresentabile come un arco. È questa proprietà --- la \textbf{decomponibilità in archi} --- a rendere il problema della decodifica un accoppiamento di peso minimo, ed è ciò che la libreria richiede esplicitamente quando si costruisce il modello d'errore con \texttt{decompose\_errors=True}. Un errore correlato che colpisca simultaneamente due qubit dati adiacenti accende invece fino a quattro detector e non ammette alcun arco che lo rappresenti: non viola l'ipotesi di Pauli, che resta soddisfatta, ma viola quella di decomponibilità. Le due idealizzazioni sono distinte e vanno tenute separate.
+La sezione precedente ha mostrato che il modello di rumore usato per \emph{simulare} il codice è un'idealizzazione. Esiste però una seconda idealizzazione, indipendente dalla prima e altrettanto conseguente, che riguarda il modello usato per \emph{decodificare}. Il \ac{MWPM} non è un algoritmo generico: presuppone che ogni meccanismo d'errore accenda al più due detection events e sia quindi rappresentabile come un arco del grafo. Un errore correlato che colpisca due qubit dati adiacenti ne accende fino a quattro e non ammette alcun arco che lo rappresenti --- non viola l'ipotesi di Pauli, che resta soddisfatta, ma quella di \textbf{decomponibilità}.
 
-Questa distinzione individua con precisione la domanda a cui la presente sezione risponde: \emph{esiste un regime in cui un decoder \textbf{appreso dai dati} --- che non assume alcun modello, ma lo ricava dai campioni --- fa meglio del decoder analitico?} La domanda chiude anche il cerchio metodologico dell'intera tesi. Il Capitolo~\ref{chap:risultati} ha stabilito che l'apprendimento automatico applicato \emph{a valle} dell'esecuzione non aggiunge nulla; qui lo stesso strumento --- un percettrone multistrato di \texttt{scikit-learn}, la medesima tecnologia del classificatore giudicato superfluo --- viene applicato alla \textbf{sindrome}, cioè in un punto della pipeline in cui l'informazione strutturale non è ancora stata distrutta. Cambia il punto di applicazione, non la tecnologia: è esattamente il confronto che permette di attribuire l'esito al \emph{dove}, e non al \emph{come}.
+Da qui la domanda che chiude il cerchio metodologico della tesi: \emph{esiste un regime in cui un decoder appreso dai dati, che non assume alcun modello ma lo ricava dai campioni, fa meglio di quello analitico?} Il Capitolo~\ref{chap:risultati} ha stabilito che l'apprendimento applicato \emph{a valle} dell'esecuzione non aggiunge nulla; qui il medesimo strumento --- un percettrone multistrato di \texttt{scikit-learn} --- viene applicato alla \textbf{sindrome}, dove l'informazione strutturale non è ancora stata distrutta. Cambia il punto di applicazione, non la tecnologia: è ciò che permette di attribuire l'esito al \emph{dove} e non al \emph{come}.
 
-\subsection{Disegno sperimentale}
-\label{subsec:neural_disegno}
-
-Il dato di addestramento non richiede alcuna infrastruttura aggiuntiva: è già ciò che Stim produce per stimare $p_L$. Il campionatore restituisce la matrice dei detection events e il corrispondente esito dell'osservabile logico, che sono rispettivamente le variabili indipendenti e l'etichetta del problema di apprendimento supervisionato:
-
-\begin{lstlisting}[caption={Il dataset del decoder appreso coincide con l'output del campionatore di Stim: \texttt{det} è la sindrome osservata, \texttt{obs} l'esito logico da predire. Il decoder analitico e quello appreso ricevono quindi esattamente la stessa informazione.}, label={lst:neural_dataset}]
-det, obs = sampler.sample(shots, separate_observables=True)
-#  X = det  (detection events)     ->  sindrome misurata
-#  y = obs  (logical observable)   ->  flip logico da predire
-\end{lstlisting}
-
-Il modello è un \ac{MLP} con due strati nascosti $(128, 64)$, attivazione ReLU, ottimizzatore Adam e arresto anticipato su una frazione di validazione interna; il decoder di riferimento è PyMatching sullo stesso insieme di test. Tutte le stime adottano il codice ruotato in base $Z$ con $\text{rounds}=d$ e rumore \textit{circuit-level}, come nella campagna della Sezione~\ref{sec:surface_risultati}. La Tabella~\ref{tab:neural_disegno} riassume i quattro esperimenti.
+La campagna consta di sette esperimenti, riportati per esteso nella Sezione~\ref{app:decodifica} dell'Appendice~\ref{app:fase2}. Se ne riassumono qui gli esiti e il criterio che ne discende.
 
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{clll}
+\begin{tabular}{clp{7.6cm}}
 \toprule
-& \textbf{Domanda} & \textbf{Condizione} & \textbf{Campioni} \\
+ & \textbf{domanda} & \textbf{esito} \\
 \midrule
-E1  & la rete sostituisce il matching?      & rumore nominale, modello esatto & $4\times10^5$ per punto \\
-E1b & quanto costa in dati il pareggio?     & $d=3$, $p=3\times10^{-3}$        & fino a $8\times10^5$ \\
-E2  & e se il rumore esce dal modello?      & crosstalk correlato              & $4\times10^5$ per punto \\
-E4  & e se la si affianca invece di sostituirla? & crosstalk correlato         & $8\times10^5$ per punto \\
+E1 & sostituire il matching con una rete? & \textbf{No}: nessuna vittoria su 14 configurazioni; pareggio a $d=3$, sconfitta a $d=5$ \\
+E1b & quanti dati servirebbero? & $10^5$--$10^6$ campioni solo per pareggiare a $d=3$ \\
+E2 & e se il rumore esce dal modello del decoder? & la rete vince a $d=3$ ($1.14$--$1.19\times$) \\
+E3 & sa prevedere \emph{quando} il matching sbaglia? & sì, \ac{AUC} $=0.941$ \\
+E4 & affiancarlo invece di sostituirlo? & $-18/-21\%$ a $d=3$, $-1/-3\%$ a $d=5$, \textbf{nullo a $d=7$} \\
+E5 & è trasferibile fra profili di rumore? & sì, 12 trasferimenti su 12 battono il matching \\
+E6 & un modello \emph{mal calibrato} apre un margine? & \textbf{No}: 0 su 12; il matching perde solo l'$1$--$3\%$ \\
+E7 & un decoder analitico migliore lo cattura già? & a $d=5$ sì, e meglio della rete \\
 \bottomrule
 \end{tabular}
-\caption[Disegno sperimentale della decodifica appresa]{I quattro esperimenti sulla decodifica appresa. E3, discusso nella Sezione~\ref{subsec:neural_validatore}, riusa la configurazione di E2 senza nuovi campionamenti.}
-\label{tab:neural_disegno}
+\caption[Sintesi della campagna sulla decodifica appresa]{Sintesi dei sette esperimenti sulla decodifica appresa. Il dettaglio, con tabelle, figure e test di significatività, è nella Sezione~\ref{app:decodifica}.}
+\label{tab:sintesi_decodifica}
 \end{table}
 
-\subsection{E1 --- la sostituzione a parità di modello}
-\label{subsec:neural_e1}
+\paragraph{Che cosa se ne ricava.}
+Il risultato centrale è che \textbf{sostituire} il decoder analitico non conviene, mentre \textbf{affiancarlo} sì. Il decoder ibrido, in cui la rete apprende unicamente \emph{quando ribaltare} la decisione del matching, riduce l'errore logico fino al $21\%$ in presenza di errori correlati e ricade esattamente sul matching quando il rumore è quello previsto: degrada con grazia, riconoscendo di non avere nulla da aggiungere.
 
-Il primo esperimento pone il confronto nelle condizioni più favorevoli al decoder analitico: rumore uniforme e modello d'errore esatto, cioè esattamente ciò per cui il \ac{MWPM} è costruito. Su quattordici configurazioni ($d = 3, 5$; sette valori di $p$) la rete \textbf{non supera mai} il matching con significatività statistica. A distanza 3 lo affianca, con un rapporto $p_L^{\text{MWPM}}/p_L^{\text{rete}}$ che sale da $0.83$ a $p = 2\times10^{-3}$ fino a $1.01$ a $p = 10^{-2}$; a distanza 5 resta indietro di un ordine di grandezza (da $0.05$ a $0.29$).
+Due controlli successivi ne delimitano però la portata, e vanno enunciati senza attenuazioni. Il primo (E6) esclude che il vantaggio nasca dal fornire al matching un modello esatto che l'hardware non offre: perturbando il modello fino a un ordine di grandezza l'errore logico varia dell'$1$--$3\%$, e la rete non vince mai. Il secondo (E7) confronta con BP+OSD, decoder analitico strettamente più espressivo: a $d=5$ esso guadagna il $17$--$27\%$ dove l'ibrido si ferma all'$1$--$3\%$.
 
-L'andamento monotòno suggerisce la spiegazione, che il pannello (b) della Figura~\ref{fig:qec_neural_leale} verifica direttamente: la rete è limitata dal \textbf{volume di dati}, non dalla capacità del modello. Fissando $d=3$ e $p = 3\times10^{-3}$ e facendo variare il solo insieme di addestramento, il rapporto cresce in modo regolare da $0.50$ ($2.5\times10^4$ campioni) a $1.02$ ($8\times10^5$ campioni). L'ultimo punto misura $p_L = 3.98\times10^{-3}$ contro $4.04\times10^{-3}$ del matching: un sorpasso nominale che, su un insieme di test di $10^5$ campioni, vale $0.2$ deviazioni standard e \textbf{non è statisticamente significativo}. Il risultato di E1 è dunque un pareggio, e il suo contenuto informativo è il prezzo di quel pareggio: dell'ordine di $10^5$--$10^6$ campioni a distanza 3, con un fabbisogno che cresce rapidamente con $d$ --- coerente con il fatto che i decoder neurali allo stato dell'arte ricorrono ad architetture ricorrenti e a volumi di dati di diversi ordini di grandezza superiori~\cite{alphaqubit2024, transformer_decoder2023}.
+Il quadro che ne esce non è però una sconfitta dell'apprendimento, bensì una precisazione su \emph{quale} informazione esso sfrutti. Il guadagno di BP+OSD \textbf{decresce} al crescere del rumore correlato, quello dell'ibrido \textbf{cresce}: i due metodi agiscono su assi ortogonali, perché il primo sfrutta meglio il modello che riceve e il secondo cattura ciò che al modello sfugge. Sono dunque sommabili, e costruire il residuo appreso sopra BP+OSD anziché sopra il matching è l'estensione immediata indicata nel Capitolo~\ref{chap:sviluppi}.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{qec_neural_leale.pdf}
-\caption[Decodifica appresa a parità di modello di rumore]{(a) Errore logico del decoder appreso e del \ac{MWPM} in funzione dell'errore fisico, per $d=3$ e $d=5$, con modello d'errore esatto fornito al matching. La rete affianca il matching a distanza 3 e resta al di sopra a distanza 5. (b) Errore logico della rete al crescere dell'insieme di addestramento ($d=3$, $p=3\times10^{-3}$): l'avvicinamento al matching è monotòno e il pareggio si raggiunge fra $3\times10^5$ e $8\times10^5$ campioni. Rigenerabile da \texttt{figure\_src/gen\_qec\_neural.py}.}
-\label{fig:qec_neural_leale}
-\end{figure}
-
-\subsection{E2 --- quando il rumore esce dal modello del decoder}
-\label{subsec:neural_e2}
-
-Il secondo esperimento rimuove l'ipotesi di decomponibilità. Al circuito viene aggiunto un canale correlato a due qubit fra i \textbf{qubit dati fisicamente adiacenti} sulla griglia, una volta per ciclo di sindrome e con intensità $p_{ct}$: è il modello elementare del \textbf{crosstalk}, la quarta fonte fisica di rumore discussa nel Capitolo~\ref{chap:rumore}, che l'accoppiamento capacitivo residuo produce fra qubit vicini. L'errore fisico resta fissato a $p = 3\times10^{-3}$, sotto la soglia misurata nella Sezione~\ref{sec:surface_risultati}. Si confrontano tre bracci: il matching con il modello \emph{nominale} (rumore uniforme --- ciò che la calibrazione del dispositivo dichiara), il matching con il modello del circuito \emph{reale} (che include il crosstalk), e la rete addestrata sui campioni effettivamente osservati.
-
-Il crosstalk degrada la decodifica in modo severo: a $p_{ct} = 5\times10^{-3}$ l'errore logico a $d=3$ passa da $3.8\times10^{-3}$ a $3.1\times10^{-2}$, quasi un ordine di grandezza, pur restando l'errore fisico invariato. In questo regime la rete supera il matching su tutte e quattro le intensità testate a distanza 3, con guadagni fra $1.14$ e $1.19$ (Tabella~\ref{tab:neural_crosstalk}). A distanza 5 il vantaggio non si manifesta: la rete perde, per la stessa ragione di E1 --- lo spazio delle sindromi cresce più rapidamente della sua capacità di generalizzazione.
-
-\begin{table}[H]
-\centering
-\small
-\begin{tabular}{clcccc}
-\toprule
-$d$ & $p_{ct}$ & \textbf{nessuna corr.} & \textbf{MWPM nominale} & \textbf{MWPM reale} & \textbf{rete} \\
-\midrule
-\multirow{4}{*}{3} & $5\times10^{-3}$ & 0.0845 & 0.03097 & 0.05656 & \textbf{0.02707} \\
-                   & $1\times10^{-2}$ & 0.1163 & 0.05966 & 0.08975 & \textbf{0.05012} \\
-                   & $2\times10^{-2}$ & 0.1746 & 0.11184 & 0.15107 & \textbf{0.09547} \\
-                   & $4\times10^{-2}$ & 0.2652 & 0.20806 & 0.25481 & \textbf{0.17568} \\
-\midrule
-\multirow{4}{*}{5} & $5\times10^{-3}$ & 0.2007 & \textbf{0.03521} & 0.02796 & 0.08266 \\
-                   & $1\times10^{-2}$ & 0.2648 & 0.08655 & \textbf{0.06526} & 0.13957 \\
-                   & $2\times10^{-2}$ & 0.3565 & 0.19933 & \textbf{0.15662} & 0.28906 \\
-                   & $4\times10^{-2}$ & 0.4459 & 0.37458 & \textbf{0.32515} & 0.44634 \\
-\bottomrule
-\end{tabular}
-\caption[Decodifica in presenza di rumore correlato]{Errore logico $p_L$ in presenza di crosstalk fra qubit dati adiacenti, a errore fisico costante $p = 3\times10^{-3}$. ``Nessuna correzione'' è la frequenza con cui l'osservabile logico risulta alterato in assenza di decodifica. A distanza 3 la rete domina entrambe le varianti del matching; a distanza 5 il quadro si inverte.}
-\label{tab:neural_crosstalk}
-\end{table}
-
-\paragraph{Un'osservazione inattesa: conoscere il rumore non basta.}
-Il braccio con il modello d'errore \emph{reale} --- quello che conosce il crosstalk --- si comporta in modo opposto alle due distanze, ed è il risultato più istruttivo dell'esperimento. A $d=3$ è il \textbf{peggiore} dei tre ($5.7\times10^{-2}$ contro $3.1\times10^{-2}$ del modello nominale a $p_{ct} = 5\times10^{-3}$): fornire al matching l'informazione corretta lo peggiora. La ragione è strutturale e non contraddittoria. Poiché l'errore correlato non è rappresentabile come arco, la libreria è costretta a scomporlo in archi equivalenti, e su un grafo piccolo come quello di distanza 3 gli archi spurî introdotti dalla scomposizione sviano l'accoppiamento più di quanto l'informazione aggiuntiva lo guidi. A $d=5$, dove il grafo è più ricco e la scomposizione pesa relativamente meno, il bilancio si inverte e il modello reale torna a essere il migliore.
-
-Ne discende un enunciato che vale la pena isolare, perché delimita esattamente ciò che un decoder analitico può e non può fare: \emph{quando la classe di errori non è esprimibile nella struttura del decoder, il limite non è la calibrazione ma la struttura stessa} --- e migliorare la stima del rumore può non produrre alcun beneficio, o risultare controproducente.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{qec_neural_crosstalk.pdf}
-\caption[Decodifica appresa in presenza di rumore correlato]{Errore logico in funzione dell'intensità del crosstalk, a errore fisico costante $p = 3\times10^{-3}$. A distanza 3 la rete (rosso) domina il matching sia con modello nominale (blu) sia con modello reale (arancio), che risulta il peggiore; a distanza 5 l'ordine si inverte. La linea tratteggiata inferiore indica l'errore logico del matching in assenza di crosstalk, cioè il livello che la decodifica raggiungerebbe se il modello fosse corretto.}
-\label{fig:qec_neural_crosstalk}
-\end{figure}
-
-\subsection{E3 --- la rete come validatore della correzione}
-\label{subsec:neural_validatore}
-
-I due esperimenti precedenti valutano la rete come \emph{sostituto} del decoder. Una domanda diversa, e operativamente più modesta, è se la rete sappia riconoscere gli shot in cui il matching ha sbagliato --- cioè se possa \textbf{confermare o negare} la correzione proposta, senza doverla rimpiazzare. Si definisce allora la confidenza che la rete assegna alla risposta effettivamente data dal matching, e si verifica quanto una confidenza bassa predica un fallimento reale.
-
-Nella configurazione $d=3$, $p_{ct} = 10^{-2}$, in cui il matching sbaglia $5\,966$ shot su $10^5$, il flag così costruito discrimina i fallimenti con \ac{AUC} $= 0.941$. La Tabella~\ref{tab:neural_flag} ne riporta il compromesso: abbassando la soglia si segnalano meno shot con precisione crescente, fino a individuare l'$85.9\%$ di errori veri segnalando appena lo $0.59\%$ delle esecuzioni.
-
-\begin{table}[H]
-\centering
-\small
-\begin{tabular}{cccc}
-\toprule
-\textbf{Soglia di confidenza} & \textbf{Shot segnalati} & \textbf{Precision} & \textbf{Recall} \\
-\midrule
-0.5 & 2.92\% & 0.664 & 0.324 \\
-0.3 & 1.54\% & 0.783 & 0.202 \\
-0.2 & 1.16\% & 0.825 & 0.160 \\
-0.1 & 0.59\% & \textbf{0.859} & 0.085 \\
-\bottomrule
-\end{tabular}
-\caption[La rete come validatore della correzione del matching]{Capacità della rete di segnalare gli shot in cui il \ac{MWPM} ha sbagliato ($d=3$, $p_{ct}=10^{-2}$, \ac{AUC} $=0.941$). La precisione cresce al restringersi della segnalazione: segnalando lo $0.59\%$ degli shot, l'$85.9\%$ delle segnalazioni corrisponde a un fallimento reale.}
-\label{tab:neural_flag}
-\end{table}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.78\textwidth]{qec_neural_flag.pdf}
-\caption[Precisione e copertura del flag di validazione]{Precision e recall del flag in funzione della soglia di confidenza, con la frazione di shot segnalati (barre, asse destro). Il flag non sostituisce la decodifica: la annota.}
-\label{fig:qec_neural_flag}
-\end{figure}
-
-\subsection{E4 --- il decoder ibrido}
-\label{subsec:neural_ibrido}
-
-L'esito di E3 suggerisce la costruzione che chiude la sezione. Se la rete riconosce i fallimenti del matching senza saper decodificare meglio di esso, allora il suo impiego corretto non è sostituirlo ma \textbf{correggerlo}. Si definisce quindi un decoder \textbf{ibrido} in forma residuale:
-\begin{equation}
-    \hat{y}_{\text{ibrido}} \;=\; \hat{y}_{\text{MWPM}} \;\oplus\; \big[\, \Pr(\text{MWPM sbaglia} \mid \text{sindrome}) \geq \tau \,\big],
-    \label{eq:decoder_ibrido}
-\end{equation}
-dove $\oplus$ è la somma modulo 2 e la rete riceve in ingresso la sindrome e la decisione del matching. La soglia di ribaltamento $\tau$ è scelta su un insieme di \textbf{validazione separato} e poi applicata invariata all'insieme di test: sceglierla sul test costituirebbe una fuga di informazione, e su guadagni dell'ordine di pochi punti percentuali sarebbe un vizio sufficiente a invalidare il risultato. Fra le soglie candidate figura il valore che non ribalta mai, cosicché il criterio di validazione può sempre ricadere sul matching puro quando nessun ribaltamento conviene.
-
-La formulazione ha una motivazione precisa, oltre alla convenienza pratica: alla rete non si chiede più di riprodurre da zero il calcolo di parità che il matching già esegue correttamente nella grande maggioranza dei casi, ma soltanto di modellarne il \emph{residuo}, che è un evento raro e strutturato. È un compito più facile, ed è per questo che riesce dove la sostituzione fallisce.
-
-\begin{table}[H]
-\centering
-\small
-\begin{tabular}{clccccc}
-\toprule
-$d$ & $p_{ct}$ & \textbf{MWPM} & \textbf{rete sola} & \textbf{ibrido} & \textbf{ribalta} & \textbf{McNemar} \\
-\midrule
-\multirow{5}{*}{3} & $0$              & 0.00415 & 0.00409 & 0.00417 & 0.10\%  & $p = 0.67$ \\
-                   & $5\times10^{-3}$ & 0.03089 & 0.02680 & \textbf{0.02607} & 1.19\%  & $3\times10^{-87}$ \\
-                   & $1\times10^{-2}$ & 0.05829 & 0.04917 & \textbf{0.04851} & 2.69\%  & $1\times10^{-156}$ \\
-                   & $2\times10^{-2}$ & 0.11144 & 0.09248 & \textbf{0.09183} & 5.38\%  & $2\times10^{-312}$ \\
-                   & $4\times10^{-2}$ & 0.20750 & 0.17615 & \textbf{0.17455} & 11.04\% & ${<}10^{-320}$ \\
-\midrule
-\multirow{5}{*}{5} & $0$              & 0.00165 & 0.01900 & 0.00165 & 0.00\%  & --- \\
-                   & $5\times10^{-3}$ & 0.03561 & 0.06311 & \textbf{0.03521} & 0.32\%  & $1\times10^{-3}$ \\
-                   & $1\times10^{-2}$ & 0.08704 & 0.12874 & \textbf{0.08428} & 1.17\%  & $3\times10^{-30}$ \\
-                   & $2\times10^{-2}$ & 0.20231 & 0.25198 & \textbf{0.19662} & 2.88\%  & $6\times10^{-51}$ \\
-                   & $4\times10^{-2}$ & 0.37581 & 0.44182 & \textbf{0.37385} & 2.96\%  & $4\times10^{-7}$ \\
-\midrule
-\multirow{5}{*}{7} & $0$              & 0.00055 & 0.06888 & 0.00055 & 0.00\%  & --- \\
-                   & $5\times10^{-3}$ & 0.03707 & 0.24671 & 0.03707 & 0.00\%  & --- \\
-                   & $1\times10^{-2}$ & 0.11319 & 0.36749 & 0.11318 & 0.00\%  & $p = 0.32$ \\
-                   & $2\times10^{-2}$ & 0.29048 & 0.46219 & 0.29048 & 0.00\%  & --- \\
-                   & $4\times10^{-2}$ & 0.46741 & 0.49980 & 0.46741 & 0.00\%  & --- \\
-\bottomrule
-\end{tabular}
-\caption[Prestazioni del decoder ibrido]{Errore logico del decoder ibrido \eqref{eq:decoder_ibrido} confrontato con il \ac{MWPM} e con la rete usata come sostituto. ``Ribalta'' è la frazione di shot in cui la rete inverte la decisione del matching. Il valore di significatività è quello del test di McNemar, appaiato sugli stessi campioni: poiché i due decoder differiscono \emph{soltanto} sugli shot ribaltati, le coppie discordanti coincidono con essi e il test è esatto.}
-\label{tab:neural_ibrido}
-\end{table}
-
-L'ibrido riduce l'errore logico in tutte e otto le configurazioni con crosstalk a distanza 3 e 5, con guadagni del $18$--$21\%$ nel primo caso e dell'$1$--$3\%$ nel secondo, tutti significativi al test di McNemar. Il dettaglio delle coppie discordanti rende l'effetto leggibile: a $d=3$ e $p_{ct} = 4\times10^{-2}$ la rete rompe $7\,745$ shot che il matching aveva risolto correttamente e ne aggiusta $14\,335$, un rapporto di quasi due a uno; a $d=5$ il bilancio si stringe ($2\,769$ contro $3\,160$), da cui il guadagno più contenuto ma comunque netto.
-
-Due proprietà meritano attenzione perché riguardano il comportamento del sistema fuori dal regime per cui è stato addestrato. La prima è che la frazione di ribaltamenti \textbf{scala con l'intensità del crosstalk} (dallo $0.10\%$ all'$11.04\%$ a distanza 3): la rete non interviene a caso, ma in misura proporzionale a quanto il modello del matching è sbagliato. La seconda è il comportamento in assenza di crosstalk, dove il matching è già adeguato e non c'è nulla da correggere: a $d=5$ la rete effettua \textbf{zero ribaltamenti} e l'ibrido coincide cifra per cifra con il \ac{MWPM}, mentre a $d=3$ ribalta lo $0.10\%$ degli shot con effetto statisticamente nullo ($p = 0.67$). Il decoder ibrido \emph{degrada con grazia}: riconosce di non avere nulla da aggiungere e si fa da parte. Va detto con esattezza che questa garanzia riguarda il criterio di validazione e non ogni singolo punto dell'insieme di test --- il valore leggermente superiore a $d=3$, $p_{ct}=0$ ne è un esempio, entro il rumore statistico --- sicché la formulazione corretta è che l'ibrido non risulta \emph{mai peggiore del matching in modo statisticamente rilevabile}.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{qec_neural_ibrido.pdf}
-\caption[Il decoder ibrido a confronto con matching e rete]{Errore logico dei tre decoder in funzione dell'intensità del crosstalk. L'ibrido (rosso) è il migliore a entrambe le distanze; la rete usata come sostituto (arancio) domina il matching a $d=3$ ma lo perde a $d=5$, dove l'ibrido continua invece a guadagnare.}
-\label{fig:qec_neural_ibrido}
-\end{figure}
-
-\paragraph{Il limite: il vantaggio non sopravvive alla distanza 7.}
-Il dato più importante della Tabella~\ref{tab:neural_ibrido} è però l'ultimo blocco, e va enunciato senza attenuazioni. A distanza 7 l'ibrido \textbf{non ribalta alcuno shot} in nessuna delle cinque configurazioni: la soglia scelta in validazione è ogni volta quella corrispondente a ``non ribaltare mai'', e il decoder ibrido coincide con il \ac{MWPM} cifra per cifra. Il guadagno svanisce, e la progressione lungo le tre distanze è inequivocabile: $18$--$21\%$ a $d=3$, $1$--$3\%$ a $d=5$, esattamente zero a $d=7$.
-
-Il meccanismo è misurabile ed è una difficoltà doppia. Da un lato lo spazio di ingresso cresce rapidamente con la distanza --- da $24$ detector a $d=3$, a $120$ a $d=5$, a $336$ a $d=7$ --- e con esso il numero di parametri che la rete deve stimare. Dall'altro, e in direzione opposta, ciò che va appreso diventa \emph{più raro}: l'evento da riconoscere è il fallimento del matching, la cui frequenza è $p_L$, e $p_L$ decresce esponenzialmente con $d$. In assenza di crosstalk, a $d=7$ si hanno $p_L = 5.5\times10^{-4}$ e $8\times10^5$ shot, ossia circa $440$ fallimenti nell'intero campione, di cui la metà destinata all'addestramento: \emph{duecento esempi positivi per un ingresso a $336$ dimensioni}. La rete non dispone dell'informazione necessaria, e il criterio di validazione lo riconosce correttamente rifiutandosi di intervenire.
-
-Questa è la delimitazione del risultato di M10, e conviene formularla in positivo. Il guadagno del decoder ibrido è reale e statisticamente schiacciante --- a $d=3$ il test di McNemar dà $p < 10^{-320}$ --- ma vive nel regime in cui il codice è piccolo abbastanza da lasciare al modello appreso abbastanza esempi da cui imparare. Poiché è proprio la crescita della distanza a costituire la strategia della correzione d'errore scalabile, il metodo così com'è non accompagna il codice nel regime che conta. Superare il limite richiederebbe un'architettura che sfrutti la simmetria traslazionale del reticolo --- una rete convoluzionale o a grafo, che condivide i pesi fra regioni equivalenti anziché trattare i $336$ detector come dimensioni indipendenti --- oppure un addestramento su campioni ordini di grandezza più numerosi. È l'estensione naturale, e la si indica fra gli sviluppi futuri (Capitolo~\ref{chap:sviluppi}).
-
-\subsection{E6 --- e se il modello del decoder fosse semplicemente sbagliato?}
-\label{subsec:neural_miscalibrato}
-
-Gli esperimenti fin qui condotti concedono al \ac{MWPM} un vantaggio che l'hardware non offre: il detector error model che ne pesa gli archi è generato da Stim \emph{dal circuito stesso}, ed è quindi una descrizione esatta del rumore. Un decoder in produzione lavora invece su un modello ricavato dalla calibrazione del dispositivo --- misurata a intervalli, soggetta a deriva, inevitabilmente diversa dal rumore del momento. Se il vantaggio del modello appreso nascesse da questa discrepanza, sarebbe un vantaggio molto più generale di quello osservato con il crosstalk, perché la mis-calibrazione è la condizione ordinaria di ogni \ac{QPU}.
-
-L'esperimento la isola: il circuito viene campionato con il rumore reale, mentre il matching è costruito su un modello in cui l'errore di \emph{misura} è sbagliato di un fattore $(1+\delta)$ e quello di gate resta corretto.
-
-\begin{samepage}
-\paragraph{Perché la perturbazione dev'essere sbilanciata.} Un primo tentativo scalava tutte le probabilità di errore dello stesso fattore, e non produceva alcun effetto misurabile: il costo rilevato era $1.000$, $1.004$ e $1.000$ per $\delta$ pari a $0$, $+100\%$ e $-50\%$. La ragione è istruttiva e merita di essere esplicitata, perché delimita ciò che una calibrazione errata può e non può fare. Il \ac{MWPM} minimizza il peso totale del matching, e il peso di un arco vale $\log\frac{1-p_e}{p_e} \approx -\log p_e$ per $p_e$ piccolo: moltiplicare tutte le $p_e$ per una costante trasla \emph{tutti} i pesi della stessa quantità, e un matching di peso minimo è invariante rispetto a una traslazione uniforme. Ciò che rende il matching vulnerabile non è dunque sbagliare la \emph{scala} del rumore, ma il suo \emph{bilanciamento}: il rapporto fra archi temporali, che rappresentano errori di misura, e archi spaziali, che rappresentano errori sui dati. È questo rapporto che l'esperimento perturba.
-\end{samepage}
-
-\begin{table}[H]
-\centering
-\small
-\begin{tabular}{crccccc}
-\toprule
-$d$ & $\delta$ & \textbf{MWPM esatto} & \textbf{MWPM sbagliato} & \textbf{costo} & \textbf{rete} & \textbf{rete/MWPM} \\
-\midrule
-\multirow{6}{*}{3} & $-80\%$  & 0.00407 & 0.00415 & 1.018 & 0.00525 & 0.79 \\
-                   & $-50\%$  & 0.00435 & 0.00435 & 1.000 & 0.00493 & 0.88 \\
-                   & $0$      & 0.00427 & 0.00427 & 1.000 & 0.00558 & 0.77 \\
-                   & $+100\%$ & 0.00387 & 0.00382 & 0.987 & 0.00443 & 0.86 \\
-                   & $+300\%$ & 0.00388 & 0.00362 & 0.931 & 0.00429 & 0.84 \\
-                   & $+900\%$ & 0.00385 & 0.00392 & 1.017 & 0.00463 & 0.85 \\
-\midrule
-\multirow{6}{*}{5} & $-80\%$  & 0.00147 & 0.00153 & 1.034 & 0.02982 & 0.05 \\
-                   & $-50\%$  & 0.00172 & 0.00173 & 1.010 & 0.02855 & 0.06 \\
-                   & $0$      & 0.00163 & 0.00163 & 1.000 & 0.02784 & 0.06 \\
-                   & $+100\%$ & 0.00174 & 0.00175 & 1.005 & 0.02774 & 0.06 \\
-                   & $+300\%$ & 0.00169 & 0.00167 & 0.985 & 0.02888 & 0.06 \\
-                   & $+900\%$ & 0.00159 & 0.00191 & \textbf{1.199} & 0.03052 & 0.06 \\
-\bottomrule
-\end{tabular}
-\caption[Effetto di un modello di rumore mis-calibrato sul MWPM]{Errore logico del \ac{MWPM} quando il modello che ne pesa gli archi attribuisce all'errore di misura il valore $p\,(1+\delta)$ anziché quello vero. La colonna ``costo'' è il rapporto fra l'errore logico con modello sbagliato e quello con modello esatto; ``rete/MWPM'' confronta il decoder appreso con il matching mis-calibrato --- valori inferiori a $1$ indicano che la rete è peggiore. Errore fisico reale $p = 3\times10^{-3}$, $4\times10^{5}$ campioni per configurazione.}
-\label{tab:neural_miscalibrato}
-\end{table}
-
-L'esito è netto in entrambe le direzioni. Il \ac{MWPM} si rivela \textbf{notevolmente robusto}: sbagliando l'errore di misura di un fattore cinque in difetto o dieci in eccesso, l'errore logico cambia tipicamente dell'$1$--$3\%$, e in due configurazioni \emph{migliora} leggermente. L'unico caso in cui la mis-calibrazione morde davvero è $d=5$ con $\delta = +900\%$, dove il costo sale al $20\%$: sovrastimare di un ordine di grandezza l'errore di misura induce il matching a preferire spiegazioni temporali degli eventi rilevati anche quando la spiegazione corretta è spaziale. Ma occorre appunto un errore di calibrazione di un ordine di grandezza perché l'effetto sia visibile.
-
-La rete, dal canto suo, \textbf{non batte il matching in nessuna delle dodici configurazioni}, neppure quelle in cui esso lavora sul modello sbagliato. A $d=3$ resta indietro del $15$--$25\%$; a $d=5$ è peggiore di un fattore venti, in coerenza con il crollo osservato nell'esperimento precedente.
-
-\paragraph{Che cosa questo precisa del criterio.}
-Il risultato è negativo, ma corregge un'imprecisione nel modo in cui il criterio della tesi era stato finora formulato. Si era detto che il modello appreso produce valore dove il metodo analitico è ``cieco'' rispetto a una parte dell'informazione; questo esperimento mostra che la cecità rilevante non è quella dei \emph{parametri} ma quella della \emph{struttura}. Un modello con i parametri sbagliati continua a rappresentare le stesse classi di errore, e il matching che ne deriva resta quasi ottimale perché la geometria del problema --- quali eventi rilevati siano plausibilmente connessi --- non cambia. Un modello che non contempla affatto una classe di errore, come il crosstalk fra qubit di dato adiacenti dell'esperimento E2, sbaglia invece la geometria stessa, e lì il margine esiste. La formulazione corretta del criterio è dunque: \emph{l'apprendimento paga quando la classe di errore non è rappresentabile nella struttura del decoder, non quando è rappresentata con parametri imprecisi}.
-
-Ne discende anche un'indicazione pratica di segno opposto a quella che ci si potrebbe attendere: investire in una calibrazione più accurata del modello di rumore, entro un ordine di grandezza, non produce guadagni apprezzabili sulla decodifica. È un'osservazione che vale la pena tenere presente perché la calibrazione periodica è un costo operativo reale nei dispositivi attuali.
-
-\subsection{E7 --- e se si scegliesse semplicemente un decoder analitico migliore?}
-\label{subsec:neural_bposd}
-
-Resta l'obiezione più severa che si possa muovere a tutto l'impianto della sezione. Il \ac{MWPM} è lo standard di fatto, ma non è il miglior decoder analitico disponibile: esso richiede che ogni meccanismo di errore sia decomponibile in archi di un grafo, e il crosstalk fra qubit di dato adiacenti viola precisamente questa ipotesi. Un decoder che non la richieda --- \textbf{BP+OSD}, ossia \textit{belief propagation} seguita da \textit{ordered statistics decoding}, che opera direttamente sulla matrice di parità del detector error model \cite{panteleev2021, roffe2020} --- potrebbe catturare da solo il margine attribuito all'apprendimento. Se così fosse, il risultato di E4 non misurerebbe il valore di un modello appreso ma il costo di una scelta subottimale del decoder di riferimento.
-
-Il confronto è condotto sugli stessi circuiti e con la stessa mis-informazione: entrambi i decoder analitici ricevono il \ac{DEM} \emph{nominale}, privo di crosstalk, che è quanto un decoder reale avrebbe a disposizione. La significatività è valutata con il test di McNemar, appaiato sugli stessi shot.
-
-\begin{table}[H]
-\centering
-\small
-\begin{tabular}{clccccc}
-\toprule
-$d$ & $p_{ct}$ & \textbf{MWPM} & \textbf{BP+OSD} & \textbf{BP+OSD/MWPM} & \textbf{ibrido/MWPM} & \textbf{McNemar} \\
-\midrule
-\multirow{5}{*}{3} & $0$              & 0.00428 & 0.00374 & \textbf{1.146} & 0.993 & $1\times10^{-9}$ \\
-                   & $5\times10^{-3}$ & 0.03193 & 0.03286 & 0.972          & \textbf{1.185} & $3\times10^{-7}$ \\
-                   & $1\times10^{-2}$ & 0.05912 & 0.06034 & 0.980          & \textbf{1.202} & $5\times10^{-7}$ \\
-                   & $2\times10^{-2}$ & 0.11176 & 0.11340 & 0.986          & \textbf{1.213} & $2\times10^{-6}$ \\
-                   & $4\times10^{-2}$ & 0.20811 & 0.20826 & 0.999          & \textbf{1.189} & $p = 0.77$ \\
-\midrule
-\multirow{5}{*}{5} & $0$              & 0.00192 & 0.00143 & \textbf{1.339} & 1.000 & $2\times10^{-7}$ \\
-                   & $5\times10^{-3}$ & 0.03565 & 0.02807 & \textbf{1.270} & 1.011 & $2\times10^{-113}$ \\
-                   & $1\times10^{-2}$ & 0.08638 & 0.07348 & \textbf{1.176} & 1.033 & $3\times10^{-140}$ \\
-                   & $2\times10^{-2}$ & 0.19998 & 0.18288 & \textbf{1.094} & 1.029 & $6\times10^{-108}$ \\
-                   & $4\times10^{-2}$ & 0.37561 & 0.36788 & \textbf{1.021} & 1.005 & $2\times10^{-12}$ \\
-\bottomrule
-\end{tabular}
-\caption[BP+OSD contro MWPM e contro il decoder ibrido]{Confronto fra il \ac{MWPM}, il decoder BP+OSD e il decoder ibrido appreso, tutti sul medesimo modello di rumore nominale. Le due colonne di guadagno sono rapporti rispetto al \ac{MWPM}: valori superiori a $1$ indicano un errore logico minore. In grassetto, per ciascuna riga, il migliore fra i due approcci alternativi. Il valore di significatività si riferisce al confronto BP+OSD contro \ac{MWPM}. Errore fisico $p = 3\times10^{-3}$, $2\times10^{5}$ campioni per configurazione.}
-\label{tab:confronto_bposd}
-\end{table}
-
-Il primo dato da registrare è che \textbf{BP+OSD è effettivamente un decoder migliore}: sul rumore nominale, quello per cui il modello è corretto, riduce l'errore logico del $14.6\%$ a distanza 3 e del $33.9\%$ a distanza 5, con significatività schiacciante. Il vantaggio cresce con la distanza, come atteso: più il codice è grande, più numerose sono le configurazioni di errore degeneri che il matching, vincolato alla decomposizione in archi, non sa distinguere.
-
-Il secondo dato è però quello che conta, ed è la struttura delle due colonne di guadagno letta lungo la colonna $p_{ct}$.
-
-\begin{quote}
-\emph{Il guadagno di BP+OSD \textbf{decresce} al crescere del crosstalk; quello del decoder ibrido \textbf{cresce}.}
-\end{quote}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{confronto_decoder.pdf}
-\caption[Ortogonalità delle due sorgenti di guadagno]{Guadagno rispetto al \ac{MWPM} dei due approcci alternativi, in funzione dell'intensità del crosstalk. La linea tratteggiata è il \ac{MWPM} stesso. BP+OSD (blu) parte dal guadagno massimo, quando il modello di rumore che riceve è corretto, e lo perde man mano che il crosstalk lo rende incompleto; il decoder ibrido (rosso) parte da zero, perché a modello corretto non ha nulla da aggiungere, e guadagna in misura crescente. A distanza 3 le due curve si incrociano immediatamente; a distanza 5 il vantaggio iniziale di BP+OSD è così ampio da mantenerlo davanti anche eroso. Figura rigenerabile da \texttt{figure\_src/gen\_confronto\_decoder.py}.}
-\label{fig:confronto_decoder}
-\end{figure}
-
-A distanza 5 il vantaggio di BP+OSD scende monotonamente da $1.339$ a $1.021$ mentre il crosstalk aumenta; a distanza 3 esso si annulla immediatamente, e il decoder diventa lievemente \emph{peggiore} del matching. Specularmente, il guadagno dell'ibrido è nullo in assenza di crosstalk e sale fino a $1.213$. I due metodi non competono sullo stesso asse: \textbf{BP+OSD sfrutta meglio il modello che riceve, il decoder appreso cattura ciò che al modello sfugge}. Il primo rende al massimo quando il modello è corretto e si degrada man mano che diventa incompleto --- perché fidarsi più a fondo di una descrizione sbagliata è un danno, non un vantaggio; il secondo rende zero quando il modello è corretto, perché non c'è nulla da aggiungere, e cresce esattamente nella misura in cui il modello si allontana dal dispositivo.
-
-Ne discende una conclusione più articolata di quella che l'esperimento si proponeva di verificare, e va enunciata riconoscendo entrambi i suoi lati. Da un lato l'obiezione è \textbf{in parte fondata}: a distanza 5, dove il vantaggio di partenza di BP+OSD è ampio, esso resta superiore all'ibrido in tutte le configurazioni, e adottare un decoder analitico migliore rende più che addestrare una rete. Chi disponga di un budget di ingegneria limitato dovrebbe spenderlo lì per primo, ed è una raccomandazione pratica che questa tesi non avrebbe potuto formulare senza l'esperimento. Dall'altro lato l'obiezione \textbf{non elimina il risultato}: a distanza 3 l'ibrido guadagna $18$--$21\%$ dove BP+OSD perde, e soprattutto le due sorgenti di guadagno restano ortogonali, sicché nulla impedisce di sommarle. La costruzione naturale --- BP+OSD come decoder di base e il residuo appreso della~\eqref{eq:decoder_ibrido} costruito sopra di esso anziché sopra il matching --- non è stata realizzata in questo lavoro ed è la sua estensione più immediata.
-
-\subsection{E5 --- il decoder è trasferibile fra dispositivi?}
-\label{subsec:neural_generalizzazione}
-
-Gli esperimenti precedenti addestrano e valutano il decoder sul \emph{medesimo} profilo di rumore. È una scelta che lascia aperta l'obiezione più concreta che si possa muovere a un decoder appreso: se il modello funzionasse soltanto sul profilo su cui è stato addestrato, andrebbe riaddestrato per ogni esemplare di \ac{QPU} e a ogni deriva di calibrazione, e il costo pratico ne annullerebbe il vantaggio. La domanda decisiva è dunque se la rete abbia appreso una \emph{regola} o le idiosincrasie di un profilo.
-
-La verifica consiste nell'addestrare su un'intensità di rumore correlato e valutare su un'altra, senza alcun riaddestramento. Il confronto ha due termini di riferimento: il \ac{MWPM}, che non si addestra e resta quindi invariante, e la rete addestrata sullo stesso profilo di test, che rappresenta il limite superiore ottenibile conoscendo perfettamente il dominio.
-
-\begin{table}[H]
-\centering
-\small
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Addestrata su} & \multicolumn{4}{c}{\textbf{Valutata su} $p_{ct}$} \\
-\cmidrule(lr){2-5}
- & $5\times10^{-3}$ & $10^{-2}$ & $2\times10^{-2}$ & $4\times10^{-2}$ \\
-\midrule
-$5\times10^{-3}$ & \textit{0.02804} & 0.05000 & 0.09684 & 0.18749 \\
-$10^{-2}$        & \textbf{0.02800} & \textit{0.04912} & 0.09492 & 0.18140 \\
-$2\times10^{-2}$ & 0.02814 & 0.04915 & \textit{0.09286} & 0.17800 \\
-$4\times10^{-2}$ & 0.02841 & \textbf{0.04878} & 0.09312 & \textit{0.17643} \\
-\midrule
-\ac{MWPM} (nessun addestramento) & 0.03232 & 0.05742 & 0.11172 & 0.20853 \\
-\bottomrule
-\end{tabular}
-\caption[Trasferibilità del decoder appreso fra profili di rumore]{Errore logico dell'ibrido al variare del profilo di addestramento e di quello di valutazione. In corsivo la diagonale (addestramento e test sullo stesso profilo), in grassetto i due casi in cui una rete \emph{trasferita} supera quella addestrata in casa. Tutte e dodici le configurazioni fuori diagonale battono comunque il \ac{MWPM}.}
-\label{tab:neural_trasferimento}
-\end{table}
-
-L'esito è netto: \textbf{tutte e dodici} le reti trasferite mantengono il vantaggio sul decoder analitico, e il costo del trasferimento --- il peggioramento medio rispetto alla rete addestrata sul profilo di test --- è dell'$1.6\%$. In due casi la rete trasferita risulta addirittura migliore di quella addestrata in casa, differenza che rientra nella variabilità statistica ma che conferma l'assenza di una dipendenza sistematica dal profilo di addestramento.
-
-La regola appresa non è dunque il profilo di rumore, ma qualcosa di più generale: verosimilmente la struttura delle configurazioni di sindrome che il matching interpreta male, la quale dipende dalla geometria del codice e dalla natura correlata dell'errore più che dalla sua intensità. Ne discende che il modello non richiede riaddestramento a ogni ricalibrazione del dispositivo --- il che rimuove l'ostacolo pratico principale all'impiego di un decoder appreso, e distingue nettamente questo risultato da quello della prima fase, dove il classificatore richiedeva una fase di addestramento dedicata proprio per essere poi giudicato inutile.
-
-\subsection{Bilancio}
-\label{subsec:neural_bilancio}
-
-I quattro esperimenti convergono su una conclusione che è più informativa di un semplice confronto fra decoder. \textbf{Sostituire} il decoder analitico con una rete non conviene: a parità di modello di rumore la rete pareggia a distanza 3 --- al prezzo di $10^5$--$10^6$ campioni --- e perde al crescere della distanza. \textbf{Affiancarlo} sì: un decoder ibrido in cui la rete impara soltanto \emph{quando ribaltare} la decisione del matching riduce l'errore logico del $18$--$21\%$ a distanza 3 e dell'$1$--$3\%$ a distanza 5 in presenza di rumore correlato, e ricade sul matching quando il rumore è quello previsto. Il guadagno compare dunque a due condizioni congiunte: che il rumore \emph{esca dal modello} del decoder, e che la taglia del codice resti \emph{alla portata} del modello appreso.
-
-Il perimetro va dichiarato. L'architettura impiegata è una rete densa di capacità modesta, deliberatamente scelta per continuità con lo strumento della prima fase sperimentale: i decoder allo stato dell'arte adottano architetture ricorrenti e convoluzionali che sfruttano la località del codice e la struttura temporale dei cicli di sindrome~\cite{alphaqubit2024}, e i risultati qui riportati non vanno letti come una stima del potenziale della decodifica appresa, ma come una verifica del \emph{principio} su un'istanza trattabile. Le distanze esplorate si fermano a $d=5$, l'errore fisico a un solo valore sotto soglia, e il rumore correlato modellato resta di tipo Pauli: gli errori coerenti e il leakage discussi nella Sezione~\ref{sec:oltre_pauli} costituiscono un asse ulteriore, sul quale ci si attende che il vantaggio del decoder appreso sia maggiore, non minore, poiché è lì che il modello analitico è più lontano dalla fisica.
-
-Resta il fatto metodologico che collega questa sezione al Capitolo~\ref{chap:risultati} e che il Capitolo~\ref{chap:integrazione} riprenderà: in entrambe le fasi sperimentali di questo lavoro il \textbf{complemento a basso costo ha battuto la sostituzione ambiziosa}. Nella prima, la ricerca multi-candidato TOP-4 ha battuto il classificatore che avrebbe dovuto filtrare l'output; nella seconda, una rete che si limita a segnalare quando il decoder sbaglia batte la rete che pretende di sostituirlo. L'apprendimento automatico non è né inutile né risolutivo: produce valore esattamente dove dispone di informazione che nessun metodo più semplice è in grado di sfruttare.
+\paragraph{Il criterio, nella sua forma definitiva.}
+Ne discende l'enunciato che regge l'intero lavoro, ora verificato su due impieghi opposti dello stesso strumento: \emph{un modello appreso produce valore quando la classe di errore non è rappresentabile nella struttura del metodo analitico --- non quando è rappresentata con parametri imprecisi}. La cecità che conta è strutturale, non di calibrazione. E poiché il vantaggio si annulla a $d=7$, dove la rete dispone di circa duecento esempi positivi per un ingresso a $336$ dimensioni, la nicchia in cui l'apprendimento è la scelta giusta risulta reale ma stretta: il primo controllo da eseguire, prima di introdurre un modello appreso, è verificare di avere già adottato il miglior metodo analitico disponibile.
 
 \end{onehalfspace}

@@ -5,7 +5,7 @@ Il criterio stabilito nel Capitolo~\ref{chap:conclusioni} --- un modello appreso
 Il lavoro principale ne ha esplorate due: \emph{dopo} l'esecuzione, dove il Capitolo~\ref{chap:risultati} ha dimostrato che non resta informazione da sfruttare; \emph{durante} il calcolo, con la correzione d'errore dei Capitoli~\ref{chap:qec}--\ref{chap:integrazione}. Ne resta una terza: \emph{prima} dell'esecuzione, nel modo in cui il circuito viene mappato sui qubit fisici del dispositivo. È l'unica che agisce sull'hardware \ac{NISQ} odierno senza richiedere il regime sotto-soglia, ed è l'unica che sfugge per costruzione al risultato negativo della prima fase --- non ricostruisce l'informazione perduta, ma riduce la probabilità che venga perduta.
 
 % -----------------------------------------------
-\section{La Previsione e il suo Fondamento}
+\subsection{La Previsione e il suo Fondamento}
 \label{sec:app_comp_previsione}
 
 Il transpiler di Qiskit non è ingenuo rispetto al rumore: ai livelli di ottimizzazione superiori sceglie la mappatura tenendo conto dei tempi di coerenza e degli errori per arco. Esistono inoltre strumenti dedicati al solo ordinamento dei layout, che assegnano a ciascuno un punteggio di fedeltà ricavato dai dati di calibrazione, e ranker appresi che li superano. Qualunque proposta va confrontata con questi, non con il layout predefinito: superare quest'ultimo dimostrerebbe soltanto che il transpiler svolge il proprio compito.
@@ -16,7 +16,7 @@ Il margine ipotizzato sta altrove. Tutti quei metodi ottimizzano la \textbf{fede
 La verifica richiede rumore \textbf{eterogeneo per qubit e per arco}: sotto rumore uniforme non esiste informazione topologica da sfruttare, e un esito nullo sarebbe conseguenza del disegno anziché proprietà del metodo. Si adottano perciò i dati di calibrazione reali di un processore a 127 qubit, la cui disomogeneità è considerevole: fra il qubit migliore e il peggiore l'errore di lettura varia di un fattore $171$, l'errore di gate a due qubit di un fattore $288$ e il tempo di coerenza $T_2$ di un fattore $185$.
 
 % -----------------------------------------------
-\section{Primo Esperimento: la Fedeltà è un Buon Criterio di Scelta?}
+\subsection{Primo Esperimento: la Fedeltà è un Buon Criterio di Scelta?}
 \label{sec:app_comp_pilota}
 
 Si campionano sessanta sottoinsiemi connessi di dodici qubit fisici. Per ciascuno si costruisce il modello di rumore dai parametri reali di quei qubit e di quegli archi, si traspila il circuito di Shor per $N=15$ e si misurano due grandezze: il \textbf{punteggio di fedeltà} $s = 1 - \prod_x (1 - e_x)$ calcolato dai soli dati di calibrazione, senza eseguire nulla, e la \textbf{probabilità di successo} della fattorizzazione, misurata su $8\,192$ campioni.
@@ -64,14 +64,14 @@ Profondità del circuito traspilato & $+0.098$ \\
 Numero di porte a due qubit (routing) & $+0.032$ \\
 \bottomrule
 \end{tabular}
-\caption[Potere predittivo delle singole grandezze del layout]{Il punteggio composito predice \emph{peggio} del solo errore di lettura, di cui è funzione: l'aggregazione moltiplicativa diluisce il segnale anziché concentrarlo. I tempi di coerenza risultano quasi irrilevanti, in accordo indipendente con la campagna parametrica dell'Appendice~\ref{app:parametrica}.}
+\caption[Potere predittivo delle singole grandezze del layout]{Il punteggio composito predice \emph{peggio} del solo errore di lettura, di cui è funzione: l'aggregazione moltiplicativa diluisce il segnale anziché concentrarlo. I tempi di coerenza risultano quasi irrilevanti, in accordo indipendente con la campagna parametrica della Sezione~\ref{app:parametrica}.}
 \label{tab:app_comp_predittori}
 \end{table}
 
-Tre osservazioni. La prima è che il punteggio composito predice \emph{peggio} del singolo ingrediente da cui dipende: aggregare moltiplicativamente tutti i contributi di errore diluisce l'informazione che conta. La seconda è che l'errore di lettura domina --- ed è coerente con la struttura dell'algoritmo, poiché gli unici qubit misurati sono gli otto di conteggio. La terza è una conferma incrociata di un risultato già acquisito: i tempi di coerenza risultano quasi ininfluenti, esattamente come la campagna parametrica dell'Appendice~\ref{app:parametrica} aveva trovato per via del tutto indipendente, con strumenti e modello di rumore diversi.
+Tre osservazioni. La prima è che il punteggio composito predice \emph{peggio} del singolo ingrediente da cui dipende: aggregare moltiplicativamente tutti i contributi di errore diluisce l'informazione che conta. La seconda è che l'errore di lettura domina --- ed è coerente con la struttura dell'algoritmo, poiché gli unici qubit misurati sono gli otto di conteggio. La terza è una conferma incrociata di un risultato già acquisito: i tempi di coerenza risultano quasi ininfluenti, esattamente come la campagna parametrica della Sezione~\ref{app:parametrica} aveva trovato per via del tutto indipendente, con strumenti e modello di rumore diversi.
 
 % -----------------------------------------------
-\section{Secondo Esperimento: Conta il Ruolo Assegnato ai Qubit?}
+\subsection{Secondo Esperimento: Conta il Ruolo Assegnato ai Qubit?}
 \label{sec:app_comp_ruoli}
 
 Il primo esperimento ha variato \emph{quale} gruppo di dodici qubit utilizzare, lasciando al transpiler la scelta del ruolo da assegnare a ciascuno. Non ha quindi messo alla prova l'ipotesi di partenza, che riguarda proprio l'assegnazione dei ruoli. Il secondo esperimento colma questa lacuna: si \textbf{fissa il sottografo} e si varia \textbf{soltanto} quali qubit fisici ricevano il registro di conteggio, confrontando l'assegnazione ai qubit a lettura migliore con quella ai qubit a lettura peggiore, con la scelta libera del transpiler e con permutazioni casuali. Il confronto è appaiato: stesso sottografo, stessi campioni, stesso seme.
@@ -120,7 +120,7 @@ Conteggio sui qubit a lettura peggiore & $0.438 \pm 0.035$ & 427 \\
 \end{table}
 
 % -----------------------------------------------
-\section{Un Terzo Caso: la Ricerca Multi-Candidato a Livello Logico}
+\subsection{Un Terzo Caso: la Ricerca Multi-Candidato a Livello Logico}
 \label{sec:app_comp_topk}
 
 Il Capitolo~\ref{chap:sviluppi} propone come estensione naturale l'applicazione della strategia TOP-K allo Shor logico, dove essa non dovrebbe più compensare il rumore fisico dei gate --- compito del codice correttore --- ma l'errore logico residuo. La verifica è riportata qui perché il suo esito, negativo, è istruttivo quanto i precedenti.
@@ -153,7 +153,7 @@ La colonna TOP-1 mostra il rovescio della stessa medaglia, con un andamento erra
 Ne segue che la proposta del Capitolo~\ref{chap:sviluppi} non è, come poteva sembrare, un'estensione a basso costo: richiede un'istanza con periodo meno degenere, e ricade quindi nella barriera di scalabilità. Le due limitazioni --- degenerazione dell'istanza piccola e intrattabilità di quelle grandi --- non sono indipendenti, ma lo stesso ostacolo che si manifesta due volte.
 
 % -----------------------------------------------
-\section{Conclusione: il Criterio va Precisato}
+\subsection{Conclusione: il Criterio va Precisato}
 \label{sec:app_comp_conclusione}
 
 I due esperimenti restituiscono un esito che non è né una conferma né una smentita, e la distinzione merita di essere formulata con precisione perché è proprio ciò che rende il caso istruttivo.
