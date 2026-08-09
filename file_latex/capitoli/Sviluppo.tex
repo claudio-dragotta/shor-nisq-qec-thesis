@@ -10,36 +10,12 @@ L'ambiente di esecuzione è stato configurato su \ac{WSL} (Ubuntu 22.04 LTS) su 
 
 \subsection{Dipendenze e Virtual Environment}
 
-Tutte le dipendenze sono isolate in un virtual environment Python dedicato, per garantire la riproducibilità dell'ambiente:
-
-\begin{lstlisting}[caption={Installazione dell'ambiente Python e delle librerie necessarie}]
-# Creazione del virtual environment
-python3 -m venv ~/quantum-env
-source ~/quantum-env/bin/activate
-
-# Framework quantistico e simulatore
-pip install qiskit qiskit-aer qiskit-ibm-runtime
-
-# Simulatore con accelerazione GPU (CUDA)
-pip install qiskit-aer-gpu
-
-# Librerie scientifiche e ML
-pip install numpy scipy matplotlib
-pip install scikit-learn
-
-# Verifica
-python -c "import qiskit; print(qiskit.__version__)"
-python -c "from qiskit_aer import AerSimulator; print('Aer OK')"
-\end{lstlisting}
+Tutte le dipendenze sono isolate in un virtual environment Python dedicato, per garantire la riproducibilità dell'ambiente (Listato~\ref{lst:installazione_dellambiente_python_e}).
 
 \subsection{Accelerazione GPU: Tentativo e Limitazione WSL}
 \label{sec:gpu_limit}
 
-Il piano originale prevedeva l'uso di \texttt{qiskit-aer-gpu} con la scheda NVIDIA RTX 4070 per ridurre i tempi di simulazione di 10--20$\times$. Sebbene il driver CUDA per WSL rilevi correttamente la GPU (\texttt{AerSimulator.available\_devices()} restituisce \texttt{['GPU']}), il backend C++ di Qiskit Aer lancia un \texttt{RuntimeError} a runtime quando si tenta di eseguire un circuito con \texttt{device='GPU'}:
-
-\begin{lstlisting}[caption={Errore GPU su WSL durante i test}]
-RuntimeError: Simulation device "GPU" is not supported on this system
-\end{lstlisting}
+Il piano originale prevedeva l'uso di \texttt{qiskit-aer-gpu} con la scheda NVIDIA RTX 4070 per ridurre i tempi di simulazione di 10--20$\times$. Sebbene il driver CUDA per WSL rilevi correttamente la GPU (\texttt{AerSimulator.available\_devices()} restituisce \texttt{['GPU']}), il backend C++ di Qiskit Aer lancia un \texttt{RuntimeError} a runtime quando si tenta di eseguire un circuito con \texttt{device='GPU'} (Listato~\ref{lst:errore_gpu_su_wsl}).
 
 Questa limitazione è nota nell'ecosistema WSL: la modalità di accesso alla GPU tramite CUDA for WSL 2 non è ancora pienamente supportata dal backend \texttt{statevector} di Qiskit Aer nella versione installata. Tutti gli esperimenti sono stati eseguiti su CPU (modalità \texttt{statevector}). Il throughput misurato su macchina dedicata (22 core) è di $\approx 0.5$\,s per campione da $1\,024$ shot su 12 qubit, ossia circa mezzo millisecondo per traiettoria; il costo cresce però di oltre quattro ordini di grandezza per le istanze maggiori, ed è quantificato nel Capitolo~\ref{chap:risultati} (Tabella~\ref{tab:costo_simulazione}).
 
@@ -51,48 +27,11 @@ Il circuito dell'algoritmo di Shor è tratto dal repository open-source di rifer
 
 \subsection{La Quantum Fourier Transform}
 
-La \ac{QFT} è la subroutine centrale del circuito. Il suo circuito è implementato ricorsivamente tramite porte di Hadamard e rotazioni di fase controllate $R_k = \mathrm{diag}(1,\, e^{2\pi i / 2^k})$:
-
-\begin{lstlisting}[caption={Implementazione della Quantum Fourier Transform}]
-from qiskit import QuantumCircuit
-import numpy as np
-
-def qft_circuit(n_qubits):
-    """Quantum Fourier Transform su n_qubits qubit."""
-    qc = QuantumCircuit(n_qubits, name='QFT')
-    for j in range(n_qubits):
-        qc.h(j)
-        for k in range(j + 1, n_qubits):
-            angle = np.pi / (2 ** (k - j))
-            qc.cp(angle, k, j)
-    for i in range(n_qubits // 2):
-        qc.swap(i, n_qubits - i - 1)
-    return qc
-
-def inverse_qft(n_qubits):
-    """QFT inversa: coniugato trasposto della QFT."""
-    return qft_circuit(n_qubits).inverse()
-\end{lstlisting}
+La \ac{QFT} è la subroutine centrale del circuito. Il suo circuito è implementato ricorsivamente tramite porte di Hadamard e rotazioni di fase controllate $R_k = \mathrm{diag}(1,\, e^{2\pi i / 2^k})$ (Listato~\ref{lst:implementazione_della_quantum_fourier}).
 
 \subsection{La Moltiplicazione Modulare Controllata}
 
-Il blocco di \textit{modular exponentiation} implementa l'operazione $U_f\ket{x}\ket{y} = \ket{x}\ket{y \cdot a^x \bmod N}$. Per istanze concrete, questo blocco viene compilato come sequenza di porte SWAP che realizzano la permutazione degli stati della base computazionale indotta dall'operatore $x \mapsto ax \bmod N$:
-
-\begin{lstlisting}[caption={Modular exponentiation per N=15, a=7}]
-def mod_exp_15_7(power):
-    """
-    Implementa U^power dove U|y> = |7y mod 15>.
-    Valida per power in {1, 2, 4, 8, ...}.
-    """
-    U = QuantumCircuit(4, name=f'U^{power}')
-    if power % 4 == 1:
-        U.swap(0, 1); U.swap(1, 2); U.swap(2, 3)
-        U.x(0); U.x(2)
-    elif power % 4 == 2:
-        U.swap(1, 3); U.swap(0, 2)
-    # U^4 = I (mod 15 con a=7): nessuna operazione
-    return U
-\end{lstlisting}
+Il blocco di \textit{modular exponentiation} implementa l'operazione $U_f\ket{x}\ket{y} = \ket{x}\ket{y \cdot a^x \bmod N}$. Per istanze concrete, questo blocco viene compilato come sequenza di porte SWAP che realizzano la permutazione degli stati della base computazionale indotta dall'operatore $x \mapsto ax \bmod N$ (Listato~\ref{lst:modular_exponentiation_per_n15}).
 
 % Per UC3 (N=21) e UC4 (N=35) si usa c_amod() con UnitaryGate (matrice di
 % permutazione generale). La sintesi produce >8000 porte CX dopo traspilazione,
@@ -100,90 +39,13 @@ def mod_exp_15_7(power):
 
 \subsection{Circuito Completo e Post-Processing}
 
-Il circuito completo combina i componenti precedenti nell'architettura a due registri dell'algoritmo di Shor. Il post-processing classico stima il periodo $r$ tramite frazioni continue e calcola i fattori tramite il \ac{GCD}:
-
-\begin{lstlisting}[caption={Circuito completo di Shor e post-processing}]
-from qiskit import QuantumCircuit, transpile
-from qiskit_aer import AerSimulator
-from math import gcd
-from fractions import Fraction
-
-def shor_circuit(N, a, n_count):
-    """Algoritmo di Shor per N con base a e n_count qubit di controllo."""
-    n_work = N.bit_length()
-    qc = QuantumCircuit(n_count + n_work, n_count)
-    for q in range(n_count):
-        qc.h(q)
-    qc.x(n_count)                # registro di lavoro inizializzato a |1>
-    for j in range(n_count):
-        power = 2 ** j
-        ctrl_U = mod_exp_15_7(power).control(1)
-        qc.append(ctrl_U, [j] + list(range(n_count, n_count + n_work)))
-    qc.barrier()
-    qc.append(inverse_qft(n_count), range(n_count))
-    qc.measure(range(n_count), range(n_count))
-    return qc
-
-def extract_factors(measured_value, n_count, N, a):
-    """Stima il periodo r e calcola i fattori di N."""
-    if measured_value == 0:
-        return None, None
-    phase = measured_value / (2 ** n_count)
-    frac  = Fraction(phase).limit_denominator(N)
-    r     = frac.denominator
-    if r % 2 != 0:
-        return None, None
-    p = gcd(a ** (r // 2) - 1, N)
-    q = gcd(a ** (r // 2) + 1, N)
-    if 1 < p < N:
-        return p, N // p
-    if 1 < q < N:
-        return q, N // q
-    return None, None
-\end{lstlisting}
+Il circuito completo combina i componenti precedenti nell'architettura a due registri dell'algoritmo di Shor. Il post-processing classico stima il periodo $r$ tramite frazioni continue e calcola i fattori tramite il \ac{GCD} (Listato~\ref{lst:circuito_completo_di_shor}).
 
 % -----------------------------------------------
 \section{Configurazione del Noise Model}
 \label{sec:noise_model}
 
-Il noise model è costruito con il modulo \texttt{qiskit\_aer.noise} e include le tre principali fonti di errore presenti nei processori superconduttori NISQ, in linea con i parametri di riferimento dell'hardware \texttt{ibm\_marrakesh} riportati nel tutorial ufficiale IBM \cite{ibm_shor_tutorial}:
-
-\begin{lstlisting}[caption={Costruzione del noise model parametrizzato}]
-from qiskit_aer.noise import (NoiseModel, depolarizing_error,
-                               thermal_relaxation_error, ReadoutError)
-import numpy as np
-
-def build_noise_model(eps_1q, eps_2q, t1_ns, t2_ns,
-                      gate_time_ns=50, p_ro=0.02):
-    """
-    Costruisce un noise model con parametri configurabili.
-    eps_1q: tasso errore depolarizzante gate 1 qubit
-    eps_2q: tasso errore depolarizzante gate 2 qubit
-    t1_ns:  tempo di rilassamento in ns
-    t2_ns:  tempo di dephasing in ns
-    p_ro:   probabilita' di readout error
-    """
-    nm = NoiseModel()
-
-    # Errore depolarizzante su gate a 1 qubit
-    e1 = depolarizing_error(eps_1q, 1)
-    nm.add_all_qubit_quantum_error(e1, ['h', 'x', 'rz', 'cp'])
-
-    # Errore depolarizzante su gate a 2 qubit
-    e2 = depolarizing_error(eps_2q, 2)
-    nm.add_all_qubit_quantum_error(e2, ['cx', 'swap'])
-
-    # Rilassamento termico (T1, T2)
-    e_relax = thermal_relaxation_error(t1_ns, t2_ns, gate_time_ns)
-    nm.add_all_qubit_quantum_error(e_relax, ['h', 'x'])
-
-    # Readout error (matrice di confusione simmetrica)
-    ro_matrix = [[1 - p_ro, p_ro], [p_ro, 1 - p_ro]]
-    ro_error  = ReadoutError(ro_matrix)
-    nm.add_all_qubit_readout_error(ro_error)
-
-    return nm
-\end{lstlisting}
+Il noise model è costruito con il modulo \texttt{qiskit\_aer.noise} e include le tre principali fonti di errore presenti nei processori superconduttori NISQ, in linea con i parametri di riferimento dell'hardware \texttt{ibm\_marrakesh} riportati nel tutorial ufficiale IBM \cite{ibm_shor_tutorial} (Listato~\ref{lst:costruzione_del_noise_model}).
 
 % -----------------------------------------------
 \section{Implementazione del Metodo 1}
@@ -191,31 +53,7 @@ def build_noise_model(eps_1q, eps_2q, t1_ns, t2_ns,
 
 Il Metodo 1 adotta la strategia \textit{TOP-1}: ad ogni iterazione esegue il circuito, identifica la misura più frequente nell'istogramma degli output e tenta la fattorizzazione tramite il post-processing classico. Il loop si interrompe non appena viene trovata una coppia di fattori non banali.
 
-Una scelta critica di implementazione riguarda la traspilazione del circuito. Affinché il noise model sia applicato correttamente a \emph{tutti} i gate, il simulatore deve essere istanziato con il noise model nel costruttore prima della traspilazione, e il livello di ottimizzazione deve essere pari a 2:
-
-\begin{lstlisting}[caption={Pipeline del Metodo 1 (TOP-1, ottimizzazione corretta)}]
-def run_method1(N, a, n_count, noise_model, shots=1024,
-                max_iter=50, seed=42):
-    base_qc = shor_circuit(N, a, n_count)
-    # CRITICO: NM nel costruttore + opt=2 decompone CCX -> CX
-    # garantendo che il noise model si applichi a tutti i gate
-    sim = AerSimulator(noise_model=noise_model, method='statevector')
-    transpiled = transpile(base_qc, sim, optimization_level=2)
-
-    for iteration in range(1, max_iter + 1):
-        counts = sim.run(transpiled, shots=shots,
-                         seed_simulator=seed * 10000 + iteration
-                         ).result().get_counts()
-        # TOP-1: misura piu' frequente nell'istogramma
-        meas = int(max(counts, key=counts.get), 2)
-        p, q = extract_factors(meas, n_count, N, a)
-        if p is not None:
-            return {'factors': (p, q), 'iterations': iteration,
-                    'success': True, 'counts': counts}
-
-    return {'factors': (None, None), 'iterations': max_iter,
-            'success': False, 'counts': {}}
-\end{lstlisting}
+Una scelta critica di implementazione riguarda la traspilazione del circuito. Affinché il noise model sia applicato correttamente a \emph{tutti} i gate, il simulatore deve essere istanziato con il noise model nel costruttore prima della traspilazione, e il livello di ottimizzazione deve essere pari a 2 (Listato~\ref{lst:pipeline_del_metodo_1}).
 
 Senza il noise model nel costruttore, Qiskit Aer non decompone le porte Toffoli (\texttt{CCX}) presenti nell'espansione di \texttt{.control()}: le 27 porte \texttt{CCX} del circuito per $N=15$ rimangono nella netlist finale come gate non rumorosi, rendendo la simulazione non fisicamente accurata. Con \texttt{optimization\_level=2} e il noise model nel costruttore, il circuito traspilato contiene esclusivamente porte elementari: per $N=15$, $a=7$, $n_{\text{count}}=8$ si ottengono 114 porte \texttt{cx}, 52 \texttt{cp}, 0 \texttt{ccx} e 0 \texttt{swap}, per una profondit\u00e0 complessiva di 311. Le porte soggette all'errore a due qubit sono dunque $k = 166$, non $114$: le \texttt{cp} della \ac{QFT} inversa appartengono al gate set nativo e sopravvivono alla traspilazione.\footnote{La ripartizione fra \texttt{cx} e \texttt{cp} dipende dalla versione del transpiler: le campagne riportate in questa tesi sono state eseguite con Qiskit 2.x, mentre versioni precedenti producevano 162 \texttt{cx} e 28 \texttt{cp} con profondit\u00e0 309 (cfr.\ Tabella~\ref{tab:sweep_optlevel}). Il totale $k$ \u00e8 assai pi\u00f9 stabile del solo conteggio \texttt{cx}: $166$ contro $194$.}
 
@@ -234,74 +72,15 @@ Il dataset viene generato eseguendo il circuito con parametri di rumore variabil
 
 L'etichetta di un campione vale 1 se \emph{almeno uno} dei \textsc{TOP\_K=16} misure più frequenti nell'istogramma corrisponde a fattori non banali. Questa definizione è coerente con la strategia di inferenza del Metodo 2: il classificatore impara a riconoscere gli istogrammi che ``contengono segnale QPE utile'', indipendentemente da quale specifica misura sia la moda.
 
-\begin{lstlisting}[caption={Generazione del dataset con etichetta TOP-K}]
-def generate_dataset(N, a, n_count, noise_base, noise_factor=0.5,
-                     n_samples=2000, shots=1024, seed=0):
-    rng = np.random.default_rng(seed)
-    X, y = [], []
-    TOP_K = 16
-
-    # Traspilosizione unica con noise model di riferimento
-    nm_ref = build_noise_model(**noise_base)
-    sim_tp = AerSimulator(noise_model=nm_ref, method='statevector')
-    tqc = transpile(shor_circuit(N, a, n_count), sim_tp,
-                    optimization_level=2)
-
-    # Simulatore senza NM fisso: noise model varia a run-time
-    sim = AerSimulator(method='statevector')
-
-    for i in range(n_samples):
-        # Variazione casuale dei parametri di rumore
-        f = 1.0 + rng.uniform(-noise_factor, noise_factor)
-        eps_2q = np.clip(noise_base['eps_2q'] * f, 1e-3, 0.3)
-        # ...altri parametri analogamente...
-        nm = build_noise_model(eps_1q, eps_2q, t1_ns, t2_ns,
-                               p_ro=noise_base['p_ro'])
-        counts = sim.run(tqc, noise_model=nm, shots=shots,
-                         seed_simulator=seed + i).result().get_counts()
-
-        # Etichetta TOP-K: 1 se almeno una delle top-16 misure
-        # piu' frequenti produce fattori validi
-        sorted_meas = sorted(counts.items(),
-                             key=lambda x: x[1], reverse=True)
-        found = any(
-            extract_factors(int(ms, 2), n_count, N, a)[0] is not None
-            for ms, _ in sorted_meas[:TOP_K]
-        )
-        label = 1 if found else 0
-
-        feature = np.zeros(2 ** n_count)
-        for k, v in counts.items():
-            feature[int(k, 2)] = v / shots
-        X.append(feature); y.append(label)
-
-    return np.array(X), np.array(y)
-\end{lstlisting}
+\noindent\emph{Si veda il Listato~\ref{lst:generazione_del_dataset_con}.}
 
 \subsection{Addestramento e Selezione del Modello}
 
 L'addestramento confronta tre architetture con scikit-learn \cite{scikit_learn}: \textbf{Random Forest} (200 alberi), \textbf{\ac{SVM}} con kernel RBF e \textbf{\ac{MLP}} con architettura $(256, 128)$. Il modello con F1-score più elevato sul test set (suddivisione 80/20 stratificata) viene serializzato per l'inferenza tramite \texttt{joblib}.
 
-I risultati della selezione del modello, eseguita su 2000 campioni per ciascun use case, sono riportati in Tabella~\ref{tab:clf_sel}.
+La selezione del modello è stata eseguita su 2000 campioni per ciascun use case, con split stratificato 80/20 e criterio di scelta basato sull'F1-score: risulta selezionato il Random Forest per UC1 e l'\ac{SVM} per UC2, entrambi con metriche di classificazione elevate (F1 fino a $0.98$, \ac{AUC} fino a $0.99$).
 
-\begin{table}[H]
-\centering
-\caption{Selezione del classificatore per i due use case (test set 20\%, $n=400$ campioni)}
-\label{tab:clf_sel}
-\begin{tabular}{llccc}
-\hline
-\textbf{Use Case} & \textbf{Modello} & \textbf{F1} & \textbf{Accuratezza} & \textbf{\acs{AUC}-ROC} \\
-\hline
-\multirow{3}{*}{UC1 ($\epsilon_{2q}=10^{-2}$)} & \textbf{Random Forest} & \textbf{0.949} & \textbf{0.922} & \textbf{0.964} \\
-                                                 & \ac{SVM}               & 0.855          & 0.748          & 0.929 \\
-                                                 & \ac{MLP}               & 0.919          & 0.885          & 0.952 \\
-\hline
-\multirow{3}{*}{UC2 ($\epsilon_{2q}=5\times10^{-2}$)} & \textbf{\ac{SVM}}  & \textbf{0.979} & \textbf{0.965} & \textbf{0.987} \\
-                                                        & Random Forest      & 0.976          & 0.960          & 0.982 \\
-                                                        & \ac{MLP}           & 0.977          & 0.963          & 0.987 \\
-\hline
-\end{tabular}
-\end{table}
+\noindent Le metriche complete dei tre modelli sui due use case, con le curve ROC e laudit delle etichette di addestramento, sono nella Sezione~\ref{app:classificatore} dellAppendice~ef{app:fase1}.
 
 Il \textbf{Random Forest} è il modello ottimale per UC1 (F1=0.949, \ac{AUC}=0.964), dove la maggiore variabilità dell'istogramma — il dataset ha il 25.8\% di esempi negativi — favorisce un classificatore ensemble capace di catturare relazioni non lineari tra le feature. Per UC2, tutti e tre i modelli raggiungono prestazioni quasi identiche (F1 $>$ 0.97): la scelta ricade sull'\textbf{\ac{SVM}} per il margine minimo di F1-score. In entrambi i casi, i valori di \ac{AUC}-ROC $>$ 0.96 indicano una buona separabilità delle classi nello spazio delle feature istogramma.
 
@@ -311,60 +90,13 @@ In fase di inferenza il Metodo 2 adotta un design a due livelli. Il classificato
 
 L'asimmetria tra TOP\_K=16 per le etichette di training e top\_k=4 per l'inferenza è intenzionale: il classificatore impara a rilevare la presenza di segnale QPE su una finestra ampia, mentre la ricerca usa una finestra stretta per limitare i tentativi per iterazione. Rispetto al Metodo 1, questa strategia trova la fase corretta anche quando il picco è stato spostato dal rumore: se la moda è $65$ invece di $64$, il Metodo 1 fallisce, ma il Metodo 2 trova $64$ tra i top-4 candidati.
 
-\begin{lstlisting}[caption={Loop di inferenza del Metodo 2 (classificatore + TOP-K)}]
-def run_method2(N, a, n_count, noise_model, classifier,
-                shots=1024, max_iter=50, seed=42, top_k=4):
-    base_qc = shor_circuit(N, a, n_count)
-    sim = AerSimulator(noise_model=noise_model, method='statevector')
-    transpiled = transpile(base_qc, sim, optimization_level=2)
-
-    for iteration in range(1, max_iter + 1):
-        counts = sim.run(transpiled, shots=shots,
-                         seed_simulator=seed * 10000 + iteration
-                         ).result().get_counts()
-
-        # Feature: istogramma normalizzato a 2^n_count dimensioni
-        feature = np.zeros(2 ** n_count)
-        for k, v in counts.items():
-            feature[int(k, 2)] = v / shots
-
-        # Porta del classificatore: salta se l'istogramma e' troppo rumoroso
-        if classifier.predict([feature])[0] == 0:
-            continue
-
-        # Ricerca TOP-K: prova i candidati piu' frequenti in ordine
-        sorted_meas = sorted(counts.items(),
-                             key=lambda x: x[1], reverse=True)
-        for meas_str, _ in sorted_meas[:top_k]:
-            p, q = extract_factors(int(meas_str, 2), n_count, N, a)
-            if p is not None:
-                return {'factors': (p, q), 'iterations': iteration,
-                        'success': True}
-
-    return {'factors': (None, None), 'iterations': max_iter,
-            'success': False}
-\end{lstlisting}
+\noindent\emph{Si veda il Listato~\ref{lst:loop_di_inferenza_del}.}
 
 % -----------------------------------------------
 \section{Infrastruttura di Test e Raccolta Dati}
 \label{sec:infrastruttura}
 
-Per garantire la riproducibilità e la comparabilità dei risultati, tutti i use case vengono eseguiti tramite uno script di orchestrazione (\texttt{run\_experiments.py}). Per UC1 e UC2 vengono eseguite $K=30$ ripetizioni di entrambi i metodi; per UC3 e UC4, dove solo il Metodo 1 è applicabile a causa della profondità del circuito, $K=10$ ripetizioni con analisi esclusiva della scalabilità. I risultati vengono salvati in formato JSON con timestamp e parametri completi, per consentire l'analisi a posteriori:
-
-\begin{lstlisting}[caption={Schema di orchestrazione degli esperimenti}]
-USE_CASES = [
-    {'name': 'UC1', 'N': 15, 'a': 7, 'n_count': 8,
-     'noise': NOISE_REALISTIC, 'has_m2': True},
-    {'name': 'UC2', 'N': 15, 'a': 7, 'n_count': 8,
-     'noise': NOISE_DEGRADED,  'has_m2': True},
-    {'name': 'UC3', 'N': 21, 'a': 2, 'n_count': 10,
-     'noise': NOISE_REALISTIC, 'has_m2': False},  # scalabilita' solo
-    {'name': 'UC4', 'N': 35, 'a': 6, 'n_count': 12,
-     'noise': NOISE_REALISTIC, 'has_m2': False},  # scalabilita' solo
-]
-K_REPETITIONS = 30   # UC1/UC2: stima statistica di M_bar
-K_SCALABILITY = 10   # UC3/UC4: analisi profondita' circuito
-\end{lstlisting}
+Per garantire la riproducibilità e la comparabilità dei risultati, tutti i use case vengono eseguiti tramite uno script di orchestrazione (\texttt{run\_experiments.py}). Per UC1 e UC2 vengono eseguite $K=30$ ripetizioni di entrambi i metodi; per UC3 e UC4, dove solo il Metodo 1 è applicabile a causa della profondità del circuito, $K=10$ ripetizioni con analisi esclusiva della scalabilità. I risultati vengono salvati in formato JSON con timestamp e parametri completi, per consentire l'analisi a posteriori (Listato~\ref{lst:schema_di_orchestrazione_degli}).
 
 Il seed di ogni ripetizione viene calcolato come \texttt{seed = rep} e propagato al simulatore come \texttt{seed\_simulator = rep * 10000 + iteration}, garantendo che ogni ripetizione e ogni iterazione interna abbiano realizzazioni di rumore indipendenti e riproducibili.
 
@@ -400,29 +132,7 @@ Il codice sperimentale è organizzato in una cartella per milestone, ciascuna co
 
 L'implementazione del codice a ripetizione realizza in forma esplicita il ciclo descritto nel Capitolo~\ref{chap:qec}. Il punto delicato non è la codifica, ma il fatto che la misura di sindrome non deve collassare lo stato logico: per questo gli stabilizzatori sono misurati \emph{indirettamente}, copiandone la parità su due qubit ancillari che vengono poi letti al posto dei dati.
 
-\begin{lstlisting}[caption={Codifica ed estrazione di sindrome del codice a ripetizione. Il registro classico separa i due bit di sindrome dai tre di lettura dei dati. Il codice duale phase-flip si ottiene coniugando con Hadamard: la stessa struttura protegge dagli errori $Z$ anziché $X$.}, label={lst:qec_repetition}]
-# --- Codifica: |0_L> = |000>, |1_L> = |111> (stato entangled, non 3 copie)
-if logical_value == 1:
-    qc.x(0)
-qc.cx(0, 1)
-qc.cx(0, 2)
-if basis == 'X':
-    qc.h(DATA)          # |+_L> = H^3 |0_L>  -> duale phase-flip
-
-# --- Punto di iniezione del rumore: identita' "rumorose" sui data
-for q in DATA:
-    qc.id(q)
-
-# --- Estrazione della sindrome tramite ancilla (i data NON vengono misurati)
-if basis == 'Z':
-    qc.cx(0, 3); qc.cx(1, 3)      # stabilizzatore Z0Z1 -> ancilla 3
-    qc.cx(1, 4); qc.cx(2, 4)      # stabilizzatore Z1Z2 -> ancilla 4
-else:
-    qc.h(3); qc.cx(3, 0); qc.cx(3, 1); qc.h(3)   # X0X1
-    qc.h(4); qc.cx(4, 1); qc.cx(4, 2); qc.h(4)   # X1X2
-qc.measure(ANC[0], 0)
-qc.measure(ANC[1], 1)
-\end{lstlisting}
+\noindent\emph{Si veda il Listato~\ref{lst:qec_repetition}.}
 
 Merita attenzione la scelta del \textbf{punto di iniezione del rumore}. Poiché il noise model di Aer associa gli errori alle \emph{porte}, e non al tempo trascorso, per applicare un canale d'errore a probabilità nota sui soli qubit dati si inseriscono porte identità in corrispondenza dell'istante in cui il rumore deve agire: l'identità non altera lo stato ideale ma costituisce l'aggancio a cui il modello di rumore associa il canale. È una tecnica standard e rende il parametro $p$ delle curve del Capitolo~\ref{chap:qec} esattamente la probabilità di errore per qubit, anziché una quantità effettiva da calibrare.
 
@@ -430,48 +140,13 @@ Merita attenzione la scelta del \textbf{punto di iniezione del rumore}. Poiché 
 
 Per lo Steane la difficoltà implementativa si sposta sulla \textbf{preparazione dello stato logico}. Lo stato $\ket{0_L}$ è la sovrapposizione uniforme degli otto \textit{codeword}, e si ottiene senza scriverli esplicitamente: si individuano i tre qubit che compaiono in un solo stabilizzatore di tipo X --- i ``semi'' --- li si pone in sovrapposizione con una porta di Hadamard, e si propaga ciascun seme sul proprio supporto con una rete di CNOT.
 
-\begin{lstlisting}[caption={Preparazione di $\ket{0_L}$ e misura dei sei stabilizzatori del codice di Steane. Le due famiglie richiedono schemi diversi: gli stabilizzatori di tipo Z si misurano portando la parità sui dati verso l'ancilla, quelli di tipo X operando nella base coniugata.}, label={lst:qec_steane}]
-def encode_zero_L(qc):
-    """|0_L> = sovrapposizione uniforme degli 8 codeword."""
-    for s in SEED:                    # H sui 3 qubit "seme"
-        qc.h(s)
-    for s, support in SEED.items():   # propaga il seme sul suo supporto
-        for d in support:
-            if d != s:
-                qc.cx(s, d)
-
-def measure_syndrome(qc):
-    for k, support in enumerate(GZ):      # tipo Z: rilevano errori X
-        for d in support:
-            qc.cx(d, ANC_Z[k])
-    for k, support in enumerate(GX):      # tipo X: rilevano errori Z
-        qc.h(ANC_X[k])
-        for d in support:
-            qc.cx(ANC_X[k], d)
-        qc.h(ANC_X[k])
-\end{lstlisting}
+\noindent\emph{Si veda il Listato~\ref{lst:qec_steane}.}
 
 La stima della curva $p \rightarrow p_L$ non viene condotta simulando il circuito completo per ogni campione, ma nel \textbf{formalismo di Pauli}: si campiona un errore di Pauli per qubit con probabilità $p$, se ne calcola la sindrome come prodotto scalare binario con le matrici di parità, si applica la correzione a peso minimo dalla lookup table e si verifica se il residuo contiene un operatore logico non banale. Questa scelta rende trattabili i $200\,000$ campioni per punto e non introduce approssimazioni, perché per errori di Pauli e circuiti Clifford il risultato coincide con quello della simulazione esplicita. Ne discende però il limite dichiarato nel Capitolo~\ref{chap:qec}: l'estrazione di sindrome così modellata è \emph{ideale}, cioè le ancilla non sono soggette a errore, e il protocollo non è fault-tolerant.
 
 \subsection{Il surface code e l'iniezione del crosstalk}
 
-Per il surface code la generazione del circuito e la decodifica sono demandate a Stim e PyMatching secondo lo schema riportato nel Capitolo~\ref{chap:surface} (Listato~\ref{lst:stim_pymatching}). L'unico intervento non standard riguarda l'esperimento sul rumore correlato della Sezione~\ref{sec:decodifica_appresa}, che richiede di aggiungere al circuito generato un canale a due qubit fra dati adiacenti. Poiché Stim rappresenta i cicli intermedi con un blocco \texttt{REPEAT}, l'inserimento deve procedere ricorsivamente sulla struttura del circuito:
-
-\begin{lstlisting}[caption={Iniezione del crosstalk nel circuito del surface code. L'inizio di ogni ciclo di sindrome è individuato dal primo \texttt{DEPOLARIZE1} che segue le porte di Hadamard sulle ancilla; la ricorsione tratta il blocco \texttt{REPEAT} con cui Stim rappresenta i cicli intermedi.}, label={lst:crosstalk}]
-def _inject(block, pairs, p_ct):
-    out = stim.Circuit()
-    first = True
-    for inst in block:
-        if isinstance(inst, stim.CircuitRepeatBlock):
-            out += _inject(inst.body_copy(), pairs, p_ct) * inst.repeat_count
-            continue
-        out.append(inst)
-        if inst.name == 'DEPOLARIZE1':
-            if first:
-                out.append('DEPOLARIZE2', pairs, p_ct)  # coppie di dati adiacenti
-            first = not first
-    return out
-\end{lstlisting}
+Per il surface code la generazione del circuito e la decodifica sono demandate a Stim e PyMatching secondo lo schema riportato nel Capitolo~\ref{chap:surface} (Listato~\ref{lst:stim_pymatching}). L'unico intervento non standard riguarda l'esperimento sul rumore correlato della Sezione~\ref{sec:decodifica_appresa}, che richiede di aggiungere al circuito generato un canale a due qubit fra dati adiacenti. Poiché Stim rappresenta i cicli intermedi con un blocco \texttt{REPEAT}, l'inserimento deve procedere ricorsivamente sulla struttura del circuito (Listato~\ref{lst:crosstalk}).
 
 Le coppie su cui il canale agisce sono determinate dalle coordinate della griglia: due qubit dati adiacenti distano 2 nel sistema di riferimento del layout ruotato, poiché fra di essi si trova un qubit di misura. L'identificazione dei qubit di misura richiede una cautela: nel \textit{memory experiment} l'ultima operazione legge \emph{anche} i qubit dati, sicché l'insieme dei qubit misurati nel circuito completo non è discriminante; si usa quindi il primo \texttt{MR}, che corrisponde al primo ciclo di estrazione della sindrome.
 

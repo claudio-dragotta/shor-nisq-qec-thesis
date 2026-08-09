@@ -1,0 +1,71 @@
+% Blocchi migrati dal Cap. 4 per il vincolo di lunghezza del corpo.
+% La rilevanza crittografica in forma estesa e' nell'Appendice C (Contesto).
+
+Questa sezione raccoglie il materiale di contesto e di approfondimento dell'algoritmo di Shor: lo stato delle realizzazioni sperimentali, i miglioramenti algoritmici recenti, la roadmap verso il calcolo fault-tolerant e il confronto con l'algoritmo di Grover. Il Capitolo~\ref{chap:shor} ne riporta la sintesi.
+
+\subsection{Sviluppi Recenti e Stato dell'Arte}
+
+\subsubsection{Implementazioni su Hardware Reale}
+
+Nonostante la solidità teorica, l'esecuzione di Shor su hardware reale rimane limitata a istanze molto piccole a causa dei requisiti di profondità circuitale. I principali risultati sperimentali sono:
+
+\begin{itemize}
+    \item \textbf{2001 -- \ac{NMR} (Vandersypen et al.)}: prima dimostrazione sperimentale di Shor su un sistema a 7 spin nucleari; fattorizzazione di $N = 15$ in $3 \times 5$ \cite{vandersypen2001}.
+    \item \textbf{2016 -- Ioni intrappolati (Monz et al.)}: implementazione scalabile su 5 qubit ionici; fattorizzazione di $N = 15$ con un'architettura modulare \cite{monz2016}.
+    \item \textbf{2021 -- Qubit superconduttori \ac{IBM}}: dimostrazione della fattorizzazione di $N = 21$ su processori \ac{IBM} Quantum utilizzando solo 5 qubit \cite{skosana2021}, attualmente il risultato più avanzato su hardware superconduttore di uso generale;
+    \item \textbf{Fotonica}: esperimenti su piattaforme fotonice hanno raggiunto la fattorizzazione di $N = 35$, sfruttando la maggiore coerenza dei qubit ottici, sebbene con circuiti fortemente semplificati rispetto all'algoritmo generale.
+\end{itemize}
+
+Il record di $N = 21$ evidenzia quanto la distanza tra le istanze dimostrabili e quelle crittograficamente rilevanti (RSA-2048, con $N$ a 2048 bit) sia ancora enorme: fattorizzare un numero a $L$ bit richiede circa $5L+1$ qubit logici e $72L^3$ gate \cite{shor_challenges2025}, valori del tutto inaccessibili ai processori \ac{NISQ} attuali. Una analisi aggiornata delle sfide pratiche nell'esecuzione di Shor su piattaforme esistenti è discussa in \cite{shor_challenges2025}.
+
+\subsubsection{Miglioramenti Algoritmici: Regev 2023}
+
+Un risultato teorico rilevante è stato pubblicato nel 2023 da Oded Regev \cite{regev2023}, che ha proposto una variante migliorata dell'algoritmo di Shor richiedente solo $O(n^{3/2})$ gate (rispetto agli $O(n^2)$ della versione originale), al costo di un overhead classico maggiore. Sebbene non ancora implementata su hardware reale, questa riduzione della profondità circuitale è promettente per le architetture NISQ, dove la profondità è il principale collo di bottiglia.
+
+\subsubsection{Roadmap IBM verso il Quantum Fault-Tolerant}
+
+\ac{IBM} ha delineato una roadmap concreta verso il calcolo quantistico fault-tolerant \cite{ibm_roadmap2025}:
+\begin{itemize}
+    \item \textbf{2025}: processori Loon e Nighthawk (120 qubit con 218 coupler sintonizzabili), con dimostrazione dei componenti chiave per la fault-tolerance tramite codici qLDPC;
+    \item \textbf{2026}: target di vantaggio quantistico su problemi pratici;
+    \item \textbf{2029}: sistema Quantum Starling con 200 qubit logici e oltre $10^8$ operazioni quantistiche.
+\end{itemize}
+
+Questi traguardi definiscono l'orizzonte temporale entro cui l'algoritmo di Shor potrà diventare una minaccia concreta per la crittografia RSA, motivando ulteriormente la transizione urgente verso gli standard PQC discussi nella sezione precedente.
+
+Le sfide hardware principali per l'esecuzione di Shor su istanze crittograficamente rilevanti sono analizzate in dettaglio nel Capitolo~\ref{chap:rumore}, mentre l'implementazione pratica con Qiskit e le tecniche di ottimizzazione basate su intelligenza artificiale sono presentate nel Capitolo~\ref{chap:sviluppo}.
+\clearpage
+
+\subsection{Contesto: Confronto con l'Algoritmo di Grover}
+
+Per collocare correttamente l'algoritmo di Shor nel panorama dell'informatica quantistica, è utile confrontarlo con l'altro grande risultato algoritmico degli anni Novanta: l'algoritmo di Grover per la ricerca non strutturata \cite{grover1996}.
+
+\subsubsection{Il Problema di Grover}
+
+Dato un insieme di $N$ elementi e una funzione oracolo $f:\{0,\ldots,N-1\}\to\{0,1\}$, l'obiettivo è trovare $x^*$ tale che $f(x^*)=1$. Classicamente, nel caso peggiore, sono necessarie $O(N)$ interrogazioni. Grover (1996) dimostrò che un algoritmo quantistico, sfruttando il meccanismo di \textit{amplitude amplification}, può trovare la soluzione in sole $O(\sqrt{N})$ interrogazioni -- uno \textbf{speedup quadratico} che è stato dimostrato ottimale: nessun algoritmo quantistico può fare meglio \cite{bennett1997,zalka1999}.
+
+\subsubsection{Differenze Fondamentali}
+
+I due algoritmi rappresentano due regimi distinti di vantaggio quantistico:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}lp{5cm}p{5cm}@{}}
+\toprule
+\textbf{Caratteristica} & \textbf{Shor} & \textbf{Grover} \\
+\midrule
+Problema target          & Fattorizzazione intera / period finding & Ricerca non strutturata \\[2pt]
+Speedup                  & Esponenziale rispetto al miglior classico & Quadratico: $O(\sqrt{N})$ vs $O(N)$ \\[2pt]
+Tecnica quantistica core & QFT + Phase Estimation          & Amplitude Amplification \\[2pt]
+Ottimalità               & Non dimostrata in assoluto      & Dimostrata ottimale \cite{bennett1997} \\[2pt]
+Impatto crittografico    & Rompe RSA, DH, ECDSA (chiave pubblica) & Dimezza sicurezza AES/SHA (simmetrica) \\[2pt]
+Requisiti hardware       & $O(\log N)$ qubit, alta profondità & $O(\log N)$ qubit, bassa profondità \\
+\bottomrule
+\end{tabular}
+\caption{Confronto tra l'algoritmo di Shor e l'algoritmo di Grover}
+\end{table}
+
+L'impatto sulla crittografia simmetrica di Grover è significativo ma gestibile: raddoppiare la lunghezza delle chiavi (da AES-128 a AES-256) è sufficiente a ripristinare il livello di sicurezza. Al contrario, non esiste un analogo rimedio per RSA: l'unica risposta è la migrazione verso gli standard post-quantum discussi nella sezione precedente. È per questa ragione che l'algoritmo di Shor rappresenta la minaccia quantistica più urgente e motivante per la ricerca sul calcolo quantistico applicato.
+
+Tutta l'analisi svolta in questo capitolo ha però assunto un modello di calcolo \textit{ideale}: porte unitarie perfette, coerenza illimitata, nessuna interazione con l'ambiente. Su hardware reale questi presupposti non reggono, e la distanza tra il modello teorico e l'esecuzione fisica è precisamente il nodo critico che rende ancora irraggiungibile la fattorizzazione di numeri crittograficamente rilevanti. Comprendere le origini e gli effetti del rumore quantistico è quindi il passo necessario per valutare le reali prospettive dell'algoritmo di Shor.

@@ -1,0 +1,52 @@
+% Derivazioni migrate dal Cap. 5 per il vincolo di lunghezza del corpo.
+% Il capitolo mantiene il canale depolarizzante in forma completa e gli enunciati
+% compatti degli altri tre.
+
+I quattro canali quantistici che modellano il rumore sono mappe \ac{CPTP} in rappresentazione di Kraus, secondo l'Eq.~\ref{eq:kraus}. Il Capitolo~\ref{chap:rumore} ne riporta il canale depolarizzante per esteso, essendo quello su cui poggia la campagna sperimentale, e l'enunciato compatto degli altri tre; qui se ne danno le derivazioni complete.
+
+\subsubsection{Canale Bit Flip}
+
+Il canale \textbf{bit flip} modella un errore di tipo $X$ discreto: con probabilità $p$ il qubit viene invertito ($\ket{0}\leftrightarrow\ket{1}$), con probabilità $1-p$ rimane invariato. Gli operatori di Kraus sono $K_0 = \sqrt{1-p}\,I$ e $K_1 = \sqrt{p}\,X$, e il canale agisce come:
+\begin{equation}
+    \mathcal{E}_{BF}(\rho) = (1-p)\,\rho + p\,X\rho X
+    \label{eq:bitflip}
+\end{equation}
+Sulla sfera di Bloch, le componenti $r_y$ e $r_z$ vengono contratte di un fattore $(1-2p)$ mentre la componente $r_x$ rimane invariata. Per $p=1/2$ lo stato è completamente distrutto sul piano $yz$.
+
+% ---
+\subsubsection{Canale Phase Flip}
+
+Il canale \textbf{phase flip} modella la perdita di informazione di fase senza cambiamento di popolazione: la sovrapposizione decade senza che l'energia venga dissipata. Con operatori di Kraus $K_0 = \sqrt{1-p}\,I$ e $K_1 = \sqrt{p}\,Z$, il canale è:
+\begin{equation}
+    \mathcal{E}_{PF}(\rho) = (1-p)\,\rho + p\,Z\rho Z
+    \label{eq:phaseflip}
+\end{equation}
+L'effetto sulla matrice densità è immediato:
+\begin{equation}
+    \mathcal{E}_{PF}\!\begin{pmatrix}\rho_{00} & \rho_{01} \\ \rho_{10} & \rho_{11}\end{pmatrix}
+    = \begin{pmatrix}\rho_{00} & (1-2p)\,\rho_{01} \\ (1-2p)\,\rho_{10} & \rho_{11}\end{pmatrix}
+\end{equation}
+Le popolazioni $\rho_{00}$ e $\rho_{11}$ rimangono invariate, mentre le \textbf{coerenze} $\rho_{01}$, $\rho_{10}$ vengono soppresse di un fattore $(1-2p)$. Questo è il canale che descrive il decadimento $T_2$: parametrizzando $p(t) = \frac{1}{2}(1-e^{-t/T_2})$, si ottiene $\rho_{01}(t) = \rho_{01}(0)\,e^{-t/T_2}$.
+
+% ---
+\subsubsection{Canale di Amplitude Damping}
+
+Il canale di \textbf{amplitude damping} modella il rilassamento energetico $T_1$: il qubit decade spontaneamente dallo stato eccitato $\ket{1}$ allo stato fondamentale $\ket{0}$ con probabilità $\gamma = 1-e^{-t/T_1}$. Gli operatori di Kraus sono:
+\begin{equation}
+    K_0 = \begin{pmatrix}1 & 0 \\ 0 & \sqrt{1-\gamma}\end{pmatrix}, \qquad
+    K_1 = \begin{pmatrix}0 & \sqrt{\gamma} \\ 0 & 0\end{pmatrix}
+    \label{eq:kraus_ad}
+\end{equation}
+Il canale agisce sulla matrice densità come:
+\begin{equation}
+    \mathcal{E}_{AD}\!(\rho) = \begin{pmatrix}
+        \rho_{00} + \gamma\,\rho_{11} & \sqrt{1-\gamma}\,\rho_{01} \\
+        \sqrt{1-\gamma}\,\rho_{10}   & (1-\gamma)\,\rho_{11}
+    \end{pmatrix}
+    \label{eq:amp_damping_explicit}
+\end{equation}
+La popolazione $\rho_{11}$ decade verso $\rho_{00}$ con tasso $\gamma$, mentre le coerenze vengono soppresse di $\sqrt{1-\gamma}$. A differenza dei canali precedenti, questo canale è \textbf{non simmetrico}: sulla sfera di Bloch contrae la sfera verso il polo nord $\ket{0}$, non verso il centro:
+\begin{equation}
+    r_x \to \sqrt{1-\gamma}\,r_x, \qquad r_y \to \sqrt{1-\gamma}\,r_y, \qquad r_z \to (1-\gamma)\,r_z + \gamma
+\end{equation}
+Per $t \to \infty$ ($\gamma \to 1$), qualsiasi stato converge a $\ket{0}\bra{0}$, indipendentemente dallo stato iniziale.

@@ -2,7 +2,7 @@
 
 Questa appendice riporta il dettaglio del classificatore \ac{ML} valutato nella prima fase sperimentale (Capitolo~\ref{chap:risultati}): architettura, procedura di addestramento, metriche di classificazione e --- nella Sezione~\ref{sec:audit_etichette} --- l'audit che ne ha chiarito il comportamento. Il verdetto operativo, ossia che il classificatore a valle dell'esecuzione non riduce le iterazioni rispetto alla sola ricerca multi-candidato TOP-4, è dimostrato nel corpo del capitolo tramite l'analisi di ablazione; qui se ne ricostruisce la causa.
 
-\section{L'Ipotesi alla Prova: il Classificatore ML}
+\subsection{L'Ipotesi alla Prova: il Classificatore ML}
 \label{sec:risultati_uc_m2}
 \label{sec:valutazione_clf}
 
@@ -40,7 +40,7 @@ Il Metodo 2 opera su due livelli: un \textit{gate di qualità} --- il classifica
 Come \emph{classificatori}, i modelli funzionano molto bene: F1 fino a $0.98$ e \ac{AUC} fino a $0.99$. Ma le metriche di classificazione dicono soltanto che il modello sa distinguere le due classi che gli sono state presentate, e non dicono nulla su \emph{quali} classi siano. L'ablazione del Capitolo~\ref{chap:risultati} ha mostrato che il filtraggio non riduce le iterazioni rispetto alla sola ricerca multi-candidato; la sezione seguente stabilisce perché.
 
 % -----------------------------------------------
-\section{Audit delle Etichette: che Cosa il Classificatore ha Effettivamente Appreso}
+\subsection{Audit delle Etichette: che Cosa il Classificatore ha Effettivamente Appreso}
 \label{sec:audit_etichette}
 
 La coesistenza di metriche eccellenti e di un guadagno operativo nullo è sufficientemente anomala da richiedere una verifica diretta, anziché una spiegazione narrativa. Poiché i modelli addestrati sono stati archiviati assieme al proprio test set, è possibile \emph{ricalcolare} le etichette a partire dagli istogrammi salvati e confrontarle con quelle memorizzate. È quanto fa lo script \texttt{audit\_etichette\_classificatore.py}, il cui esito è riportato nella Tabella~\ref{tab:audit_etichette}.
@@ -109,7 +109,7 @@ Resta da chiedersi che cosa accadrebbe addestrando il classificatore sulla regol
 
 L'interpretazione è la seguente: al livello di rumore di UC1, e con una ricerca che consideri anche solo i primi sedici candidati, \emph{non esiste alcun istogramma da scartare}. La domanda a cui il classificatore avrebbe dovuto rispondere non ha istanze negative, e quindi non è una domanda. Il filtro a valle non è ridondante per una qualche insufficienza dell'architettura scelta o della quantità di dati: è ridondante perché il rumore depolarizzante, su questo circuito e a questa profondità, non produce mai la condizione che esso dovrebbe rilevare.
 
-\subsection{Perché la Regola TOP-16 non Può Produrre Negativi}
+\subsubsection{Perché la Regola TOP-16 non Può Produrre Negativi}
 \label{subsec:soglia_classe_negativa}
 
 Constatare che la classe negativa è vuota lascia aperta la domanda su \emph{dove} cominci a popolarsi: è quella soglia a delimitare il regime in cui un filtro a valle avrebbe qualcosa da apprendere. La ricerca della soglia, spingendo $\varepsilon_{2q}$ ben oltre qualunque valore fisicamente sensato, dà l'esito riportato nella Tabella~\ref{tab:soglia_negativi}.

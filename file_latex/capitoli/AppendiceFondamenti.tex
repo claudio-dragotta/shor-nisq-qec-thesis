@@ -1,13 +1,13 @@
 \begin{onehalfspace}
 
-\section{Dalla Meccanica Classica alla Meccanica Quantistica}
+\subsection{Dalla Meccanica Classica alla Meccanica Quantistica}
 
 La meccanica quantistica descrive il comportamento della materia e dell'energia alle scale atomiche e subatomiche, dove i principi della fisica classica cessano di essere validi. I suoi postulati, formulati nella prima metà del Novecento da Heisenberg, Schrödinger, Dirac e Bohr, introducono concetti radicalmente diversi da quelli classici: lo stato di un sistema fisico non è determinato in modo assoluto, ma è descritto da una \textbf{funzione d'onda} la cui evoluzione è governata dall'equazione di Schrödinger.
 
 Il calcolo quantistico traduce questi principi fisici in risorse computazionali. La \textbf{sovrapposizione} consente a un bit quantistico di trovarsi in una combinazione lineare di 0 e 1 simultaneamente; l'\textbf{entanglement} crea correlazioni non classiche tra qubit distinti; l'\textbf{interferenza} permette di amplificare le soluzioni corrette e cancellare quelle errate.
 
 \clearpage
-\section{I Postulati della Meccanica Quantistica}
+\subsection{I Postulati della Meccanica Quantistica}
 
 Il formalismo matematico della meccanica quantistica poggia su quattro postulati fondamentali, che costituiscono l'assiomatica della teoria e il punto di partenza rigoroso per la descrizione di qualsiasi sistema quantistico \cite{nielsenChuang2000}.
 
@@ -48,9 +48,9 @@ Il formalismo matematico della meccanica quantistica poggia su quattro postulati
 Questi quattro postulati forniscono il quadro assiomatico completo entro cui si collocano tutti i concetti che seguono: il qubit (Postulato~1), le porte quantistiche come trasformazioni unitarie (Postulato~2), la misura e il collasso dello stato (Postulato~3), i registri multi-qubit e l'entanglement (Postulato~4).
 
 \clearpage
-\section{Il Qubit}
+\subsection{Il Qubit}
 
-\subsection{Definizione Matematica}
+\subsubsection{Definizione Matematica}
 
 L'unità fondamentale del calcolo quantistico è il \textbf{qubit} (\textit{quantum bit}). Mentre un bit classico assume uno dei due valori $\{0, 1\}$, un qubit è descritto da un vettore unitario nello spazio di Hilbert bidimensionale $\mathcal{H} = \mathbb{C}^2$.\footnote{Lo \textbf{spazio di Hilbert} prende il nome dal matematico tedesco David Hilbert (1862--1943), uno dei più influenti matematici del XX secolo. In meccanica quantistica indica uno spazio vettoriale complesso dotato di prodotto interno, che fornisce il formalismo matematico per descrivere gli stati di un sistema fisico.}
 
@@ -67,7 +67,7 @@ Lo stato generico di un qubit è la \textbf{sovrapposizione}:
 
 dove $|\alpha|^2$ e $|\beta|^2$ rappresentano le probabilità di ottenere rispettivamente $0$ e $1$ al momento della misura. Il vincolo di normalizzazione $|\alpha|^2 + |\beta|^2 = 1$ garantisce che le probabilità sommino a 1.
 
-\subsection{La Sfera di Bloch}
+\subsubsection{La Sfera di Bloch}
 
 Ogni stato puro di un qubit può essere visualizzato come un punto sulla superficie della \textbf{sfera di Bloch}, una sfera unitaria in $\mathbb{R}^3$.\footnote{La \textbf{sfera di Bloch} deve il suo nome al fisico svizzero-americano Felix Bloch (1905--1983), Premio Nobel per la Fisica nel 1952 (insieme a Edward Purcell) per lo sviluppo della spettroscopia a risonanza magnetica nucleare (\ac{NMR}). La stessa notazione $T_1$ e $T_2$ per i tempi di decoerenza proviene dal formalismo NMR di Bloch.} Parametrizzando le ampiezze complesse tramite angoli reali $\theta \in [0, \pi]$ e $\phi \in [0, 2\pi)$:
 \begin{equation}
@@ -83,7 +83,7 @@ I poli nord e sud corrispondono agli stati $\ket{0}$ e $\ket{1}$, mentre i punti
     \label{fig:bloch}
 \end{figure}
 
-\section{Sistemi Multi-Qubit e Prodotto Tensoriale}
+\subsection{Sistemi Multi-Qubit e Prodotto Tensoriale}
 
 Un sistema di $n$ qubit è descritto da un vettore nello spazio di Hilbert $\mathcal{H}^{\otimes n} = \mathbb{C}^{2^n}$, ottenuto come prodotto tensoriale degli spazi individuali. Uno stato generico di $n$ qubit è:
 \begin{equation}
@@ -92,7 +92,7 @@ Un sistema di $n$ qubit è descritto da un vettore nello spazio di Hilbert $\mat
 
 La dimensione esponenziale $2^n$ dello spazio di Hilbert è la fonte del potere computazionale dei sistemi quantistici: con $n = 300$ qubit, lo spazio degli stati ha dimensione $2^{300}$, superiore al numero di atomi nell'universo osservabile.
 
-\subsection{Entanglement}
+\subsubsection{Entanglement}
 
 Due qubit sono detti \textbf{entangled} quando il loro stato congiunto non può essere scritto come prodotto tensoriale degli stati individuali. Gli stati di Bell costituiscono la base canonica degli stati entangled a due qubit:
 \begin{align}
@@ -111,7 +111,7 @@ Lo stato $\ket{\Phi^+}$ non può essere fattorizzato come $\ket{\psi_A} \otimes 
     \label{fig:circuit_bell}
 \end{figure}
 
-\subsection{L'Entanglement come Risorsa Fisica Fragile}
+\subsubsection{L'Entanglement come Risorsa Fisica Fragile}
 \label{sec:entanglement_fragile}
 
 L'entanglement non è soltanto una proprietà astratta degli stati quantistici: è la \textbf{risorsa fisica} che gli algoritmi quantistici consumano per ottenere il loro vantaggio computazionale. Nell'algoritmo di Shor, il registro di controllo e il registro di lavoro devono restare entangled per tutta la durata della phase estimation affinché la Quantum Fourier Transform possa estrarre il periodo corretto. La perdita anche parziale di questa correlazione è sufficiente a degradare il risultato.
@@ -120,11 +120,11 @@ La fragilitá dell'entanglement ha un'origine fisica precisa. Un sistema quantis
 
 Il tempo caratteristico entro cui questa perdita di fase diventa apprezzabile è $T_2$, il \textbf{tempo di coerenza di fase} (\textit{dephasing time}). Esso misura per quanto tempo un qubit riesce a mantenere la propria sovrapposizione coerente prima che l'interazione con l'ambiente la distrugga. Sui processori superconduttori attuali, $T_2$ è tipicamente nell'intervallo $50$--$200\,\mu$s; ogni singola porta a due qubit dura circa $300$--$500\,$ns. Un calcolo diretto rivela che l'algoritmo di Shor, la cui profondità cresce come $O(n^3)$ nel numero di bit dell'intero da fattorizzare, supera il limite imposto da $T_2$ già per $n \gtrsim 10$--$15$ bit. La trattazione quantitativa di questi tempi caratteristici e del loro impatto sull'algoritmo è oggetto del Capitolo~\ref{chap:rumore}.
 
-\section{Porte Quantistiche}
+\subsection{Porte Quantistiche}
 
 Le operazioni su qubit sono rappresentate da \textbf{matrici unitarie}: $U^\dagger U = I$. La condizione di unitarietà garantisce la reversibilità del calcolo e la conservazione della norma (delle probabilità).
 
-\subsection{Porte a Singolo Qubit}
+\subsubsection{Porte a Singolo Qubit}
 
 Le principali porte a singolo qubit sono:
 
@@ -174,7 +174,7 @@ La porta di Hadamard è fondamentale: applicata a $n$ qubit inizializzati in $\k
 \end{equation}
 Casi particolari: $T = R_{\pi/4}$ (T-gate) e $S = R_{\pi/2}$ (S-gate o Phase gate).
 
-\subsection{Porte a Due Qubit}
+\subsubsection{Porte a Due Qubit}
 
 \textbf{Porta \ac{CNOT}:}
 \begin{equation}
@@ -191,19 +191,19 @@ Applica una NOT sul qubit \textit{target} se e solo se il qubit \textit{control}
     \label{fig:gates}
 \end{figure}
 \clearpage
-\section{Circuiti Quantistici}
+\subsection{Circuiti Quantistici}
 
 Un \textbf{circuito quantistico} è una sequenza ordinata di porte quantistiche applicata a un registro di qubit. I circuiti si leggono da sinistra a destra, con ogni filo orizzontale che rappresenta l'evoluzione temporale di un qubit. La composizione di porte corrisponde al prodotto matriciale degli operatori unitari associati.
 
 L'equivalente quantistico del teorema di universalità classico afferma che qualunque trasformazione unitaria su $n$ qubit può essere \textbf{approssimata con precisione arbitraria} da una sequenza finita di porte prese da un insieme universale, tipicamente $\{H, T, \text{CNOT}\}$. La distinzione fra approssimazione e decomposizione esatta non è pedanteria: le sequenze finite su un insieme di porte fissato sono numerabili, mentre le trasformazioni unitarie non lo sono, sicché una decomposizione esatta è impossibile in generale. Il teorema di Solovay--Kitaev garantisce che l'approssimazione a precisione $\varepsilon$ richiede $O(\log^c(1/\varepsilon))$ porte, con $c$ costante piccola: il costo dell'approssimazione cresce dunque solo polilogaritmicamente, ed è questa la ragione per cui l'universalità resta praticamente utile.
 
-\section{Misura Quantistica}
+\subsection{Misura Quantistica}
 
 La \textbf{misura} in base computazionale di uno stato $\ket{\psi} = \sum_x \alpha_x\ket{x}$ produce il risultato $x$ con probabilità $|\alpha_x|^2$, e collassa irrevocabilmente lo stato in $\ket{x}$. La misura è una operazione \textit{non unitaria} e \textit{non reversibile}: una volta effettuata, l'informazione sulle ampiezze è irreversibilmente persa.
 
 Questa caratteristica impone che gli algoritmi quantistici siano progettati per amplificare selettivamente l'ampiezza della risposta corretta prima della misura, in modo da ottenere il risultato voluto con alta probabilità.
 
-\section{Interferenza Quantistica}
+\subsection{Interferenza Quantistica}
 
 L'\textbf{interferenza} è il meccanismo fondamentale attraverso cui gli algoritmi quantistici realizzano il loro vantaggio computazionale. Le ampiezze quantistiche sono numeri complessi e possono combinarsi costruttivamente (quando hanno lo stesso segno/fase) o distruttivamente (quando hanno fase opposta).
 
@@ -215,7 +215,7 @@ Un algoritmo quantistico efficiente è costruito in modo che:
 
 Questo meccanismo è alla base sia dell'algoritmo di Grover sia dell'algoritmo di Shor (Capitolo~\ref{chap:shor}), dove la Quantum Fourier Transform realizza l'interferenza necessaria al ritrovamento del periodo.
 
-\section{Modello di Complessità Quantistica}
+\subsection{Modello di Complessità Quantistica}
 
 La complessità di un algoritmo quantistico è misurata in termini di numero di porte (equivalente delle operazioni elementari classiche) e di profondità del circuito (numero di livelli di porte parallele). Si definiscono le classi di complessità quantistiche più rilevanti:
 
