@@ -1,24 +1,39 @@
 \begin{onehalfspace}
 
-Questo capitolo richiama in forma sintetica i concetti di meccanica quantistica e di calcolo quantistico necessari a seguire il resto della tesi. La trattazione completa --- i quattro postulati, l'insieme esteso delle porte, le figure e il modello di complessità --- è riportata nell'Appendice~\ref{app:fondamenti}, a cui si rimanda per ogni dettaglio formale.
+Questo capitolo introduce l'algoritmo che dà a questa tesi il proprio oggetto. Si apre con i richiami di calcolo quantistico indispensabili a seguirlo --- il qubit, la sovrapposizione, le porte unitarie e il meccanismo di interferenza --- di cui l'algoritmo costituisce l'applicazione più celebre.
 
-\section{Qubit, Sovrapposizione e Sfera di Bloch}
+L'\textbf{algoritmo di Shor}, proposto da Peter Shor nel 1994 \cite{shor1994}, è un algoritmo quantistico che risolve il problema della \textbf{fattorizzazione intera} di un numero $N$ in tempo \textbf{polinomiale} nel numero di bit di $N$:
+\begin{equation}
+    T_{\text{Shor}}(N) = O\!\left((\log N)^3\right)
+    \label{eq:shor_complexity}
+\end{equation}
+
+Questo risultato costituisce uno \textbf{speedup esponenziale} rispetto al miglior algoritmo classico noto -- il \ac{GNFS} -- che richiede tempo sub-esponenziale (si veda l'equazione~\eqref{eq:gnfs_complexity}), del tutto impraticabile per i numeri di grandi dimensioni usati in crittografia. È considerato il risultato algoritmico più dirompente dell'informatica quantistica, poiché la fattorizzazione è il fondamento matematico del sistema crittografico RSA, che protegge la quasi totalità delle comunicazioni digitali moderne.
+
+L'algoritmo si articola in tre fasi: un \textit{preprocessing} classico che riconduce il problema a trovare il periodo di una funzione modulare; un nucleo quantistico basato sulla \ac{QFT} e sulla \ac{QPE}, che trova quel periodo in modo esponenzialmente più efficiente di qualunque strategia classica; e una \textit{post-elaborazione} classica che estrae i fattori di $N$ tramite il calcolo del massimo comune divisore. Dopo i richiami si introduce il problema che l'algoritmo risolve e la sua rilevanza crittografica, per poi svilupparne nel dettaglio la struttura.
+
+\section{Richiami di Calcolo Quantistico}
+\label{chap:fondamenti}
+
+Questa sezione richiama in forma sintetica i concetti di meccanica quantistica e di calcolo quantistico necessari a seguire il resto della tesi. La trattazione completa --- i quattro postulati, l'insieme esteso delle porte, le figure e il modello di complessità --- è riportata nella Sezione~\ref{app:fondamenti}, a cui si rimanda per ogni dettaglio formale.
+
+\subsection{Qubit, Sovrapposizione e Sfera di Bloch}
 
 L'unità fondamentale del calcolo quantistico è il \textbf{qubit}, descritto da un vettore unitario nello spazio di Hilbert $\mathcal{H} = \mathbb{C}^2$. In notazione di Dirac, lo stato generico è la \textbf{sovrapposizione}
 \begin{equation}
     \ket{\psi} = \alpha\ket{0} + \beta\ket{1}, \qquad \alpha, \beta \in \mathbb{C}, \quad |\alpha|^2 + |\beta|^2 = 1,
 \end{equation}
-dove $|\alpha|^2$ e $|\beta|^2$ sono le probabilità di misurare rispettivamente $0$ e $1$ (\textbf{regola di Born}). Ogni stato puro si visualizza come un punto sulla \textbf{sfera di Bloch}, parametrizzato da $\theta$ e $\phi$ tramite $\ket{\psi} = \cos(\theta/2)\ket{0} + e^{i\phi}\sin(\theta/2)\ket{1}$: i poli sono $\ket{0}$ e $\ket{1}$, l'equatore le sovrapposizioni equiprobabili (Appendice~\ref{app:fondamenti}, Fig.~\ref{fig:bloch}).
+dove $|\alpha|^2$ e $|\beta|^2$ sono le probabilità di misurare rispettivamente $0$ e $1$ (\textbf{regola di Born}). Ogni stato puro si visualizza come un punto sulla \textbf{sfera di Bloch}, parametrizzato da $\theta$ e $\phi$ tramite $\ket{\psi} = \cos(\theta/2)\ket{0} + e^{i\phi}\sin(\theta/2)\ket{1}$: i poli sono $\ket{0}$ e $\ket{1}$, l'equatore le sovrapposizioni equiprobabili (Sezione~\ref{app:fondamenti}, Fig.~\ref{fig:bloch}).
 
-\section{Sistemi Multi-Qubit ed Entanglement}
+\subsection{Sistemi Multi-Qubit ed Entanglement}
 
 Un registro di $n$ qubit vive nello spazio $\mathbb{C}^{2^n}$, ottenuto per \textbf{prodotto tensoriale}: è la dimensione esponenziale $2^n$ la fonte del potere computazionale quantistico. Due qubit sono \textbf{entangled} quando il loro stato congiunto non è fattorizzabile nel prodotto degli stati individuali; l'esempio canonico è lo stato di Bell $\ket{\Phi^+} = \tfrac{1}{\sqrt{2}}(\ket{00} + \ket{11})$, in cui misurare il primo qubit determina istantaneamente l'esito del secondo.
 
-\subsection{L'Entanglement come Risorsa Fisica Fragile}
+\subsubsection{L'Entanglement come Risorsa Fisica Fragile}
 
 L'entanglement non è solo una proprietà astratta: è la \textbf{risorsa} che gli algoritmi quantistici consumano per ottenere il loro vantaggio. Nell'algoritmo di Shor il registro di controllo e quello di lavoro devono restare entangled per tutta la phase estimation, affinché la Quantum Fourier Transform estragga il periodo corretto. Ma un qubit reale non è mai isolato: l'accoppiamento con l'ambiente trasferisce ad esso l'informazione di fase, riducendo lo stato puro a un \textbf{miscuglio statistico} in cui la fase relativa è persa --- la \textbf{decoerenza}~\cite{zurek2003}. Il tempo caratteristico di questa perdita è $T_2$ (\textit{dephasing time}): sui processori superconduttori attuali $T_2 \sim 50$--$200\,\mu$s, mentre una porta a due qubit dura $\sim 300$--$500\,$ns. Poiché la profondità di Shor cresce come $O(n^3)$, il limite imposto da $T_2$ è superato già per $n \gtrsim 10$--$15$ bit: è questo il collo di bottiglia che il Capitolo~\ref{chap:rumore} tratta quantitativamente.
 
-\section{Porte, Misura e Interferenza}
+\subsection{Porte, Misura e Interferenza}
 
 Le operazioni sui qubit sono \textbf{matrici unitarie} ($U^\dagger U = I$), quindi reversibili. Le porte fondamentali sono le matrici di Pauli $X$ (bit flip), $Y$, $Z$ (phase flip), la porta di \textbf{Hadamard} $H$ --- che genera la sovrapposizione uniforme $H^{\otimes n}\ket{0}^{\otimes n} = 2^{-n/2}\sum_x \ket{x}$ --- le porte di fase $R_\phi$, e la porta a due qubit \textbf{CNOT}, che con le porte a singolo qubit forma un insieme universale. La \textbf{misura} in base computazionale collassa lo stato $\ket{\psi}=\sum_x\alpha_x\ket{x}$ sull'esito $x$ con probabilità $|\alpha_x|^2$: è un'operazione non unitaria e irreversibile. Il meccanismo che rende utile tutto ciò è l'\textbf{interferenza}: un algoritmo efficiente è costruito perché le ampiezze degli esiti sbagliati si cancellino (interferenza distruttiva) e quelle degli esiti corretti si sommino (costruttiva). È esattamente ciò che la QFT realizza nell'algoritmo di Shor (Capitolo~\ref{chap:shor}) per far emergere il periodo.
 

@@ -1,6 +1,3 @@
-% ⚠ STATO DEL CAPITOLO: struttura e parti concettuali DEFINITIVE (fedeli al documento di
-%   indirizzo del relatore, §10). Le sezioni [DA COMPLETARE...] restano in bianco finché
-%   la milestone sperimentale M7 (surface code con Stim + PyMatching) non produce i dati.
 \begin{onehalfspace}
 
 Il Capitolo~\ref{chap:qec} ha mostrato che un codice di distanza 3 può correggere un errore arbitrario su un singolo qubit --- ma anche che questa protezione, da sola, non basta: con sette qubit fisici per qubit logico e distanza fissa, lo Steane code non offre alcuna via per \emph{ridurre a piacere} l'errore residuo. La proprietà che manca è la scalabilità della protezione: un parametro che, aumentato, faccia diminuire l'errore logico. È esattamente ciò che offre il \textbf{surface code}~\cite{kitaev2003,fowler2012}, oggi lo standard di riferimento industriale per il calcolo fault-tolerant: un codice definito su una griglia bidimensionale di qubit con sole interazioni locali, la cui distanza $d$ cresce con la taglia della griglia. Questo capitolo ne descrive il funzionamento operativo, introduce il problema della decodifica e la sua soluzione standard --- il \textit{matching} di peso minimo --- e presenta l'esperimento centrale della parte QEC della tesi: la stima del \textbf{logical error rate} $p_L$ in funzione dell'errore fisico $p$ e della distanza $d$, condotta con gli strumenti specializzati Stim e PyMatching. Le due sezioni conclusive mettono poi alla prova le assunzioni su cui quella stima poggia: prima il modello di rumore con cui il codice viene \emph{simulato} (Sezione~\ref{sec:oltre_pauli}), poi quello con cui viene \emph{decodificato} (Sezione~\ref{sec:decodifica_appresa}) --- ed è in quest'ultima che l'apprendimento automatico, giudicato superfluo nel Capitolo~\ref{chap:risultati} quando applicato all'output, trova il punto della pipeline in cui produce un guadagno misurabile.
@@ -22,7 +19,7 @@ Gli errori fisici sul surface code producono detection events \emph{in coppie} (
 Se la catena di correzione proposta dal decoder e la catena di errori reale differiscono per un ciclo che attraversa la griglia da parte a parte, la correzione fallisce \emph{silenziosamente}: l'informazione logica è stata alterata senza che alcuna sindrome lo riveli. La frequenza di questi fallimenti è il logical error rate $p_L$ --- la metrica centrale di tutta la parte QEC.
 
 \paragraph{Perché servono strumenti dedicati.}
-La stima di $p_L$ richiede milioni di esecuzioni di circuiti con centinaia di qubit: fuori portata per un simulatore statevector, il cui costo cresce come $2^n$ (Capitolo~\ref{chap:strumenti}). I circuiti del surface code, però, sono interamente \emph{stabilizer} (composti di sole operazioni Clifford e misure), e per questa classe il teorema di Gottesman-Knill garantisce la simulabilità classica efficiente. Stim~\cite{stim2021} sfrutta esattamente questa proprietà: campiona detection events di circuiti stabilizer a velocità di milioni di shot al secondo. Il rovescio della medaglia --- il fatto che Shor \emph{non} sia un circuito stabilizer --- è il punto di partenza del Capitolo~\ref{chap:integrazione}.
+La stima di $p_L$ richiede milioni di esecuzioni di circuiti con centinaia di qubit: fuori portata per un simulatore statevector, il cui costo cresce come $2^n$ (Sezione~\ref{chap:strumenti}). I circuiti del surface code, però, sono interamente \emph{stabilizer} (composti di sole operazioni Clifford e misure), e per questa classe il teorema di Gottesman-Knill garantisce la simulabilità classica efficiente. Stim~\cite{stim2021} sfrutta esattamente questa proprietà: campiona detection events di circuiti stabilizer a velocità di milioni di shot al secondo. Il rovescio della medaglia --- il fatto che Shor \emph{non} sia un circuito stabilizer --- è il punto di partenza del Capitolo~\ref{chap:integrazione}.
 
 \noindent La struttura del codice che realizza questa stima --- generazione parametrica del circuito, campionamento dei detection events, costruzione del \ac{DEM} e decodifica --- è riportata nel Listato~\ref{lst:stim_pymatching} (Sezione~\ref{app:codice}).
 
@@ -38,14 +35,14 @@ L'esperimento segue il protocollo del documento di indirizzo:
 \toprule
 \textbf{Variabile} & \textbf{Valori} & \textbf{Osservazione attesa} \\
 \midrule
-distanza $d$ & 3, 5, 7 & $p_L$ diminuisce con $d$ se $p$ è sotto soglia \\
+distanza $d$ & 3, 5, 7, 9 & $p_L$ diminuisce con $d$ se $p$ è sotto soglia \\
 rounds & $d$ e $2d$ & cicli di memoria quantistica \\
 $p$ fisico & $10^{-4}$ \dots $2 \times 10^{-2}$ & curva $p$ vs $p_L$ \\
 shots & $\geq 10^4$ per punto & stima stabile di $p_L$ con intervalli di confidenza \\
 base & memory X e memory Z & confronto protezione errori X/Z \\
 \bottomrule
 \end{tabular}
-\caption[Disegno sperimentale surface code]{Griglia sperimentale prescritta per la stima del logical error rate. La campagna effettivamente eseguita ne copre un sottoinsieme: tutte e tre le distanze ed entrambe le basi, con $\text{rounds} = d$ e $p \in [2\times10^{-3},\, 10^{-2}]$ --- l'intervallo in cui cade l'incrocio delle curve, cioè la grandezza che l'esperimento deve misurare. Lo scaling a $\text{rounds}=2d$ non è stato eseguito (Sezione~\ref{sec:surface_risultati}).}
+\caption[Disegno sperimentale surface code]{Griglia sperimentale prescritta per la stima del logical error rate. La campagna effettivamente eseguita ne copre un sottoinsieme: tutte e quattro le distanze ed entrambe le basi, con $\text{rounds} = d$ e $p \in [2\times10^{-3},\, 10^{-2}]$ --- l'intervallo in cui cade l'incrocio delle curve, cioè la grandezza che l'esperimento deve misurare. Lo scaling a $\text{rounds}=2d$ non è stato eseguito (Sezione~\ref{sec:surface_risultati}).}
 \label{tab:surface_esperimento}
 \end{table}
 
