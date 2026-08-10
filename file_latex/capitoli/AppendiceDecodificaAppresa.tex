@@ -178,9 +178,38 @@ Due proprietà meritano attenzione perché riguardano il comportamento del siste
 \paragraph{Il limite: il vantaggio non sopravvive alla distanza 7.}
 Il dato più importante della Tabella~\ref{tab:neural_ibrido} è però l'ultimo blocco, e va enunciato senza attenuazioni. A distanza 7 l'ibrido \textbf{non ribalta alcuno shot} in nessuna delle cinque configurazioni: la soglia scelta in validazione è ogni volta quella corrispondente a ``non ribaltare mai'', e il decoder ibrido coincide con il \ac{MWPM} cifra per cifra. Il guadagno svanisce, e la progressione lungo le tre distanze è inequivocabile: $18$--$21\%$ a $d=3$, $1$--$3\%$ a $d=5$, esattamente zero a $d=7$.
 
-Il meccanismo è misurabile ed è una difficoltà doppia. Da un lato lo spazio di ingresso cresce rapidamente con la distanza --- da $24$ detector a $d=3$, a $120$ a $d=5$, a $336$ a $d=7$ --- e con esso il numero di parametri che la rete deve stimare. Dall'altro, e in direzione opposta, ciò che va appreso diventa \emph{più raro}: l'evento da riconoscere è il fallimento del matching, la cui frequenza è $p_L$, e $p_L$ decresce esponenzialmente con $d$. In assenza di crosstalk, a $d=7$ si hanno $p_L = 5.5\times10^{-4}$ e $8\times10^5$ shot, ossia circa $440$ fallimenti nell'intero campione, di cui la metà destinata all'addestramento: \emph{duecento esempi positivi per un ingresso a $336$ dimensioni}. La rete non dispone dell'informazione necessaria, e il criterio di validazione lo riconosce correttamente rifiutandosi di intervenire.
+Due meccanismi possono spiegarlo, e vanno separati perché conducono a rimedi diversi. Il primo è la \textbf{scarsità di esempi}: l'evento da riconoscere è il fallimento del matching, la cui frequenza \emph{è} $p_L$, e $p_L$ decresce esponenzialmente con $d$. In assenza di crosstalk, a $d=7$ si hanno $p_L = 5.5\times10^{-4}$ e $8\times10^5$ shot, ossia $264$ esempi positivi nella partizione di addestramento, per un ingresso a $336$ dimensioni. Il secondo è la \textbf{capacità rappresentativa}: la rete densa impiegata tratta i detector come dimensioni indipendenti, e ciò che distingue le due classi di errore su un reticolo grande è una correlazione a lungo raggio fra detector distanti.
 
-Questa è la delimitazione del risultato di M10, e conviene formularla in positivo. Il guadagno del decoder ibrido è reale e statisticamente schiacciante --- a $d=3$ il test di McNemar dà $p < 10^{-320}$ --- ma vive nel regime in cui il codice è piccolo abbastanza da lasciare al modello appreso abbastanza esempi da cui imparare. Poiché è proprio la crescita della distanza a costituire la strategia della correzione d'errore scalabile, il metodo così com'è non accompagna il codice nel regime che conta. Superare il limite richiederebbe un'architettura che sfrutti la simmetria traslazionale del reticolo --- una rete convoluzionale o a grafo, che condivide i pesi fra regioni equivalenti anziché trattare i $336$ detector come dimensioni indipendenti --- oppure un addestramento su campioni ordini di grandezza più numerosi. È l'estensione naturale, e la si indica fra gli sviluppi futuri (Capitolo~\ref{chap:sviluppi}).
+Un primo indizio viene dal semplice conteggio. La spiegazione per scarsità è esatta nella configurazione senza crosstalk, dove i fallimenti del matching sono effettivamente poche centinaia; ma nelle altre quattro configurazioni a $d=7$ la rete dispone da $1.8\times10^4$ a $2.2\times10^5$ esempi positivi --- fino a duecentomila --- e continua a non ribaltare alcuno shot. La spiegazione copre dunque una configurazione su cinque.
+
+L'indizio non basta però a stabilire la causa, perché fra $d=5$ (che funziona) e $d=7$ (che non funziona) cambiano \emph{due} cose insieme: la distanza del codice e il numero di detector. L'esperimento E9 le separa, sfruttando il fatto che il numero di detector è il prodotto fra gli stabilizzatori per ciclo e il numero di cicli, e può quindi essere variato a distanza fissa. Ne risulta un incrocio $2\times2$ le cui celle diagonali distinguono le due ipotesi, riportato nella Tabella~\ref{tab:neural_esempi}.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{ccc rc rc}
+\toprule
+& & & \multicolumn{2}{c}{$p_{ct} = 0.005$} & \multicolumn{2}{c}{$p_{ct} = 0.02$} \\
+\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+$d$ & \textbf{cicli} & \textbf{detector} & \textbf{es.\ pos.} & \textbf{residuo} & \textbf{es.\ pos.} & \textbf{residuo} \\
+\midrule
+7 & \phantom{0}3 & \textbf{144} & \phantom{00}5\,933 & si astiene & \phantom{0}61\,900 & \textbf{interviene} \\
+7 & \phantom{0}7 & 336 & \phantom{0}17\,665 & si astiene & 139\,275 & si astiene \\
+5 & 14 & 336 & \phantom{0}48\,657 & si astiene & 188\,582 & si astiene \\
+5 & \phantom{0}5 & \textbf{120} & \phantom{0}17\,235 & \textbf{interviene} & \phantom{0}96\,167 & \textbf{interviene} \\
+\bottomrule
+\end{tabular}
+\caption[Larghezza dell'ingresso contro distanza del codice]{Esperimento E9: incrocio fra distanza del codice e numero di detector, ottenuto variando il numero di cicli di estrazione della sindrome. ``Es.\ pos.'' è il numero di fallimenti del \ac{MWPM} disponibili all'addestramento su $4.8\times10^5$ shot; ``residuo'' indica se il criterio di validazione seleziona una soglia che ribalta almeno uno shot su diecimila. Le righe centrali sono le celle diagonali, quelle che distinguono le ipotesi: a distanza 5 con $336$ detector e $1.9\times10^5$ esempi il residuo si astiene, a distanza 7 con $144$ detector e tre volte meno esempi interviene. Il comportamento segue la colonna, non la riga.}
+\label{tab:neural_esempi}
+\end{table}
+
+L'esito è netto su entrambe le diagonali e va letto per colonne. A $336$ detector il residuo si astiene sempre, a qualunque distanza e con qualunque numerosità --- fino a $1.9\times10^5$ esempi positivi; a $120$ e $144$ detector interviene, anche a distanza 7 e anche con tre volte meno esempi. \textbf{L'ipotesi della distanza è confutata, quella della larghezza dell'ingresso è confermata.}
+
+Una sfumatura completa l'enunciato e lo rende più preciso. A $144$ detector con soli $5\,933$ esempi positivi il residuo si astiene: la numerosità \emph{è} dunque un vincolo reale, al margine inferiore. Non è però il vincolo che opera nell'esperimento E4 a distanza 7, dove gli esempi erano $1.4\times10^5$ e la rete si asteneva comunque. La formulazione corretta è che disporre di abbastanza esempi è \emph{necessario ma non sufficiente}, e che a parità di numerosità sufficiente è la larghezza dell'ingresso a decidere.
+
+Un secondo riscontro conferma la diagnosi. La rete impiegata come decoder \emph{autonomo} --- il braccio di sostituzione, colonna \textit{rete} della Tabella~\ref{tab:neural_ibrido} --- si degrada lungo le distanze in modo indipendente dagli esempi disponibili: a $d=3$ essa riduce l'errore rispetto al tasso di base di un fattore fra $1.5$ e $11.9$; a $d=5$ fra $1.0$ e $6.2$; a $d=7$ fra $0.99$ e $2.9$, ossia a crosstalk $\geq 0.02$ essa è \emph{indistinguibile dal tasso di base} pur disponendo di oltre centomila esempi. Non è un modello a cui manchino i dati: è un modello che, su $336$ dimensioni indipendenti, non riesce a rappresentare la funzione richiesta.
+
+Questa è la delimitazione del risultato di M10, e conviene formularla in positivo. Il guadagno del decoder ibrido è reale e statisticamente schiacciante --- a $d=3$ il test di McNemar dà $p < 10^{-320}$ --- ma vive nel regime in cui il reticolo è piccolo abbastanza da essere rappresentabile da una rete densa. Poiché è proprio la crescita della distanza a costituire la strategia della correzione d'errore scalabile, il metodo così com'è non accompagna il codice nel regime che conta. Il rimedio indicato dalla diagnosi non è raccogliere più campioni --- ne bastavano già --- ma cambiare architettura: una rete convoluzionale o a grafo, che condivida i pesi fra regioni equivalenti del reticolo anziché trattare i $336$ detector come dimensioni indipendenti, sfrutta la simmetria traslazionale del problema e rappresenta con pochi parametri le correlazioni locali che la rete densa deve stimare una per una. È l'estensione naturale, e la si indica fra gli sviluppi futuri (Capitolo~\ref{chap:sviluppi}).
 
 \subsection{E6 --- e se il modello del decoder fosse semplicemente sbagliato?}
 \label{subsec:neural_miscalibrato}
@@ -276,7 +305,76 @@ Il secondo dato è però quello che conta, ed è la struttura delle due colonne 
 
 A distanza 5 il vantaggio di BP+OSD scende monotonamente da $1.339$ a $1.021$ mentre il crosstalk aumenta; a distanza 3 esso si annulla immediatamente, e il decoder diventa lievemente \emph{peggiore} del matching. Specularmente, il guadagno dell'ibrido è nullo in assenza di crosstalk e sale fino a $1.213$. I due metodi non competono sullo stesso asse: \textbf{BP+OSD sfrutta meglio il modello che riceve, il decoder appreso cattura ciò che al modello sfugge}. Il primo rende al massimo quando il modello è corretto e si degrada man mano che diventa incompleto --- perché fidarsi più a fondo di una descrizione sbagliata è un danno, non un vantaggio; il secondo rende zero quando il modello è corretto, perché non c'è nulla da aggiungere, e cresce esattamente nella misura in cui il modello si allontana dal dispositivo.
 
-Ne discende una conclusione più articolata di quella che l'esperimento si proponeva di verificare, e va enunciata riconoscendo entrambi i suoi lati. Da un lato l'obiezione è \textbf{in parte fondata}: a distanza 5, dove il vantaggio di partenza di BP+OSD è ampio, esso resta superiore all'ibrido in tutte le configurazioni, e adottare un decoder analitico migliore rende più che addestrare una rete. Chi disponga di un budget di ingegneria limitato dovrebbe spenderlo lì per primo, ed è una raccomandazione pratica che questa tesi non avrebbe potuto formulare senza l'esperimento. Dall'altro lato l'obiezione \textbf{non elimina il risultato}: a distanza 3 l'ibrido guadagna $18$--$21\%$ dove BP+OSD perde, e soprattutto le due sorgenti di guadagno restano ortogonali, sicché nulla impedisce di sommarle. La costruzione naturale --- BP+OSD come decoder di base e il residuo appreso della~\eqref{eq:decoder_ibrido} costruito sopra di esso anziché sopra il matching --- non è stata realizzata in questo lavoro ed è la sua estensione più immediata.
+Ne discende una conclusione più articolata di quella che l'esperimento si proponeva di verificare, e va enunciata riconoscendo entrambi i suoi lati. Da un lato l'obiezione è \textbf{in parte fondata}: a distanza 5, dove il vantaggio di partenza di BP+OSD è ampio, esso resta superiore all'ibrido in tutte le configurazioni, e adottare un decoder analitico migliore rende più che addestrare una rete. Chi disponga di un budget di ingegneria limitato dovrebbe spenderlo lì per primo, ed è una raccomandazione pratica che questa tesi non avrebbe potuto formulare senza l'esperimento. Dall'altro lato l'obiezione \textbf{non elimina il risultato}: a distanza 3 l'ibrido guadagna $18$--$21\%$ proprio dove BP+OSD perde.
+
+Resta da chiarire che cosa significhi ``agire su assi ortogonali''. L'inferenza immediata è che i due guadagni siano \emph{sommabili}, e che costruire il residuo appreso sopra BP+OSD anziché sopra il matching debba produrre il prodotto dei due --- ossia, a distanza 5 e crosstalk $5\times10^{-3}$, un guadagno di $1.289 \times 1.010 = 1.302$. È una previsione quantitativa, e l'esperimento successivo la mette alla prova anziché darla per buona.
+
+\subsection{E8 --- le due sorgenti si sommano davvero? E10 --- il pavimento comune}
+\label{subsec:neural_pavimento}
+
+\paragraph{La previsione e il suo esito.}
+L'esperimento E8 sostituisce il decoder di base della~\eqref{eq:decoder_ibrido}: il residuo appreso viene costruito sopra BP+OSD anziché sopra il matching, e i quattro bracci --- \ac{MWPM}, BP+OSD, ciascuno con e senza residuo --- sono misurati \emph{sui medesimi campioni}, il che rende ogni confronto appaiato ed elimina il disallineamento fra le campagne precedenti. Le due ipotesi in gioco erano dichiarate prima dell'esecuzione: quella \emph{moltiplicativa}, per cui il combinato approssima il prodotto; e quella di \emph{saturazione}, per cui il residuo trova sopra BP+OSD assai meno di quanto trovasse sopra il matching, perché una parte di ciò che recuperava era semplicemente il costo di un decoder analitico subottimale. La seconda è l'ipotesi sfavorevole al risultato di questa sezione, ed è quella che i dati sostengono.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{ccccc c}
+\toprule
+$d$ & $p_{ct}$ & \textbf{BP+OSD} & \textbf{MWPM+res} & \textbf{combinato} & \textbf{prodotto previsto} \\
+\midrule
+3 & 0      & 1.181 & 1.079 & 1.190 & 1.274 \\
+3 & 0.005  & 0.985 & 1.192 & 1.183 & 1.173 \\
+3 & 0.01   & 0.982 & 1.205 & 1.203 & 1.183 \\
+3 & 0.02   & 0.985 & 1.211 & 1.200 & 1.193 \\
+3 & 0.04   & 0.997 & 1.184 & 1.177 & 1.180 \\
+\midrule
+5 & 0      & 1.180 & 1.000 & 1.180 & 1.180 \\
+5 & 0.005  & 1.289 & 1.010 & 1.289 & 1.302 \\
+5 & 0.01   & 1.196 & 1.026 & 1.200 & 1.228 \\
+5 & 0.02   & 1.093 & 1.028 & 1.104 & 1.123 \\
+5 & 0.04   & 1.024 & 1.007 & 1.024 & 1.032 \\
+\bottomrule
+\end{tabular}
+\caption[Il residuo appreso costruito sopra BP+OSD]{Esperimento E8. Tutti i guadagni sono rapporti $p_L^{\text{MWPM}}/p_L^{\text{metodo}}$ misurati sui medesimi $8\times10^5$ campioni per configurazione, $2\times10^5$ dei quali di test. ``Combinato'' è il residuo appreso costruito sopra BP+OSD; ``prodotto previsto'' è il valore che l'ipotesi moltiplicativa richiede. Il combinato non lo raggiunge mai quando entrambi i componenti hanno un guadagno reale, e coincide invece con il migliore dei due singoli.}
+\label{tab:neural_e8}
+\end{table}
+
+Il confronto decisivo è nelle righe in cui \emph{entrambi} i componenti guadagnano. A distanza 3 ve n'è una sola, quella senza crosstalk: il prodotto richiede $1.274$, il combinato si ferma a $1.190$, ossia esattamente il guadagno di BP+OSD da solo --- e il residuo, sopra BP+OSD e senza crosstalk, ribalta lo $0.04\%$ delle predizioni con $p = 0.58$, cioè non trova nulla. Nelle altre righe di quel blocco il ``prodotto'' è soddisfatto soltanto perché degenere: con BP+OSD a $0.98$ esso coincide per costruzione con il guadagno del residuo. A distanza 5, dove BP+OSD conserva un vantaggio ampio anche sotto crosstalk, tutte e cinque le righe sono informative e tutte e cinque smentiscono la previsione: lo scarto dal prodotto è negativo ovunque, da $-0.007$ a $-0.027$, e il residuo migliora BP+OSD in modo statisticamente significativo in \emph{una sola} configurazione su cinque, e ivi dell'uno per cento.
+
+\begin{quote}
+\emph{Il decoder combinato eguaglia sempre il migliore dei due singoli, mai il loro prodotto. Le due sorgenti di guadagno non sono sommabili: sono alternative.}
+\end{quote}
+
+\paragraph{Perché: esiste un pavimento comune.}
+L'esperimento E10 individua la ragione. Sei bracci sono misurati sui medesimi campioni a distanza 3, in ordine crescente di informazione utilizzata: il decoder \emph{banale} che predice sempre l'assenza di flip logico, la rete usata \emph{da sola} senza alcun modello analitico, il \ac{MWPM}, BP+OSD, e i due residui costruiti sui due decoder analitici.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{c ccc ccc c}
+\toprule
+$p_{ct}$ & \textbf{banale} & \textbf{MWPM} & \textbf{BP+OSD} & \textbf{rete sola} & \textbf{MWPM+res} & \textbf{BP+OSD+res} & \textbf{disp.} \\
+\midrule
+0     & 0.04863 & 0.00432 & 0.00367 & 0.00431 & 0.00405 & 0.00354 & $19.4\%$ \\
+0.005 & 0.08369 & 0.03106 & 0.03195 & 0.02704 & 0.02676 & 0.02677 & $1.0\%$ \\
+0.01  & 0.11611 & 0.05928 & 0.06035 & 0.04965 & 0.04885 & 0.04982 & $2.0\%$ \\
+0.02  & 0.17464 & 0.11169 & 0.11292 & 0.09222 & 0.09108 & 0.09156 & $1.2\%$ \\
+0.04  & 0.26492 & 0.20753 & 0.20819 & 0.17565 & 0.17413 & 0.17536 & $0.9\%$ \\
+\bottomrule
+\end{tabular}
+\caption[Sei decoder, un solo pavimento]{Esperimento E10: errore logico dei sei bracci a distanza 3, tutti sugli stessi $8\times10^5$ campioni. La colonna ``disp.'' è la dispersione relativa fra i tre bracci di fondo --- rete sola, \ac{MWPM}+residuo, BP+OSD+residuo. In presenza di crosstalk essi convergono entro il $2\%$ pur partendo da metodi radicalmente diversi; in sua assenza divergono del $19\%$ e si ordinano per qualità intrinseca del decoder.}
+\label{tab:neural_pavimento}
+\end{table}
+
+Il quadro si legge in due regimi, ed è la struttura stessa del risultato.
+
+\emph{A modello corretto} (prima riga) il pavimento non esiste: i metodi si ordinano per qualità, BP+OSD davanti a tutti con $3.54\times10^{-3}$ e la rete sola ultima con $4.31\times10^{-3}$, e la dispersione fra i bracci di fondo è del $19\%$. Qui l'unica cosa che conta è quanto bene si sfrutti il modello, e il residuo appreso non ha nulla da aggiungere.
+
+\emph{A modello strutturalmente incompleto} (le altre quattro righe) i tre bracci di fondo collassano entro lo $0.9$--$2.0\%$ l'uno dall'altro, mentre i due decoder analitici da cui provengono restano il $16$--$18\%$ sopra. Vi arriva anche la rete usata da sola, che non dispone di alcun decoder analitico: il pavimento non è dunque una proprietà del metodo di decodifica, ma \textbf{dell'informazione contenuta nella sindrome}. Sotto crosstalk ciascuno di questi metodi la estrae per intero, e incontra lo stesso limite.
+
+L'onestà richiede una precisazione sulla parola ``coincidono''. Il test di McNemar fra la rete sola e il \ac{MWPM}+residuo dà $p = 7.8\times10^{-4}$, $8.2\times10^{-4}$ e $2.6\times10^{-3}$ ai tre livelli superiori di crosstalk: con $2\times10^{5}$ campioni di test si risolve anche uno scarto dell'uno per cento, e quelle differenze residue sono \emph{reali}. Ciò che si afferma è più debole e più preciso: i tre metodi atterrano entro l'$1$--$2\%$ l'uno dall'altro, e tale scarto è un ordine di grandezza inferiore al divario che separa tutti e tre dal decoder analitico da cui partono.
+
+Il fallimento di E8 discende allora da E10 senza bisogno di ulteriori ipotesi: impilare i due metodi non porta sotto il pavimento, perché il pavimento non appartiene a nessuno dei due.
 
 \subsection{E5 --- il decoder è trasferibile fra dispositivi?}
 \label{subsec:neural_generalizzazione}
@@ -315,9 +413,9 @@ La regola appresa non è dunque il profilo di rumore, ma qualcosa di più genera
 
 I sette esperimenti convergono su una conclusione che è più informativa di un semplice confronto fra decoder, e che i due controlli finali hanno reso più precisa anziché più debole. \textbf{Sostituire} il decoder analitico con una rete non conviene: a parità di modello di rumore la rete pareggia a distanza 3 --- al prezzo di $10^5$--$10^6$ campioni --- e perde al crescere della distanza. \textbf{Affiancarlo} sì: un decoder ibrido in cui la rete impara soltanto \emph{quando ribaltare} la decisione del matching riduce l'errore logico del $18$--$21\%$ a distanza 3 e dell'$1$--$3\%$ a distanza 5 in presenza di rumore correlato, e ricade sul matching quando il rumore è quello previsto.
 
-Il guadagno compare dunque a due condizioni congiunte, e gli esperimenti E6 ed E7 permettono di enunciarle con precisione. La prima è che il rumore \emph{esca dalla struttura} del modello del decoder --- non che il modello sia mal calibrato: perturbandone i parametri fino a un ordine di grandezza l'errore logico varia dell'$1$--$3\%$, e la rete non vince in nessuna delle dodici configurazioni. La seconda è che la taglia del codice resti \emph{alla portata} del modello appreso: a distanza 7 la rete dispone di circa duecento esempi positivi per un ingresso a $336$ dimensioni, e l'ibrido correttamente si astiene dall'intervenire.
+Il guadagno compare dunque a due condizioni congiunte, e gli esperimenti E6 ed E7 permettono di enunciarle con precisione. La prima è che il rumore \emph{esca dalla struttura} del modello del decoder --- non che il modello sia mal calibrato: perturbandone i parametri fino a un ordine di grandezza l'errore logico varia dell'$1$--$3\%$, e la rete non vince in nessuna delle dodici configurazioni. La seconda è che il reticolo resti \emph{rappresentabile} dal modello appreso: a distanza 7, su $336$ detector trattati come dimensioni indipendenti, l'ibrido si astiene dall'intervenire in tutte e cinque le configurazioni --- anche là dove dispone di oltre duecentomila esempi positivi, sicché il limite è di architettura e non di numerosità (Tabella~\ref{tab:neural_esempi}).
 
-A queste due condizioni se ne aggiunge una terza, emersa dal confronto con BP+OSD, che riguarda la scelta del termine di paragone. Il guadagno dell'ibrido va misurato contro il \emph{miglior} decoder analitico disponibile, non contro quello standard: a distanza 5 BP+OSD recupera assai più margine dell'ibrido, e chi disponga di un budget di ingegneria limitato dovrebbe spenderlo lì per primo. Le due sorgenti di guadagno restano però ortogonali --- quella analitica decresce al crescere del rumore correlato, quella appresa cresce --- sicché la costruzione corretta non è sceglierne una ma sommarle.
+A queste due condizioni se ne aggiunge una terza, emersa dal confronto con BP+OSD, che riguarda la scelta del termine di paragone. Il guadagno dell'ibrido va misurato contro il \emph{miglior} decoder analitico disponibile, non contro quello standard: a distanza 5 BP+OSD recupera assai più margine dell'ibrido, e chi disponga di un budget di ingegneria limitato dovrebbe spenderlo lì per primo. Le due sorgenti di guadagno restano ortogonali --- quella analitica decresce al crescere del rumore correlato, quella appresa cresce --- ma non per questo sommabili: E8 ed E10 mostrano che entrambe conducono al medesimo pavimento, e che impilarle non porta al di sotto di esso. La costruzione corretta è dunque \emph{sceglierne una in base al regime}, non cumularle: il miglior decoder analitico dove il modello è corretto, il residuo appreso dove non lo è --- e in quest'ultimo caso quale sia il decoder analitico sottostante cessa di contare.
 
 Il perimetro va dichiarato. L'architettura impiegata è una rete densa di capacità modesta, deliberatamente scelta per continuità con lo strumento della prima fase sperimentale: i decoder allo stato dell'arte adottano architetture ricorrenti e convoluzionali che sfruttano la località del codice e la struttura temporale dei cicli di sindrome~\cite{alphaqubit2024}, e i risultati qui riportati non vanno letti come una stima del potenziale della decodifica appresa, ma come una verifica del \emph{principio} su un'istanza trattabile. Le distanze esplorate arrivano a $d=7$ --- dove, come mostrato, il vantaggio si annulla --- l'errore fisico è fissato a un solo valore sotto soglia, e il rumore correlato modellato resta di tipo Pauli: gli errori coerenti e il leakage discussi nella Sezione~\ref{sec:oltre_pauli} costituiscono un asse ulteriore, sul quale ci si attende che il vantaggio del decoder appreso sia maggiore, non minore, poiché è lì che il modello analitico è più lontano dalla fisica.
 
