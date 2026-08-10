@@ -1,0 +1,238 @@
+{
+  "milestone": "M10_controllo_pavimento",
+  "timestamp": "2026-08-10T12:51:14.720266",
+  "p_phys": 0.003,
+  "shots_per_config": 800000,
+  "points": [
+    {
+      "d": 3,
+      "p": 0.003,
+      "p_crosstalk": 0.0,
+      "shots": 800000,
+      "seed": 11300,
+      "n_detectors": 24,
+      "n_test": 200000,
+      "pL": {
+        "mwpm": 0.004005,
+        "rete_sola": 0.004055,
+        "mwpm_res": 0.003915,
+        "rete_grande": 0.004205,
+        "mwpm_res_grande": 0.0037,
+        "tabella": 0.003915
+      },
+      "pL_se": {
+        "mwpm": 0.00014122605947557978,
+        "rete_sola": 0.00014210131904736142,
+        "mwpm_res": 0.00013963654204756002,
+        "rete_grande": 0.00014469481633769748,
+        "mwpm_res_grande": 0.00013576284469618335,
+        "tabella": 0.00013963654204756002
+      },
+      "pavimento_E10": 0.003985,
+      "scarto_dal_pavimento": {
+        "rete_grande": -0.055207026348808176,
+        "mwpm_res_grande": 0.07151819322459214,
+        "tabella": 0.01756587202007522
+      },
+      "tabella_copertura": 0.989475,
+      "tabella_sindromi_distinte": 8682,
+      "mcnemar_grande_vs_res": {
+        "b_peggiora": 53,
+        "c_migliora": 96,
+        "chi2": 12.409395973154362,
+        "p_value": 0.00042717901765186285
+      },
+      "mcnemar_tabella_vs_res": {
+        "b_peggiora": 131,
+        "c_migliora": 131,
+        "chi2": 0.0,
+        "p_value": 1.0
+      },
+      "secs": 170.4
+    },
+    {
+      "d": 3,
+      "p": 0.003,
+      "p_crosstalk": 0.005,
+      "shots": 800000,
+      "seed": 11301,
+      "n_detectors": 24,
+      "n_test": 200000,
+      "pL": {
+        "mwpm": 0.031415,
+        "rete_sola": 0.02709,
+        "mwpm_res": 0.02667,
+        "rete_grande": 0.026875,
+        "mwpm_res_grande": 0.026165,
+        "tabella": 0.027655
+      },
+      "pL_se": {
+        "mwpm": 0.00039005190536004305,
+        "rete_sola": 0.0003630160595621081,
+        "mwpm_res": 0.00036026872678599235,
+        "rete_grande": 0.00036161259916518397,
+        "mwpm_res_grande": 0.0003569341169949995,
+        "tabella": 0.0003666756125992019
+      },
+      "pavimento_E10": 0.02688,
+      "scarto_dal_pavimento": {
+        "rete_grande": 0.0001860119047619617,
+        "mwpm_res_grande": 0.026599702380952394,
+        "tabella": -0.02883184523809516
+      },
+      "tabella_copertura": 0.98149,
+      "tabella_sindromi_distinte": 14869,
+      "mcnemar_grande_vs_res": {
+        "b_peggiora": 456,
+        "c_migliora": 557,
+        "chi2": 10.070088845014807,
+        "p_value": 0.0015069576534207697
+      },
+      "mcnemar_tabella_vs_res": {
+        "b_peggiora": 852,
+        "c_migliora": 655,
+        "chi2": 25.752488387524885,
+        "p_value": 3.8812627034209876e-07
+      },
+      "secs": 198.4
+    },
+    {
+      "d": 3,
+      "p": 0.003,
+      "p_crosstalk": 0.01,
+      "shots": 800000,
+      "seed": 11302,
+      "n_detectors": 24,
+      "n_test": 200000,
+      "pL": {
+        "mwpm": 0.05928,
+        "rete_sola": 0.04996,
+        "mwpm_res": 0.048745,
+        "rete_grande": 0.049205,
+        "mwpm_res_grande": 0.048505,
+        "tabella": 0.05032
+      },
+      "pL_se": {
+        "mwpm": 0.0005280429982491956,
+        "rete_sola": 0.00048715499792160603,
+        "mwpm_res": 0.0004815024661151799,
+        "rete_grande": 0.0004836520855687485,
+        "mwpm_res_grande": 0.00048037623262917577,
+        "tabella": 0.0004888143696742149
+      },
+      "pavimento_E10": 0.049352499999999994,
+      "scarto_dal_pavimento": {
+        "rete_grande": 0.00298870371308434,
+        "mwpm_res_grande": 0.017172382351451177,
+        "tabella": -0.019603870118028534
+      },
+      "tabella_copertura": 0.97403,
+      "tabella_sindromi_distinte": 21022,
+      "mcnemar_grande_vs_res": {
+        "b_peggiora": 779,
+        "c_migliora": 827,
+        "chi2": 1.4346201743462017,
+        "p_value": 0.23101190107412414
+      },
+      "mcnemar_tabella_vs_res": {
+        "b_peggiora": 1370,
+        "c_migliora": 1055,
+        "chi2": 40.91752577319588,
+        "p_value": 1.5879074599059625e-10
+      },
+      "secs": 219.7
+    },
+    {
+      "d": 3,
+      "p": 0.003,
+      "p_crosstalk": 0.02,
+      "shots": 800000,
+      "seed": 11303,
+      "n_detectors": 24,
+      "n_test": 200000,
+      "pL": {
+        "mwpm": 0.112785,
+        "rete_sola": 0.09319,
+        "mwpm_res": 0.091825,
+        "rete_grande": 0.092215,
+        "mwpm_res_grande": 0.091695,
+        "tabella": 0.094995
+      },
+      "pL_se": {
+        "mwpm": 0.0007073349410816632,
+        "rete_sola": 0.0006500216300247246,
+        "mwpm_res": 0.0006457289267757794,
+        "rete_grande": 0.0006469597892257293,
+        "mwpm_res_grande": 0.0006453178556920612,
+        "tabella": 0.0006556330908938321
+      },
+      "pavimento_E10": 0.09250749999999999,
+      "scarto_dal_pavimento": {
+        "rete_grande": 0.003161905791422179,
+        "mwpm_res_grande": 0.008783071642839703,
+        "tabella": -0.0268897116450018
+      },
+      "tabella_copertura": 0.95554,
+      "tabella_sindromi_distinte": 33744,
+      "mcnemar_grande_vs_res": {
+        "b_peggiora": 1813,
+        "c_migliora": 1839,
+        "chi2": 0.1851040525739321,
+        "p_value": 0.6670231006164133
+      },
+      "mcnemar_tabella_vs_res": {
+        "b_peggiora": 2824,
+        "c_migliora": 2190,
+        "chi2": 80.16673314718787,
+        "p_value": 3.441121744356266e-19
+      },
+      "secs": 253.5
+    },
+    {
+      "d": 3,
+      "p": 0.003,
+      "p_crosstalk": 0.04,
+      "shots": 800000,
+      "seed": 11304,
+      "n_detectors": 24,
+      "n_test": 200000,
+      "pL": {
+        "mwpm": 0.20878,
+        "rete_sola": 0.17646,
+        "mwpm_res": 0.17558,
+        "rete_grande": 0.174625,
+        "mwpm_res_grande": 0.173765,
+        "tabella": 0.183235
+      },
+      "pL_se": {
+        "mwpm": 0.0009088204212054216,
+        "rete_sola": 0.0008524138325954125,
+        "mwpm_res": 0.0008507398650586441,
+        "rete_grande": 0.0008489143342381492,
+        "mwpm_res_grande": 0.0008472624291652499,
+        "tabella": 0.0008650431630126904
+      },
+      "pavimento_E10": 0.17602,
+      "scarto_dal_pavimento": {
+        "rete_grande": 0.007925235768662693,
+        "mwpm_res_grande": 0.01281104419952282,
+        "tabella": -0.04098966026587887
+      },
+      "tabella_copertura": 0.912515,
+      "tabella_sindromi_distinte": 63180,
+      "mcnemar_grande_vs_res": {
+        "b_peggiora": 4043,
+        "c_migliora": 4406,
+        "chi2": 15.595810155047936,
+        "p_value": 7.842818206975217e-05
+      },
+      "mcnemar_tabella_vs_res": {
+        "b_peggiora": 6721,
+        "c_migliora": 5190,
+        "chi2": 196.7896062463269,
+        "p_value": 1.0481885205664128e-44
+      },
+      "secs": 251.1
+    }
+  ]
+}
