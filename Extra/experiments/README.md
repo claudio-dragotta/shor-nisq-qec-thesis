@@ -27,7 +27,8 @@ numpy, scipy, matplotlib. Per M7 servirà in aggiunta `pip install stim pymatchi
 | `M6_steane_code/` | M6 | Codice di Steane [[7,1,3]] (codice QEC centrale) | ✅ completo |
 | `M7_surface_code/` | M7 | Surface code con Stim + PyMatching (soglia p_th≈0.8%) | ✅ completo |
 | `M8_shor_logico/` | M8 | Shor logico: P_success vs p_L + figura conclusiva | ✅ completo |
-| `M10_neural_decoder/` | M10 | Decodifica appresa vs MWPM: confronto leale, rumore correlato, validatore, decoder ibrido | ✅ completo |
+| `M10_neural_decoder/` | M10 | Decodifica appresa vs MWPM — 12 esperimenti in tre ondate: il risultato (E1–E4), gli attacchi al risultato (E5–E7), gli attacchi alle conclusioni (E8–E12) | ✅ completo |
+| `M12_coerenti/` | M12 | Il decoder appreso guadagna di più sugli errori coerenti? (no: il ciclo QEC li converte in statistica di Pauli) | ✅ completo |
 | `extra_rumore_coerente/` | extra | Errore coerente vs Pauli (limite del modello Clifford-Pauli, cfr. Plaquette) | ✅ completo |
 
 ## Regola di validazione (dal documento del relatore)
