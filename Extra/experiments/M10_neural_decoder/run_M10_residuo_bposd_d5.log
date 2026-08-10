@@ -1,0 +1,23 @@
+==============================================================================
+E8 — IL RESIDUO APPRESO SOPRA BP+OSD: le due sorgenti di guadagno si sommano?
+    p fisico = 0.003, 800000 shot per configurazione, 20 processi
+    ipotesi moltiplicativa: combinato ~ prodotto | saturazione: combinato ~ BP+OSD
+==============================================================================
+  d=5 p_ct=0       MWPM=0.00157  BP+OSD=0.00133  MWPM+res=0.00157  BP+OSD+res=0.00133
+        guadagni vs MWPM: BP+OSD 1.180x  MWPM+res 1.000x  COMBINATO 1.180x  (prodotto previsto 1.180x, scarto +0.000)
+        il residuo ribalta il 0.00% delle predizioni BP+OSD, McNemar p=1.0e+00   [731.6s]
+  d=5 p_ct=0.005   MWPM=0.03584  BP+OSD=0.02781  MWPM+res=0.03547  BP+OSD+res=0.02780
+        guadagni vs MWPM: BP+OSD 1.289x  MWPM+res 1.010x  COMBINATO 1.289x  (prodotto previsto 1.302x, scarto -0.013)
+        il residuo ribalta il 0.02% delle predizioni BP+OSD, McNemar p=6.0e-01   [891.4s]
+  d=5 p_ct=0.01    MWPM=0.08642  BP+OSD=0.07223  MWPM+res=0.08420  BP+OSD+res=0.07199
+        guadagni vs MWPM: BP+OSD 1.196x  MWPM+res 1.026x  COMBINATO 1.200x  (prodotto previsto 1.228x, scarto -0.027)
+        il residuo ribalta il 0.30% delle predizioni BP+OSD, McNemar p=5.2e-02   [652.9s]
+  d=5 p_ct=0.02    MWPM=0.20153  BP+OSD=0.18443  MWPM+res=0.19607  BP+OSD+res=0.18257
+        guadagni vs MWPM: BP+OSD 1.093x  MWPM+res 1.028x  COMBINATO 1.104x  (prodotto previsto 1.123x, scarto -0.019)
+        il residuo ribalta il 2.10% delle predizioni BP+OSD, McNemar p=9.7e-09   [808.8s]
+  d=5 p_ct=0.04    MWPM=0.37528  BP+OSD=0.36636  MWPM+res=0.37260  BP+OSD+res=0.36640
+        guadagni vs MWPM: BP+OSD 1.024x  MWPM+res 1.007x  COMBINATO 1.024x  (prodotto previsto 1.032x, scarto -0.007)
+        il residuo ribalta il 9.17% delle predizioni BP+OSD, McNemar p=9.6e-01   [899.5s]
+
+FLAG E8: il residuo migliora BP+OSD (p<0.01) in 1/5 configurazioni
+Tempo totale: 66.4 min
