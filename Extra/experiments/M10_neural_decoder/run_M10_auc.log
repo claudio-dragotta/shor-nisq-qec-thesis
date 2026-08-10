@@ -1,0 +1,17 @@
+==============================================================================
+E12 — A 336 DETECTOR LA RETE E' CIECA O SOLO INDECISA?
+    AUC ~ 0.5 -> cieca, serve un'altra architettura
+    AUC alta  -> vede ma non conviene agire: sarebbe la regola di decisione
+==============================================================================
+  det=24   d=3 cicli=3  p_ct=0.005   AUC=0.9580  soglia=0.64  onesto=1.1929x  oracolo=1.1929x   [17.8s]
+  det=24   d=3 cicli=3  p_ct=0.02    AUC=0.9117  soglia=0.50  onesto=1.2215x  oracolo=1.2233x   [28.8s]
+  det=120  d=5 cicli=5  p_ct=0.005   AUC=0.8868  soglia=0.52  onesto=1.0035x  oracolo=1.0046x   [20.3s]
+  det=120  d=5 cicli=5  p_ct=0.02    AUC=0.7693  soglia=0.48  onesto=1.0206x  oracolo=1.0215x   [26.1s]
+  det=144  d=7 cicli=3  p_ct=0.005   AUC=0.8406  soglia=0.20  onesto=1.0000x  oracolo=1.0000x   [22.4s]
+  det=144  d=7 cicli=3  p_ct=0.02    AUC=0.7881  soglia=0.52  onesto=1.0066x  oracolo=1.0066x   [31.8s]
+  det=336  d=5 cicli=14 p_ct=0.005   AUC=0.7217  soglia=0.52  onesto=1.0000x  oracolo=1.0000x   [34.2s]
+  det=336  d=5 cicli=14 p_ct=0.02    AUC=0.5726  soglia=0.60  onesto=1.0000x  oracolo=1.0003x   [47.2s]
+  det=336  d=7 cicli=7  p_ct=0.005   AUC=0.7708  soglia=0.56  onesto=1.0003x  oracolo=1.0003x   [39.0s]
+  det=336  d=7 cicli=7  p_ct=0.02    AUC=0.6209  soglia=0.56  onesto=1.0000x  oracolo=1.0000x   [54.3s]
+
+Tempo totale: 5.4 min

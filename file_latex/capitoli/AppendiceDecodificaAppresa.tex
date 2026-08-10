@@ -207,9 +207,34 @@ L'esito è netto su entrambe le diagonali e va letto per colonne. A $336$ detect
 
 Una sfumatura completa l'enunciato e lo rende più preciso. A $144$ detector con soli $5\,933$ esempi positivi il residuo si astiene: la numerosità \emph{è} dunque un vincolo reale, al margine inferiore. Non è però il vincolo che opera nell'esperimento E4 a distanza 7, dove gli esempi erano $1.4\times10^5$ e la rete si asteneva comunque. La formulazione corretta è che disporre di abbastanza esempi è \emph{necessario ma non sufficiente}, e che a parità di numerosità sufficiente è la larghezza dell'ingresso a decidere.
 
-Un secondo riscontro conferma la diagnosi. La rete impiegata come decoder \emph{autonomo} --- il braccio di sostituzione, colonna \textit{rete} della Tabella~\ref{tab:neural_ibrido} --- si degrada lungo le distanze in modo indipendente dagli esempi disponibili: a $d=3$ essa riduce l'errore rispetto al tasso di base di un fattore fra $1.5$ e $11.9$; a $d=5$ fra $1.0$ e $6.2$; a $d=7$ fra $0.99$ e $2.9$, ossia a crosstalk $\geq 0.02$ essa è \emph{indistinguibile dal tasso di base} pur disponendo di oltre centomila esempi. Non è un modello a cui manchino i dati: è un modello che, su $336$ dimensioni indipendenti, non riesce a rappresentare la funzione richiesta.
+\paragraph{Che cosa significhi esattamente ``si astiene'' (E12).}
+Il verbo va però disinnescato, perché astenersi è l'esito di una \emph{selezione}: fra le soglie candidate figura quella corrispondente a ``non ribaltare mai'', e che vinca in validazione significa che agire non conviene, non che non vi sia nulla da vedere. La distinzione non è oziosa, perché le due letture conducono a rimedi opposti --- un'architettura diversa nella prima, una regola di decisione diversa nella seconda. L'esperimento E12 la risolve misurando l'\ac{AUC} del residuo, che quantifica quanto la rete \emph{ordini} i fallimenti del matching indipendentemente da qualunque soglia, e affiancando alla soglia scelta onestamente in validazione una soglia \emph{oracolo}, la migliore sul test set stesso: inutilizzabile in pratica, ma limite superiore assoluto di ciò che qualunque regola di decisione potrebbe ottenere.
 
-Questa è la delimitazione del risultato di M10, e conviene formularla in positivo. Il guadagno del decoder ibrido è reale e statisticamente schiacciante --- a $d=3$ il test di McNemar dà $p < 10^{-320}$ --- ma vive nel regime in cui il reticolo è piccolo abbastanza da essere rappresentabile da una rete densa. Poiché è proprio la crescita della distanza a costituire la strategia della correzione d'errore scalabile, il metodo così com'è non accompagna il codice nel regime che conta. Il rimedio indicato dalla diagnosi non è raccogliere più campioni --- ne bastavano già --- ma cambiare architettura: una rete convoluzionale o a grafo, che condivida i pesi fra regioni equivalenti del reticolo anziché trattare i $336$ detector come dimensioni indipendenti, sfrutta la simmetria traslazionale del problema e rappresenta con pochi parametri le correlazioni locali che la rete densa deve stimare una per una. È l'estensione naturale, e la si indica fra gli sviluppi futuri (Capitolo~\ref{chap:sviluppi}).
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{rcc cc c}
+\toprule
+\textbf{detector} & $d$ & \textbf{cicli} & \textbf{AUC} & \textbf{guadagno onesto} & \textbf{guadagno oracolo} \\
+\midrule
+\phantom{0}24 & 3 & \phantom{0}3 & 0.912 & 1.2215 & 1.2233 \\
+120 & 5 & \phantom{0}5 & 0.769 & 1.0206 & 1.0215 \\
+144 & 7 & \phantom{0}3 & 0.788 & 1.0066 & 1.0066 \\
+336 & 7 & \phantom{0}7 & 0.621 & 1.0000 & 1.0000 \\
+336 & 5 & 14 & 0.573 & 1.0000 & 1.0003 \\
+\bottomrule
+\end{tabular}
+\caption[Discriminazione e guadagno al crescere della larghezza dell'ingresso]{Esperimento E12 a $p_{ct} = 2\times10^{-2}$. L'\ac{AUC} è calcolata sul test set con bersaglio ``il \ac{MWPM} ha sbagliato''. Il guadagno oracolo usa la soglia migliore sul test set stesso e non è quindi realizzabile: serve unicamente a stabilire quanto del divario sia imputabile alla calibrazione. Ai livelli di crosstalk più bassi il quadro è il medesimo, con \ac{AUC} sistematicamente più alte ($0.958$ a $24$ detector, $0.771$ a $336$).}
+\label{tab:neural_auc}
+\end{table}
+
+Il risultato smentisce entrambe le letture immediate. \textbf{La rete non è cieca}: a $336$ detector l'\ac{AUC} vale $0.57$--$0.77$, ben sopra il caso, e la rete ordina dunque i fallimenti del matching assai meglio del lancio di una moneta. \textbf{Ma non si tratta neppure di calibrazione}: il guadagno oracolo è $1.0000$, sicché nemmeno scegliendo la soglia sui dati di valutazione si otterrebbe alcunché.
+
+La spiegazione sta nella forma stessa della correzione residuale, ed è quantitativa. Il ribaltamento è \emph{simmetrico}: ribaltare uno shot che il matching aveva risolto costa esattamente quanto ribaltarne uno che aveva sbagliato rende. Perché l'operazione sia in attivo occorre dunque che fra gli shot ribaltati la \textbf{precisione superi il cinquanta per cento} --- una soglia netta, non un ottimo graduale. L'\ac{AUC} necessaria a raggiungerla dipende dal tasso di base: a $24$ detector e crosstalk $5\times10^{-3}$ il tasso di base è del $3.1\%$ e un'\ac{AUC} di $0.958$ concentra i fallimenti abbastanza da superare la soglia, con un guadagno del $19\%$; a $336$ detector, a parità di tasso di base, un'\ac{AUC} di $0.771$ richiederebbe un fattore di concentrazione quattordici volte superiore a quello che produce. Nessuna soglia porta la precisione sopra il cinquanta per cento, e il guadagno è allora \emph{esattamente} $1.000$ --- non approssimativamente: è questa discontinuità a spiegare il salto brusco osservato lungo la Tabella~\ref{tab:neural_esempi}.
+
+Ne discendono due conseguenze. La prima è che \textbf{l'astensione del criterio di validazione è corretta e non conservativa}: la soglia oracolo conferma che intervenire non converrebbe, e il metodo si comporta esattamente come dichiarato al momento della sua costruzione. La seconda riguarda il rimedio, e ne precisa il criterio di successo: un'architettura convoluzionale o a grafo è utile se e soltanto se innalza l'\ac{AUC} quanto basta a riportare la precisione sopra la soglia del cinquanta per cento, che è una condizione verificabile in anticipo su una rete addestrata --- assai più informativa dell'osservazione che il modello ``non regge''.
+
+Questa è la delimitazione del risultato di M10, e conviene formularla in positivo. Il guadagno del decoder ibrido è reale e statisticamente schiacciante --- a $d=3$ il test di McNemar dà $p < 10^{-320}$ --- ma vive nel regime in cui la sindrome è stretta abbastanza da lasciare alla rete densa una discriminazione sufficiente a superare la soglia di precisione. Poiché è proprio la crescita della distanza a costituire la strategia della correzione d'errore scalabile, il metodo così com'è non accompagna il codice nel regime che conta. Il rimedio indicato dalla diagnosi non è raccogliere più campioni --- ne bastavano già --- ma innalzare la discriminazione a parità di larghezza dell'ingresso, il che significa cambiare architettura: una rete convoluzionale o a grafo, che condivida i pesi fra regioni equivalenti del reticolo anziché trattare i $336$ detector come dimensioni indipendenti, sfrutta la simmetria traslazionale del problema e rappresenta con pochi parametri le correlazioni locali che la rete densa deve stimare una per una. È l'estensione naturale, e la si indica fra gli sviluppi futuri (Capitolo~\ref{chap:sviluppi}).
 
 \subsection{E6 --- e se il modello del decoder fosse semplicemente sbagliato?}
 \label{subsec:neural_miscalibrato}
@@ -375,6 +400,34 @@ Il quadro si legge in due regimi, ed è la struttura stessa del risultato.
 L'onestà richiede una precisazione sulla parola ``coincidono''. Il test di McNemar fra la rete sola e il \ac{MWPM}+residuo dà $p = 7.8\times10^{-4}$, $8.2\times10^{-4}$ e $2.6\times10^{-3}$ ai tre livelli superiori di crosstalk: con $2\times10^{5}$ campioni di test si risolve anche uno scarto dell'uno per cento, e quelle differenze residue sono \emph{reali}. Ciò che si afferma è più debole e più preciso: i tre metodi atterrano entro l'$1$--$2\%$ l'uno dall'altro, e tale scarto è un ordine di grandezza inferiore al divario che separa tutti e tre dal decoder analitico da cui partono.
 
 Il fallimento di E8 discende allora da E10 senza bisogno di ulteriori ipotesi: impilare i due metodi non porta sotto il pavimento, perché il pavimento non appartiene a nessuno dei due.
+
+\paragraph{Il pavimento è del problema o del modello? (E11)}
+Alla lettura appena data si può muovere un'obiezione che va presa sul serio, perché è la stessa che questa sezione muove agli altri risultati. I tre bracci che convergono contengono \emph{tutti e tre la medesima rete}, un percettrone $(128, 64)$ addestrato sugli stessi $4.8\times10^5$ campioni: che convergano potrebbe significare soltanto ``questo è quanto estrae questa rete'', e il pavimento sarebbe una proprietà del modello, non del problema. Per distinguere le due letture occorrono metodi più potenti di quel percettrone. L'esperimento E11 ne mette due alla prova, a distanza 3 e sui medesimi campioni.
+
+Il primo è una rete con la stessa ricetta ma architettura $(512, 256, 128)$, ossia circa quaranta volte i parametri. Il secondo è il \textbf{decoder empirico a massima verosimiglianza}: per ogni sindrome osservata in addestramento si predice l'osservabile di maggioranza, con ricaduta sul \ac{MWPM} per le sindromi mai viste. Quest'ultimo non stima parametri --- memorizza --- e non ha dunque alcun limite di capacità.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{c c ccc c}
+\toprule
+$p_{ct}$ & \textbf{pavimento} & \textbf{rete $40\times$} & \textbf{residuo $40\times$} & \textbf{tabella empirica} & \textbf{copertura} \\
+\midrule
+0.005 & 0.02688 & 0.02687 & 0.02617 & 0.02765 & $98.1\%$ \\
+0.01  & 0.04935 & 0.04920 & 0.04850 & 0.05032 & $97.4\%$ \\
+0.02  & 0.09251 & 0.09222 & 0.09169 & 0.09499 & $95.6\%$ \\
+0.04  & 0.17602 & 0.17463 & 0.17377 & 0.18324 & $91.3\%$ \\
+\bottomrule
+\end{tabular}
+\caption[Il pavimento alla prova di modelli più potenti]{Esperimento E11, distanza 3. ``Pavimento'' è il valore di E10 ricalcolato sugli stessi campioni. ``Copertura'' è la frazione di shot di test la cui sindrome era già stata osservata in addestramento, e misura quanto la tabella empirica sia effettivamente una tabella anziché un \ac{MWPM} travestito.}
+\label{tab:neural_e11}
+\end{table}
+
+L'obiezione è \textbf{respinta}: la rete con quaranta volte i parametri atterra sul pavimento entro lo $0.8\%$, e la tabella empirica --- che di capacità ne ha infinita --- risulta addirittura dal $2$ al $4\%$ \emph{peggiore}. Il pavimento non è dunque il tetto dell'architettura scelta.
+
+Sarebbe però scorretto concluderne che esso coincida con il limite informativo della sindrome, e la ragione sta nella tabella stessa. La sua copertura è alta ($91$--$98\%$) ma la sua \emph{profondità} non lo è: a crosstalk $4\times10^{-2}$ le sindromi distinte osservate sono $63\,180$ su $4.8\times10^5$ campioni di addestramento, ossia circa sette osservazioni per sindrome, e un voto di maggioranza su sette campioni è in larga parte rumore. La tabella non fallisce perché l'informazione manchi, ma perché a questa numerosità non riesce a stimarla; essa mette dunque alla prova l'ipotesi della capacità --- e la scarta --- senza stabilire alcun limite superiore informativo. Nella stessa direzione va notato che il residuo costruito sulla rete grande scende dell'$1$--$3\%$ sotto il pavimento in tutti e quattro i punti, in modo piccolo ma sistematico: il pavimento non è perfettamente duro.
+
+L'enunciato che i dati sostengono è pertanto il seguente, e va tenuto entro questi limiti: \emph{il pavimento è robusto a un aumento di quaranta volte della capacità del modello e a un'alternativa non parametrica, e non è quindi un artefatto dell'architettura; se esso coincida con il limite informativo della sindrome resta una questione aperta, che solo una decodifica esatta a massima verosimiglianza potrebbe chiudere.}
 
 \subsection{E5 --- il decoder è trasferibile fra dispositivi?}
 \label{subsec:neural_generalizzazione}
