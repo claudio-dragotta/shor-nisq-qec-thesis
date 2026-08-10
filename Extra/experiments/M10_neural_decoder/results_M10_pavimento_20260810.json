@@ -1,0 +1,228 @@
+{
+  "milestone": "M10_pavimento_comune",
+  "timestamp": "2026-08-10T11:32:51.238038",
+  "p_phys": 0.003,
+  "shots_per_config": 800000,
+  "points": [
+    {
+      "d": 3,
+      "p": 0.003,
+      "p_crosstalk": 0.0,
+      "shots": 800000,
+      "seed": 10300,
+      "n_detectors": 24,
+      "n_test": 200000,
+      "pL": {
+        "banale": 0.048635,
+        "rete_sola": 0.00431,
+        "mwpm": 0.004315,
+        "bposd": 0.00367,
+        "mwpm_res": 0.00405,
+        "bposd_res": 0.00354
+      },
+      "pL_se": {
+        "banale": 0.00048098667744023843,
+        "rete_sola": 0.00014648248871452178,
+        "mwpm": 0.0001465670627221546,
+        "bposd": 0.00013521337027084268,
+        "mwpm_res": 0.00014201403979888748,
+        "bposd_res": 0.00013280565500007897
+      },
+      "pavimento_medio": 0.003966666666666666,
+      "dispersione_relativa": 0.19411764705882342,
+      "ribalta": {
+        "su_mwpm": 0.001235,
+        "su_bposd": 0.00038
+      },
+      "mcnemar_rete_vs_mwpm_res": {
+        "b_peggiora": 225,
+        "c_migliora": 173,
+        "chi2": 6.793969849246231,
+        "p_value": 0.009146628631100813
+      },
+      "mcnemar_rete_vs_bposd_res": {
+        "b_peggiora": 260,
+        "c_migliora": 106,
+        "chi2": 64.79781420765028,
+        "p_value": 8.299115594377477e-16
+      },
+      "secs": 94.5
+    },
+    {
+      "d": 3,
+      "p": 0.003,
+      "p_crosstalk": 0.005,
+      "shots": 800000,
+      "seed": 10301,
+      "n_detectors": 24,
+      "n_test": 200000,
+      "pL": {
+        "banale": 0.08369,
+        "rete_sola": 0.027035,
+        "mwpm": 0.03106,
+        "bposd": 0.03195,
+        "mwpm_res": 0.026755,
+        "bposd_res": 0.026765
+      },
+      "pL_se": {
+        "banale": 0.0006192171828203736,
+        "rete_sola": 0.0003626576124597414,
+        "mwpm": 0.00038791285361534494,
+        "bposd": 0.0003932505403683509,
+        "mwpm_res": 0.0003608266202416335,
+        "bposd_res": 0.00036089219148521345
+      },
+      "pavimento_medio": 0.026851666666666666,
+      "dispersione_relativa": 0.010427658121780113,
+      "ribalta": {
+        "su_mwpm": 0.010335,
+        "su_bposd": 0.012275
+      },
+      "mcnemar_rete_vs_mwpm_res": {
+        "b_peggiora": 591,
+        "c_migliora": 535,
+        "chi2": 2.7850799289520425,
+        "p_value": 0.09514594631296588
+      },
+      "mcnemar_rete_vs_bposd_res": {
+        "b_peggiora": 783,
+        "c_migliora": 729,
+        "chi2": 1.9285714285714286,
+        "p_value": 0.16491482255330134
+      },
+      "secs": 113.6
+    },
+    {
+      "d": 3,
+      "p": 0.003,
+      "p_crosstalk": 0.01,
+      "shots": 800000,
+      "seed": 10302,
+      "n_detectors": 24,
+      "n_test": 200000,
+      "pL": {
+        "banale": 0.116115,
+        "rete_sola": 0.049655,
+        "mwpm": 0.059285,
+        "bposd": 0.060345,
+        "mwpm_res": 0.04885,
+        "bposd_res": 0.04982
+      },
+      "pL_se": {
+        "banale": 0.0007163529394614083,
+        "rete_sola": 0.0004857436616930786,
+        "mwpm": 0.000528063863443618,
+        "bposd": 0.000532463524454962,
+        "mwpm_res": 0.00048199417786940125,
+        "bposd_res": 0.0004865077984986469
+      },
+      "pavimento_medio": 0.04944166666666666,
+      "dispersione_relativa": 0.019619079723580093,
+      "ribalta": {
+        "su_mwpm": 0.026805,
+        "su_bposd": 0.024145
+      },
+      "mcnemar_rete_vs_mwpm_res": {
+        "b_peggiora": 1228,
+        "c_migliora": 1067,
+        "chi2": 11.294553376906318,
+        "p_value": 0.0007773479888018755
+      },
+      "mcnemar_rete_vs_bposd_res": {
+        "b_peggiora": 1376,
+        "c_migliora": 1409,
+        "chi2": 0.3910233393177738,
+        "p_value": 0.5317619811442947
+      },
+      "secs": 159.2
+    },
+    {
+      "d": 3,
+      "p": 0.003,
+      "p_crosstalk": 0.02,
+      "shots": 800000,
+      "seed": 10303,
+      "n_detectors": 24,
+      "n_test": 200000,
+      "pL": {
+        "banale": 0.17464,
+        "rete_sola": 0.092215,
+        "mwpm": 0.11169,
+        "bposd": 0.112915,
+        "mwpm_res": 0.091085,
+        "bposd_res": 0.091565
+      },
+      "pL_se": {
+        "banale": 0.0008489430793639819,
+        "rete_sola": 0.0006469597892257293,
+        "mwpm": 0.0007043271395452542,
+        "bposd": 0.0007076906201688701,
+        "mwpm_res": 0.0006433837221091314,
+        "bposd_res": 0.0006449063915600465
+      },
+      "pavimento_medio": 0.09162166666666667,
+      "dispersione_relativa": 0.01233332726975067,
+      "ribalta": {
+        "su_mwpm": 0.047555,
+        "su_bposd": 0.0532
+      },
+      "mcnemar_rete_vs_mwpm_res": {
+        "b_peggiora": 2392,
+        "c_migliora": 2166,
+        "chi2": 11.205792014041247,
+        "p_value": 0.0008154241620587471
+      },
+      "mcnemar_rete_vs_bposd_res": {
+        "b_peggiora": 2364,
+        "c_migliora": 2234,
+        "chi2": 3.6755110917790343,
+        "p_value": 0.05521732228995748
+      },
+      "secs": 205.0
+    },
+    {
+      "d": 3,
+      "p": 0.003,
+      "p_crosstalk": 0.04,
+      "shots": 800000,
+      "seed": 10304,
+      "n_detectors": 24,
+      "n_test": 200000,
+      "pL": {
+        "banale": 0.264915,
+        "rete_sola": 0.17565,
+        "mwpm": 0.20753,
+        "bposd": 0.208185,
+        "mwpm_res": 0.174125,
+        "bposd_res": 0.175365
+      },
+      "pL_se": {
+        "banale": 0.0009867498233468298,
+        "rete_sola": 0.0008508733087246303,
+        "mwpm": 0.0009068111686012694,
+        "bposd": 0.0009078656447266853,
+        "mwpm_res": 0.0008479548466015157,
+        "bposd_res": 0.000850329691281564
+      },
+      "pavimento_medio": 0.17504666666666666,
+      "dispersione_relativa": 0.008711962524279233,
+      "ribalta": {
+        "su_mwpm": 0.116655,
+        "su_bposd": 0.10122
+      },
+      "mcnemar_rete_vs_mwpm_res": {
+        "b_peggiora": 5287,
+        "c_migliora": 4982,
+        "chi2": 9.05881780114909,
+        "p_value": 0.002614309540335632
+      },
+      "mcnemar_rete_vs_bposd_res": {
+        "b_peggiora": 5314,
+        "c_migliora": 5257,
+        "chi2": 0.3073502979850534,
+        "p_value": 0.5793107181773405
+      },
+      "secs": 233.5
+    }
+  ]
+}

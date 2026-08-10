@@ -1,0 +1,15 @@
+==============================================================================
+E9 — IL FALLIMENTO A d=7: larghezza dell'ingresso o distanza del codice?
+    p fisico = 0.003, 800000 shot per cella
+    dimensione: interviene a (7,144) e non a (5,336) | distanza: il contrario
+==============================================================================
+  d=7 cicli=3  det=144  p_ct=0.005   pos=   5933  MWPM=0.01225  IBRIDO=0.01226  ribalta 0.00%  (si astiene)  [51.5s]
+  d=7 cicli=3  det=144  p_ct=0.02    pos=  61900  MWPM=0.12937  IBRIDO=0.12809  ribalta 1.52%  (INTERVIENE)  [90.5s]
+  d=7 cicli=7  det=336  p_ct=0.005   pos=  17665  MWPM=0.03639  IBRIDO=0.03638  ribalta 0.00%  (si astiene)  [76.4s]
+  d=7 cicli=7  det=336  p_ct=0.02    pos= 139275  MWPM=0.29083  IBRIDO=0.29082  ribalta 0.00%  (si astiene)  [80.9s]
+  d=5 cicli=14 det=336  p_ct=0.005   pos=  48657  MWPM=0.10135  IBRIDO=0.10134  ribalta 0.00%  (si astiene)  [55.0s]
+  d=5 cicli=14 det=336  p_ct=0.02    pos= 188582  MWPM=0.39234  IBRIDO=0.39235  ribalta 0.01%  (si astiene)  [84.3s]
+  d=5 cicli=5  det=120  p_ct=0.005   pos=  17235  MWPM=0.03531  IBRIDO=0.03486  ribalta 0.29%  (INTERVIENE)  [40.9s]
+  d=5 cicli=5  det=120  p_ct=0.02    pos=  96167  MWPM=0.20034  IBRIDO=0.19538  ribalta 2.96%  (INTERVIENE)  [35.9s]
+
+Tempo totale: 8.6 min

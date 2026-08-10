@@ -1,0 +1,28 @@
+==============================================================================
+E10 — SEI DECODER, UN SOLO PAVIMENTO?
+    p fisico = 0.003, 800000 shot per configurazione, tutti i bracci
+    sugli stessi campioni. Previsione: rete sola == MWPM+res == BP+OSD+res
+==============================================================================
+  d=3 p_ct=0     
+        banale=0.04863  MWPM=0.00432  BP+OSD=0.00367
+        rete sola=0.00431  MWPM+res=0.00405  BP+OSD+res=0.00354
+        pavimento 0.00397, dispersione fra i tre 19.41%  |  rete vs MWPM+res: p=9.1e-03   [94.5s]
+  d=3 p_ct=0.005 
+        banale=0.08369  MWPM=0.03106  BP+OSD=0.03195
+        rete sola=0.02704  MWPM+res=0.02676  BP+OSD+res=0.02677
+        pavimento 0.02685, dispersione fra i tre 1.04%  |  rete vs MWPM+res: p=9.5e-02   [113.6s]
+  d=3 p_ct=0.01  
+        banale=0.11611  MWPM=0.05928  BP+OSD=0.06035
+        rete sola=0.04965  MWPM+res=0.04885  BP+OSD+res=0.04982
+        pavimento 0.04944, dispersione fra i tre 1.96%  |  rete vs MWPM+res: p=7.8e-04   [159.2s]
+  d=3 p_ct=0.02  
+        banale=0.17464  MWPM=0.11169  BP+OSD=0.11292
+        rete sola=0.09222  MWPM+res=0.09108  BP+OSD+res=0.09156
+        pavimento 0.09162, dispersione fra i tre 1.23%  |  rete vs MWPM+res: p=8.2e-04   [205.0s]
+  d=3 p_ct=0.04  
+        banale=0.26492  MWPM=0.20753  BP+OSD=0.20819
+        rete sola=0.17565  MWPM+res=0.17413  BP+OSD+res=0.17536
+        pavimento 0.17505, dispersione fra i tre 0.87%  |  rete vs MWPM+res: p=2.6e-03   [233.5s]
+
+FLAG E10: i tre bracci di fondo coincidono entro il 3% in 4/5 configurazioni
+Tempo totale: 13.4 min
