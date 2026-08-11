@@ -15,7 +15,7 @@ L'algoritmo si articola in tre fasi: un \textit{preprocessing} classico che rico
 \section{Richiami di Calcolo Quantistico}
 \label{chap:fondamenti}
 
-Questa sezione richiama in forma sintetica i concetti di meccanica quantistica e di calcolo quantistico necessari a seguire il resto della tesi. La trattazione completa --- i quattro postulati, l'insieme esteso delle porte, le figure e il modello di complessità --- è riportata nella Sezione~\ref{app:fondamenti}, a cui si rimanda per ogni dettaglio formale.
+Questa sezione richiama i concetti di meccanica quantistica e di calcolo quantistico necessari a seguire il resto della tesi, riportando per esteso quelli su cui i capitoli successivi si appoggiano operativamente --- la sfera di Bloch, le matrici di Pauli e la loro algebra. La trattazione completa, con i quattro postulati, l'insieme esteso delle porte e il modello di complessità, è nella Sezione~\ref{app:fondamenti}.
 
 \subsection{Qubit, Sovrapposizione e Sfera di Bloch}
 
@@ -23,7 +23,22 @@ L'unità fondamentale del calcolo quantistico è il \textbf{qubit}, descritto da
 \begin{equation}
     \ket{\psi} = \alpha\ket{0} + \beta\ket{1}, \qquad \alpha, \beta \in \mathbb{C}, \quad |\alpha|^2 + |\beta|^2 = 1,
 \end{equation}
-dove $|\alpha|^2$ e $|\beta|^2$ sono le probabilità di misurare rispettivamente $0$ e $1$ (\textbf{regola di Born}). Ogni stato puro si visualizza come un punto sulla \textbf{sfera di Bloch}, parametrizzato da $\theta$ e $\phi$ tramite $\ket{\psi} = \cos(\theta/2)\ket{0} + e^{i\phi}\sin(\theta/2)\ket{1}$: i poli sono $\ket{0}$ e $\ket{1}$, l'equatore le sovrapposizioni equiprobabili (Sezione~\ref{app:fondamenti}, Fig.~\ref{fig:bloch}).
+dove $|\alpha|^2$ e $|\beta|^2$ sono le probabilità di misurare rispettivamente $0$ e $1$ (\textbf{regola di Born}).
+
+Riparametrizzando le due ampiezze complesse tramite angoli reali --- il che è lecito perché la normalizzazione toglie un grado di libertà e la fase globale è inosservabile --- ogni stato puro si scrive
+\begin{equation}
+    \ket{\psi} = \cos\!\left(\frac{\theta}{2}\right)\ket{0} + e^{i\phi}\sin\!\left(\frac{\theta}{2}\right)\ket{1},
+    \qquad \theta \in [0,\pi],\ \phi \in [0,2\pi),
+    \label{eq:bloch_param}
+\end{equation}
+e si visualizza come un punto sulla superficie della \textbf{sfera di Bloch}.\footnote{La sfera deve il nome al fisico svizzero-americano Felix Bloch (1905--1983), Premio Nobel per la Fisica nel 1952 per lo sviluppo della spettroscopia a risonanza magnetica nucleare (\ac{NMR}). La stessa notazione $T_1$ e $T_2$ per i tempi di decoerenza proviene dal formalismo NMR di Bloch.} I poli sono $\ket{0}$ e $\ket{1}$, l'equatore le sovrapposizioni equiprobabili con fasi diverse.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.42\textwidth]{bloch_sphere.png}
+    \caption[La sfera di Bloch]{La sfera di Bloch: ogni stato puro di un qubit corrisponde a un punto sulla superficie della sfera unitaria, parametrizzato dagli angoli $\theta$ e $\varphi$ della~\eqref{eq:bloch_param}. I poli nord e sud rappresentano gli stati base $\ket{0}$ e $\ket{1}$; i punti sull'equatore corrispondono a sovrapposizioni equiprobabili. È la rappresentazione a cui si farà riferimento nel Capitolo~\ref{chap:rumore} per descrivere l'azione dei canali di rumore, che deformano la sfera anziché spostare punti su di essa.}
+    \label{fig:bloch}
+\end{figure}
 
 \subsection{Sistemi Multi-Qubit ed Entanglement}
 
@@ -35,6 +50,34 @@ L'entanglement non è solo una proprietà astratta: è la \textbf{risorsa} che g
 
 \subsection{Porte, Misura e Interferenza}
 
-Le operazioni sui qubit sono \textbf{matrici unitarie} ($U^\dagger U = I$), quindi reversibili. Le porte fondamentali sono le matrici di Pauli $X$ (bit flip), $Y$, $Z$ (phase flip), la porta di \textbf{Hadamard} $H$ --- che genera la sovrapposizione uniforme $H^{\otimes n}\ket{0}^{\otimes n} = 2^{-n/2}\sum_x \ket{x}$ --- le porte di fase $R_\phi$, e la porta a due qubit \textbf{CNOT}, che con le porte a singolo qubit forma un insieme universale. La \textbf{misura} in base computazionale collassa lo stato $\ket{\psi}=\sum_x\alpha_x\ket{x}$ sull'esito $x$ con probabilità $|\alpha_x|^2$: è un'operazione non unitaria e irreversibile. Il meccanismo che rende utile tutto ciò è l'\textbf{interferenza}: un algoritmo efficiente è costruito perché le ampiezze degli esiti sbagliati si cancellino (interferenza distruttiva) e quelle degli esiti corretti si sommino (costruttiva). È esattamente ciò che la QFT realizza nell'algoritmo di Shor (Capitolo~\ref{chap:shor}) per far emergere il periodo.
+Le operazioni sui qubit sono \textbf{matrici unitarie} ($U^\dagger U = I$), quindi reversibili. La Tabella~\ref{tab:porte_essenziali} raccoglie quelle su cui il resto della tesi si appoggia; l'insieme completo, con le derivazioni, è nella Sezione~\ref{app:fondamenti}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llc l}
+\toprule
+\textbf{Porta} & \textbf{Matrice} & \textbf{Qubit} & \textbf{Effetto} \\
+\midrule
+$X$ & $\begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}$ & 1 & \textit{bit flip}: scambia $\ket{0}$ e $\ket{1}$ \\[10pt]
+$Y$ & $\begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix}$ & 1 & bit flip e phase flip insieme ($\propto XZ$) \\[10pt]
+$Z$ & $\begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}$ & 1 & \textit{phase flip}: $\ket{1} \mapsto -\ket{1}$ \\[10pt]
+$H$ & $\tfrac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}$ & 1 & genera la sovrapposizione uniforme \\[10pt]
+$R_\phi$ & $\begin{pmatrix} 1 & 0 \\ 0 & e^{i\phi} \end{pmatrix}$ & 1 & rotazione di fase; $T = R_{\pi/4}$, $S = R_{\pi/2}$ \\[10pt]
+CNOT & $\begin{pmatrix} 1&0&0&0 \\ 0&1&0&0 \\ 0&0&0&1 \\ 0&0&1&0 \end{pmatrix}$ & 2 & nega il \textit{target} se il \textit{control} è $\ket{1}$ \\
+\bottomrule
+\end{tabular}
+\caption[Le porte quantistiche essenziali]{Le porte su cui poggia il resto dell'elaborato. Le tre matrici di Pauli descrivono i canali di rumore del Capitolo~\ref{chap:rumore} e gli errori che i codici correttori dei Capitoli~\ref{chap:qec}--\ref{chap:surface} devono diagnosticare; $H$ e $R_\phi$ costruiscono la \ac{QFT}; la \ac{CNOT} è la porta a due qubit dominante nel conteggio delle risorse, ed è quella a cui è associato l'errore più severo.}
+\label{tab:porte_essenziali}
+\end{table}
+
+Con l'identità, le tre matrici di Pauli formano una base per le matrici $2\times2$ hermitiane a traccia nulla: ogni errore su un singolo qubit si scrive dunque come loro combinazione, ed è questa la ragione per cui un codice capace di correggere $X$ e $Z$ corregge \emph{qualunque} errore a un qubit --- proprietà su cui si fonda l'intera parte \ac{QEC}. Valgono inoltre le relazioni
+\begin{equation}
+    X^2 = Y^2 = Z^2 = I, \qquad XY = iZ, \quad YZ = iX, \quad ZX = iY, \qquad
+    \{X,Y\} = \{Y,Z\} = \{X,Z\} = 0,
+    \label{eq:algebra_pauli}
+\end{equation}
+dove $\{A,B\} = AB+BA$ è l'anticommutatore. L'\textbf{anticommutazione} è la proprietà operativamente decisiva: è essa a garantire che un errore $X$ e un errore $Z$ producano sindromi \emph{indipendenti}, e quindi distinguibili, nella misura degli stabilizzatori del Capitolo~\ref{chap:qec}.
+
+Insieme alle porte a singolo qubit, la \ac{CNOT} forma un insieme universale: ogni operazione unitaria su $n$ qubit si approssima a piacere componendo elementi di questo insieme. La \textbf{misura} in base computazionale collassa lo stato $\ket{\psi}=\sum_x\alpha_x\ket{x}$ sull'esito $x$ con probabilità $|\alpha_x|^2$: è un'operazione non unitaria e irreversibile. Il meccanismo che rende utile tutto ciò è l'\textbf{interferenza}: un algoritmo efficiente è costruito perché le ampiezze degli esiti sbagliati si cancellino (interferenza distruttiva) e quelle degli esiti corretti si sommino (costruttiva). È esattamente ciò che la QFT realizza nell'algoritmo di Shor (Capitolo~\ref{chap:shor}) per far emergere il periodo.
 
 \end{onehalfspace}
