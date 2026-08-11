@@ -9,8 +9,37 @@ Il Capitolo~\ref{chap:sviluppo} ha descritto le scelte implementative dei due me
 
 Tutti gli esperimenti sono stati condotti nell'ambiente WSL descritto nel Capitolo~\ref{chap:sviluppo}, con il simulatore \texttt{AerSimulator} in modalità \texttt{statevector} (CPU): \texttt{optimization\_level=2}, $M_{\text{shots}}=1024$ per iterazione, $M_{\text{max}}=50$ iterazioni, $K=30$ ripetizioni per UC1/UC2, seed deterministici.
 
-\paragraph{Indipendenza fra le iterazioni.}
-Un dettaglio dell'assegnazione dei seed merita di essere esplicitato, perché condiziona il significato stesso della metrica $\bar{M}$. Il simulatore deriva il seme di ciascuno shot dalla somma fra il seme dell'esecuzione e l'indice dello shot: due esecuzioni con semi consecutivi condividono quindi $1\,023$ campioni su $1\,024$ e costituiscono, in pratica, la medesima esecuzione. Poiché $\bar{M}$ intende misurare quante esecuzioni \emph{indipendenti} siano necessarie, le iterazioni devono essere separate di più del numero di shot; lo schema adottato è $\texttt{seed} = \text{rep} \times 10^6 + \text{iter} \times 10^4$. La verifica empirica conferma la necessità dell'accorgimento: la sovrapposizione fra gli istogrammi di due esecuzioni con semi consecutivi è del $99.9\%$, contro il $90.4\%$ fra semi ben separati --- valore, quest'ultimo, atteso fra campioni realmente indipendenti tratti da una distribuzione concentrata. I quattro use case seguono la struttura definita nel Capitolo~\ref{chap:obiettivi} (Tabella~\ref{tab:use_case_params}): UC1 e UC2 usano lo stesso circuito per $N=15$ a due livelli di rumore diversi (asse rumore), mentre UC3 ($N=21$) e UC4 ($N=35$) testano la scalabilità a rumore NISQ-realistico costante.
+I quattro use case seguono la struttura definita nel Capitolo~\ref{chap:obiettivi} (Tabella~\ref{tab:use_case_params}): UC1 e UC2 usano lo stesso circuito per $N=15$ a due livelli di rumore diversi (asse rumore), mentre UC3 ($N=21$) e UC4 ($N=35$) testano la scalabilità a rumore NISQ-realistico costante.
+
+\paragraph{Un errore nell'assegnazione dei seed, e la ripetizione della campagna.}
+I risultati riportati in questo capitolo provengono da una \emph{seconda} esecuzione della campagna. La prima conteneva un difetto che invalidava la metrica principale, e poiché esso riguarda il significato stesso di $\bar{M}$ va esposto per intero prima dei numeri che ne dipendono.
+
+La metrica $\bar{M}$ conta quante esecuzioni \emph{indipendenti} dell'algoritmo servano per ottenere i fattori. Nella prima campagna il seme di ciascuna iterazione era assegnato come $\texttt{seed} = \text{rep} \times 10^4 + \text{iter}$, cioè con iterazioni consecutive separate da un'unità. Lo schema sarebbe innocuo se il simulatore trattasse quel valore come seme di un'intera esecuzione, ma non è così: \texttt{AerSimulator} deriva il generatore del singolo shot come $\texttt{seed\_simulator} + \text{indice\_shot}$. Con $M_{\text{shots}} = 1024$ due iterazioni consecutive condividevano dunque $1\,023$ campioni su $1\,024$ --- erano, in sostanza, la medesima esecuzione ripetuta. La grandezza che il capitolo intendeva misurare non era quella misurata.
+
+La correzione consiste nel separare le iterazioni di più del numero di shot: $\texttt{seed} = \text{rep} \times 10^6 + \text{iter} \times 10^4$. La verifica empirica ne conferma la necessità: la sovrapposizione fra gli istogrammi di due esecuzioni con semi consecutivi è del $99.9\%$, contro il $90.4\%$ fra semi ben separati --- valore, quest'ultimo, atteso fra campioni realmente indipendenti tratti da una distribuzione concentrata.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Grandezza} & \textbf{prima campagna} & \textbf{campagna corretta} \\
+\midrule
+$\bar{M}_1$ (UC1) & $6.43$ & $1.97$ \\
+$\rho = \bar{M}_1/\bar{M}_{\text{TOP4}}$ (UC1) & $6.44$ & $1.97$ \\
+tasso di successo & $76.7\%$ & $100\%$ (tutte le strategie) \\
+esito della \ac{ZNE} & ``peggiora'' & ``inefficace'' \\
+\bottomrule
+\end{tabular}
+\caption[Effetto della correzione dei seed sui risultati della prima campagna]{Confronto fra i valori pubblicati prima della correzione e quelli riportati in questo capitolo. I valori della colonna di sinistra non vanno usati: sono riportati unicamente per documentare l'entità dello scostamento.}
+\label{tab:correzione_seed}
+\end{table}
+
+L'effetto sui risultati è riassunto nella Tabella~\ref{tab:correzione_seed}, e va letto riconoscendo che tocca sia la magnitudine sia, in un caso, il segno di una conclusione. Il guadagno della strategia multi-candidato si ridimensiona da $6.4\times$ a $2\times$: resta reale e statisticamente solido, ma di entità assai minore. Il tasso di successo sale al $100\%$ per tutte le strategie, poiché l'apparente $76.7\%$ derivava dal ripetere cinquanta volte la stessa estrazione sfortunata anziché cinquanta estrazioni diverse. E la \ac{ZNE}, che nella prima campagna \emph{peggiorava} l'esito, risulta ora semplicemente inefficace --- nessun guadagno significativo a fronte di un costo di $2$--$3\times$ in shot. Quest'ultimo cambiamento merita una nota: il peggioramento era un artefatto del difetto, e la conclusione corretta è più debole ma anche più difendibile di quella che sostituisce.
+
+Ciò che la correzione \emph{non} tocca è l'esito dell'analisi di ablazione, che è il risultato portante del capitolo: il classificatore resta neutro su UC1 e dannoso su UC2, con le medesime significatività. La conclusione che motiva l'intero spostamento verso la correzione d'errore non dipendeva dal difetto.
+
+Documentare l'episodio anziché limitarsi a pubblicare i numeri corretti risponde a una richiesta esplicita del relatore, e ha una ragione metodologica propria: l'errore non era nel codice della tesi ma in un'assunzione tacita su una libreria di terze parti, ed è la categoria di difetto che nessun test sull'algoritmo avrebbe rilevato. Solo la domanda ``queste esecuzioni sono davvero indipendenti?'', posta esplicitamente e verificata sui dati, poteva scoprirlo.
 
 Le tre configurazioni algoritmiche confrontate sono:
 \begin{itemize}

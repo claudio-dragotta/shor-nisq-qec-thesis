@@ -152,7 +152,9 @@ def run_method1(N, a, n_count, noise_model, shots=1024,
 
     for iteration in range(1, max_iter + 1):
         counts = sim.run(transpiled, shots=shots,
-                         seed_simulator=seed * 10000 + iteration
+                         # separati di piu' dei 1024 shot: Aer deriva il seme
+                         # del singolo shot come seed_simulator + shot_index
+                         seed_simulator=seed * 1_000_000 + iteration * 10_000
                          ).result().get_counts()
         # TOP-1: misura piu' frequente nell'istogramma
         meas = int(max(counts, key=counts.get), 2)
@@ -189,7 +191,8 @@ def generate_dataset(N, a, n_count, noise_base, noise_factor=0.5,
         nm = build_noise_model(eps_1q, eps_2q, t1_ns, t2_ns,
                                p_ro=noise_base['p_ro'])
         counts = sim.run(tqc, noise_model=nm, shots=shots,
-                         seed_simulator=seed + i).result().get_counts()
+                         seed_simulator=seed * 1_000_000 + i * 10_000
+                         ).result().get_counts()
 
         # Etichetta TOP-K: 1 se almeno una delle top-16 misure
         # piu' frequenti produce fattori validi
@@ -218,7 +221,7 @@ def run_method2(N, a, n_count, noise_model, classifier,
 
     for iteration in range(1, max_iter + 1):
         counts = sim.run(transpiled, shots=shots,
-                         seed_simulator=seed * 10000 + iteration
+                         seed_simulator=seed * 1_000_000 + iteration * 10_000
                          ).result().get_counts()
 
         # Feature: istogramma normalizzato a 2^n_count dimensioni
