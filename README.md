@@ -3,9 +3,10 @@
 **Master's thesis — Claudio Dragotta · Advisor: Ing. Floriano Caprio · Università Campus
 Bio-Medico di Roma**
 
-This repository contains the thesis sources, experimental code, versioned JSON artifacts,
-figure generators and the interactive Shor demo. Scientific outputs are considered current
-only when their circuit/model revision and provenance are recorded in the artifact.
+This repository contains the thesis sources, experimental code, versioned JSON artifacts
+and figure generators; the interactive demo is kept in its own repository. Scientific
+outputs are considered current only when their circuit/model revision and provenance are
+recorded in the artifact.
 
 ## Scientific status — 27 August 2026
 
@@ -193,10 +194,12 @@ causal ML claim.
 ## Repository map
 
 ```text
-file_latex/          thesis sources and included figures
-figure_src/          deterministic figure generators
-Extra/experiments/   code and versioned artifacts, grouped by milestone
-Extra/shor-demo/     interactive demo, maintained as a separate nested repository
+file_latex/           thesis sources and included figures
+file_latex_sommario/  5+5 page summary for the LM ISI template
+figure_src/           deterministic figure generators
+Extra/experiments/    code and versioned artifacts, grouped by milestone
+AVVIO_WSL.md          environment and experimental pipeline walkthrough
+tesi_compilata.pdf    compiled thesis
 ```
 
 | Block | Directory |
@@ -212,10 +215,15 @@ Extra/shor-demo/     interactive demo, maintained as a separate nested repositor
 
 ## Interactive demo
 
-The live teaching demo is available at
-**<https://shor-demo-6knp.onrender.com>**. It deliberately exposes only the tractable
-`N=15, a=7` instance and separates the ideal mathematical simulation from an illustrative
-noise laboratory.
+The live teaching demo is available at **<https://shor-demo-6knp.onrender.com>**; its
+sources are kept in a separate repository,
+[shor-demo](https://github.com/claudio-dragotta/shor-demo).
+
+It exposes the three validated instances `N=15`, `N=21` and `N=35`, and separates the ideal
+mathematical simulation from an illustrative noise laboratory. For `N=21` and `N=35` the
+demo does not materialise the statevector: it shows the circuit structure and samples the
+exact ideal QPE law. That view is therefore **ideal**, not a noisy simulation, and licenses
+no comparison with the noisy `N=15` results.
 
 ## Building the thesis
 
