@@ -1,0 +1,54 @@
+
+=======================================================
+Training classificatore per UC1  (N=15, a=7, n_count=8)
+=======================================================
+  Circuito traspilato: depth=412, cx=224
+  Campioni: 200/2000 | TOP-1: pos=125 neg=75, TOP-16: pos=200 neg=0
+  Campioni: 400/2000 | TOP-1: pos=257 neg=143, TOP-16: pos=400 neg=0
+  Campioni: 600/2000 | TOP-1: pos=375 neg=225, TOP-16: pos=600 neg=0
+  Campioni: 800/2000 | TOP-1: pos=492 neg=308, TOP-16: pos=800 neg=0
+  Campioni: 1000/2000 | TOP-1: pos=616 neg=384, TOP-16: pos=1000 neg=0
+  Campioni: 1200/2000 | TOP-1: pos=749 neg=451, TOP-16: pos=1200 neg=0
+  Campioni: 1400/2000 | TOP-1: pos=866 neg=534, TOP-16: pos=1400 neg=0
+  Campioni: 1600/2000 | TOP-1: pos=1000 neg=600, TOP-16: pos=1600 neg=0
+  Campioni: 1800/2000 | TOP-1: pos=1127 neg=673, TOP-16: pos=1800 neg=0
+  Campioni: 2000/2000 | TOP-1: pos=1262 neg=738, TOP-16: pos=2000 neg=0
+
+Etichette TOP-1: 2000 campioni | pos=1262 (63.1%) neg=738 (36.9%)
+  validation RandomForest: F1=0.811  Acc=0.710  AUC=0.854
+  validation SVM: F1=0.908  Acc=0.882  AUC=0.960
+  validation MLP: F1=0.874  Acc=0.835  AUC=0.940
+>> TOP-1, selezionato su validation: SVM; test F1=0.919, Acc=0.895, AUC=0.965
+   Salvato in artifacts/v2_20260819/training/top1/clf_UC1.joblib
+
+Etichette TOP-16: 2000 campioni | pos=2000 (100.0%) neg=0 (0.0%)
+  Classe unica: classificatore non addestrabile (esito registrato).
+
+=======================================================
+Training classificatore per UC2  (N=15, a=7, n_count=8)
+=======================================================
+  Circuito traspilato: depth=412, cx=224
+  Campioni: 200/2000 | TOP-1: pos=150 neg=50, TOP-16: pos=200 neg=0
+  Campioni: 400/2000 | TOP-1: pos=296 neg=104, TOP-16: pos=400 neg=0
+  Campioni: 600/2000 | TOP-1: pos=437 neg=163, TOP-16: pos=600 neg=0
+  Campioni: 800/2000 | TOP-1: pos=589 neg=211, TOP-16: pos=800 neg=0
+  Campioni: 1000/2000 | TOP-1: pos=738 neg=262, TOP-16: pos=1000 neg=0
+  Campioni: 1200/2000 | TOP-1: pos=874 neg=326, TOP-16: pos=1200 neg=0
+  Campioni: 1400/2000 | TOP-1: pos=1014 neg=386, TOP-16: pos=1400 neg=0
+  Campioni: 1600/2000 | TOP-1: pos=1162 neg=438, TOP-16: pos=1600 neg=0
+  Campioni: 1800/2000 | TOP-1: pos=1305 neg=495, TOP-16: pos=1800 neg=0
+  Campioni: 2000/2000 | TOP-1: pos=1453 neg=547, TOP-16: pos=2000 neg=0
+
+Etichette TOP-1: 2000 campioni | pos=1453 (72.7%) neg=547 (27.3%)
+  validation RandomForest: F1=0.842  Acc=0.728  AUC=0.770
+  validation SVM: F1=0.929  Acc=0.897  AUC=0.963
+  validation MLP: F1=0.906  Acc=0.865  AUC=0.945
+>> TOP-1, selezionato su validation: SVM; test F1=0.923, Acc=0.887, AUC=0.958
+   Salvato in artifacts/v2_20260819/training/top1/clf_UC2.joblib
+
+Etichette TOP-16: 2000 campioni | pos=2000 (100.0%) neg=0 (0.0%)
+  Classe unica: classificatore non addestrabile (esito registrato).
+
+--- UC3/UC4 (N=21/35): skip training ---
+L'aritmetica Beauregard è validata separatamente, ma N=21 richiede 21.036 CX
+nella base RZ/SX/X/CX (n_count=8): escluso dal training rumoroso per costo.

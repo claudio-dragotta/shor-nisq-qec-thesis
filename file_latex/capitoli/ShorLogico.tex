@@ -1,134 +1,152 @@
 \begin{onehalfspace}
 
-I Capitoli~\ref{chap:qec} e~\ref{chap:surface} hanno costruito e misurato la correzione d'errore su circuiti dedicati; il Capitolo~\ref{chap:risultati} aveva misurato quanto il rumore fisico degrada Shor. Questo capitolo chiude il cerchio unendo i due fili: che cosa succederebbe all'algoritmo di Shor se i suoi qubit fossero \emph{logici}, protetti da un codice correttore? La tentazione naturale --- codificare ogni qubit di Shor con Steane o surface code e simulare tutto esplicitamente --- non è percorribile, e la ragione è strutturale, non solo pratica. La soluzione metodologicamente corretta, prescritta dal documento di indirizzo del lavoro, è un'\textbf{integrazione a livelli}: caratterizzare separatamente Shor rumoroso e correzione d'errore, e connetterli attraverso un'unica grandezza di scambio --- il logical error rate $p_L$. Il prodotto finale è la risposta a una domanda scientifica precisa: \emph{quale livello di errore logico è necessario affinché Shor mantenga una probabilità di successo accettabile?}
+I Capitoli~\ref{chap:qec} e~\ref{chap:surface} studiano la correzione d'errore su circuiti dedicati, mentre il Capitolo~\ref{chap:risultati} misura la degradazione di Shor sotto un modello di rumore fisico. Collegare direttamente i due insiemi di risultati richiederebbe una compilazione fault-tolerant completa: codifica dei registri, estrazione ripetuta della sindrome, decoder, operazioni logiche e distillazione delle risorse non-Clifford. Questa tesi non simula tale architettura. Il presente capitolo svolge invece un esperimento di \textbf{sensibilit\`a fenomenologica}: applica al circuito compilato un errore Pauli indipendente per gate, indicato con $p_L$, e misura come varia la probabilit\`a di fattorizzazione. Il pedice ``L'' identifica il ruolo concettuale del parametro, ma non autorizza a sostituirvi direttamente le metriche logiche aggregate dei capitoli precedenti.
 
 % -----------------------------------------------
-\section{L'Architettura a Quattro Livelli}
+\section{L'architettura a quattro livelli}
 \label{sec:quattro_livelli}
 
-Il percorso sperimentale complessivo della tesi si organizza in quattro livelli di simulazione, ciascuno con il proprio strumento e la propria domanda:
+La separazione adottata evita di attribuire a una simulazione ridotta pi\`u informazione di quella che contiene.
 
 \begin{table}[H]
 \centering
 \small
 \begin{tabular}{clll}
 \toprule
-\textbf{Livello} & \textbf{Oggetto} & \textbf{Strumento} & \textbf{Dove nella tesi} \\
+\textbf{Livello} & \textbf{Oggetto} & \textbf{Strumento} & \textbf{Domanda} \\
 \midrule
-1 & Shor ideale & Qiskit Aer (statevector) & Capp.~\ref{chap:sviluppo}--\ref{chap:risultati} \\
-2 & Shor rumoroso & Qiskit Aer + noise model & Cap.~\ref{chap:risultati}, App.~\ref{app:parametrica} \\
-3 & QEC isolata & Qiskit (repetition, Steane); Stim + PyMatching (surface) & Capp.~\ref{chap:qec}--\ref{chap:surface} \\
-4 & Shor logico & Qiskit Aer + errore logico $p_L$ & questo capitolo \\
+1 & Shor ideale & Qiskit Aer & limite senza rumore \\
+2 & Shor rumoroso & Aer + noise model & sensibilit\`a agli errori fisici \\
+3 & QEC isolata & Qiskit; Stim/PyMatching & soppressione dell'errore \\
+4 & proxy per gate & Aer + canale Pauli & sensibilit\`a a un residuo uniforme \\
 \bottomrule
 \end{tabular}
-\caption[Architettura a quattro livelli della parte sperimentale]{L'integrazione a livelli: ogni livello isola una domanda. Il livello 4 connette i precedenti: l'errore logico $p_L$, misurato al livello 3, sostituisce il rumore fisico del livello 2 nel circuito del livello 1.}
+\caption[Architettura a quattro livelli della parte sperimentale]{I quattro livelli isolano domande diverse. Il quarto non \`e una simulazione fault-tolerant e non riceve automaticamente come input i tassi aggregati misurati al terzo livello.}
 \label{tab:quattro_livelli}
 \end{table}
 
-\paragraph{Perché la simulazione completa non è percorribile.}
-Due barriere si sommano. La prima è dimensionale: codificare i 12 qubit di Shor per $N=15$ con un surface code di distanza 3 richiederebbe centinaia di qubit fisici simulati, ben oltre il limite statevector già discusso nella Sezione~\ref{chap:strumenti}. La seconda è strutturale: Stim, che ai livelli di qubit richiesti sarebbe l'unico strumento efficiente, simula solo circuiti \emph{stabilizer} --- e Shor non lo è. L'esponenziazione modulare e le rotazioni della \ac{QFT} sono operazioni non-Clifford, che nessun simulatore stabilizer può trattare senza perdere l'efficienza garantita dal teorema di Gottesman-Knill. Presentare Stim come simulatore di uno Shor completo sarebbe un errore metodologico; la divisione dei compiti tra Qiskit Aer (circuiti generali piccoli) e Stim/PyMatching (QEC stabilizer) è l'unica configurazione corretta, ed è quella adottata.
+Una simulazione esplicita incontra due barriere. La prima \`e dimensionale: sostituire ciascuno dei 12 qubit dell'istanza $N=15$ con un blocco di codice e includere ancilla e cicli di sindrome porta rapidamente a centinaia di qubit. La seconda \`e strutturale: Stim rimane efficiente per circuiti stabilizer, mentre l'aritmetica modulare e le rotazioni della \ac{QFT} rendono Shor non-Clifford. Aer pu\`o simulare il circuito generale piccolo; Stim/PyMatching pu\`o caratterizzare circuiti QEC stabilizer. Nessuno dei due risultati, da solo, equivale all'esecuzione fault-tolerant completa.
 
 % -----------------------------------------------
-\section{Il Modello di Shor Logico}
+\section{Definizione operativa del proxy}
 \label{sec:modello_logico}
 
-L'idea del livello 4 è sostituire il rumore fisico con il suo residuo dopo la correzione. In un'esecuzione fault-tolerant reale, ogni operazione logica --- gate su qubit codificati, cicli di sindrome, misura logica --- lascia una probabilità residua $p_L$ di errore logico non corretto. Il modello di Shor logico rappresenta questo residuo direttamente: il circuito di Shor del Capitolo~\ref{chap:sviluppo} viene eseguito con un canale d'errore di probabilità $p_L$ applicato dopo ogni gate logico (o, in una variante a granularità maggiore, dopo ogni blocco computazionale), con $p_L$ trattato come parametro libero nell'intervallo stimato sperimentalmente al Capitolo~\ref{chap:surface}.
+In M8, $p_L$ \`e definito come la \textbf{probabilit\`a totale di applicare un Pauli non identit\`a dopo ciascun gate compilato incluso nel modello}. Per un gate su $q$ qubit il canale distribuisce $p_L$ uniformemente sui $4^q-1$ Pauli non identit\`a. Poich\'e Qiskit Aer parametrizza il canale depolarizzante con $\lambda_q$, lo script usa
+\begin{equation}
+    \lambda_1=\frac{4}{3}p_L,
+    \qquad
+    \lambda_2=\frac{16}{15}p_L.
+\end{equation}
+Il rumore \`e applicato a \texttt{sx}/\texttt{x} e \texttt{cx}; le rotazioni \texttt{rz} sono considerate virtuali. Si tratta quindi di un proxy uniforme \emph{per gate nella base compilata}, non di una probabilit\`a per ciclo di correzione, per round di sindrome o per intero blocco logico.
 
-Il modello è dichiaratamente un'approssimazione: assume errori logici indipendenti e uniformi tra i gate, trascura le correlazioni residue del decoder e l'overhead dei gate logici non transversali. La sua funzione non è riprodurre fedelmente una macchina fault-tolerant, ma porre in modo quantitativo la domanda di ricerca conclusiva:
+Il circuito \`e quello canonico $N=15$, $a=7$, con 8 qubit di conteggio e 4 di lavoro. La transpilazione deterministica usa la base \texttt{rz/sx/x/cx}, livello di ottimizzazione 2 e seed 20260819; il manifest registra 224 \texttt{cx}, 302 \texttt{rz}, 70 \texttt{sx}, 8 misure e lo SHA-256 \texttt{c7f4cf3b\ldots a50f4ba2c}. Ogni punto M8 aggrega 20 repliche indipendenti da 4096 shot, per un totale di $81\,920$ misure. Il successo per misura vale uno se le frazioni continue e i controlli con il massimo comun divisore restituiscono una coppia di fattori non banali.
 
+Questa definizione rende riproducibile la domanda sperimentale:
 \begin{quote}
-\emph{quale valore di $p_L$ è necessario affinché la probabilità di successo di Shor superi una soglia prefissata --- ad esempio l'80\%?}
+\emph{come cambia il successo di questa specifica implementazione di Shor al crescere di un errore Pauli indipendente e uniforme per gate?}
 \end{quote}
-
-La risposta, combinata con le curve $p \rightarrow p_L$ del surface code, si traduce in un requisito sull'hardware fisico: dato il tasso d'errore fisico $p$ di una QPU, quale distanza di codice --- e quindi quanti qubit fisici --- servono perché quella QPU esegua Shor in modo affidabile. Il confronto con il livello 2 (lo stesso circuito sotto rumore fisico diretto, dove per $N=15$ una singola iterazione produce il risultato corretto con probabilità $\approx 17\%$ usando la sola misura più frequente, Capitolo~\ref{chap:risultati}) quantifica il beneficio della correzione, e il \textbf{break-even} --- il regime in cui il qubit logico diventa più affidabile del qubit fisico equivalente --- fornisce il criterio sintetico di valutazione.
+Non consente invece di rispondere, senza un ulteriore modello architetturale, a quale distanza di surface code corrisponda un dato punto della curva.
 
 % -----------------------------------------------
-\section{Il Contesto: le Stime di Risorse per Shor Fault-Tolerant}
+\section{Il contesto delle stime fault-tolerant}
 \label{sec:resource_estimates}
 
-Per collocare i risultati didattici nella giusta scala, il capitolo si chiude sul confronto con le stime di risorse della letteratura. Gidney ed Ekerå hanno stimato nel 2021 che fattorizzare un modulo RSA a 2048 bit richiederebbe circa 20 milioni di qubit fisici rumorosi per 8 ore di calcolo, sotto assunzioni fisiche esplicite --- con il costo dominato non dall'algoritmo ma dall'overhead di correzione: cicli di sindrome, routing e distillazione di stati magici~\cite{gidney2021}. È doverosa un'avvertenza metodologica: \textbf{questi numeri non si ottengono estrapolando i risultati con $N=15$}. Lo Shor a 12 qubit di questa tesi è un esperimento dimostrativo, mentre le stime di risorse sono analisi architetturali complete --- che includono compilazione fault-tolerant, layout dei qubit, distillazione e schedulazione --- non commensurabili con una singola istanza simulata. Il valore del confronto è qualitativo: chiarisce perché Shor dimostrativo e Shor crittograficamente rilevante siano problemi radicalmente diversi, e quale grandezza li connetta concettualmente --- il costo, in qubit e cicli, di portare $p_L$ al livello richiesto.
-
-In prospettiva futura, va segnalato che queste stime sono in rapida evoluzione: un lavoro più recente di Gidney~\cite{gidney2025} riduce il fabbisogno sotto il milione di qubit fisici grazie a nuove tecniche di aritmetica modulare, di codifica e di preparazione degli stati magici. La direzione della ricerca --- meno qubit a parità di affidabilità --- conferma che il collo di bottiglia non è l'algoritmo di Shor in sé, ma l'efficienza dell'infrastruttura di correzione d'errore che lo sostiene: esattamente il tema di questa parte della tesi.
+Le stime per istanze crittografiche comprendono routing, cicli di sindrome, fabbriche di stati magici e schedulazione. Per esempio, Gidney ed Eker\aa{} stimano circa 20 milioni di qubit fisici rumorosi e otto ore per RSA-2048 sotto un insieme esplicito di assunzioni architetturali~\cite{gidney2021}. Questi numeri non si ricavano estrapolando $N=15$: il circuito didattico e una stima di risorse fault-tolerant descrivono oggetti differenti. La curva seguente va dunque letta come analisi locale di sensibilit\`a, non come previsione di risorse hardware.
 
 % -----------------------------------------------
-\section{Risultati del Confronto}
+\section{Risultati M8 e M13}
 \label{sec:risultati_logico}
 
-\paragraph{Come l'errore logico è trasferito al circuito.}
-Il trasferimento del \textit{logical error rate} stimato ai Capitoli~\ref{chap:qec} e~\ref{chap:surface} avviene tramite un \textbf{unico canale di rumore logico}: dopo ogni gate del circuito di Shor si applica un canale depolarizzante indipendente di intensità $p_L$, dove $p_L$ è il tasso di errore logico residuo che il codice scelto (Steane, oppure surface a una data distanza) lascia sul singolo qubit logico. Va dichiarato con precisione il perimetro di questa scelta: si tratta di un \textbf{modello efficace}, non di una simulazione fault-tolerant completa dell'algoritmo. Non si codificano esplicitamente i qubit di Shor né si simulano i cicli di estrazione della sindrome sul circuito logico; si assume invece che l'effetto netto della correzione sia riassumibile in un tasso di errore per operazione logica, indipendente e uniforme tra i gate. È l'approssimazione ``a livelli'' del documento di indirizzo (§11.3): permette di porre la domanda quantitativa senza il costo, intrattabile, della simulazione fault-tolerant esplicita, al prezzo di trascurare correlazioni e non-idealità che la Sezione~\ref{subsec:discussione_logico} discute.
+\subsection*{M8: successo per singola misura}
 
-Concretamente, il modello è stato realizzato iniettando il canale depolarizzante di intensità $p_L$ dopo ogni gate del circuito di Shor per $N=15$ ($a=7$, periodo $r=4$) e misurando la probabilità di successo come frazione di misure che ricostruiscono i fattori corretti ($16\,384$ campioni per punto, seed fissato). La Figura~\ref{fig:qec_shor_logico} è la figura conclusiva della tesi: mostra $P_{\text{success}}$ in funzione dell'errore logico per gate $p_L$, con sovrapposti i tre regimi di correzione.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.82\textwidth]{qec_shor_logico_curve.pdf}
-\caption[Figura conclusiva: Shor fisico vs Steane vs surface code]{Probabilità di successo di Shor ($N=15$) in funzione dell'errore logico per gate $p_L$. La curva scende in modo monotòno dalla probabilità di successo per singola misura ($\approx 0.75$ a $p_L \rightarrow 0$, base $a=7$) fino al livello di successo casuale ($\approx 0.25$). I tre marcatori collocano sull'asse tre regimi operativi, ciascuno con il proprio errore fisico e il proprio modello di rumore: \emph{Shor fisico nudo} ($p_L \approx 10^{-2}$, nessuna correzione: è il tasso d'errore a due qubit $\varepsilon_{2q}$ del regime NISQ-realistico), \emph{codice di Steane} ($p_L \approx 1.7\times10^{-3}$, misurato a errore fisico $p = 10^{-2}$ sotto canale depolarizzante per qubit con estrazione di sindrome ideale, Cap.~\ref{chap:qec}) e \emph{surface code} $d=7$ ($p_L \approx 9\times10^{-5}$, misurato a errore fisico $p = 2\times10^{-3}$ sotto rumore \textit{circuit-level} con sindrome rumorosa, Cap.~\ref{chap:surface}). I marcatori indicano dunque \emph{dove ciascun codice opera}, non un confronto fra codici a parità di condizioni: la Sezione~\ref{subsec:discussione_logico} discute il punto. Il valore di $P_{\text{success}}$ al marcatore del surface code è interpolato, poiché $p_L = 10^{-4}$ è inferiore al più piccolo errore logico simulato ($2\times10^{-3}$). Muovendosi verso sinistra --- cioè riducendo l'errore logico residuo --- $P_{\text{success}}$ risale verso il limite dell'istanza. Curva rigenerabile da \texttt{figure\_src/gen\_shor\_logico.py}.}
-\label{fig:qec_shor_logico}
-\end{figure}
-
-La curva è monotòna e ha due asintoti: a $p_L \rightarrow 0$ (correzione ideale) $P_{\text{success}} \approx 0.75$, a $p_L$ elevato satura a $\approx 0.25$, il livello di successo puramente casuale su un istogramma ormai piatto. Tra i due estremi la correzione compie il suo lavoro: passando dal regime fisico non corretto ($p_L \approx 10^{-2}$, $P_{\text{success}} \approx 0.64$) al codice di Steane ($p_L \approx 1.7\times10^{-3}$, $P_{\text{success}} \approx 0.72$) e al surface code sotto soglia ($p_L \approx 9\times10^{-5}$, $P_{\text{success}} \approx 0.74$ per interpolazione), la probabilità di successo risale progressivamente. Questo è, in un solo grafico, il messaggio dell'intera parte sperimentale: ridurre l'errore logico residuo trasforma un calcolo dominato dal rumore in un calcolo affidabile, e la grandezza che governa il guadagno è una sola, $p_L$.
-
-\paragraph{Che cosa la figura non afferma.}
-Va detto con precisione, perché è il punto in cui la lettura affrettata porterebbe fuori strada: i tre marcatori \textbf{non} costituiscono una graduatoria fra i codici a parità di condizioni. Ciascuno è misurato al proprio errore fisico e sotto il proprio modello di rumore, e i due modelli non sono commensurabili --- lo Steane è caratterizzato con canale depolarizzante per qubit e sindrome ideale, il surface code con rumore \textit{circuit-level} e cicli di sindrome anch'essi rumorosi, condizione molto più severa. Confrontandoli invece \emph{allo stesso} errore fisico $p = 10^{-2}$, i dati dei Capitoli~\ref{chap:qec} e~\ref{chap:surface} danno $p_L = 1.7\times10^{-3}$ per lo Steane contro $p_L = 5.3\times10^{-2}$ per il surface code a $d=7$: quest'ultimo è peggiore di oltre un ordine di grandezza, e la ragione è nota e attesa --- $p = 10^{-2}$ cade \emph{sopra} la soglia $p_{th} \approx 0.9\%$ misurata nel Capitolo~\ref{chap:surface}, dove aumentare la distanza amplifica l'errore anziché sopprimerlo. Ciò che la figura afferma è dunque una relazione fra $p_L$ e $P_{\text{success}}$, valida qualunque sia il codice che produce quel $p_L$; e che i codici studiati raggiungono valori di $p_L$ progressivamente più bassi \emph{nei rispettivi regimi di validità}. Il surface code non è ``meglio'' dello Steane su questa istanza: è il solo dei due che, disponendo di hardware sotto soglia, può ridurre $p_L$ a piacere aumentando $d$ --- ed è per questo, e non per il valore assoluto misurato qui, che è la via allo Shor fault-tolerant.
-
-\paragraph{Che cosa misura, e che cosa non misura, il valore $0.75$.}
-Il valore $P_{\text{success}} \approx 0.75$ a correzione ideale va interpretato con cautela: \emph{non} è un limite intrinseco e invalicabile dell'algoritmo, ma la probabilità di successo di una \textbf{singola misura} con la specifica scelta della base $a=7$. Occorre distinguere grandezze diverse che il termine ``successo'' confonde: la probabilità di ricostruire \emph{esattamente} il periodo $r$ dalla fase misurata; la probabilità di ottenere \emph{un fattore} (che è maggiore, perché il post-processing con $\gcd$ recupera i fattori anche da alcune stime parziali del periodo); la dipendenza dalla base $a$ scelta; e, soprattutto, la differenza tra la probabilità di \emph{una singola misura} e la probabilità \emph{cumulativa} dopo più esecuzioni. L'algoritmo di Shor è per sua natura probabilistico e si esegue ripetutamente: per esecuzioni indipendenti la probabilità di successo cumulativa dopo $k$ tentativi è
-\begin{equation}
-    P(k) = 1 - (1 - P_s)^k,
-    \label{eq:cumulativa}
-\end{equation}
-dove $P_s$ è la probabilità per singolo run. La Figura~\ref{fig:qec_shor_pk} mostra che una $P_s$ inferiore all'$80\%$ non impedisce affatto di superare tale soglia con poche ripetizioni: con $P_s \approx 0.75$ bastano $k=2$ esecuzioni per raggiungere il $94\%$, e anche partendo da un regime rumoroso ($P_s = 0.40$) sono sufficienti quattro tentativi. La soglia dell'$80\%$ va dunque letta come obiettivo \emph{cumulativo}, non come requisito sul singolo run.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.72\textwidth]{qec_shor_pk.pdf}
-\caption[Probabilità di successo cumulativa di Shor dopo $k$ esecuzioni]{Probabilità di successo cumulativa $P(k) = 1 - (1 - P_s)^k$ (Eq.~\ref{eq:cumulativa}) in funzione del numero di esecuzioni indipendenti $k$, per diversi valori della probabilità per singolo run $P_s$. Il cerchio evidenzia il primo $k$ che supera la soglia dell'$80\%$: con $P_s \approx 0.75$ (correzione ideale su $N=15$) sono sufficienti $k=2$ tentativi; anche a $P_s = 0.40$ ne bastano quattro. Una probabilità per singolo run inferiore all'$80\%$ non impedisce di superare quella soglia in modo cumulativo.}
-\label{fig:qec_shor_pk}
-\end{figure}
-
-\paragraph{La barriera di scalabilità.}
-Il modello logico è stato applicato a $N=15$ perché l'estensione a istanze maggiori incontra un limite pratico netto, esplorato seguendo l'indicazione di procedere per $N$ crescenti finché la simulazione resta stabile. Già per $N=21$ il circuito, dopo la transpilazione della moltiplicazione modulare (decomposizione di Beauregard), raggiunge una profondità di circa $9\,500$ porte su $22$ qubit: la simulazione classica, anche in assenza di rumore, non completa una singola esecuzione in tempi ragionevoli. È la stessa barriera di scalabilità documentata nel Capitolo~\ref{chap:risultati} per gli use case UC3/UC4, e coincide con l'avvertenza del documento di indirizzo (istanze piccole, $N=21$ e $35$ solo ``se gestibili''). La finestra di $N$ simulabili si esaurisce dunque a $N=15$: è precisamente questo limite a motivare, sul piano metodologico, il ricorso alle stime di risorse della Sezione~\ref{sec:resource_estimates} anziché alla simulazione diretta per proiettare il costo su scala crittografica.
-
-\paragraph{Che cosa guadagna Shor da un decoder migliore.}
-Il modello a livelli consente di rispondere a una domanda che, formulata direttamente, resterebbe senza risposta: \emph{quanto vale, per l'algoritmo, migliorare la decodifica?} La Sezione~\ref{sec:decodifica_appresa} misura la riduzione di errore logico ottenuta dal decoder ibrido rispetto al \ac{MWPM} in presenza di rumore correlato; la curva della Figura~\ref{fig:qec_shor_logico} traduce un errore logico in una probabilità di successo. Componendo le due si ottiene il guadagno end-to-end, riportato nella Tabella~\ref{tab:decoder_su_shor}.
+La Tabella seguente riporta l'intera griglia preregistrata. Gli intervalli sono Wilson al 95\% sui conteggi aggregati; il controllo di monotonia usa inoltre il massimo tra l'errore standard binomiale e quello tra repliche e applica una copertura simultanea di Bonferroni ai confronti adiacenti.
 
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{clcccc}
+\begin{tabular}{rcc@{\hspace{1.2cm}}rcc}
 \toprule
-$d$ & $p_{ct}$ & \multicolumn{2}{c}{\textbf{errore logico} $p_L$} & \multicolumn{2}{c}{$P_{\text{success}}$ \textbf{di Shor}} \\
-\cmidrule(lr){3-4}\cmidrule(lr){5-6}
- & & MWPM & ibrido & MWPM & ibrido \\
+$p_L$ & $P_{\mathrm{success}}$ & IC 95\% & $p_L$ & $P_{\mathrm{success}}$ & IC 95\% \\
 \midrule
-\multirow{4}{*}{3} & $5\times10^{-3}$ & 0.0309 & 0.0261 & 0.490 & \textbf{0.519} \\
-                   & $1\times10^{-2}$ & 0.0583 & 0.0485 & 0.384 & \textbf{0.416} \\
-                   & $2\times10^{-2}$ & 0.1114 & 0.0918 & 0.283 & \textbf{0.305} \\
-                   & $4\times10^{-2}$ & 0.2075 & 0.1746 & 0.249 & \textbf{0.256} \\
-\midrule
-\multirow{2}{*}{5} & $5\times10^{-3}$ & 0.0356 & 0.0352 & 0.467 & 0.469 \\
-                   & $1\times10^{-2}$ & 0.0870 & 0.0843 & 0.314 & \textbf{0.320} \\
+$0$      & 0,7489 & [0,7459; 0,7518] & $0,005$ & 0,6450 & [0,6417; 0,6483] \\
+$0,0001$ & 0,7469 & [0,7439; 0,7498] & $0,01$  & 0,5651 & [0,5617; 0,5685] \\
+$0,0005$ & 0,7373 & [0,7343; 0,7403] & $0,02$  & 0,4518 & [0,4484; 0,4552] \\
+$0,001$  & 0,7250 & [0,7219; 0,7280] & $0,05$  & 0,2953 & [0,2921; 0,2984] \\
+$0,0017$ & 0,7083 & [0,7051; 0,7114] & $0,1$   & 0,2503 & [0,2474; 0,2533] \\
+$0,002$  & 0,6992 & [0,6961; 0,7024] & $0,2$   & 0,2441 & [0,2412; 0,2471] \\
+          &        &                   & $0,5$   & 0,2459 & [0,2430; 0,2489] \\
 \bottomrule
 \end{tabular}
-\caption[Effetto del decoder appreso sulla probabilità di successo di Shor]{Guadagno end-to-end della decodifica appresa. Le colonne $p_L$ riportano l'errore logico misurato nella Sezione~\ref{sec:decodifica_appresa}; quelle $P_{\text{success}}$ il corrispondente valore letto sulla curva della Figura~\ref{fig:qec_shor_logico}. Il guadagno massimo è di $3.2$ punti percentuali, da $0.384$ a $0.416$. \textbf{I valori di $P_{\text{success}}$ sono ottenuti per interpolazione della curva già misurata, non da nuove simulazioni}: la composizione eredita quindi tutte le approssimazioni del modello a livelli.}
+\caption{M8: probabilit\`a di ricavare i fattori per singola misura, 20 repliche da 4096 shot per punto.}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.82\textwidth]{qec_shor_logico_curve.pdf}
+\caption[Shor sotto un proxy fenomenologico per gate]{Probabilit\`a di successo di Shor ($N=15$, $a=7$) in funzione di $p_L$. I punti positivi sono mostrati in scala logaritmica con IC Wilson al 95\%; la linea orizzontale riporta la stima separata a $p_L=0$. Non sono sovrapposti marcatori Steane o surface code, perch\'e le rispettive metriche aggregate non sono direttamente convertibili nel proxy per gate M8. Figura rigenerata dal JSON schema 2 con \texttt{figure\_src/gen\_shor\_logico.py}.}
+\label{fig:qec_shor_logico}
+\end{figure}
+
+La curva \`e compatibile con una funzione non crescente al livello simultaneo prefissato. Non tutte le diminuzioni adiacenti sono per\`o individualmente confermate: la differenza tra $p_L=0$ e $10^{-4}$ \`e piccola e, sul plateau, le stime a 0,2 e 0,5 si sovrappongono. L'affermazione supportata \`e quindi ``nessun aumento significativo'', non ``ogni passo produce una diminuzione significativa''. Tra $p_L=0$ e $0,02$ il successo passa da 0,7489 a 0,4518; oltre $p_L=0,1$ raggiunge un plateau empirico vicino a 0,245. Tale valore nasce dalla struttura degli esiti che il post-processing di $N=15$ riconosce come utili e non va assunto a priori come universale.
+
+\subsection*{Ripetizioni indipendenti}
+
+Il valore 0,7489 a $p_L=0$ \`e una probabilit\`a per singola misura, non un limite alla probabilit\`a di concludere la fattorizzazione. Se ogni tentativo \`e indipendente e ha probabilit\`a $P_s$, dopo $k$ tentativi vale
+\begin{equation}
+    P(k)=1-(1-P_s)^k.
+    \label{eq:cumulativa}
+\end{equation}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\textwidth]{qec_shor_pk.pdf}
+\caption[Probabilit\`a cumulativa dai punti M8]{Probabilit\`a cumulativa ottenuta esclusivamente dai punti M8 simulati $p_L\in\{0;0,01;0,05;0,2\}$. La soglia dell'80\% richiede rispettivamente 2, 2, 5 e 6 tentativi indipendenti. Le bande propagano gli estremi degli IC Wilson.}
+\label{fig:qec_shor_pk}
+\end{figure}
+
+In particolare, due tentativi portano la stima a $1-(1-0,7489)^2\simeq0,937$ nel caso ideale e a circa 0,811 per $p_L=0,01$. La soglia dell'80\% non pu\`o essere usata come requisito sul singolo run di questa istanza, poich\'e nemmeno il punto senza rumore la raggiunge; ha invece un significato operativo come soglia cumulativa.
+
+\subsection*{M13: TOP-4 con pareggi espliciti}
+
+% M13_RESULTS_BEGIN
+M13 completa la lettura di M8 separando tre quantit\`a sullo stesso istogramma: successo per misura, TOP-1 e TOP-4. Per ogni valore di $p_L$ sono state eseguite 200 repliche indipendenti da 1024 shot. Il TOP-4 rimane pari a 1,000 dal caso ideale fino a $p_L=0,05$, mentre la probabilit\`a per singola misura scende nello stesso intervallo da 0,7512 a 0,2979. Questo conferma che, sull'istanza piccola $N=15$, selezionare quattro candidati pu\`o recuperare un fattore anche quando la massa utile per singolo shot \`e gi\`a molto degradata.
+
+La saturazione non si estende per\`o all'intera griglia. A $p_L=0,1$ il TOP-4 seeded scende a 0,915, con intervallo identificato $[0,855;0,940]$ dovuto ai pareggi; a $p_L=0,2$ scende a 0,670, con intervallo $[0,535;0,860]$. Il contrasto primario preregistrato fra $p_L=0$ e $p_L=0,2$ produce una diminuzione stimata di 0,330 con IC Newcombe 95\% $[0,266;0,398]$. Poich\'e il limite inferiore supera il margine assoluto 0,10, l'esito primario \`e una diminuzione discriminante, non equivalenza. L'inviluppo simultaneo robusto ai pareggi $[0,059;0,553]$ conferma inoltre che non si pu\`o sostenere equivalenza per tutte le risoluzioni ammissibili dei pareggi.
+% M13_RESULTS_END
+
+\subsection*{Barriera di scalabilit\`a}
+
+M8 e M13 sono limitati a $N=15$. La variante Beauregard validata produce per $N=21$ un circuito ideale corretto, ma la compilazione nella stessa base raggiunge 21\,036 gate \texttt{cx} e profondit\`a 23\,081 su 22 qubit. L'esecuzione rumorosa generale non \`e quindi commensurabile con la campagna M8 su hardware classico disponibile. Il risultato non dimostra un limite dell'algoritmo quantistico: documenta il limite della simulazione classica adottata.
+
+\subsection*{Perch\'e le metriche QEC non sono proiettate sulla curva}
+
+La precedente versione del capitolo interpolava sulla curva M8 valori provenienti da Steane, surface code e decoder appreso. Quell'operazione confonde unit\`a statistiche diverse. La Tabella~\ref{tab:decoder_su_shor} rende esplicito il contratto corretto.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{0.22\textwidth}p{0.38\textwidth}p{0.26\textwidth}}
+\toprule
+\textbf{Grandezza} & \textbf{Unit\`a/contesto} & \textbf{Inseribile direttamente in M8?} \\
+\midrule
+$p_L$ di M8 & Pauli non identit\`a dopo ogni \texttt{sx}/\texttt{x}/\texttt{cx} compilato & s\`i, per definizione \\
+errore Steane & fallimento del protocollo protetto sotto il modello dedicato & no \\
+errore surface code & fallimento logico per memoria/ciclo e distanza & no \\
+guadagno del decoder & differenza osservata sotto rumore correlato del benchmark & no \\
+\bottomrule
+\end{tabular}
+\caption[Contratto tra risultati QEC e curva M8]{Le metriche QEC richiedono un modello di conversione che specifichi circuito logico, numero e durata dei cicli, operazioni fault-tolerant e correlazioni residue. In sua assenza, sovrapporre i valori sulla curva produrrebbe una precisione non giustificata.}
 \label{tab:decoder_su_shor}
 \end{table}
 
-Il guadagno è reale ma modesto, e va letto per quello che è. Si manifesta a distanza 3, dove il decoder appreso è competitivo, e si assottiglia a distanza 5, dove --- come documentato nella Sezione~\ref{subsec:neural_ibrido} --- l'ibrido recupera poco rispetto al matching. Soprattutto, l'intero intervallo esplorato cade in un regime di errore logico elevato, in cui $P_{\text{success}}$ è comunque lontana dal limite dell'istanza: è il regime in cui il rumore correlato mette in difficoltà il decoder analitico, non un regime operativo desiderabile. L'affermazione corretta non è dunque che la decodifica appresa renda Shor affidabile, ma che \emph{recupera una frazione misurabile di ciò che il rumore correlato sottrae al decoder analitico}, e che tale frazione si traduce in un guadagno quantificabile sulla probabilità di fattorizzare.
-
-Il valore metodologico di questo passaggio è tuttavia maggiore del suo valore numerico: è il punto in cui la catena che attraversa l'intera tesi --- \emph{modello appreso $\rightarrow$ decodifica migliore $\rightarrow$ errore logico minore $\rightarrow$ algoritmo più affidabile} --- viene percorsa per intero con grandezze misurate, anziché essere argomentata a parole.
-
+% -----------------------------------------------
 \subsection{Discussione}
 \label{subsec:discussione_logico}
 
-La domanda di ricerca conclusiva --- quale $p_L$ è necessario affinché Shor mantenga una probabilità di successo elevata --- riceve una risposta articolata. Nel regime sotto-soglia il surface code porta l'errore logico a $p_L \approx 10^{-4}$, sufficiente a riportare $P_{\text{success}}$ (per singola misura) al valore massimo dell'istanza; è il codice di Steane, con $p_L \approx 10^{-3}$, a rappresentare il gradino intermedio. Quanto alla soglia dell'$80\%$ presa a riferimento dal documento di indirizzo, va letta correttamente come obiettivo \emph{cumulativo}: per $N=15$ e base $a=7$ la probabilità per singolo run a correzione ideale è $\approx 0.75$, ma --- come mostrato dall'Eq.~\ref{eq:cumulativa} e dalla Figura~\ref{fig:qec_shor_pk} --- due sole esecuzioni portano la probabilità cumulativa al $94\%$. Il valore $0.75$ non è quindi un tetto invalicabile, ma il riflesso della natura probabilistica di Shor e della particolare scelta di $a$; una base diversa, o semplicemente qualche ripetizione, spostano l'asticella. Il criterio che sintetizza il capitolo è dunque il \textbf{break-even} relativo: ogni riduzione dell'errore logico residuo avvicina $P_{\text{success}}$ al massimo dell'istanza, in modo monotòno e riproducibile. Come precisato sopra, questa non è una graduatoria fra codici --- che richiederebbe di misurarli sotto lo stesso modello di rumore e allo stesso errore fisico --- ma la quantificazione di quanto \emph{ciascun livello di correzione raggiungibile} valga in termini di probabilità di successo dell'algoritmo.
+M8 stabilisce una relazione quantitativa robusta all'interno del proprio modello: ridurre la probabilit\`a Pauli per gate riporta il successo verso il limite ideale dell'istanza. Non stabilisce quale codice raggiunga uno specifico $p_L$ per gate, n\'e confronta Steane e surface code a parit\`a di hardware. Per compiere quel passo servirebbe almeno una compilazione in un gate set logico, il conteggio dei cicli di correzione associati a ciascuna operazione, un decoder con latenze e correlazioni esplicite e un modello delle operazioni non-Clifford.
 
-\paragraph{Il bilancio dell'intero percorso.}
-Questo risultato chiude un arco coerente. La prima campagna sperimentale (Capitolo~\ref{chap:risultati}) aveva stabilito, tramite ablazione, che l'apprendimento automatico applicato \emph{a valle} dell'esecuzione non aggiunge nulla: il guadagno era interamente della ricerca multi-candidato TOP-K. Quel risultato negativo, lungi dall'essere un vicolo cieco, indicava dove il problema andava affrontato --- non nel post-processing dell'output, ma nella \emph{struttura} del calcolo. La seconda parte ha percorso questa strada: la correzione d'errore quantistica codifica l'informazione in modo che l'errore possa essere rilevato e corretto prima che si propaghi, dal codice a ripetizione (che introduce la sindrome) al codice di Steane (che corregge un errore arbitrario) al surface code (che scala verso il regime fault-tolerant). La figura conclusiva riunisce le due parti: mostra quanto della fragilità di Shor sul rumore fisico venga recuperato passando ai qubit logici, e quantifica il prezzo --- in distanza di codice, e quindi in qubit fisici --- di quel recupero.
+Il risultato chiarisce anche il ruolo del post-processing. Il successo per misura degrada in modo netto lungo la curva; una strategia TOP-K pu\`o invece saturare su questa piccola istanza perch\'e quattro candidati coprono rapidamente almeno un esito utile. Una percentuale TOP-4 elevata non prova dunque che l'informazione quantistica sia rimasta intatta: deve essere letta insieme alla massa utile per misura e ai limiti dovuti ai pareggi.
 
-Va però osservato che questo bilancio, così formulato, sarebbe incompleto: descrive un arco che va dall'apprendimento automatico \emph{alla} correzione d'errore, come se il primo fosse stato semplicemente abbandonato lungo la strada. Non è ciò che è accaduto. L'apprendimento automatico rientra nella seconda parte, e vi rientra nel punto che il risultato negativo della prima aveva indicato: non sull'output, ma sulla \textbf{sindrome}. La Sezione~\ref{sec:decodifica_appresa} lo documenta, e la Tabella~\ref{tab:decoder_su_shor} ne misura l'effetto fin quaggiù, sulla probabilità di successo dell'algoritmo. L'arco corretto non è dunque ``dal machine learning alla QEC'', ma \emph{dal machine learning applicato dove non serve a quello applicato dove serve} --- ed è la correzione d'errore ad aver fornito il luogo in cui applicarlo utilmente. Le due strategie che il Capitolo~\ref{chap:strategie} aveva selezionato come promettenti non sono alternative che si escludono: la seconda è la condizione perché la prima abbia qualcosa da fare.
-
-\paragraph{Limiti e perimetro.}
-I risultati vanno letti entro il perimetro dichiarato. Il modello logico è un'approssimazione: assume errori logici indipendenti e uniformi tra i gate, trascura le correlazioni residue del decoder, l'overhead dei gate logici non transversali e la distillazione degli stati magici necessari alle rotazioni non-Clifford. Le stime di errore logico di Steane e surface provengono da modelli di rumore non identici (depolarizzazione per qubit nel primo, \textit{circuit-level} nel secondo) e vanno intese come ordini di grandezza, non come misure direttamente commensurabili. Infine, l'estrazione di sindrome implementata non è fault-tolerant, e l'istanza $N=15$ è didattica. Ciò che i risultati dimostrano non è la fattibilità di Shor su scala crittografica --- che le stime di risorse~\cite{gidney2021} collocano a milioni di qubit fisici --- ma la \emph{relazione} quantitativa tra capacità di correzione ed affidabilità del calcolo, verificata end-to-end su un'istanza trattabile: è questa relazione, e non il singolo numero fattorizzato, il contributo del lavoro.
+Infine, $N=15$ resta un'istanza didattica. Le conclusioni supportate riguardano la sensibilit\`a del circuito corretto e riproducibile a canali d'errore controllati. La fattibilit\`a di Shor su scala crittografica rimane una domanda architetturale distinta, dominata dall'overhead fault-tolerant e non risolta da questa simulazione.
 
 \end{onehalfspace}

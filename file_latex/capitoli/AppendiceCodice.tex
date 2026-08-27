@@ -1,342 +1,263 @@
-% Listati migrati dal Cap. 9 per il vincolo di lunghezza del corpo.
-% Il ragionamento sulle scelte implementative resta nel Capitolo~\ref{chap:sviluppo}.
+% Listati della pipeline sperimentale. I sorgenti eseguibili restano l'autorità;
+% gli estratti mostrano il contratto versione 2 senza incorporare risultati.
 
-Questa sezione raccoglie il codice sorgente dei componenti descritti nel Capitolo~\ref{chap:sviluppo}. Il capitolo motiva le scelte implementative; qui se ne riporta la realizzazione, perché sia verificabile e riproducibile. Ogni listato è richiamato puntualmente dal punto del corpo che lo discute.
+Questa sezione raccoglie gli estratti necessari a verificare le scelte implementative del Capitolo~\ref{chap:sviluppo}. Gli output numerici non sono codificati nei listati: ogni campagna li salva in un artefatto JSON schema~2 corredato di manifest.
 
 \begin{lstlisting}[caption={Installazione dell'ambiente Python e delle librerie necessarie}, label={lst:installazione_dellambiente_python_e}]
-# Creazione del virtual environment
 python3 -m venv ~/quantum-env
 source ~/quantum-env/bin/activate
-
-# Framework quantistico e simulatore
-pip install qiskit qiskit-aer qiskit-ibm-runtime
-
-# Simulatore con accelerazione GPU (CUDA)
-pip install qiskit-aer-gpu
-
-# Librerie scientifiche e ML
-pip install numpy scipy matplotlib
-pip install scikit-learn
-
-# Verifica
-python -c "import qiskit; print(qiskit.__version__)"
-python -c "from qiskit_aer import AerSimulator; print('Aer OK')"
+python -m pip install -r requirements.txt
+python -c "import qiskit, qiskit_aer; print(qiskit.__version__)"
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Errore GPU su WSL durante i test}, label={lst:errore_gpu_su_wsl}]
+\begin{lstlisting}[caption={Errore GPU osservato su WSL durante i test}, label={lst:errore_gpu_su_wsl}]
 RuntimeError: Simulation device "GPU" is not supported on this system
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Implementazione della Quantum Fourier Transform}, label={lst:implementazione_della_quantum_fourier}]
-from qiskit import QuantumCircuit
-import numpy as np
-
-def qft_circuit(n_qubits):
-    """Quantum Fourier Transform su n_qubits qubit."""
-    qc = QuantumCircuit(n_qubits, name='QFT')
-    for j in range(n_qubits):
-        qc.h(j)
-        for k in range(j + 1, n_qubits):
-            angle = np.pi / (2 ** (k - j))
-            qc.cp(angle, k, j)
-    for i in range(n_qubits // 2):
-        qc.swap(i, n_qubits - i - 1)
-    return qc
-
+\begin{lstlisting}[caption={Implementazione della Quantum Fourier Transform inversa}, label={lst:implementazione_della_quantum_fourier}]
 def inverse_qft(n_qubits):
-    """QFT inversa: coniugato trasposto della QFT."""
-    return qft_circuit(n_qubits).inverse()
+    qc = QuantumCircuit(n_qubits, name='QFT_dagger')
+    for q in range(n_qubits // 2):
+        qc.swap(q, n_qubits - q - 1)
+    for j in range(n_qubits):
+        for m in range(j):
+            qc.cp(-np.pi / 2 ** (j - m), m, j)
+        qc.h(j)
+    return qc
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Modular exponentiation per N=15, a=7}, label={lst:modular_exponentiation_per_n15}]
-def mod_exp_15_7(power):
-    """
-    Implementa U^power dove U|y> = |7y mod 15>.
-    Valida per power in {1, 2, 4, 8, ...}.
-    """
-    U = QuantumCircuit(4, name=f'U^{power}')
-    if power % 4 == 1:
-        U.swap(0, 1); U.swap(1, 2); U.swap(2, 3)
-        U.x(0); U.x(2)
-    elif power % 4 == 2:
-        U.swap(1, 3); U.swap(0, 2)
-    # U^4 = I (mod 15 con a=7): nessuna operazione
-    return U
+\begin{lstlisting}[caption={Moltiplicazione modulare N15 corretta: l'operazione $\times a$ viene ripetuta \texttt{power} volte}, label={lst:modular_exponentiation_per_n15}]
+def c_amod15(a, power):
+    if a not in [2, 7, 8, 11, 13]:
+        raise ValueError("base non supportata per N=15")
+    U = QuantumCircuit(4)
+    for _ in range(power):
+        if a in [2, 13]:
+            U.swap(0, 1); U.swap(1, 2); U.swap(2, 3)
+        if a in [7, 8]:
+            U.swap(2, 3); U.swap(1, 2); U.swap(0, 1)
+        if a == 11:
+            U.swap(1, 3); U.swap(0, 2)
+        if a in [7, 11, 13]:
+            U.x(range(4))
+    return U.control(annotated=False)
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Circuito completo di Shor e post-processing}, label={lst:circuito_completo_di_shor}]
-from qiskit import QuantumCircuit, transpile
-from qiskit_aer import AerSimulator
-from math import gcd
-from fractions import Fraction
-
+\begin{lstlisting}[caption={Circuito N15 e post-processing classico}, label={lst:circuito_completo_di_shor}]
 def shor_circuit(N, a, n_count):
-    """Algoritmo di Shor per N con base a e n_count qubit di controllo."""
-    n_work = N.bit_length()
+    if N != 15:
+        return shor_circuit_beauregard(N, a, n_count)
+    n_work = 4
     qc = QuantumCircuit(n_count + n_work, n_count)
-    for q in range(n_count):
-        qc.h(q)
-    qc.x(n_count)                # registro di lavoro inizializzato a |1>
+    qc.h(range(n_count))
+    qc.x(n_count + 3)   # |1> nella convenzione del registro textbook
     for j in range(n_count):
         power = 2 ** j
-        ctrl_U = mod_exp_15_7(power).control(1)
-        qc.append(ctrl_U, [j] + list(range(n_count, n_count + n_work)))
+        if power % 4 != 0:       # U^4 = I per a=7 mod 15
+            qc.append(c_amod15(a, power),
+                      [j] + list(range(n_count, n_count + n_work)))
     qc.barrier()
     qc.append(inverse_qft(n_count), range(n_count))
     qc.measure(range(n_count), range(n_count))
     return qc
 
 def extract_factors(measured_value, n_count, N, a):
-    """Stima il periodo r e calcola i fattori di N."""
     if measured_value == 0:
         return None, None
-    phase = measured_value / (2 ** n_count)
-    frac  = Fraction(phase).limit_denominator(N)
-    r     = frac.denominator
-    if r % 2 != 0:
+    phase = measured_value / 2 ** n_count
+    r = Fraction(phase).limit_denominator(N).denominator
+    if r % 2:
         return None, None
-    p = gcd(a ** (r // 2) - 1, N)
-    q = gcd(a ** (r // 2) + 1, N)
-    if 1 < p < N:
-        return p, N // p
-    if 1 < q < N:
-        return q, N // q
+    for candidate in (gcd(a ** (r // 2) - 1, N),
+                      gcd(a ** (r // 2) + 1, N)):
+        if 1 < candidate < N:
+            return candidate, N // candidate
     return None, None
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Costruzione del noise model parametrizzato}, label={lst:costruzione_del_noise_model}]
-from qiskit_aer.noise import (NoiseModel, depolarizing_error,
-                               thermal_relaxation_error, ReadoutError)
-import numpy as np
+\begin{lstlisting}[caption={Noise model uniforme illustrativo: RZ virtuale, durate 1Q/2Q separate}, label={lst:costruzione_del_noise_model}]
+BASIS_GATES = ('rz', 'sx', 'x', 'cx')
+GATE_TIME_1Q_NS = 50.0
+GATE_TIME_2Q_NS = 300.0
 
-def build_noise_model(eps_1q, eps_2q, t1_ns, t2_ns,
-                      gate_time_ns=50, p_ro=0.02):
-    """
-    Costruisce un noise model con parametri configurabili.
-    eps_1q: tasso errore depolarizzante gate 1 qubit
-    eps_2q: tasso errore depolarizzante gate 2 qubit
-    t1_ns:  tempo di rilassamento in ns
-    t2_ns:  tempo di dephasing in ns
-    p_ro:   probabilita' di readout error
-    """
+def compose_errors(errors):
+    out = None
+    for error in errors:
+        if error is not None:
+            out = error if out is None else out.compose(error)
+    return out
+
+def build_noise_model(eps_1q, eps_2q, t1_ns, t2_ns, p_ro=0.02):
+    # eps_1q ed eps_2q sono i lambda di depolarizing_error.
+    thermal_1q = thermal_relaxation_error(
+        t1_ns, t2_ns, GATE_TIME_1Q_NS)
+    thermal_one_2q = thermal_relaxation_error(
+        t1_ns, t2_ns, GATE_TIME_2Q_NS)
+    thermal_2q = thermal_one_2q.tensor(thermal_one_2q)
+    error_1q = compose_errors([
+        depolarizing_error(eps_1q, 1) if eps_1q else None,
+        thermal_1q,
+    ])
+    error_2q = compose_errors([
+        depolarizing_error(eps_2q, 2) if eps_2q else None,
+        thermal_2q,
+    ])
     nm = NoiseModel()
-
-    # Errore depolarizzante su gate a 1 qubit
-    e1 = depolarizing_error(eps_1q, 1)
-    nm.add_all_qubit_quantum_error(e1, ['h', 'x', 'rz', 'cp'])
-
-    # Errore depolarizzante su gate a 2 qubit
-    e2 = depolarizing_error(eps_2q, 2)
-    nm.add_all_qubit_quantum_error(e2, ['cx', 'swap'])
-
-    # Rilassamento termico (T1, T2)
-    e_relax = thermal_relaxation_error(t1_ns, t2_ns, gate_time_ns)
-    nm.add_all_qubit_quantum_error(e_relax, ['h', 'x'])
-
-    # Readout error (matrice di confusione simmetrica)
-    ro_matrix = [[1 - p_ro, p_ro], [p_ro, 1 - p_ro]]
-    ro_error  = ReadoutError(ro_matrix)
-    nm.add_all_qubit_readout_error(ro_error)
-
+    nm.add_all_qubit_quantum_error(error_1q, ['sx', 'x'])
+    nm.add_all_qubit_quantum_error(error_2q, ['cx'])
+    if p_ro:
+        nm.add_all_qubit_readout_error(
+            ReadoutError([[1-p_ro, p_ro], [p_ro, 1-p_ro]]))
     return nm
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Pipeline del Metodo 1 (TOP-1, ottimizzazione corretta)}, label={lst:pipeline_del_metodo_1}]
-def run_method1(N, a, n_count, noise_model, shots=1024,
-                max_iter=50, seed=42):
-    base_qc = shor_circuit(N, a, n_count)
-    # CRITICO: NM nel costruttore + opt=2 decompone CCX -> CX
-    # garantendo che il noise model si applichi a tutti i gate
-    sim = AerSimulator(noise_model=noise_model, method='statevector')
-    transpiled = transpile(base_qc, sim, optimization_level=2)
+\begin{lstlisting}[caption={Compilazione deterministica, tie-break SHA-256 e baseline TOP-1}, label={lst:pipeline_del_metodo_1}]
+def compile_shor_circuit(N, a, n_count):
+    return transpile(
+        shor_circuit(N, a, n_count),
+        basis_gates=['rz', 'sx', 'x', 'cx'],
+        optimization_level=2,
+        seed_transpiler=20260819,
+    )
 
-    for iteration in range(1, max_iter + 1):
-        counts = sim.run(transpiled, shots=shots,
-                         # separati di piu' dei 1024 shot: Aer deriva il seme
-                         # del singolo shot come seed_simulator + shot_index
-                         seed_simulator=seed * 1_000_000 + iteration * 10_000
-                         ).result().get_counts()
-        # TOP-1: misura piu' frequente nell'istogramma
-        meas = int(max(counts, key=counts.get), 2)
-        p, q = extract_factors(meas, n_count, N, a)
-        if p is not None:
-            return {'factors': (p, q), 'iterations': iteration,
-                    'success': True, 'counts': counts}
+def rank_measurements(counts, tie_seed):
+    def priority(bitstring):
+        payload = f'{int(tie_seed)}:{bitstring}'.encode('ascii')
+        return hashlib.sha256(payload).digest()
+    return sorted(counts.items(),
+                  key=lambda item: (-item[1], priority(item[0])))
 
-    return {'factors': (None, None), 'iterations': max_iter,
-            'success': False, 'counts': {}}
+def method1_from_counts(counts, tie_seed, n_count, N, a):
+    bitstring = rank_measurements(counts, tie_seed)[0][0]
+    return extract_factors(int(bitstring, 2), n_count, N, a)
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Generazione del dataset con etichetta TOP-K}, label={lst:generazione_del_dataset_con}]
-def generate_dataset(N, a, n_count, noise_base, noise_factor=0.5,
-                     n_samples=2000, shots=1024, seed=0):
-    rng = np.random.default_rng(seed)
-    X, y = [], []
-    TOP_K = 16
+\begin{lstlisting}[caption={Dataset condiviso per l'audit delle etichette TOP-1 e TOP-16}, label={lst:generazione_del_dataset_con}]
+LABEL_TOP_KS = (1, 16)
+labels = {top_k: [] for top_k in LABEL_TOP_KS}
 
-    # Traspilosizione unica con noise model di riferimento
-    nm_ref = build_noise_model(**noise_base)
-    sim_tp = AerSimulator(noise_model=nm_ref, method='statevector')
-    tqc = transpile(shor_circuit(N, a, n_count), sim_tp,
-                    optimization_level=2)
-
-    # Simulatore senza NM fisso: noise model varia a run-time
-    sim = AerSimulator(method='statevector')
-
-    for i in range(n_samples):
-        # Variazione casuale dei parametri di rumore
-        f = 1.0 + rng.uniform(-noise_factor, noise_factor)
-        eps_2q = np.clip(noise_base['eps_2q'] * f, 1e-3, 0.3)
-        # ...altri parametri analogamente...
-        nm = build_noise_model(eps_1q, eps_2q, t1_ns, t2_ns,
-                               p_ro=noise_base['p_ro'])
-        counts = sim.run(tqc, noise_model=nm, shots=shots,
-                         seed_simulator=seed * 1_000_000 + i * 10_000
-                         ).result().get_counts()
-
-        # Etichetta TOP-K: 1 se almeno una delle top-16 misure
-        # piu' frequenti produce fattori validi
-        sorted_meas = sorted(counts.items(),
-                             key=lambda x: x[1], reverse=True)
-        found = any(
-            extract_factors(int(ms, 2), n_count, N, a)[0] is not None
-            for ms, _ in sorted_meas[:TOP_K]
+for sample_index in range(n_samples):
+    sample_seed = seed * 1_000_000 + sample_index * 10_000
+    counts = simulator.run(
+        compiled, noise_model=sample_noise, shots=shots,
+        seed_simulator=sample_seed,
+    ).result().get_counts()
+    ranked = rank_measurements(counts, tie_seed=sample_seed)
+    for top_k in LABEL_TOP_KS:
+        useful = any(
+            extract_factors(int(bits, 2), n_count, N, a)[0] is not None
+            for bits, _ in ranked[:top_k]
         )
-        label = 1 if found else 0
+        labels[top_k].append(int(useful))
+    X.append(normalized_histogram(counts, n_count, shots))
 
-        feature = np.zeros(2 ** n_count)
-        for k, v in counts.items():
-            feature[int(k, 2)] = v / shots
-        X.append(feature); y.append(label)
-
-    return np.array(X), np.array(y)
+# Ogni modello salva schema_version=2.0, label_top_k e manifest.
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Loop di inferenza del Metodo 2 (classificatore + TOP-K)}, label={lst:loop_di_inferenza_del}]
-def run_method2(N, a, n_count, noise_model, classifier,
-                shots=1024, max_iter=50, seed=42, top_k=4):
-    base_qc = shor_circuit(N, a, n_count)
-    sim = AerSimulator(noise_model=noise_model, method='statevector')
-    transpiled = transpile(base_qc, sim, optimization_level=2)
-
-    for iteration in range(1, max_iter + 1):
-        counts = sim.run(transpiled, shots=shots,
-                         seed_simulator=seed * 1_000_000 + iteration * 10_000
-                         ).result().get_counts()
-
-        # Feature: istogramma normalizzato a 2^n_count dimensioni
-        feature = np.zeros(2 ** n_count)
-        for k, v in counts.items():
-            feature[int(k, 2)] = v / shots
-
-        # Porta del classificatore: salta se l'istogramma e' troppo rumoroso
-        if classifier.predict([feature])[0] == 0:
-            continue
-
-        # Ricerca TOP-K: prova i candidati piu' frequenti in ordine
-        sorted_meas = sorted(counts.items(),
-                             key=lambda x: x[1], reverse=True)
-        for meas_str, _ in sorted_meas[:top_k]:
-            p, q = extract_factors(int(meas_str, 2), n_count, N, a)
-            if p is not None:
-                return {'factors': (p, q), 'iterations': iteration,
-                        'success': True}
-
-    return {'factors': (None, None), 'iterations': max_iter,
-            'success': False}
+\begin{lstlisting}[caption={Decisione M2 sullo stesso istogramma usato da M1 e TOP-4}, label={lst:loop_di_inferenza_del}]
+def evaluate_same_histogram(counts, simulation_seed, classifier,
+                            n_count, N, a, shots):
+    ranked = rank_measurements(counts, simulation_seed)
+    valid = [
+        extract_factors(int(bits, 2), n_count, N, a)[0] is not None
+        for bits, _ in ranked[:4]
+    ]
+    m1_success = valid[0]
+    top4_success = any(valid)
+    feature = normalized_histogram(counts, n_count, shots)
+    m2_success = bool(classifier.predict([feature])[0]) and top4_success
+    return m1_success, top4_success, m2_success
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Schema di orchestrazione degli esperimenti}, label={lst:schema_di_orchestrazione_degli}]
-USE_CASES = [
-    {'name': 'UC1', 'N': 15, 'a': 7, 'n_count': 8,
-     'noise': NOISE_REALISTIC, 'has_m2': True},
-    {'name': 'UC2', 'N': 15, 'a': 7, 'n_count': 8,
-     'noise': NOISE_DEGRADED,  'has_m2': True},
-    {'name': 'UC3', 'N': 21, 'a': 2, 'n_count': 10,
-     'noise': NOISE_REALISTIC, 'has_m2': False},  # scalabilita' solo
-    {'name': 'UC4', 'N': 35, 'a': 6, 'n_count': 12,
-     'noise': NOISE_REALISTIC, 'has_m2': False},  # scalabilita' solo
-]
-K_REPETITIONS = 30   # UC1/UC2: stima statistica di M_bar
-K_SCALABILITY = 10   # UC3/UC4: analisi profondita' circuito
+\begin{lstlisting}[caption={Orchestrazione appaiata delle sole campagne rumorose N15}, label={lst:schema_di_orchestrazione_degli}]
+PRESETS = {
+    'reference': dict(N=15, a=7, n_count=8,
+                      eps_1q=1e-3, eps_2q=1e-2,
+                      t1_ns=100_000, t2_ns=80_000, p_ro=0.02),
+    'stress':    dict(N=15, a=7, n_count=8,
+                      eps_1q=5e-3, eps_2q=5e-2,
+                      t1_ns=50_000, t2_ns=30_000, p_ro=0.05),
+}
+K_REPETITIONS, SHOTS, MAX_ITER = 30, 1024, 50
+
+for rep in range(K_REPETITIONS):
+    first = {'m1': None, 'top4': None, 'm2': None}
+    for iteration in range(1, MAX_ITER + 1):
+        simulation_seed = rep * 1_000_000 + iteration * 10_000
+        counts = simulator.run(compiled, shots=SHOTS,
+             seed_simulator=simulation_seed).result().get_counts()
+        flags = evaluate_same_histogram(counts, simulation_seed, ...)
+        update_first_success(first, flags, iteration)
+    encoded = {name: value if value is not None else MAX_ITER + 1
+               for name, value in first.items()}
+
+# Inferenza: wilcoxon(paired_a, paired_b,
+#                     zero_method='pratt', alternative=...)
+# Output: schema_version='2.0', input espliciti e manifest/hash.
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Codifica ed estrazione di sindrome del codice a ripetizione. Il registro classico separa i due bit di sindrome dai tre di lettura dei dati. Il codice duale phase-flip si ottiene coniugando con Hadamard: la stessa struttura protegge dagli errori $Z$ anziché $X$.}, label={lst:qec_repetition}]
-# --- Codifica: |0_L> = |000>, |1_L> = |111> (stato entangled, non 3 copie)
+\begin{lstlisting}[caption={Codifica ed estrazione di sindrome del codice a ripetizione.}, label={lst:qec_repetition}]
 if logical_value == 1:
     qc.x(0)
-qc.cx(0, 1)
-qc.cx(0, 2)
+qc.cx(0, 1); qc.cx(0, 2)
 if basis == 'X':
-    qc.h(DATA)          # |+_L> = H^3 |0_L>  -> duale phase-flip
-
-# --- Punto di iniezione del rumore: identita' "rumorose" sui data
+    qc.h(DATA)
 for q in DATA:
-    qc.id(q)
-
-# --- Estrazione della sindrome tramite ancilla (i data NON vengono misurati)
+    qc.id(q)                       # punto di iniezione del rumore
 if basis == 'Z':
-    qc.cx(0, 3); qc.cx(1, 3)      # stabilizzatore Z0Z1 -> ancilla 3
-    qc.cx(1, 4); qc.cx(2, 4)      # stabilizzatore Z1Z2 -> ancilla 4
+    qc.cx(0, 3); qc.cx(1, 3)
+    qc.cx(1, 4); qc.cx(2, 4)
 else:
-    qc.h(3); qc.cx(3, 0); qc.cx(3, 1); qc.h(3)   # X0X1
-    qc.h(4); qc.cx(4, 1); qc.cx(4, 2); qc.h(4)   # X1X2
-qc.measure(ANC[0], 0)
-qc.measure(ANC[1], 1)
+    qc.h(3); qc.cx(3, 0); qc.cx(3, 1); qc.h(3)
+    qc.h(4); qc.cx(4, 1); qc.cx(4, 2); qc.h(4)
+qc.measure(ANC[0], 0); qc.measure(ANC[1], 1)
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Preparazione di $\ket{0_L}$ e misura dei sei stabilizzatori del codice di Steane. Le due famiglie richiedono schemi diversi: gli stabilizzatori di tipo Z si misurano portando la parità sui dati verso l'ancilla, quelli di tipo X operando nella base coniugata.}, label={lst:qec_steane}]
+\begin{lstlisting}[caption={Preparazione di $\ket{0_L}$ e misura degli stabilizzatori di Steane.}, label={lst:qec_steane}]
 def encode_zero_L(qc):
-    """|0_L> = sovrapposizione uniforme degli 8 codeword."""
-    for s in SEED:                    # H sui 3 qubit "seme"
-        qc.h(s)
-    for s, support in SEED.items():   # propaga il seme sul suo supporto
-        for d in support:
-            if d != s:
-                qc.cx(s, d)
+    for seed in SEED:
+        qc.h(seed)
+    for seed, support in SEED.items():
+        for data in support:
+            if data != seed:
+                qc.cx(seed, data)
 
 def measure_syndrome(qc):
-    for k, support in enumerate(GZ):      # tipo Z: rilevano errori X
-        for d in support:
-            qc.cx(d, ANC_Z[k])
-    for k, support in enumerate(GX):      # tipo X: rilevano errori Z
+    for k, support in enumerate(GZ):
+        for data in support:
+            qc.cx(data, ANC_Z[k])
+    for k, support in enumerate(GX):
         qc.h(ANC_X[k])
-        for d in support:
-            qc.cx(ANC_X[k], d)
+        for data in support:
+            qc.cx(ANC_X[k], data)
         qc.h(ANC_X[k])
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Iniezione del crosstalk nel circuito del surface code. L'inizio di ogni ciclo di sindrome è individuato dal primo \texttt{DEPOLARIZE1} che segue le porte di Hadamard sulle ancilla; la ricorsione tratta il blocco \texttt{REPEAT} con cui Stim rappresenta i cicli intermedi.}, label={lst:crosstalk}]
-def _inject(block, pairs, p_ct):
+\begin{lstlisting}[caption={Iniezione ricorsiva del crosstalk nel circuito del surface code.}, label={lst:crosstalk}]
+def inject(block, pairs, p_ct):
     out = stim.Circuit()
     first = True
     for inst in block:
         if isinstance(inst, stim.CircuitRepeatBlock):
-            out += _inject(inst.body_copy(), pairs, p_ct) * inst.repeat_count
+            out += inject(inst.body_copy(), pairs, p_ct) * inst.repeat_count
             continue
         out.append(inst)
         if inst.name == 'DEPOLARIZE1':
             if first:
-                out.append('DEPOLARIZE2', pairs, p_ct)  # coppie di dati adiacenti
+                out.append('DEPOLARIZE2', pairs, p_ct)
             first = not first
     return out
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Struttura concettuale della stima di $p_L$ con Stim e PyMatching (dal documento di indirizzo). Il circuito di memoria del surface code viene generato parametricamente, campionato, e decodificato con MWPM; $p_L$ è la frazione di shot in cui la predizione del decoder non coincide con l'osservabile logico.}, label={lst:stim_pymatching}]
-import stim
-import pymatching
-
+\begin{lstlisting}[caption={Stima di $p_L$ con Stim e PyMatching.}, label={lst:stim_pymatching}]
 circuit = stim.Circuit.generated(
-    'surface_code:rotated_memory_x',
-    distance=d,
-    rounds=rounds,
+    'surface_code:rotated_memory_x', distance=d, rounds=rounds,
     after_clifford_depolarization=p,
     after_reset_flip_probability=p,
     before_measure_flip_probability=p,
 )
 sampler = circuit.compile_detector_sampler()
 events, observables = sampler.sample(shots, separate_observables=True)
-
 model = circuit.detector_error_model(decompose_errors=True)
 matching = pymatching.Matching.from_detector_error_model(model)
 predictions = matching.decode_batch(events)

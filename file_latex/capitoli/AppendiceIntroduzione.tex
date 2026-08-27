@@ -27,7 +27,7 @@ Poiché la norma è unitaria e la fase globale è fisicamente irrilevante, lo st
     \ket{\psi} = \cos\!\frac{\theta}{2}\ket{0} + e^{i\phi}\sin\!\frac{\theta}{2}\ket{1}, \qquad \theta \in [0,\pi],\quad \phi \in [0,2\pi)
     \label{eq:bloch_parametrization}
 \end{equation}
-Questo definisce un punto sulla superficie di una sfera unitaria -- la \textbf{sfera di Bloch} -- dove il polo nord corrisponde a $\ket{0}$, il polo sud a $\ket{1}$, e i punti equatoriali a sovrapposizioni equiprobabili con fasi diverse. Questa rappresentazione geometrica è di grande utilità pratica: le operazioni su un singolo qubit corrispondono a \textbf{rotazioni rigide} della sfera di Bloch, e il rumore -- come si vedrà nel Capitolo~\ref{chap:rumore} -- corrisponde alla contrazione progressiva del vettore di Bloch verso il centro, fino a ridurlo a zero (stato completamente misto, massima incertezza).
+Questo definisce un punto sulla superficie di una sfera unitaria -- la \textbf{sfera di Bloch} -- dove il polo nord corrisponde a $\ket{0}$, il polo sud a $\ket{1}$, e i punti equatoriali a sovrapposizioni equiprobabili con fasi diverse. Questa rappresentazione geometrica è di grande utilità pratica: le operazioni unitarie su un singolo qubit corrispondono a rotazioni, mentre i canali rumorosi trasformano in generale la sfera in un ellissoide traslato. Un canale unital può contrarre verso il centro; l'amplitude damping trasla invece gli stati verso $\ket{0}$.
 
 \subsubsection{L'Entanglement}
 
@@ -36,21 +36,21 @@ Quando due o più qubit interagiscono tramite porte quantistiche opportune, poss
     \ket{\Phi^+} = \frac{1}{\sqrt{2}}\bigl(\ket{00} + \ket{11}\bigr)
     \label{eq:bell_state}
 \end{equation}
-In questo stato, misurare il primo qubit in $\ket{0}$ collassa istantaneamente il secondo in $\ket{0}$, e viceversa per $\ket{1}$, indipendentemente dalla distanza fisica tra i due qubit. L'entanglement crea correlazioni impossibili da replicare con qualunque modello classico a variabili nascoste locali, come dimostrato teoricamente da Bell nel 1964 \cite{bell1964} e verificato sperimentalmente con crescente precisione negli anni successivi \cite{aspect1982}. Nel contesto del calcolo quantistico, l'entanglement è la risorsa che permette agli algoritmi di elaborare esponenzialmente più informazione rispetto ai circuiti classici: un registro di $n$ qubit entangled descrive uno stato nello spazio $\mathbb{C}^{2^n}$, inaccessibile a qualunque rappresentazione classica di dimensione polinomiale in $n$.
+In questo stato, se la misura del primo qubit produce $0$, una misura del secondo nella stessa base produce anch'essa $0$, e analogamente per $1$, indipendentemente dalla distanza fisica; la correlazione non consente però di trasmettere informazione più velocemente della luce. Con opportune scelte delle basi di misura, gli stati entangled violano disuguaglianze di Bell e producono correlazioni incompatibili con modelli a variabili nascoste locali \cite{bell1964,aspect1982}. Un registro di $n$ qubit descrive ampiezze in uno spazio $\mathbb{C}^{2^n}$, ma questa dimensione non basta da sola a garantire un vantaggio: alcune famiglie entangled, come gli stati stabilizer, restano simulabili classicamente in modo efficiente. Il vantaggio algoritmico nasce dalla struttura con cui preparazione, entanglement e interferenza trasformano tali ampiezze.
 
 \subsubsection{L'Interferenza Quantistica}
 
 Il terzo pilastro del calcolo quantistico è l'\textbf{interferenza}: la capacità di far sommare costruttivamente o annullare distruttivamente le ampiezze di probabilità di percorsi computazionali diversi. Le ampiezze $\alpha$ e $\beta$ in \eqref{eq:qubit_state} sono numeri complessi, e possono quindi avere segni opposti o sfasamenti arbitrari: quando si sommano, possono amplificarsi o cancellarsi esattamente come onde fisiche.
 
-Un algoritmo quantistico ben progettato sfrutta sistematicamente questo meccanismo: attraverso una sequenza opportuna di porte quantistiche, si costruisce un'interferenza \textit{costruttiva} sui percorsi che portano alla risposta corretta e \textit{distruttiva} su quelli errati, concentrando la probabilità di misura sull'output desiderato. È esattamente questo il meccanismo alla base della ricerca quadraticamente accelerata di Grover e della fattorizzazione polinomiale di Shor.
+Un algoritmo quantistico ben progettato sfrutta questo meccanismo per modificare la distribuzione degli esiti: Grover amplifica l'ampiezza degli elementi marcati, mentre in Shor la QFT concentra la probabilità vicino alle frequenze legate al periodo. Non tutti gli esiti prodotti sono quindi ``corretti'', e resta necessario un post-processing classico probabilistico.
 
 \subsubsection{Implementazione Fisica: i Qubit Superconduttori di IBM}
 
-Un qubit può essere realizzato con qualunque sistema fisico a due livelli: la polarizzazione di un fotone, lo spin di un elettrone, i livelli energetici di un atomo intrappolato. I \textbf{qubit superconduttori} utilizzati da IBM -- la piattaforma adottata nel presente lavoro -- sono circuiti elettrici macroscopici che operano nel regime quantistico grazie al raffreddamento a temperature criogeniche estreme.
+Un qubit può essere realizzato con qualunque sistema fisico a due livelli: la polarizzazione di un fotone, lo spin di un elettrone, i livelli energetici di un atomo intrappolato. I \textbf{qubit superconduttori} utilizzati da IBM sono circuiti elettrici macroscopici che operano nel regime quantistico grazie al raffreddamento a temperature criogeniche estreme. In questa tesi costituiscono l'architettura di riferimento per la snapshot \texttt{FakeSherbrooke} e per la discussione hardware; gli esperimenti principali restano simulazioni classiche.
 
-Il componente chiave è la \textbf{giunzione di Josephson} \cite{josephson1962}: una sottile barriera isolante (spessa $\sim 1$--$2\,$nm) interposta tra due materiali superconduttori. Questo elemento introduce una non-linearità nell'energia del circuito che rompe la degenerazione dei livelli energetici, isolando i due stati computazionali $\ket{0}$ e $\ket{1}$ da tutti gli altri. Il risultato è il \textbf{transmon} \cite{koch2007} -- il tipo di qubit superconduttore adottato da IBM -- un oscillatore anelastico con frequenza tipica $4$--$6\,$GHz, controllato da impulsi a microonde.
+Il componente chiave è la \textbf{giunzione di Josephson} \cite{josephson1962}: una sottile barriera isolante (spessa $\sim 1$--$2\,$nm) interposta tra due materiali superconduttori. Questo elemento introduce una non-linearità nell'energia del circuito che rompe l'equidistanza dei livelli energetici, permettendo di indirizzare selettivamente i due stati computazionali $\ket{0}$ e $\ket{1}$. Il risultato è il \textbf{transmon} \cite{koch2007} -- il tipo di qubit superconduttore adottato da IBM -- un oscillatore anarmonico con frequenza tipica $4$--$6\,$GHz, controllato da impulsi a microonde.
 
-Per operare nel regime quantistico, questi circuiti devono essere raffreddati a temperature dell'ordine di $15\,\text{mK}$ ($-273.13\,°$C), più fredde dello spazio cosmico a $2.7\,\text{K}$, tramite refrigeratori a diluizione. A queste temperature la resistenza elettrica scompare per effetto della superconduttività, eliminando la dissipazione termica che causerebbe la distruzione dello stato quantistico. 
+Per operare nel regime quantistico, questi circuiti devono essere raffreddati a temperature dell'ordine di $15\,\text{mK}$ (circa $-273.135\,^{\circ}\text{C}$), molto inferiori ai $2.7\,\text{K}$ della radiazione cosmica di fondo, tramite refrigeratori a diluizione. Il raffreddamento abilita il regime superconduttivo e sopprime fortemente le eccitazioni termiche, ma non elimina la dissipazione né le altre sorgenti di decoerenza.
 \clearpage
 I parametri operativi tipici dei processori IBM (serie Eagle, Heron) sono:
 
@@ -63,7 +63,7 @@ I parametri operativi tipici dei processori IBM (serie Eagle, Heron) sono:
     \item \textbf{Fedeltà gate a due qubit}: $\sim 99$--$99.7\%$
 \end{itemize}
 
-Il rapporto tra il tempo di coerenza e la durata di un gate determina quante operazioni possono essere eseguite prima che il qubit perda il proprio stato quantistico -- ed è proprio questo rapporto il principale collo di bottiglia per l'esecuzione di algoritmi profondi come Shor sui processori attuali.
+Il rapporto tra il tempo di coerenza e la durata di un gate contribuisce a determinare quante operazioni utili possano essere eseguite prima che il rumore domini; insieme agli errori di controllo, al crosstalk, al readout e alla connettività, è uno dei principali colli di bottiglia per algoritmi profondi come Shor sui processori attuali.
 
 % -----------------------------------------------
 \subsection{La Rivoluzione Algoritmica degli Anni Novanta}
@@ -71,7 +71,7 @@ Il rapporto tra il tempo di coerenza e la durata di un gate determina quante ope
 
 Negli anni successivi alla proposta di Deutsch, la comunità scientifica si interrogò sulla effettiva esistenza di problemi che un computer quantistico potesse risolvere in modo \textit{probabilmente} più efficiente di qualunque macchina classica. La risposta arrivò in forma dirompente nel corso di pochi anni.
 
-Nel 1992, Daniel Simon\footnote{L'\textbf{algoritmo di Simon} (1994, pubblicato nel 1997) fu il primo a dimostrare uno speedup \textit{esponenziale} rispetto a qualunque algoritmo classico probabilistico, stabilendo la prova di principio che i computer quantistici potessero essere genuinamente più potenti. Shor riconobbe che la sua tecnica si ispirava direttamente alle idee di Simon.} identificò un problema artificiale per il quale un algoritmo quantistico era esponenzialmente più veloce di qualunque algoritmo classico. Questo risultato rimase per alcuni anni una curiosità teorica, fino a quando, nel \textbf{1994}, Peter Shor pubblicò un risultato che scosse le fondamenta della sicurezza informatica mondiale: un algoritmo quantistico in grado di fattorizzare un intero di $n$ bit in tempo \textit{polinomiale} $O(n^3)$ \cite{shor1994}, a fronte della complessità sub-esponenziale ma super-polinomiale dei migliori algoritmi classici noti. Le implicazioni furono immediate e devastanti: l'intero edificio della crittografia a chiave pubblica -- \ac{RSA}, Diffie-Hellman, le firme digitali \ac{ECDSA} -- si fondava proprio sull'assunzione che la fattorizzazione fosse computazionalmente intrattabile. Un computer quantistico sufficientemente grande avrebbe reso obsoleta, in un solo colpo, l'intera infrastruttura crittografica su cui poggia Internet.
+Nel 1994, Daniel Simon\footnote{L'\textbf{algoritmo di Simon}, presentato nel 1994 e pubblicato in forma estesa nel 1997, dimostrò nel modello oracle una separazione esponenziale rispetto agli algoritmi classici probabilistici. Shor riconobbe che la sua tecnica si ispirava direttamente alle idee di Simon.} identificò un problema oracle per il quale un algoritmo quantistico richiede esponenzialmente meno interrogazioni di qualunque algoritmo classico probabilistico. Nello stesso anno Peter Shor pubblicò algoritmi quantistici polinomiali per fattorizzazione e logaritmo discreto; nella formulazione textbook della fattorizzazione, il costo è spesso riassunto come $O(n^3)$ \cite{shor1994}. Le implicazioni furono immediate: RSA dipende dalla difficoltà della fattorizzazione, mentre Diffie--Hellman ed \ac{ECDSA} dipendono da varianti del logaritmo discreto. Una macchina quantistica sufficientemente grande comprometterebbe quindi molte delle primitive a chiave pubblica oggi impiegate, pur senza rendere insicura ogni componente simmetrica dei protocolli.
 
 Due anni dopo, nel \textbf{1996}, Lov Grover presentò un algoritmo di tutt'altra natura, ma di eguale importanza \cite{grover1996}. Mentre Shor aveva risolto un problema specifico della teoria dei numeri, Grover affrontò una sfida universale: la \textbf{ricerca non strutturata}. Dato un insieme di $N$ elementi senza alcuna struttura o ordinamento, trovare quello che soddisfa una certa proprietà richiede, nel caso classico, un numero di interrogazioni proporzionale a $N$. Grover dimostrò che un algoritmo quantistico può fare lo stesso lavoro in sole $O(\sqrt{N})$ interrogazioni -- uno \textit{speedup quadratico} -- e che questo risultato è \textit{ottimale}: nessun algoritmo quantistico può fare di meglio \cite{zalka1999}. Sebbene meno spettacolare dello speedup esponenziale di Shor, il vantaggio di Grover è universale, applicabile a qualunque problema di ricerca, e porta con sé implicazioni profonde per la crittografia simmetrica, l'ottimizzazione combinatoria e la ricerca in grandi basi di dati.
 
@@ -81,7 +81,7 @@ Questi due algoritmi -- Shor e Grover -- rappresentano ancora oggi i pilastri de
 \subsection{RSA e le Implicazioni Crittografiche dell'Algoritmo di Shor}
 \label{app:intro:rsa}
 
-Per comprendere appieno la portata rivoluzionaria dell'algoritmo di Shor è necessario esaminare la struttura matematica del sistema crittografico che esso minaccia. Il sistema \textbf{RSA}, proposto nel 1977 da Rivest, Shamir e Adleman \cite{rsa1978}, è la pietra angolare della crittografia a chiave pubblica e il fondamento di praticamente ogni protocollo sicuro su Internet.
+Per comprendere appieno la portata dell'algoritmo di Shor è necessario esaminare la struttura matematica del sistema crittografico che esso minaccia. Il sistema \textbf{RSA}, proposto nel 1977 da Rivest, Shamir e Adleman e pubblicato nel 1978 \cite{rsa1978}, è uno degli schemi storicamente centrali della crittografia a chiave pubblica. Continua a essere impiegato in certificati e firme, ma i protocolli moderni possono adottare anche primitive diverse, in particolare su curve ellittiche.
 
 \subsubsection{Struttura del Protocollo RSA}
 
@@ -110,16 +110,28 @@ L'algoritmo di Shor riduce questa complessità a $O(n^3)$ -- un salto da sub-esp
 \clearpage
 \subsubsection{Implicazioni Pratiche per la Sicurezza Informatica}
 
-Le conseguenze sono sistemiche. RSA-2048 e le sue varianti sono il fondamento di:
+Le conseguenze sono sistemiche e riguardano più in generale la crittografia
+a chiave pubblica vulnerabile a Shor: RSA, Diffie--Hellman e le primitive su
+curve ellittiche. Questi algoritmi compaiono, in combinazioni diverse, in:
 
 \begin{itemize}
-    \item \textbf{HTTPS e TLS}: proteggono oltre il 95\% del traffico web mondiale, incluse operazioni bancarie, sanitarie e governative;
-    \item \textbf{Certificati X.509}: l'infrastruttura a chiave pubblica (PKI) su cui si basa l'autenticità di ogni sito web;
+    \item \textbf{HTTPS e TLS}: per autenticazione e scambio delle chiavi di sessione, a seconda della versione e della configurazione;
+    \item \textbf{Certificati X.509}: nell'infrastruttura a chiave pubblica usata per autenticare servizi e soggetti;
     \item \textbf{SSH}: il protocollo standard per l'accesso remoto sicuro ai server;
     \item \textbf{Firme digitali}: documenti legali, transazioni finanziarie, aggiornamenti software firmati.
 \end{itemize}
 
-Un computer quantistico scalabile renderebbe retroattivamente vulnerabili anche le comunicazioni \textit{storicamente registrate}, attraverso il cosiddetto attacco \textit{``harvest now, decrypt later''} (HNDL): avversari statali raccolgono oggi grandi volumi di traffico cifrato con RSA, conservandoli in attesa di poterli decifrare quando l'hardware quantistico raggiungerà la scala necessaria. Questo scenario non è teorico: rapporti di intelligence statunitensi e cinesi documentano campagne di raccolta massiva di traffico cifrato attive da almeno un decennio. Stime dell'NSA e del \ac{NIST} indicano che chiavi RSA-2048 potrebbero diventare vulnerabili entro il 2030--2035 con il proseguire dell'avanzamento tecnologico quantistico \cite{nsa_cnsa2022}.
+Un computer quantistico crittograficamente rilevante renderebbe vulnerabili
+anche comunicazioni registrate in precedenza quando la riservatezza della
+chiave di sessione dipende da una primitiva a chiave pubblica attaccabile da
+Shor. È il rischio \textit{``harvest now, decrypt later''}: acquisire oggi
+dati cifrati ancora sensibili e conservarli per una futura decifratura.
+Il \ac{NIST} sottolinea però che non esiste una data affidabile per la
+comparsa di una macchina di questo tipo; le stime spaziano da pochi anni a
+decenni. Le scadenze 2030--2035 presenti nelle roadmap istituzionali sono
+obiettivi di migrazione e dismissione degli algoritmi vulnerabili, non
+previsioni della data in cui RSA-2048 verrà violato
+\cite{nist_pqc_explainer2026,nsa_cnsa2022}.
 
 \clearpage
 \subsection{Crittografia Post-Quantistica: la Risposta dell'Industria}
@@ -170,7 +182,7 @@ Il panorama tecnologico attuale è dominato da un insieme variegato di piattafor
 
 Un momento simbolico di questa corsa fu raggiunto nel \textbf{2019}, quando il team di Google rivendicò il raggiungimento della cosiddetta \textit{quantum supremacy}\footnote{Il termine \textit{quantum supremacy}, coniato da John Preskill nel 2012, indica il punto in cui un computer quantistico esegue un calcolo specifico in un tempo che nessun supercomputer classico potrebbe eguagliare in modo pratico. La rivendicazione di Google con il processore Sycamore è rimasta controversa: IBM sostenne che il calcolo avrebbe potuto essere eseguito classicamente in 2.5 giorni anziché 10.000 anni, con un algoritmo migliorato. Questo dibattito evidenzia la difficoltà di definire e misurare il vantaggio quantistico.} con il processore Sycamore a 53 qubit \cite{arute2019}: un calcolo specifico fu completato in 200 secondi, mentre le stime attribuivano al più potente supercomputer classico un tempo di circa 10.000 anni per lo stesso compito. Nel 2023, IBM ha presentato il processore \textit{Condor} a 1.121 qubit e ha delineato una roadmap \cite{ibm_roadmap2025} verso sistemi con architettura fault-tolerant entro la fine del decennio, con il target \textit{Quantum Starling} previsto per il 2029.
 
-Tuttavia, la distanza tra i dispositivi attuali e un computer quantistico \textit{fault-tolerant} -- in grado di eseguire Shor su istanze RSA reali -- è ancora enorme. I processori odierni operano nel regime cosiddetto \ac{NISQ}, un termine coniato da John Preskill nel 2018 \cite{preskill2018} per descrivere macchine con decine o centinaia di qubit fisici, affette da errori significativi che limitano la profondità dei circuiti eseguibili. In questo scenario, la ricerca si concentra su due direzioni parallele e complementari:
+Tuttavia, la distanza tra i dispositivi attuali e un computer quantistico \textit{fault-tolerant} --- in grado di eseguire Shor su istanze RSA reali --- è ancora enorme. I processori odierni sono comunemente descritti nel regime \ac{NISQ}, termine introdotto da John Preskill nel 2018 \cite{preskill2018}: il numero di qubit fisici, da solo, non li rende fault-tolerant, perché errori, connettività e assenza di correzione scalabile limitano la profondità affidabile. In questo scenario, la ricerca si concentra su due direzioni parallele e complementari:
 
 \begin{itemize}
     \item \textbf{\ac{QEC}}: tecniche per codificare qubit logici in qubit fisici ridondanti, in modo da rilevare e correggere gli errori durante il calcolo, a costo di un overhead fisico significativo (centinaia o migliaia di qubit fisici per qubit logico);

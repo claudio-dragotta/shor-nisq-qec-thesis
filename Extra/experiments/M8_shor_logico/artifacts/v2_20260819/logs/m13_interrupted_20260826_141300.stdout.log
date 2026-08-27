@@ -1,0 +1,13 @@
+
+=== M13 TOP-4 — 200 repliche x 1024 shot/punto ===
+p_L=0         per-misura=0.7512 TOP-4=1.0000 identificato=[1.0000, 1.0000]
+p_L=0.0001    per-misura=0.7459 TOP-4=1.0000 identificato=[1.0000, 1.0000]
+p_L=0.0005    per-misura=0.7377 TOP-4=1.0000 identificato=[1.0000, 1.0000]
+p_L=0.001     per-misura=0.7229 TOP-4=1.0000 identificato=[1.0000, 1.0000]
+p_L=0.0017    per-misura=0.7080 TOP-4=1.0000 identificato=[1.0000, 1.0000]
+p_L=0.002     per-misura=0.7003 TOP-4=1.0000 identificato=[1.0000, 1.0000]
+p_L=0.005     per-misura=0.6396 TOP-4=1.0000 identificato=[1.0000, 1.0000]
+p_L=0.01      per-misura=0.5652 TOP-4=1.0000 identificato=[1.0000, 1.0000]
+p_L=0.02      per-misura=0.4528 TOP-4=1.0000 identificato=[1.0000, 1.0000]
+p_L=0.05      per-misura=0.2979 TOP-4=1.0000 identificato=[1.0000, 1.0000]
+p_L=0.1       per-misura=0.2506 TOP-4=0.9150 identificato=[0.8550, 0.9400]

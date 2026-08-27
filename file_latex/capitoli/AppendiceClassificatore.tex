@@ -1,178 +1,198 @@
 \begin{onehalfspace}
 
-Questa appendice riporta il dettaglio del classificatore \ac{ML} valutato nella prima fase sperimentale (Capitolo~\ref{chap:risultati}): architettura, procedura di addestramento, metriche di classificazione e --- nella Sezione~\ref{sec:audit_etichette} --- l'audit che ne ha chiarito il comportamento. Il verdetto operativo, ossia che il classificatore a valle dell'esecuzione non riduce le iterazioni rispetto alla sola ricerca multi-candidato TOP-4, è dimostrato nel corpo del capitolo tramite l'analisi di ablazione; qui se ne ricostruisce la causa.
+Questa appendice documenta il classificatore valutato nella prima fase
+sperimentale (Capitolo~\ref{chap:risultati}) e, soprattutto, separa due
+domande che nella prima versione della campagna erano state confuse:
+\emph{il candidato più frequente conduce ai fattori?} (TOP-1) e
+\emph{esiste un candidato utile fra i primi sedici?} (TOP-16). Tutti i
+numeri riportati provengono dagli artefatti schema~2 rigenerati con il
+circuito $N=15$, $a=7$ corretto, il medesimo manifest del circuito e seed
+deterministici.
 
 \subsection{L'Ipotesi alla Prova: il Classificatore ML}
 \label{sec:risultati_uc_m2}
 \label{sec:valutazione_clf}
 
-L'ipotesi formalizzata nel Capitolo~\ref{chap:obiettivi} era che un classificatore \ac{ML}, addestrato a riconoscere gli istogrammi privi di segnale QPE, riducesse le iterazioni scartando le esecuzioni inutili: quantitativamente, $\bar{M}_2 \approx 3$ e $\rho = \bar{M}_1/\bar{M}_2 > 1$ con $p < 0.05$ (Mann-Whitney). Il disegno sperimentale include fin dall'inizio la variante di ablazione $M_{\text{TOP4}}$: poiché il Metodo 2 combina due componenti (filtro \ac{ML} + ricerca TOP-4), solo il confronto a tre permette di attribuire un eventuale guadagno all'una o all'altra.
+Il Metodo~2 usa un classificatore come \emph{gate di qualità}: riceve la
+distribuzione normalizzata sui $2^8=256$ esiti e, se approva
+l'istogramma, tenta l'estrazione dei fattori dai quattro candidati più
+frequenti. L'ablazione $M_{\mathrm{TOP4}}$ applica la stessa ricerca senza
+filtro e consente quindi di distinguere l'effetto del classificatore da
+quello della ricerca multi-candidato.
 
-\paragraph{Architettura e addestramento.}
-Il Metodo 2 opera su due livelli: un \textit{gate di qualità} --- il classificatore riceve il vettore di distribuzione normalizzato $\mathbf{x} \in \mathbb{R}^{256}$ e predice se l'istogramma contiene segnale recuperabile --- e una \textit{ricerca multi-candidato}: se il classificatore approva, si tentano i 4 candidati più frequenti. Per ciascun use case è stato generato un dataset di 2000 campioni con noise model variato del $\pm50\%$ intorno al valore nominale, ottenendo il $74.2\%$ di positivi per UC1 e l'$83.2\%$ per UC2. Tre architetture sono state confrontate --- Random Forest, \ac{SVM} con kernel RBF, \ac{MLP} $(256,128)$ --- con split 80/20 stratificato e selezione per F1-score.
+Per ciascuno dei due scenari sono stati generati $2\,000$ istogrammi da
+$1\,024$ shot. I cinque parametri del modello uniforme
+($\lambda_{1q}$, $\lambda_{2q}$, $T_1$, $T_2$ e readout) sono stati
+campionati indipendentemente in un intervallo relativo del $\pm50\%$
+attorno al preset. Il dataset è stato separato in train, validation e
+test con proporzioni $60/20/20$: la scelta dell'architettura usa soltanto
+la validation; il test viene valutato una sola volta dopo il refit su
+train+validation.
+
+La regola TOP-1 produce $1\,262$ positivi e $738$ negativi in UC1
+($63.1\%/36.9\%$), e $1\,453$ positivi e $547$ negativi in UC2
+($72.7\%/27.3\%$). Random Forest, \ac{SVM} RBF calibrata e \ac{MLP}
+$(256,128)$ sono state confrontate mediante F1 sulla validation. La
+Tabella~\ref{tab:clf_metrics} riporta la valutazione indipendente del
+modello selezionato.
 
 \begin{table}[H]
 \centering
-\caption{Metriche dei classificatori sul test set (20\% del dataset)}
+\caption{Metriche TOP-1 sul test set indipendente (400 istogrammi per scenario)}
 \label{tab:clf_metrics}
 \begin{tabular}{llccc}
-\hline
-\textbf{Use Case} & \textbf{Modello} & \textbf{F1} & \textbf{Accuratezza} & \textbf{\acs{AUC}-ROC} \\
-\hline
-\multirow{3}{*}{UC1} & \textbf{Random Forest (selezionato)} & \textbf{0.949} & \textbf{0.922} & \textbf{0.964} \\
-                     & \ac{SVM}                             & 0.855          & 0.748          & 0.929 \\
-                     & \ac{MLP}                             & 0.919          & 0.885          & 0.952 \\
-\hline
-\multirow{3}{*}{UC2} & \textbf{\ac{SVM} (selezionato)}      & \textbf{0.979} & \textbf{0.965} & \textbf{0.987} \\
-                     & Random Forest                        & 0.976          & 0.960          & 0.982 \\
-                     & \ac{MLP}                             & 0.977          & 0.963          & 0.987 \\
-\hline
+\toprule
+\textbf{Scenario} & \textbf{Modello selezionato} & \textbf{F1} &
+\textbf{Accuratezza} & \textbf{\acs{AUC}-ROC} \\
+\midrule
+UC1 & \ac{SVM} & 0.919 & 0.895 & 0.965 \\
+UC2 & \ac{SVM} & 0.923 & 0.888 & 0.958 \\
+\bottomrule
 \end{tabular}
 \end{table}
+
+Sulla validation l'\ac{SVM} ottiene F1 pari a $0.908$ in UC1 e $0.929$
+in UC2, contro $0.811/0.842$ della Random Forest e $0.874/0.906$
+dell'\ac{MLP}. Queste metriche mostrano che il modello riproduce bene la
+regola TOP-1; non dimostrano però che il filtro riduca il costo operativo.
+Quel confronto richiede gli stessi istogrammi per M1, TOP-4 e M2 ed è
+riportato nella Sezione~\ref{sec:confronto}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{fig_roc_curve.pdf}
-    \caption[Curve ROC dei classificatori selezionati (UC1: Random Forest, UC2: \acs{SVM})]{Curve ROC dei classificatori selezionati: Random Forest per UC1 (\acs{AUC}=0.964) e \acs{SVM} per UC2 (\acs{AUC}=0.987). La linea tratteggiata rappresenta il classificatore casuale (\acs{AUC}=0.5).}
+    \caption[Curve ROC dei classificatori TOP-1 selezionati]{Curve ROC
+    sul test set indipendente dei due classificatori \acs{SVM} selezionati
+    mediante validation. Le aree sono $0.965$ (UC1) e $0.958$ (UC2); la
+    diagonale rappresenta un classificatore casuale.}
     \label{fig:roc_curve}
 \end{figure}
 
-Come \emph{classificatori}, i modelli funzionano molto bene: F1 fino a $0.98$ e \ac{AUC} fino a $0.99$. Ma le metriche di classificazione dicono soltanto che il modello sa distinguere le due classi che gli sono state presentate, e non dicono nulla su \emph{quali} classi siano. L'ablazione del Capitolo~\ref{chap:risultati} ha mostrato che il filtraggio non riduce le iterazioni rispetto alla sola ricerca multi-candidato; la sezione seguente stabilisce perché.
-
 % -----------------------------------------------
-\subsection{Audit delle Etichette: che Cosa il Classificatore ha Effettivamente Appreso}
+\subsection{Audit delle Etichette: TOP-1 e TOP-16 Sono Problemi Diversi}
 \label{sec:audit_etichette}
 
-La coesistenza di metriche eccellenti e di un guadagno operativo nullo è sufficientemente anomala da richiedere una verifica diretta, anziché una spiegazione narrativa. Poiché i modelli addestrati sono stati archiviati assieme al proprio test set, è possibile \emph{ricalcolare} le etichette a partire dagli istogrammi salvati e confrontarle con quelle memorizzate. È quanto fa lo script \texttt{audit\_etichette\_classificatore.py}, il cui esito è riportato nella Tabella~\ref{tab:audit_etichette}.
-
-La regola di etichettatura documentata prevede $\text{TOP\_K} = 16$: un istogramma è positivo se almeno una delle sedici misure più frequenti conduce ai fattori corretti.
+La campagna rigenerata calcola entrambe le etichette sullo \emph{stesso}
+istogramma, eliminando l'ambiguità del dataset storico. L'esito è
+riassunto nella Tabella~\ref{tab:audit_etichette}.
 
 \begin{table}[H]
 \centering
-\caption[Audit delle etichette del dataset di addestramento]{Concordanza fra le etichette memorizzate nel test set e quelle ricalcolate dagli istogrammi con diverse regole di etichettatura. La regola documentata è TOP-16; le etichette effettive corrispondono a TOP-1.}
+\caption[Audit delle etichette TOP-1 e TOP-16]{Bilanciamento delle due
+regole sul dataset completo. TOP-16 è a classe unica e non consente un
+addestramento discriminante.}
 \label{tab:audit_etichette}
-\begin{tabular}{lcc}
-\hline
-\textbf{Regola usata per il ricalcolo} & \textbf{UC1} & \textbf{UC2} \\
-\hline
-TOP-1 (la sola moda)          & \textbf{399/400 (99.8\%)} & \textbf{396/400 (99.0\%)} \\
-TOP-2                         & 297/400 (74.2\%)          & 333/400 (83.2\%) \\
-TOP-4                         & 297/400 (74.2\%)          & 333/400 (83.2\%) \\
-TOP-16 (regola documentata)   & 297/400 (74.2\%)          & 333/400 (83.2\%) \\
-\hline
+\begin{tabular}{lrr}
+\toprule
+\textbf{Regola} & \textbf{UC1: positivi/negativi} &
+\textbf{UC2: positivi/negativi} \\
+\midrule
+TOP-1  & $1\,262/738$ & $1\,453/547$ \\
+TOP-16 & $2\,000/0$   & $2\,000/0$ \\
+\bottomrule
 \end{tabular}
 \end{table}
 
-Le etichette effettivamente usate per l'addestramento coincidono con la regola TOP-1, non con TOP-16: la concordanza è del $99.8\%$ contro il $74.2\%$ per UC1, e del $99.0\%$ contro l'$83.2\%$ per UC2 --- dove il valore più basso non è altro che la frequenza di base della classe positiva, cioè quanto si otterrebbe etichettando tutto come positivo. Il parametro è stato evidentemente modificato nel codice dopo la generazione del dataset, senza rigenerarlo.
+Il runner non forza un modello sul dataset TOP-16: registra
+esplicitamente \texttt{single-class-dataset} e interrompe
+l'addestramento per quella regola. M2 usa perciò soltanto i modelli TOP-1
+e conserva nel payload \texttt{label\_top\_k=1}. Questo controllo evita
+di attribuire capacità predittiva a un classificatore costante.
 
-La conseguenza va enunciata con precisione, perché non è quella che il nome della variabile suggerisce. Poiché fra i quattro picchi della \ac{QPE} l'unico che non conduce ai fattori è l'esito banale $y=0$ (fase nulla, scartata per costruzione dalla funzione di estrazione), etichettare con TOP-1 equivale a etichettare con la domanda: \emph{la moda dell'istogramma cade sulla cella $0$?} La verifica lo conferma senza eccezioni: dei $103$ campioni negativi di UC1 tutti e $103$ hanno moda $y=0$, e così tutti e $67$ quelli di UC2.
+Una diagnostica separata su 60 esecuzioni nominali UC1 chiarisce la
+struttura della classe TOP-1. La moda è $y=0$ in $30/60$ casi e conduce
+ai fattori negli altri $30/60$; i primi quattro candidati contengono
+invece almeno un esito utile in $60/60$ casi. La Tabella
+\ref{tab:struttura_negativi} riporta la distribuzione della moda.
 
 \begin{table}[H]
 \centering
-\caption[Struttura degli istogrammi etichettati come negativi]{Struttura degli istogrammi della classe negativa. Su UC1 essi conservano il segnale \ac{QPE} praticamente intatto: la differenza rispetto ai positivi non è la presenza del segnale, ma quale dei quattro picchi risulti il più alto.}
+\caption[Distribuzione della moda su UC1]{Distribuzione della misura più
+frequente su 60 istogrammi nominali indipendenti.}
 \label{tab:struttura_negativi}
-\begin{tabular}{lcc}
-\hline
- & \textbf{UC1} & \textbf{UC2} \\
-\hline
-Massa media sui quattro picchi $\{0, 64, 128, 192\}$ & 0.758 & 0.294 \\
-Entropia media dell'istogramma (uniforme $= 8$ bit)  & 3.66 bit & 6.37 bit \\
-Campioni negativi con moda $y=0$                      & 103/103 & 67/67 \\
-\hline
+\begin{tabular}{lrr}
+\toprule
+\textbf{Valore della moda} & \textbf{Occorrenze} & \textbf{Frazione} \\
+\midrule
+$0$   & 30 & $50.0\%$ \\
+$64$  &  5 & $8.3\%$ \\
+$128$ & 15 & $25.0\%$ \\
+$192$ & 10 & $16.7\%$ \\
+\bottomrule
 \end{tabular}
 \end{table}
 
-Per UC1 il dato della Tabella~\ref{tab:struttura_negativi} è dirimente: gli istogrammi ``negativi'' concentrano il $75.8\%$ della propria massa sui quattro picchi della \ac{QPE} e hanno entropia $3.66$ bit su $8$ --- valori indistinguibili da quelli della classe positiva. Non sono affatto istogrammi privi di segnale: sono istogrammi in cui il segnale c'è tutto, e in cui il picco più alto è quello privo di contenuto informativo. La Figura~\ref{fig:audit_istogramma_negativo} mostra un campione rappresentativo della classe negativa e rende la situazione immediata.
+L'esito $y=0$ rappresenta la fase nulla e non fornisce il periodo, ma
+non implica che l'istogramma sia privo di segnale. Nel campione
+rappresentativo della Figura~\ref{fig:audit_istogramma_negativo}, la
+moda $y=0$ raccoglie 176 conteggi, mentre $y=64$, $192$ e $128$ ne
+raccolgono rispettivamente 160, 141 e 131: tutti e tre conducono ai
+fattori. La massa complessiva sui quattro picchi è $0.594$.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.86\textwidth]{audit_istogramma_negativo.pdf}
-    \caption[Un istogramma etichettato ``negativo'' nel dataset]{Campione della classe negativa del dataset di UC1 (quello di massa mediana sui picchi). I quattro picchi della \ac{QPE} sono tutti presenti e di altezza confrontabile; il più alto --- e quindi la moda, l'unico candidato che la regola TOP-1 valuta --- è l'esito $y=0$, che corrisponde a fase nulla e che la funzione di estrazione scarta per costruzione. Gli altri tre, in seconda, terza e quarta posizione, conducono tutti alla fattorizzazione corretta $(3,5)$. Il campione è stato etichettato negativo pur contenendo il segnale intatto: è la ragione per cui il classificatore ha appreso a riconoscere la posizione dell'argmax anziché la presenza del segnale. Figura rigenerabile da \texttt{figure\_src/gen\_audit\_classificatore.py}.}
+    \caption[Istogramma TOP-1 negativo ma recuperabile con TOP-4]{Esempio
+    nominale UC1 in cui TOP-1 fallisce perché la moda è $y=0$, mentre i
+    successivi tre picchi conducono ai fattori. Il classificatore TOP-1
+    apprende quindi una regola sul candidato dominante, non una misura
+    generale della presenza di segnale quantistico.}
     \label{fig:audit_istogramma_negativo}
 \end{figure}
 
-Il caso illustrato merita un'osservazione ulteriore, perché mostra quanto sia fragile la distinzione su cui il modello è stato addestrato. In quel campione l'esito $y=0$ e l'esito $y=128$ raccolgono \textbf{esattamente lo stesso numero di conteggi}, $202$ su $1\,024$: quale dei due risulti la moda non è deciso dai dati ma dal criterio di spareggio della funzione che ne calcola il massimo. E non è un caso isolato: su $103$ campioni negativi, $14$ presentano un pareggio esatto fra $y=0$ e il picco utile più alto, $29$ differiscono di al più un conteggio, e lo scarto mediano è di quattro conteggi su circa duecento.
-
-In oltre un quarto dei casi, dunque, l'etichetta che separa la classe positiva dalla negativa è determinata da uno o due shot di differenza --- cioè da rumore di campionamento, non dal rumore quantistico che il classificatore avrebbe dovuto diagnosticare. Le metriche del modello misurano la sua capacità di riprodurre questa distinzione.
-
-\paragraph{Perché questo spiega tutti e tre gli esiti osservati.}
-L'audit ricompone in un'unica causa i tre fatti che il Capitolo~\ref{chap:risultati} registra separatamente.
-
-\begin{itemize}
-    \item \textbf{Le metriche sono eccellenti perché il compito è quasi banale.} Predire se l'argmax di un vettore cade su una cella prefissata è una funzione elementare dell'input, non il riconoscimento di una firma di rumore. F1 $=0.95$ misura la capacità del modello di individuare il massimo di $256$ numeri, non la sua capacità di diagnosticare la corruzione dell'informazione quantistica.
-    \item \textbf{Il contributo operativo è nullo perché la ricerca TOP-4 copre già quel caso.} Quando la moda è $y=0$ i picchi utili occupano le posizioni successive, e TOP-4 li raggiunge per costruzione. Il classificatore scarta l'iterazione; la ricerca multi-candidato la risolve. I due componenti agiscono sullo stesso identico insieme di esecuzioni, ed è per questo che l'ablazione su UC1 non rileva differenza significativa ($p = 0.849$).
-    \item \textbf{Su UC2 il filtro diventa dannoso per la stessa ragione.} Scartare un'iterazione recuperabile ha un costo: bisogna eseguirne un'altra. È esattamente ciò che si osserva, con $\bar{M}$ che risale da $1.00$ a $1.57$ ($p < 0.001$).
-\end{itemize}
-
-\paragraph{Il problema di classificazione, così come documentato, non esiste.}
-Resta da chiedersi che cosa accadrebbe addestrando il classificatore sulla regola dichiarata anziché su quella applicata. La rigenerazione dei dataset con $\text{TOP\_K} = 16$, a parità di ogni altro parametro, produce \textbf{2000 campioni positivi su 2000 per entrambi gli use case}: la classe negativa è vuota e la procedura di addestramento si interrompe segnalando l'assenza di una seconda classe. Che l'esito sia identico su UC2, il cui livello di rumore è cinque volte superiore, è già di per sé indicativo. Il risultato non è un artefatto dello schema di seeding --- la rigenerazione ripetuta con il seeding originale dà lo stesso esito --- né della versione del transpiler, verificata riportando il livello di rumore a quello che riproduce la profondità efficace precedente.
-
-L'interpretazione è la seguente: al livello di rumore di UC1, e con una ricerca che consideri anche solo i primi sedici candidati, \emph{non esiste alcun istogramma da scartare}. La domanda a cui il classificatore avrebbe dovuto rispondere non ha istanze negative, e quindi non è una domanda. Il filtro a valle non è ridondante per una qualche insufficienza dell'architettura scelta o della quantità di dati: è ridondante perché il rumore depolarizzante, su questo circuito e a questa profondità, non produce mai la condizione che esso dovrebbe rilevare.
-
-\subsubsection{Perché la Regola TOP-16 non Può Produrre Negativi}
+\subsubsection{Perché TOP-16 Produce una Classe Quasi Sempre Positiva}
 \label{subsec:soglia_classe_negativa}
 
-Constatare che la classe negativa è vuota lascia aperta la domanda su \emph{dove} cominci a popolarsi: è quella soglia a delimitare il regime in cui un filtro a valle avrebbe qualcosa da apprendere. La ricerca della soglia, spingendo $\varepsilon_{2q}$ ben oltre qualunque valore fisicamente sensato, dà l'esito riportato nella Tabella~\ref{tab:soglia_negativi}.
-
-\begin{table}[H]
-\centering
-\caption[Frazione di negativi in funzione del rumore]{Frazione di istogrammi privi di segnale recuperabile nei primi sedici candidati, in funzione di $\varepsilon_{2q}$ ($200$ campioni per punto, regola TOP-16). La colonna $f$ riporta la frazione coerente efficace misurata indipendentemente (Sezione~\ref{subsec:frazione_coerente}).}
-\label{tab:soglia_negativi}
-\begin{tabular}{crrrr}
-\hline
-$\varepsilon_{2q}$ & rispetto a UC1 & $P_{\text{surv}}$ & $f$ & negativi \\
-\hline
-$5\times10^{-2}$ (UC2) & $5\times$  & $2.0\times10^{-4}$  & 0.372 & \phantom{00}0.0\% \\
-$8\times10^{-2}$       & $8\times$  & $9.7\times10^{-7}$  & ---   & \phantom{00}0.0\% \\
-$10^{-1}$              & $10\times$ & $2.5\times10^{-8}$  & 0.158 & \phantom{00}0.0\% \\
-$1.5\times10^{-1}$     & $15\times$ & $1.9\times10^{-12}$ & ---   & \phantom{00}0.0\% \\
-$2\times10^{-1}$       & $20\times$ & $8.2\times10^{-17}$ & 0.032 & \phantom{00}0.5\% \\
-$3\times10^{-1}$       & $30\times$ & $1.9\times10^{-26}$ & 0.008 & \phantom{00}0.5\% \\
-\hline
-\end{tabular}
-\end{table}
-
-La soglia non esiste. Portando il tasso di errore a trenta volte il valore dei dispositivi attuali --- dove la frazione coerente efficace è scesa allo $0.8\%$ e il segnale \ac{QPE} è quindi quasi del tutto perduto --- i negativi restano lo $0.5\%$, esattamente come a venti volte. La saturazione indica che il fenomeno non dipende dal rumore, e la sua causa è nella regola di etichettatura stessa.
-
-\paragraph{Il conto che lo spiega.} La funzione di estrazione applica le frazioni continue con $\texttt{limit\_denominator}(N)$, che mappa sul periodo $r=4$ non i soli quattro picchi esatti ma un'intera banda di fasi attorno a ciascuno. Enumerando i $256$ esiti possibili per $N=15$, $a=7$, $n_{\text{count}}=8$, si trova che \textbf{$63$ di essi --- il $24.6\%$ --- conducono ai fattori corretti}. Ne segue che, per un istogramma \emph{completamente privo di segnale} e dunque uniforme, la probabilità che nessuno dei sedici valori più frequenti sia utile vale
+Per $N=15$, $a=7$ e otto bit di controllo, 63 dei 256 esiti conducono ai
+fattori tramite la procedura di frazioni continue adottata. Anche per un
+istogramma uniforme, la probabilità che nessuno dei primi $K$ candidati
+sia utile è quindi
 \begin{equation}
-    \frac{\binom{256-63}{16}}{\binom{256}{16}} = 0.9\% .
+    P_{\mathrm{neg}}(K)=
+    \frac{\binom{256-63}{K}}{\binom{256}{K}}.
     \label{eq:tetto_negativi}
 \end{equation}
-
-La regola TOP-16 etichetta quindi come positivo il $99.1\%$ degli istogrammi \emph{anche in assenza totale di informazione}, per puro effetto combinatorio: pescando sedici celle su un insieme in cui un quarto è utile, è quasi impossibile mancarle tutte. La classe negativa non può superare lo $0.9\%$ a nessun livello di rumore --- ed è precisamente lo $0.5\%$ misurato ai due punti estremi.
-
-Il medesimo calcolo, ripetuto al variare di $K$, mostra che la scelta di questo parametro non è una sfumatura di severità ma determina l'ordine di grandezza del problema posto.
+Per $K=16$ essa vale soltanto $0.9275\%$: la regola assegna dunque
+un'etichetta positiva a oltre il $99\%$ degli istogrammi uniformi per
+puro effetto combinatorio. Il risultato $2\,000/0$ osservato nei due
+dataset è coerente con questo limite e non autorizza a concludere che il
+segnale sia perfetto.
 
 \begin{table}[H]
 \centering
-\caption[Tetto combinatorio alla classe negativa in funzione di $K$]{Frazione massima di campioni negativi ottenibile con la regola TOP-$K$ su un istogramma privo di segnale, calcolata come $\binom{256-63}{K} / \binom{256}{K}$. Il valore osservato è quello del dataset di UC1.}
+\caption[Tetto combinatorio alla classe negativa in funzione di $K$]{Probabilità
+di non includere alcuno dei 63 esiti utili scegliendo $K$ celle da 256
+senza informazione sulla distribuzione.}
 \label{tab:tetto_topk}
-\begin{tabular}{ccc}
-\hline
-\textbf{Regola} & \textbf{Tetto ai negativi} & \textbf{Osservato} \\
-\hline
-TOP-1  & $75.4\%$ & $25.8\%$ \\
-TOP-2  & $56.8\%$ & --- \\
-TOP-4  & $32.1\%$ & --- \\
-TOP-16 & \phantom{0}$0.9\%$ & \phantom{0}$0.5\%$ \\
-\hline
+\label{tab:soglia_negativi}
+\begin{tabular}{cc}
+\toprule
+\textbf{Regola} & $P_{\mathrm{neg}}(K)$ \\
+\midrule
+TOP-1  & $75.39\%$ \\
+TOP-2  & $56.76\%$ \\
+TOP-4  & $32.06\%$ \\
+TOP-16 & $0.93\%$  \\
+\bottomrule
 \end{tabular}
 \end{table}
-
-\noindent Il $25.8\%$ osservato nel dataset originale si colloca ben sotto il tetto del $75.4\%$ proprio perché il segnale era presente: la moda cadeva sempre su uno dei quattro picchi, e di questi il solo $y=0$ fallisce, da cui una frazione negativa di circa un quarto. Il tetto sarebbe raggiunto solo se l'istogramma fosse privo di struttura. La Figura~\ref{fig:tetto_classe_negativa} riassume la situazione.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{tetto_classe_negativa.pdf}
-    \caption[Tetto combinatorio alla classe negativa]{Frazione massima di campioni negativi ottenibile con la regola TOP-$K$, calcolata su un istogramma privo di segnale. Poiché $63$ dei $256$ esiti possibili conducono ai fattori, il tetto decade rapidamente con $K$: passare da $K=1$ a $K=16$ lo abbatte di quasi due ordini di grandezza. I due punti segnati sono le frazioni osservate --- $25.8\%$ con la regola effettivamente usata per l'addestramento, $0.5\%$ con quella documentata. Il primo sta sotto il proprio tetto perché il segnale era presente; il secondo vi aderisce, perché a quel valore di $K$ l'esito non dipende quasi più dal segnale. Figura rigenerabile da \texttt{figure\_src/gen\_audit\_classificatore.py}.}
+    \caption[Tetto combinatorio alla classe negativa]{Decadimento di
+    $P_{\mathrm{neg}}(K)$ al crescere del numero di candidati. La figura
+    è rigenerata dai dati schema~2 e rende visibile perché TOP-16 non
+    definisce un problema di classificazione bilanciato su questa
+    istanza.}
     \label{fig:tetto_classe_negativa}
 \end{figure}
 
-\paragraph{Il contrasto con la regola effettivamente usata.} Lo stesso conto spiega, per differenza, l'origine del $25.8\%$ di negativi del dataset originale. Con TOP-1 il solo candidato valutato è la moda, che cade sempre su uno dei quattro picchi $\{0,64,128,192\}$ (Capitolo~\ref{chap:risultati}): dei quattro, il solo $y=0$ fallisce, e la frazione negativa attesa è quindi dell'ordine di un quarto. È esattamente quanto si osserva. Le due regole non differiscono per una sfumatura di severità: l'una produce una classe negativa di un quarto del dataset, l'altra non può produrne più dell'uno per cento.
-
-\paragraph{Conclusione sul perimetro di validità.} Ne discende l'enunciato più preciso che questi dati consentono, e non è quello che ci si aspetterebbe. Il problema di classificazione su cui la prima fase della tesi ha investito non manca di istanze negative perché il rumore sia troppo blando: \emph{non ne ha per costruzione}, perché la domanda ``esiste un candidato utile fra i sedici più frequenti?'' ha risposta affermativa quasi sempre, indipendentemente da quanto il segnale sia degradato. La regola dichiarata è quasi vacua, quella effettivamente applicata chiedeva invece qualcosa di banale e già coperto dalla ricerca multi-candidato. In nessuna delle due formulazioni esiste un problema di classificazione sensato da porre a valle dell'esecuzione --- ed è questa, in ultima analisi, la ragione per cui la seconda fase del lavoro sposta l'apprendimento sulla sindrome, dove le due classi sono definite dalla fisica del codice e non da una convenzione di post-processing.
-
-È il risultato negativo nella sua forma più netta, e delimita con precisione il regime in cui vale: non ``l'apprendimento automatico non serve alla mitigazione degli errori quantistici'', bensì \emph{un filtro applicato a valle di un output già ricco di struttura ridondante non ha nulla da apprendere che la struttura non fornisca già gratuitamente}. È esattamente questa constatazione a motivare lo spostamento della seconda fase del lavoro sulla sindrome, dove l'informazione è disponibile \emph{durante} il calcolo e non dopo (Capitoli~\ref{chap:qec}--\ref{chap:integrazione}, e in particolare la decodifica appresa della Sezione~\ref{sec:decodifica_appresa}).
+Il verdetto ha un perimetro preciso: non mostra che l'apprendimento
+automatico sia inutile in generale, ma che un filtro a valle addestrato
+su TOP-1 replica una decisione già superata da TOP-4, mentre la regola
+TOP-16 è quasi sempre positiva per costruzione. Questo motiva lo
+spostamento dell'apprendimento dalla distribuzione finale alla sindrome
+di errore nei capitoli dedicati alla \ac{QEC}.
 
 \end{onehalfspace}

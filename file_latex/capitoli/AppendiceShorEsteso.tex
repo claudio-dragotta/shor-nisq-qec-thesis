@@ -12,15 +12,14 @@ Nonostante la solidità teorica, l'esecuzione di Shor su hardware reale rimane l
 \begin{itemize}
     \item \textbf{2001 -- \ac{NMR} (Vandersypen et al.)}: prima dimostrazione sperimentale di Shor su un sistema a 7 spin nucleari; fattorizzazione di $N = 15$ in $3 \times 5$ \cite{vandersypen2001}.
     \item \textbf{2016 -- Ioni intrappolati (Monz et al.)}: implementazione scalabile su 5 qubit ionici; fattorizzazione di $N = 15$ con un'architettura modulare \cite{monz2016}.
-    \item \textbf{2021 -- Qubit superconduttori \ac{IBM}}: dimostrazione della fattorizzazione di $N = 21$ su processori \ac{IBM} Quantum utilizzando solo 5 qubit \cite{skosana2021}, attualmente il risultato più avanzato su hardware superconduttore di uso generale;
-    \item \textbf{Fotonica}: esperimenti su piattaforme fotonice hanno raggiunto la fattorizzazione di $N = 35$, sfruttando la maggiore coerenza dei qubit ottici, sebbene con circuiti fortemente semplificati rispetto all'algoritmo generale.
+    \item \textbf{2021 -- Qubit superconduttori \ac{IBM}}: dimostrazione compilata della fattorizzazione di $N = 21$ su processori \ac{IBM} Quantum utilizzando 5 qubit \cite{skosana2021}.
 \end{itemize}
 
-Il record di $N = 21$ evidenzia quanto la distanza tra le istanze dimostrabili e quelle crittograficamente rilevanti (RSA-2048, con $N$ a 2048 bit) sia ancora enorme: fattorizzare un numero a $L$ bit richiede circa $5L+1$ qubit logici e $72L^3$ gate \cite{shor_challenges2025}, valori del tutto inaccessibili ai processori \ac{NISQ} attuali. Una analisi aggiornata delle sfide pratiche nell'esecuzione di Shor su piattaforme esistenti è discussa in \cite{shor_challenges2025}.
+Queste istanze evidenziano quanto la distanza dalle chiavi crittograficamente rilevanti sia ancora enorme. Una specifica stima di risorse per fattorizzare un numero a $L$ bit riporta circa $5L+1$ qubit logici e $72L^3$ gate \cite{shor_challenges2025}; costanti e overhead dipendono però dall'architettura aritmetica e dal protocollo fault-tolerant. In ogni caso, i valori per RSA-2048 restano fuori portata per i processori \ac{NISQ} attuali.
 
 \subsubsection{Miglioramenti Algoritmici: Regev 2023}
 
-Un risultato teorico rilevante è stato pubblicato nel 2023 da Oded Regev \cite{regev2023}, che ha proposto una variante migliorata dell'algoritmo di Shor richiedente solo $O(n^{3/2})$ gate (rispetto agli $O(n^2)$ della versione originale), al costo di un overhead classico maggiore. Sebbene non ancora implementata su hardware reale, questa riduzione della profondità circuitale è promettente per le architetture NISQ, dove la profondità è il principale collo di bottiglia.
+Un risultato teorico rilevante è stato pubblicato nel 2023 da Oded Regev \cite{regev2023}. La proposta fattorizza un intero di $n$ bit eseguendo indipendentemente circa $\sqrt n+4$ circuiti, ciascuno con $\widetilde O(n^{3/2})$ gate, seguiti da post-processing classico polinomiale. Il confronto con Shor non può quindi essere ridotto al solo conteggio di gate di una singola esecuzione: aumentano il numero di run e, nella costruzione originale, anche lo spazio quantistico; inoltre l'articolo dichiara non chiaro l'effettivo vantaggio implementativo. Il risultato è un miglioramento asintotico importante, non una dimostrazione di praticabilità su dispositivi NISQ.
 
 \subsubsection{Roadmap IBM verso il Quantum Fault-Tolerant}
 
@@ -31,7 +30,7 @@ Un risultato teorico rilevante è stato pubblicato nel 2023 da Oded Regev \cite{
     \item \textbf{2029}: sistema Quantum Starling con 200 qubit logici e oltre $10^8$ operazioni quantistiche.
 \end{itemize}
 
-Questi traguardi definiscono l'orizzonte temporale entro cui l'algoritmo di Shor potrà diventare una minaccia concreta per la crittografia RSA, motivando ulteriormente la transizione urgente verso gli standard PQC discussi nella sezione precedente.
+Questi traguardi sono obiettivi industriali dichiarati da IBM, soggetti a revisione, e non stabiliscono quando una macchina avrà le risorse logiche necessarie a rompere RSA-2048. Rafforzano la necessità di preparare la migrazione, ma non forniscono una previsione crittografica.
 
 Le sfide hardware principali per l'esecuzione di Shor su istanze crittograficamente rilevanti sono analizzate in dettaglio nel Capitolo~\ref{chap:rumore}, mentre l'implementazione pratica con Qiskit e le tecniche di ottimizzazione basate su intelligenza artificiale sono presentate nel Capitolo~\ref{chap:sviluppo}.
 \clearpage

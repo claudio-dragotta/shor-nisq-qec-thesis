@@ -1,93 +1,134 @@
 \begin{onehalfspace}
 
-Ogni lavoro sperimentale su una tecnologia emergente porta con sé, oltre ai risultati ottenuti, una mappa di direzioni non esplorate: vincoli di tempo, risorse e maturità tecnologica che delimitano il perimetro di ciò che è stato fatto. I Capitoli~\ref{chap:qec}--\ref{chap:integrazione} hanno portato la tesi dalla verifica del rumore alla correzione d'errore quantistica e allo Shor logico. Questo capitolo raccoglie le direzioni che stanno \emph{oltre} quel perimetro: le estensioni più naturali del lavoro svolto, le domande che i risultati aprono senza rispondere e le opportunità che lo stato dell'arte attuale rende oggi accessibili.
-
-Le direzioni presentate sono ordinate per urgenza e vicinanza ai risultati ottenuti: si parte dall'estensione più immediata e realizzabile --- la scalabilità a istanze maggiori tramite decomposizioni efficienti --- per passare alla validazione su hardware reale, alla generalizzazione ad altri algoritmi e al proseguimento della decodifica appresa, concludendo con l'evoluzione del classificatore a valle, il cui contributo è risultato secondario rispetto alla strategia di ricerca TOP-K.
-
-I risultati sperimentali della tesi evidenziano tre aperture concrete: (i) la barriera di scalabilità per $N \geq 21$ è doppia --- la decomposizione \texttt{UnitaryGate} ($>10\,000$ porte CX) ne è solo la metà rimovibile, mentre la metà residua è fisica e resiste anche a Beauregard (Capitolo~\ref{chap:risultati}); (ii) il simulation gap tra il simulatore statevector e l'hardware reale rimane da quantificare sperimentalmente; (iii) l'analisi di ablazione ha dimostrato che il classificatore ML applicato all'output è irrilevante --- il vantaggio $\rho = 1.90$ su UC1 è interamente attribuibile alla strategia TOP-K --- apertura che ha trovato la sua risposta strutturale nel nucleo \ac{QEC} della tesi (Capitoli~\ref{chap:qec}--\ref{chap:integrazione}) e, per quanto riguarda specificamente il ruolo dell'apprendimento automatico, nella decodifica appresa della Sezione~\ref{sec:decodifica_appresa}.
+I risultati delimitano con chiarezza ciò che la demo e la campagna
+dimostrano: l'esecuzione ideale è verificata anche per $N=21/35$, mentre
+il confronto controllato fra canali di rumore è sostenibile su $N=15$.
+Le estensioni seguenti mirano a colmare questa distanza senza
+estrapolare i risultati oltre il loro perimetro.
 
 % -----------------------------------------------
 \section{Scalabilità a Istanze di Maggiore Dimensione}
 \label{sec:scalabilita_futura}
 
-I quattro use case di questa tesi utilizzano numeri $N$ di piccola dimensione. Questa scelta è dettata dai limiti computazionali del simulatore: la simulazione statevector di un circuito di Shor richiede una memoria proporzionale a $2^{n_{\text{tot}}}$, dove $n_{\text{tot}} = n_{\text{count}} + \lceil \log_2 N \rceil$ è il numero totale di qubit. Per $N = 15$ con $n_{\text{count}} = 8$, si hanno 12 qubit e $2^{12} = 4096$ ampiezze complesse --- perfettamente gestibile. Per $N = 2048$ bit (rilevante crittograficamente), servirebbero $\sim 4000$ qubit logici, del tutto fuori dalla portata sia dei simulatori che dell'hardware attuale.
+La priorità è ridurre il costo dell'aritmetica modulare. La costruzione
+Beauregard implementata nella tesi è stata validata idealmente mediante
+truth table e distribuzione QPE, ma per $N=21$, $a=2$ e otto controlli il
+circuito esecutivo compilato nella base \texttt{rz/sx/x/cx} contiene
+21\,036 CX e ha profondità 23\,081. Questi sono conteggi della
+compilazione congiunta, non somme di blocchi né stime su un gate set più
+astratto.
 
-Il principale collo di bottiglia identificato dagli esperimenti non è il numero di qubit ma la \textbf{profondità del circuito}, e la sua origine è duplice. La decomposizione di Beauregard~\cite{beauregard2002} --- che costruisce l'aritmetica modulare nel dominio della \ac{QFT} con addizionatori di Draper, implementata nel modulo \texttt{beauregard.py} sviluppato durante questa tesi --- riduce per $N=21$ le porte \ac{CX} da $10\,040$ a $3\,406$ su 22 qubit. Ma il conteggio delle sole \ac{CX} è ingannevole: l'aritmetica nel dominio della \ac{QFT} paga in porte \texttt{cp}, che nel modello di rumore adottato sono soggette allo stesso errore a due qubit, e che qui sono $11\,436$. Il totale delle porte rumorose \emph{cresce} a $14\,842$, con $P_{\text{surv}} \approx 1.7\times10^{-65}$. A questo si somma un costo di simulazione di $16.8\,$s per traiettoria --- oltre trentamila volte quello di UC1 --- da cui quasi cinque ore per una sola iterazione da $1\,024$ shot (Capitolo~\ref{chap:risultati}, Tabella~\ref{tab:costo_simulazione}).
+Le direzioni immediate sono l'approximate QFT con soglia d'angolo
+esplicita, addizionatori alternativi, sintesi mirata al gate set del
+backend e riduzione delle operazioni controllate prima della
+traspilazione. Ogni variante dovrebbe superare gli stessi controlli già
+usati qui: verità funzionale della moltiplicazione, ancille pulite,
+coerenza di fase e distanza della QPE ideale dalla legge teorica. Il
+numero di gate, da solo, non è una prova di correttezza.
 
-Ne segue una direzione di lavoro concreta che questa tesi non ha percorso: \textbf{ottimizzare la decomposizione rispetto al numero di porte rumorose anziché al numero di \ac{CX}}. Le due metriche divergono, e Beauregard le ottimizza in direzioni opposte. Approcci ibridi che sostituiscano le catene di rotazioni controllate con addizionatori a ripple-carry, o che tronchino le rotazioni \texttt{cp} di angolo trascurabile --- una potatura nota in letteratura come \textit{approximate QFT}, il cui effetto sulla fedeltà è controllabile analiticamente --- potrebbero ridurre $k$ di un fattore rilevante a parità di qubit. Resta comunque vero che l'estensione del confronto M1 vs $M_{\text{TOP4}}$ a UC3 richiede anche un livello di errore fisico inferiore di ordini di grandezza --- ovvero, ancora una volta, la correzione d'errore.
-
-\paragraph{Come andrebbe riformulata l'ipotesi di scalabilità.}
-L'analisi di UC4 (Capitolo~\ref{chap:risultati}) ha messo in luce un difetto di formulazione dell'Ipotesi secondaria 2 che è indipendente dalle risorse di calcolo, e che una prosecuzione del lavoro dovrebbe correggere per prima cosa. L'ipotesi assume che la difficoltà cresca con il modulo, lungo la sequenza $N = 15 \to 21 \to 35$. Non è così: la profondità del circuito è governata dal \emph{periodo} $r$ dell'elemento $a$ scelto, perché ogni gate controllato $U^{2^j}$ con $2^j \equiv 0 \pmod{r}$ collassa nell'identità e viene eliminato dal transpiler. Lungo la sequenza dei tre use case i periodi valgono $4 \to 6 \to 2$ e le profondità $311 \to 9\,883 \to 1\,480$: la progressione non è monotòna, e UC4 --- la cui scelta $r=2$ era peraltro deliberata, per isolare l'effetto della larghezza del registro --- risulta più \emph{semplice} di UC1 pur avendo un modulo più che doppio.
-
-La riformulazione corretta assume come variabile indipendente il periodo. La verifica diretta degli ordini moltiplicativi mostra che due istanze su tre già la rispettano: per $N=15$ l'ordine massimo in $\mathbb{Z}_N^*$ è $4$, raggiunto da $a \in \{2,7,8,13\}$ fra cui la base $a=7$ adottata; per $N=21$ è $6$, raggiunto da $a \in \{2,5,10,11,17,19\}$ fra cui $a=2$. Per $N=35$ l'ordine massimo è $12$, raggiunto da $a \in \{2,3,12,17,18,23,32,33\}$, mentre la base $a=6$ ha ordine $2$ --- il minimo non banale. Affiancare a UC4 una quinta istanza $(N,a) = (35,2)$ ripristinerebbe la monotonia dell'asse di scalabilità a costo nullo in fase di disegno, con l'avvertenza che il circuito tornerebbe profondo e ricadrebbe nello stesso regime di UC3: la verifica appartiene comunque all'hardware reale, non alla simulazione.
-
-La direzione di sviluppo immediata è quindi la validazione sperimentale di UC3 e di un UC4 ridisegnato, attraverso una delle seguenti modalità: (i) \textbf{IBM Quantum} --- hardware reale con $\geq 20$ qubit, accessibile gratuitamente per accademici, che esegue 1\,024 shot in $\sim$60 secondi ed è immune alla barriera computazionale, essendo il dispositivo stesso a eseguire le traiettorie; (ii) \textbf{cluster HPC universitario} --- lo stesso codice \texttt{run\_top4\_baseline.py} può essere inviato come job batch senza modifiche; (iii) \textbf{analisi teorica estesa} --- se le risorse non sono disponibili, il contributo di Beauregard può essere quantificato analiticamente tramite $P_{\text{surv}}$ e confrontato con la letteratura, tenendo però presente che tale stima sottovaluta sistematicamente la recuperabilità del segnale QPE. In tutti i casi, l'obiettivo è verificare se il vantaggio $\rho \approx 1.9$ osservato per $N=15$ si mantiene a profondità circuitale maggiore.
+Anche la scelta delle istanze deve essere governata dall'ordine
+moltiplicativo $r$, non soltanto dal modulo $N$. L'istanza $N=35$, $a=6$
+ha ordine 2 e non costituisce una progressione monotona rispetto a
+$N=21$, $a=2$, che ha ordine 6. Una campagna di scalabilità dovrebbe
+quindi stratificare sia la larghezza sia l'ordine e dichiarare a priori
+quale delle due variabili intende studiare.
 
 % -----------------------------------------------
-\section{Test e Validazione su Hardware Quantistico Reale}
+\section{Validazione su Hardware Quantistico Reale}
 \label{sec:hw_reale}
 
-Il sistema sperimentale sviluppato in questa tesi opera interamente su simulatore. Questa scelta garantisce riproducibilità, controllo preciso dei parametri di rumore e accesso illimitato --- tutti requisiti indispensabili per la generazione del dataset di addestramento e per l'esecuzione sistematica dei quattro use case. Tuttavia, la simulazione è per definizione un'approssimazione: il noise model adottato replica il comportamento macroscopico del processore IBM \texttt{ibm\_marrakesh} attraverso canali di rumore indipendenti e stazionari, mentre il rumore su hardware reale è correlato spazialmente tra qubit vicini, non stazionario nel tempo e affetto da derive lente dei parametri fisici non catturate da un modello statico. Su hardware reale diventano quindi rilevanti le tecniche di compilazione consapevoli del rumore --- il mapping adattivo, che assegna il circuito ai qubit e agli accoppiamenti a più alta fedeltà~\cite{murali2019}, e le politiche che tengono conto della variabilità qubit-per-qubit~\cite{tannu2019} --- che selezionano layout e routing in base ai parametri di errore locali del dispositivo.
+Il modello rumoroso della tesi è uniforme e illustrativo: non include
+coupling map, routing, crosstalk, leakage o deriva della calibrazione. Il
+passo successivo è ripetere il protocollo $N=15$ su una QPU, registrando
+backend, timestamp, proprietà dei qubit, layout iniziale e finale,
+conteggi post-routing e job identifier. Il confronto deve usare lo stesso
+budget di shot e una politica di seed dichiarata, senza presentare il
+preset uniforme come replica della macchina.
 
-\begin{figure}[H]
-\centering
-\begin{minipage}{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{10_histogram_simulator_N15.pdf}
-    \caption*{Simulatore (basso rumore)}
-\end{minipage}
-\hfill
-\begin{minipage}{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{11_histogram_hardware_N15.pdf}
-    \caption*{Hardware reale IBM}
-\end{minipage}
-\caption[Simulation gap: simulatore vs hardware reale per $N=15$]{Confronto degli istogrammi \ac{QPE} per $N=15$ con base $a=2$ su simulatore (sinistra) e su hardware IBM Quantum reale (destra). \textbf{Entrambi gli istogrammi provengono dall'esecuzione del notebook del tutorial ufficiale IBM} \cite{ibm_shor_tutorial} sul processore \texttt{ibm\_marrakesh}, e non dalla pipeline sperimentale di questa tesi, che opera su simulatore e adotta la base $a=7$ (Capitolo~\ref{chap:risultati}): sono riportati qui come termine di paragone qualitativo, non come misura propria. Sul simulatore i quattro picchi corretti $\{0, 64, 128, 192\}$ raccolgono $\approx 250$ conteggi ciascuno su 1024 shot; sull'hardware reale gli stessi picchi risultano significativamente più deboli ($\approx 40$--$58$ conteggi), con la maggior parte dei conteggi dispersi uniformemente. Il divario dà la misura qualitativa della distanza fra un modello di rumore statico e il rumore reale, correlato e non stazionario, di un processore fisico.}
-\label{fig:simulation_gap}
-\end{figure}
+La demo è già predisposta per questo confronto metodologico: distingue
+rumore disattivato, scenario moderato, scenario di stress e canali
+singoli. Un'estensione hardware dovrebbe affiancare una quinta modalità
+``calibrazione acquisita'', costruita dallo snapshot reale e marcata con
+la sua data di validità. In questo modo diventerebbe misurabile il
+\emph{simulation gap} fra il modello controllato e il dispositivo.
 
-Il passo più immediato è quindi l'esecuzione di UC1 e UC2 su hardware reale attraverso IBM Quantum, verificando in che misura le metriche ottenute su simulatore --- in particolare il fattore di riduzione $\rho = \bar{M}_1 / \bar{M}_{\text{TOP4}}$ --- si trasferiscono all'hardware fisico. Poiché l'analisi di ablazione ha dimostrato che $M_{\text{TOP4}}$ non richiede addestramento, questa validazione è immediata: basta eseguire la strategia TOP-K sui risultati reali senza alcuna fase di fine-tuning. Ci si attende che $M_{\text{TOP4}}$ mostri la stessa robustezza osservata su simulatore, dato che la sua efficacia non dipende dal profilo specifico del rumore ma dalla struttura dei picchi QPE. Questa differenza è di per sé un risultato scientifico interessante: quantifica il \textit{simulation gap}, ossia la distanza tra il comportamento del simulatore e quello dell'hardware reale.
+Per $N=21/35$ l'hardware non elimina il problema della profondità: evita
+il costo esponenziale dello statevector classico, ma non le migliaia di
+operazioni rumorose e i vincoli di connettività. Prima di eseguire queste
+istanze servono quindi una sintesi più corta e un budget d'errore basato
+sul circuito effettivamente instradato.
 
 % -----------------------------------------------
-\section{Generalizzazione ad Altri Algoritmi Quantistici NISQ}
+\section{Generalizzazione ad Altri Algoritmi Quantistici}
 \label{sec:altri_algoritmi}
 
-La strategia multi-candidato TOP-K sviluppata in questa tesi è stata validata sugli output dell'algoritmo di Shor e non richiede alcun addestramento. Proprio per questo la struttura del problema è più generale: dato un algoritmo quantistico che produce, in assenza di rumore, una distribuzione di output con picchi netti, il rumore degrada quei picchi allargandoli e aggiungendo un fondo uniforme. La strategia TOP-K --- che sfrutta la struttura residua dei picchi senza modificare il circuito né il profilo di errore --- può in principio essere applicata a qualunque algoritmo con quella struttura.
+TOP-K è utile soltanto quando più candidati possono essere verificati
+classicamente a costo contenuto. Questa proprietà vale per Shor, perché
+ogni candidato al periodo produce o meno divisori verificabili, e può
+valere per problemi di ricerca con un oracolo di verifica. Non segue
+automaticamente che la stessa strategia migliori VQE o QAOA, dove
+l'output centrale è una stima di valore atteso e non una lista di
+soluzioni equivalenti.
 
-I candidati più naturali per una generalizzazione sono:
-
-\textbf{Algoritmo di Grover.} Come descritto nel Capitolo~\ref{chap:shor}, Grover concentra l'ampiezza sullo stato soluzione tramite \textit{amplitude amplification}. In presenza di rumore, l'ampiezza sullo stato obiettivo si riduce e la distribuzione si appiattisce progressivamente con il numero di iterazioni. La struttura del problema è analoga a quella di Shor: la distribuzione ideale ha un picco dominante, il rumore lo degrada. Una strategia TOP-K applicata a Grover potrebbe tentare i $K$ candidati più frequenti invece del solo massimo, riducendo il numero di iterazioni necessarie.
-
-\textbf{Variational Quantum Eigensolver (VQE).} Il VQE~\cite{peruzzo2014} è uno degli algoritmi più rilevanti per l'era NISQ: stima il valore atteso di un Hamiltoniano usando circuiti parametrizzati e ottimizzazione classica. Il rumore introduce un bias sistematico nella stima dell'energia. Un modello di regressione addestrato a correggere questo bias --- estensione diretta dell'approccio di \cite{ml_mitigation2023} --- potrebbe ridurre significativamente il numero di misurazioni necessarie per convergere all'energia dello stato fondamentale.
-
-\textbf{Quantum Approximate Optimization Algorithm (QAOA).} Il QAOA~\cite{farhi2014} è progettato per problemi di ottimizzazione combinatoria (Max-Cut, TSP). La funzione obiettivo è anch'essa un valore atteso misurato su un circuito quantistico, e il rumore la degrada in modo analogo al VQE. La tecnica TOP-K sviluppata per Shor potrebbe essere adattata per selezionare, dopo ogni valutazione della funzione obiettivo, i $K$ candidati più promettenti invece del solo massimo, riducendo il numero di evaluazioni necessarie.
+Una generalizzazione corretta dovrebbe quindi definire prima:
+\begin{enumerate}
+    \item una funzione classica di validazione del candidato;
+    \item il costo aggiuntivo delle $K$ verifiche;
+    \item una baseline TOP-1 appaiata sugli stessi campioni;
+    \item un criterio che impedisca a $K$ di rendere il successo quasi
+    certo per puro effetto combinatorio.
+\end{enumerate}
+Grover su problemi con verifica economica è un primo banco di prova;
+per gli algoritmi variazionali è invece più naturale studiare
+allocazione adattiva degli shot o mitigazione del bias dell'osservabile.
 
 % -----------------------------------------------
-\section{Integrazione con la Quantum Error Correction Strutturale}
+\section{Integrazione con la Quantum Error Correction}
 \label{sec:qec_integrazione}
 
-La strategia $M_{\text{TOP4}}$ sviluppata in questa tesi opera al livello degli \textit{output}: sfrutta la struttura statistica dell'istogramma rumoroso per identificare il risultato corretto. La \ac{QEC} strutturale --- basata su codici come il surface code --- opera invece al livello dei \textit{qubit fisici}: rileva e corregge gli errori \textit{durante} l'esecuzione, prima che si propaghino.
+La campagna di Shor logico usa $p_L$ come probabilità fenomenologica di
+Pauli non-identità per gate compilato incluso nel proxy. Non identifica questo parametro con
+il logical error rate di un memory experiment surface-code: le due
+grandezze hanno circuiti, osservabili e granularità differenti. Il passo
+successivo scientificamente significativo è una mappatura esplicita fra
+un set di operazioni logiche fault-tolerant e i canali residui stimati per
+ciascuna operazione.
 
-Questi due approcci sono complementari, non alternativi, e il modello di Shor logico del Capitolo~\ref{chap:integrazione} fornisce il banco di prova naturale per la loro combinazione: nello Shor logico, TOP-K non dovrebbe più compensare il rumore fisico dei gate --- quello è compito del codice correttore --- ma l'incertezza residua $p_L$ derivante da errori oltre la soglia del codice o da imprecisioni nella decodifica della sindrome.
+Solo dopo tale mappatura sarebbe lecito combinare surface code e Shor in
+una previsione end-to-end. Servirebbero almeno: conteggio delle operazioni
+logiche per tipo, costo di magic-state distillation per le non-Clifford,
+decoder e latenza di feed-forward, errori correlati e intervalli di
+confidenza propagati. Il modello fenomenologico della tesi resta utile
+come analisi di sensibilità, non come stima di risorse hardware.
 
-La verifica è stata condotta, ed è opportuno riportarne l'esito perché delimita la proposta anziché confermarla: \textbf{su $N=15$ la strategia TOP-K non è in grado di discriminare a livello logico}. Facendo variare l'errore logico per gate su tre ordini di grandezza, fino a valori ai quali la probabilità di successo per singola misura è già scesa al livello del caso, la frazione di iterazioni risolte da TOP-4 resta pari al $100\%$: la curva è esattamente piatta. Ne è responsabile la stessa degenerazione discussa nel Capitolo~\ref{chap:integrazione} --- con periodo $r=4$ una frazione elevata degli esiti conduce comunque ai fattori attraverso le frazioni continue --- che rende il criterio insensibile al parametro che si vorrebbe misurare.
-
-L'estensione resta dunque interessante, ma non è a basso costo come potrebbe sembrare: richiede un'istanza con periodo meno degenere, e ricade perciò nella barriera di scalabilità documentata nel Capitolo~\ref{chap:risultati}. Le due limitazioni --- degenerazione dell'istanza piccola e intrattabilità di quelle grandi --- non sono indipendenti: sono lo stesso ostacolo che si presenta due volte, e superarlo richiede hardware, non una scelta algoritmica diversa.
-
-Una seconda direzione riguarda la decodifica appresa, che in questa tesi non è più una prospettiva ma un risultato: la Sezione~\ref{sec:decodifica_appresa} mostra che una rete addestrata sulle sindromi riduce l'errore logico del surface code in presenza di rumore correlato, e che il suo impiego efficace non è sostituire il decoder analitico ma correggerlo. Ciò che resta aperto sono quattro estensioni naturali di quel risultato, di cui la prima è emersa dai controlli condotti contro il risultato stesso. \textbf{Andare sotto il pavimento.} La direzione che sembrava più promettente è già stata percorsa, e si è chiusa. Poiché BP+OSD e il decoder appreso agiscono su assi ortogonali rispetto al rumore correlato, era naturale attendersi che i loro guadagni si sommassero; gli esperimenti della Sezione~\ref{subsec:neural_pavimento} mostrano invece che il decoder combinato eguaglia il migliore dei due e mai il loro prodotto, perché entrambe le strade conducono al medesimo pavimento --- lo stesso su cui atterra la rete usata da sola, senza alcun decoder analitico. Quel pavimento è una proprietà dell'informazione contenuta nella sindrome, e la domanda che resta aperta non è più come sommare due decodifiche ma \emph{come procurarsi informazione che la sindrome non contiene}. Due vie sono concrete: estendere l'ingresso del decoder ai dati analogici della misura --- i \textit{soft outcomes}, l'ampiezza del segnale di dispersione anziché il bit già discretizzato, che quantificano la confidenza di ciascuna misura e che l'hardware produce ma il formalismo scarta; e sfruttare la \emph{storia temporale} fra cicli successivi, che il decoder qui impiegato tratta come un unico vettore piatto. In entrambi i casi non si tratta di decodificare meglio la stessa sindrome, ma di riceverne una più ricca. La seconda estensione è \textbf{architetturale}, ed è quella che il risultato a distanza 7 rende necessaria --- e che la diagnosi condotta sui dati rende anche l'unica sensata. La spiegazione immediata del fallimento sarebbe la scarsità di esempi, poiché l'evento da apprendere è il fallimento del matching e la sua frequenza \emph{è} $p_L$, che decresce esponenzialmente con la distanza. Un esperimento dedicato la esclude. Variando il numero di cicli di estrazione della sindrome si può cambiare il numero di detector \emph{a distanza fissa}, e l'incrocio $2\times2$ che ne risulta (Tabella~\ref{tab:neural_esempi}) separa le due variabili che altrimenti si muovono insieme: a distanza 5 con $336$ detector e $1.9\times10^5$ esempi positivi il residuo si astiene, mentre a distanza 7 con $144$ detector e tre volte meno esempi interviene. Il comportamento segue la larghezza dell'ingresso, non la distanza del codice. Un ulteriore controllo ne chiarisce il meccanismo e rende verificabile il rimedio: a $336$ detector la rete non è cieca --- ordina i fallimenti del matching con \ac{AUC} fra $0.57$ e $0.77$ --- ma poiché ribaltare una predizione corretta costa quanto correggerne una sbagliata, l'operazione è in attivo solo se fra gli shot ribaltati la precisione supera il cinquanta per cento, e a quella larghezza nessuna soglia vi arriva. Il criterio di successo per un'architettura alternativa è dunque netto e verificabile in anticipo: innalzare la discriminazione quanto basta a superare quella soglia. La via consiste nello sfruttare la simmetria del problema anziché ignorarla: architetture \textbf{convoluzionali o a grafo}, che condividono i pesi fra regioni equivalenti del reticolo, riducono drasticamente il numero di parametri da stimare e possono apprendere da un numero di esempi molto inferiore. È la direzione dei decoder allo stato dell'arte --- AlphaQubit \cite{alphaqubit2024} e i decoder transformer \cite{transformer_decoder2023}, nella linea aperta da \cite{torlaiMelko2017} --- che sfruttano appunto la località della griglia e la struttura temporale dei cicli di sindrome, e da cui ci si attende che il vantaggio sopravviva alle distanze in cui la rete densa non regge. La terza riguarda il \textbf{tipo di rumore}, e va formulata tenendo conto che la sua versione più ovvia è già stata provata e smentita. Sarebbe ragionevole attendersi che il vantaggio del decoder appreso cresca sugli errori coerenti, che dal modello di Pauli del matching sono più lontani del crosstalk; la verifica riportata nella Sezione~\ref{sec:oltre_pauli} mostra invece che il guadagno resta lo stesso entro una deviazione standard, perché l'estrazione ciclica della sindrome converte la coerenza in statistica di Pauli prima che si accumuli, e perché una sovrarotazione su un singolo qubit resta comunque decomponibile in archi del grafo. Ciò che resta da esplorare è dunque il \textbf{leakage}, che è l'unica delle sorgenti non-Pauli discusse a violare la decomponibilità e non solo l'ipotesi di Pauli: la fuga verso $\ket{2}$ non è rappresentabile nello spazio degli errori del decoder, persiste per più cicli e corrompe più stabilizzatori, cioè presenta esattamente la firma strutturale su cui l'apprendimento ha mostrato di rendere. Simularlo richiede però un modello a tre livelli e un simulatore full-state, il che confina l'esperimento a distanze molto piccole. La quarta è la \textbf{diagnosi}: un modello che non si limiti a segnalare il fallimento ma indichi quale tipologia di errore lo ha causato trasformerebbe il decoder in uno strumento di caratterizzazione del dispositivo. Con l'avanzare dell'hardware verso processori capaci di surface code su istanze non banali (la roadmap IBM prevede questa capacità entro il 2026--2029 \cite{ibm_roadmap2025}), tutte queste direzioni diventano sperimentabili anche su dispositivi reali, dove il rumore correlato non va iniettato perché è già presente.
+Per la decodifica appresa, le direzioni più promettenti restano modelli a
+grafo o convoluzionali che rispettino la località del reticolo, uso della
+storia temporale dei cicli e soft information analogica della misura.
+Queste estensioni aggiungono informazione o struttura; non si limitano a
+ingrandire una rete densa sullo stesso vettore di sindrome.
 
 % -----------------------------------------------
 \section{Evoluzione del Classificatore ML}
 \label{sec:evoluzione_ml}
 
-L'analisi di ablazione ha dimostrato che il classificatore ML applicato all'output non contribuisce al miglioramento delle prestazioni: la variante $M_{\text{TOP4}}$ senza classificatore è statisticamente equivalente a M2 per UC1 ($p = 0.849$) e significativamente migliore per UC2 ($p < 0.001$). La risposta strutturale a questo risultato negativo --- correggere gli errori durante l'esecuzione anziché filtrarne gli effetti a valle --- è il nucleo \ac{QEC} della tesi (Capitoli~\ref{chap:qec}--\ref{chap:integrazione}), e il ruolo costruttivo dell'apprendimento automatico in quel contesto (la decodifica appresa) è discusso nella Sezione~\ref{sec:qec_integrazione}. Su questa direzione, però, l'audit delle etichette (Sezione~\ref{app:classificatore}) impone una precisazione che ne ridimensiona la portata, e che è più onesto anticipare qui. Il problema di classificazione a valle non è semplicemente \emph{difficile}: nella formulazione documentata non ammette istanze negative, perché $63$ dei $256$ esiti possibili conducono ai fattori e la probabilità che nessuno dei sedici candidati più frequenti sia utile vale $0.9\%$ anche su un istogramma privo di informazione. Rigenerando il dataset con quella regola si ottengono duemila campioni positivi su duemila, per entrambi gli use case, e la ricerca della soglia di rumore a cui la classe negativa comincia a popolarsi non ne trova alcuna: la frazione satura allo $0.5\%$ già a venti volte l'errore di gate dei dispositivi attuali, e non cresce oltre.
+La campagna aggiornata mostra che TOP-1 è addestrabile ma operativo solo
+come predittore della riuscita del candidato dominante; TOP-16 produce
+invece $2\,000/2\,000$ positivi in entrambi gli scenari. Inoltre M2 è
+peggiore della propria ablazione TOP-4 nei due confronti appaiati. Non è
+quindi giustificato migliorare soltanto l'architettura mantenendo la
+stessa etichetta.
 
-Le direzioni elencate di seguito vanno lette entro questo perimetro. Esse conservano interesse in scenari \emph{strutturalmente diversi} da quello studiato --- istanze con periodo grande, in cui i picchi \ac{QPE} siano numerosi e la banda di accettazione delle frazioni continue proporzionalmente più stretta, oppure regimi in cui il costo per iterazione sia tanto elevato da rendere conveniente anche un filtraggio imperfetto --- ma non come miglioramenti incrementali del classificatore qui valutato, la cui inefficacia non dipende dall'architettura scelta.
+Un nuovo problema supervisionato dovrebbe prevedere un obiettivo legato
+al costo, ad esempio il valore atteso degli shot risparmiati dopo aver
+considerato il costo di uno scarto errato. Training e test dovrebbero
+essere separati anche per giorno di calibrazione o backend, non solo per
+seed, e la soglia decisionale scelta su validation. Prima di addestrare
+si deve infine verificare il bilanciamento della classe e confrontare il
+modello con regole semplici come massa sui picchi, entropia e TOP-K.
 
-\textbf{Classificatore adattivo al regime di rumore.} Il risultato di UC2 ha evidenziato che, quando la probabilità di successo per iterazione della baseline è già alta, il filtraggio del classificatore annulla il vantaggio della ricerca multi-candidato: $\bar{M}_2 = 1.57$ contro $\bar{M} = 1.00$ del solo TOP-4. Una soluzione naturale è un classificatore che stima direttamente $p_{\text{iter}}$ dall'istogramma e decide dinamicamente la strategia ottimale: ricerca TOP-1 (equivalente al Metodo 1) quando $p_{\text{iter}}$ stimata è alta, ricerca TOP-K quando $p_{\text{iter}}$ stimata è bassa. Questo adattamento al regime richiederebbe un modello di regressione o un sistema a due stadi con una soglia di commutazione calibrata sul noise model corrente.
-
-\textbf{Calibrazione probabilistica dell'output.} Anziché un'etichetta binaria secca, un classificatore calibrato produce una probabilità $p(\text{corretto} \mid \text{output})$. Questo consente di impostare una soglia adattiva: il loop si interrompe quando la probabilità stimata supera un livello di confidenza configurabile, bilanciando il rischio di falsi positivi con il costo delle iterazioni aggiuntive.
-
-\textbf{Transfer learning tra noise model diversi.} Un classificatore addestrato su un noise model specifico (es. \texttt{ibm\_marrakesh}) potrebbe essere adattato a un hardware diverso (es. \texttt{ibm\_kyoto}) attraverso una fase di fine-tuning su un piccolo dataset del nuovo dispositivo, senza riaddestrare da zero. Questa tecnica, ispirata al transfer learning del deep learning classico, ridurrebbe significativamente il costo di portare il sistema su nuovi hardware.
+Il contributo più credibile dell'apprendimento resta comunque a monte
+della misura finale: sulla sindrome, dove può sfruttare correlazioni che
+un decoder analitico non modella, anziché tentare di recuperare
+informazione già persa nell'output.
 
 \end{onehalfspace}

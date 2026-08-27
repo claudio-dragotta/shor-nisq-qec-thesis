@@ -1,0 +1,8 @@
+Backend snapshot: fake_sherbrooke | sottografi: 12 | 8192 shot per strategia
+Le etichette initial-layout sono descrittive; il readout analizzato e quello finale.
+
+  sg  strategia             readout eff.   P_holdout   ECR   depth
+  -------------------------------------------------------------------------
+  0   init-readout-basso    0.05756       0.2874      433   1538
+  0   init-readout-alto     0.05402       0.3982      395   1409
+  0   transpiler            0.05179       0.3850      354   1361

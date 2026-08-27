@@ -1,0 +1,2866 @@
+{
+  "schema_version": "2.0",
+  "artifact_type": "phase1-mode-zero-uc1",
+  "created_at": "2026-08-26T09:48:19.101873+00:00",
+  "config": {
+    "N": 15,
+    "a": 7,
+    "n_count": 8,
+    "use_case": "UC1",
+    "noise": {
+      "eps_1q": 0.001,
+      "eps_2q": 0.01,
+      "t1_ns": 100000,
+      "t2_ns": 80000,
+      "p_ro": 0.02
+    },
+    "shots": 1024,
+    "reps": 60,
+    "seed": 7,
+    "seed_schedule": "seed*1000000 + rep*10000; rep starts at 1"
+  },
+  "manifest": {
+    "circuit_revision": "shor-qpe-v2-amod15-correct",
+    "noise_model_revision": "uniform-rz-virtual-v2",
+    "postprocess_revision": "seeded-sha256-tie-break-v1",
+    "circuit_sha256": "c7f4cf3bc1735dce9d5b56d8e09686ee4ab43cabead65e734ea23d5a50f4ba2c",
+    "basis_gates": [
+      "rz",
+      "sx",
+      "x",
+      "cx"
+    ],
+    "optimization_level": 2,
+    "seed_transpiler": 20260819,
+    "depth": 412,
+    "size": 604,
+    "gate_counts": {
+      "rz": 302,
+      "cx": 224,
+      "sx": 70,
+      "measure": 8,
+      "barrier": 1
+    },
+    "python": "3.12.3",
+    "packages": {
+      "numpy": "2.5.1",
+      "qiskit": "2.5.0",
+      "qiskit-aer": "0.17.2",
+      "scikit-learn": "1.9.0"
+    }
+  },
+  "methodology": {
+    "ranking": "rank_measurements con tie-break SHA-256 dipendente dal seed",
+    "representative_mode_zero": "mediana superiore della massa sui quattro picchi fra le repliche con moda y=0; pareggio risolto per indice di replica"
+  },
+  "reference": {
+    "theoretical_peaks": [
+      0,
+      64,
+      128,
+      192
+    ],
+    "useful_theoretical_peaks": [
+      64,
+      128,
+      192
+    ],
+    "factorable_outcomes": [
+      18,
+      21,
+      22,
+      25,
+      26,
+      27,
+      42,
+      43,
+      44,
+      54,
+      55,
+      62,
+      63,
+      64,
+      65,
+      66,
+      75,
+      76,
+      77,
+      89,
+      90,
+      91,
+      92,
+      105,
+      106,
+      107,
+      108,
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      148,
+      149,
+      150,
+      151,
+      164,
+      165,
+      166,
+      167,
+      179,
+      180,
+      181,
+      190,
+      191,
+      192,
+      193,
+      194,
+      201,
+      202,
+      212,
+      213,
+      214,
+      229,
+      230,
+      231,
+      234,
+      235,
+      238
+    ],
+    "factorable_outcome_count": 63,
+    "uniform_top1_factor_floor": 0.24609375
+  },
+  "summary": {
+    "mode_zero_count": 30,
+    "mode_zero_rate": 0.5,
+    "mode_factor_success_count": 30,
+    "mode_factor_success_rate": 0.5,
+    "top4_factor_success_count": 60,
+    "top4_factor_success_rate": 1.0,
+    "mode_distribution": [
+      {
+        "value": 0,
+        "count": 30,
+        "rate": 0.5
+      },
+      {
+        "value": 128,
+        "count": 15,
+        "rate": 0.25
+      },
+      {
+        "value": 192,
+        "count": 10,
+        "rate": 0.16666666666666666
+      },
+      {
+        "value": 64,
+        "count": 5,
+        "rate": 0.08333333333333333
+      }
+    ]
+  },
+  "runs": [
+    {
+      "seed_simulator": 7010000,
+      "shots": 1024,
+      "top_value": 128,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.59375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 128,
+          "count": 160,
+          "probability": 0.15625,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 154,
+          "probability": 0.150390625,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 0,
+          "count": 153,
+          "probability": 0.1494140625,
+          "factor_success": false
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 141,
+          "probability": 0.1376953125,
+          "factor_success": true
+        }
+      ],
+      "rep": 1
+    },
+    {
+      "seed_simulator": 7020000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.6005859375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 169,
+          "probability": 0.1650390625,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 156,
+          "probability": 0.15234375,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 155,
+          "probability": 0.1513671875,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 128,
+          "count": 135,
+          "probability": 0.1318359375,
+          "factor_success": true
+        }
+      ],
+      "rep": 2
+    },
+    {
+      "seed_simulator": 7030000,
+      "shots": 1024,
+      "top_value": 128,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.6015625,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 128,
+          "count": 173,
+          "probability": 0.1689453125,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 0,
+          "count": 162,
+          "probability": 0.158203125,
+          "factor_success": false
+        },
+        {
+          "rank": 3,
+          "value": 64,
+          "count": 150,
+          "probability": 0.146484375,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 131,
+          "probability": 0.1279296875,
+          "factor_success": true
+        }
+      ],
+      "rep": 3
+    },
+    {
+      "seed_simulator": 7040000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.6142578125,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 181,
+          "probability": 0.1767578125,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 163,
+          "probability": 0.1591796875,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 155,
+          "probability": 0.1513671875,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 130,
+          "probability": 0.126953125,
+          "factor_success": true
+        }
+      ],
+      "rep": 4
+    },
+    {
+      "seed_simulator": 7050000,
+      "shots": 1024,
+      "top_value": 64,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.6064453125,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 64,
+          "count": 168,
+          "probability": 0.1640625,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 192,
+          "count": 157,
+          "probability": 0.1533203125,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 128,
+          "count": 152,
+          "probability": 0.1484375,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 0,
+          "count": 144,
+          "probability": 0.140625,
+          "factor_success": false
+        }
+      ],
+      "rep": 5
+    },
+    {
+      "seed_simulator": 7060000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.5849609375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 164,
+          "probability": 0.16015625,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 146,
+          "probability": 0.142578125,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 146,
+          "probability": 0.142578125,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 128,
+          "count": 143,
+          "probability": 0.1396484375,
+          "factor_success": true
+        }
+      ],
+      "rep": 6
+    },
+    {
+      "seed_simulator": 7070000,
+      "shots": 1024,
+      "top_value": 128,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.59765625,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 128,
+          "count": 171,
+          "probability": 0.1669921875,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 151,
+          "probability": 0.1474609375,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 147,
+          "probability": 0.1435546875,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 0,
+          "count": 143,
+          "probability": 0.1396484375,
+          "factor_success": false
+        }
+      ],
+      "rep": 7
+    },
+    {
+      "seed_simulator": 7080000,
+      "shots": 1024,
+      "top_value": 192,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.6064453125,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 192,
+          "count": 168,
+          "probability": 0.1640625,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 167,
+          "probability": 0.1630859375,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 64,
+          "count": 146,
+          "probability": 0.142578125,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 0,
+          "count": 140,
+          "probability": 0.13671875,
+          "factor_success": false
+        }
+      ],
+      "rep": 8
+    },
+    {
+      "seed_simulator": 7090000,
+      "shots": 1024,
+      "top_value": 128,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.5849609375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 128,
+          "count": 160,
+          "probability": 0.15625,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 192,
+          "count": 154,
+          "probability": 0.150390625,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 0,
+          "count": 150,
+          "probability": 0.146484375,
+          "factor_success": false
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 135,
+          "probability": 0.1318359375,
+          "factor_success": true
+        }
+      ],
+      "rep": 9
+    },
+    {
+      "seed_simulator": 7100000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.5654296875,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 170,
+          "probability": 0.166015625,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 152,
+          "probability": 0.1484375,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 64,
+          "count": 131,
+          "probability": 0.1279296875,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 126,
+          "probability": 0.123046875,
+          "factor_success": true
+        }
+      ],
+      "rep": 10
+    },
+    {
+      "seed_simulator": 7110000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.583984375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 160,
+          "probability": 0.15625,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 157,
+          "probability": 0.1533203125,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 64,
+          "count": 147,
+          "probability": 0.1435546875,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 134,
+          "probability": 0.130859375,
+          "factor_success": true
+        }
+      ],
+      "rep": 11
+    },
+    {
+      "seed_simulator": 7120000,
+      "shots": 1024,
+      "top_value": 64,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.599609375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 64,
+          "count": 169,
+          "probability": 0.1650390625,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 156,
+          "probability": 0.15234375,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 0,
+          "count": 150,
+          "probability": 0.146484375,
+          "factor_success": false
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 139,
+          "probability": 0.1357421875,
+          "factor_success": true
+        }
+      ],
+      "rep": 12
+    },
+    {
+      "seed_simulator": 7130000,
+      "shots": 1024,
+      "top_value": 64,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.6005859375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 64,
+          "count": 168,
+          "probability": 0.1640625,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 192,
+          "count": 154,
+          "probability": 0.150390625,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 0,
+          "count": 150,
+          "probability": 0.146484375,
+          "factor_success": false
+        },
+        {
+          "rank": 4,
+          "value": 128,
+          "count": 143,
+          "probability": 0.1396484375,
+          "factor_success": true
+        }
+      ],
+      "rep": 13
+    },
+    {
+      "seed_simulator": 7140000,
+      "shots": 1024,
+      "top_value": 128,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.62890625,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 128,
+          "count": 175,
+          "probability": 0.1708984375,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 192,
+          "count": 168,
+          "probability": 0.1640625,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 0,
+          "count": 157,
+          "probability": 0.1533203125,
+          "factor_success": false
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 144,
+          "probability": 0.140625,
+          "factor_success": true
+        }
+      ],
+      "rep": 14
+    },
+    {
+      "seed_simulator": 7150000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.5888671875,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 169,
+          "probability": 0.1650390625,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 148,
+          "probability": 0.14453125,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 64,
+          "count": 145,
+          "probability": 0.1416015625,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 141,
+          "probability": 0.1376953125,
+          "factor_success": true
+        }
+      ],
+      "rep": 15
+    },
+    {
+      "seed_simulator": 7160000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.5830078125,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 168,
+          "probability": 0.1640625,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 147,
+          "probability": 0.1435546875,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 128,
+          "count": 144,
+          "probability": 0.140625,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 138,
+          "probability": 0.134765625,
+          "factor_success": true
+        }
+      ],
+      "rep": 16
+    },
+    {
+      "seed_simulator": 7170000,
+      "shots": 1024,
+      "top_value": 128,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.6171875,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 128,
+          "count": 172,
+          "probability": 0.16796875,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 156,
+          "probability": 0.15234375,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 156,
+          "probability": 0.15234375,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 0,
+          "count": 148,
+          "probability": 0.14453125,
+          "factor_success": false
+        }
+      ],
+      "rep": 17
+    },
+    {
+      "seed_simulator": 7180000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.6044921875,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 176,
+          "probability": 0.171875,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 152,
+          "probability": 0.1484375,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 147,
+          "probability": 0.1435546875,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 128,
+          "count": 144,
+          "probability": 0.140625,
+          "factor_success": true
+        }
+      ],
+      "rep": 18
+    },
+    {
+      "seed_simulator": 7190000,
+      "shots": 1024,
+      "top_value": 64,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.5947265625,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 64,
+          "count": 163,
+          "probability": 0.1591796875,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 192,
+          "count": 160,
+          "probability": 0.15625,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 0,
+          "count": 147,
+          "probability": 0.1435546875,
+          "factor_success": false
+        },
+        {
+          "rank": 4,
+          "value": 128,
+          "count": 139,
+          "probability": 0.1357421875,
+          "factor_success": true
+        }
+      ],
+      "rep": 19
+    },
+    {
+      "seed_simulator": 7200000,
+      "shots": 1024,
+      "top_value": 192,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.6015625,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 192,
+          "count": 175,
+          "probability": 0.1708984375,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 162,
+          "probability": 0.158203125,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 0,
+          "count": 144,
+          "probability": 0.140625,
+          "factor_success": false
+        },
+        {
+          "rank": 4,
+          "value": 128,
+          "count": 135,
+          "probability": 0.1318359375,
+          "factor_success": true
+        }
+      ],
+      "rep": 20
+    },
+    {
+      "seed_simulator": 7210000,
+      "shots": 1024,
+      "top_value": 192,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.6064453125,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 192,
+          "count": 168,
+          "probability": 0.1640625,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 0,
+          "count": 153,
+          "probability": 0.1494140625,
+          "factor_success": false
+        },
+        {
+          "rank": 3,
+          "value": 64,
+          "count": 150,
+          "probability": 0.146484375,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 128,
+          "count": 150,
+          "probability": 0.146484375,
+          "factor_success": true
+        }
+      ],
+      "rep": 21
+    },
+    {
+      "seed_simulator": 7220000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.591796875,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 161,
+          "probability": 0.1572265625,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 155,
+          "probability": 0.1513671875,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 128,
+          "count": 152,
+          "probability": 0.1484375,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 138,
+          "probability": 0.134765625,
+          "factor_success": true
+        }
+      ],
+      "rep": 22
+    },
+    {
+      "seed_simulator": 7230000,
+      "shots": 1024,
+      "top_value": 128,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.59765625,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 128,
+          "count": 177,
+          "probability": 0.1728515625,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 160,
+          "probability": 0.15625,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 0,
+          "count": 141,
+          "probability": 0.1376953125,
+          "factor_success": false
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 134,
+          "probability": 0.130859375,
+          "factor_success": true
+        }
+      ],
+      "rep": 23
+    },
+    {
+      "seed_simulator": 7240000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.576171875,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 158,
+          "probability": 0.154296875,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 155,
+          "probability": 0.1513671875,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 128,
+          "count": 141,
+          "probability": 0.1376953125,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 136,
+          "probability": 0.1328125,
+          "factor_success": true
+        }
+      ],
+      "rep": 24
+    },
+    {
+      "seed_simulator": 7250000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.5869140625,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 160,
+          "probability": 0.15625,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 192,
+          "count": 154,
+          "probability": 0.150390625,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 128,
+          "count": 149,
+          "probability": 0.1455078125,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 138,
+          "probability": 0.134765625,
+          "factor_success": true
+        }
+      ],
+      "rep": 25
+    },
+    {
+      "seed_simulator": 7260000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.6015625,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 162,
+          "probability": 0.158203125,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 156,
+          "probability": 0.15234375,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 150,
+          "probability": 0.146484375,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 148,
+          "probability": 0.14453125,
+          "factor_success": true
+        }
+      ],
+      "rep": 26
+    },
+    {
+      "seed_simulator": 7270000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.5849609375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 164,
+          "probability": 0.16015625,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 163,
+          "probability": 0.1591796875,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 64,
+          "count": 139,
+          "probability": 0.1357421875,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 133,
+          "probability": 0.1298828125,
+          "factor_success": true
+        }
+      ],
+      "rep": 27
+    },
+    {
+      "seed_simulator": 7280000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.578125,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 167,
+          "probability": 0.1630859375,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 156,
+          "probability": 0.15234375,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 128,
+          "count": 135,
+          "probability": 0.1318359375,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 134,
+          "probability": 0.130859375,
+          "factor_success": true
+        }
+      ],
+      "rep": 28
+    },
+    {
+      "seed_simulator": 7290000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.5927734375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 159,
+          "probability": 0.1552734375,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 192,
+          "count": 154,
+          "probability": 0.150390625,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 128,
+          "count": 152,
+          "probability": 0.1484375,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 142,
+          "probability": 0.138671875,
+          "factor_success": true
+        }
+      ],
+      "rep": 29
+    },
+    {
+      "seed_simulator": 7300000,
+      "shots": 1024,
+      "top_value": 192,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.6240234375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 192,
+          "count": 168,
+          "probability": 0.1640625,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 0,
+          "count": 162,
+          "probability": 0.158203125,
+          "factor_success": false
+        },
+        {
+          "rank": 3,
+          "value": 128,
+          "count": 160,
+          "probability": 0.15625,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 149,
+          "probability": 0.1455078125,
+          "factor_success": true
+        }
+      ],
+      "rep": 30
+    },
+    {
+      "seed_simulator": 7310000,
+      "shots": 1024,
+      "top_value": 128,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.58203125,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 128,
+          "count": 164,
+          "probability": 0.16015625,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 147,
+          "probability": 0.1435546875,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 145,
+          "probability": 0.1416015625,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 0,
+          "count": 140,
+          "probability": 0.13671875,
+          "factor_success": false
+        }
+      ],
+      "rep": 31
+    },
+    {
+      "seed_simulator": 7320000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.5927734375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 158,
+          "probability": 0.154296875,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 155,
+          "probability": 0.1513671875,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 64,
+          "count": 147,
+          "probability": 0.1435546875,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 147,
+          "probability": 0.1435546875,
+          "factor_success": true
+        }
+      ],
+      "rep": 32
+    },
+    {
+      "seed_simulator": 7330000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.599609375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 173,
+          "probability": 0.1689453125,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 148,
+          "probability": 0.14453125,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 147,
+          "probability": 0.1435546875,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 146,
+          "probability": 0.142578125,
+          "factor_success": true
+        }
+      ],
+      "rep": 33
+    },
+    {
+      "seed_simulator": 7340000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.6318359375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 176,
+          "probability": 0.171875,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 164,
+          "probability": 0.16015625,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 157,
+          "probability": 0.1533203125,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 128,
+          "count": 150,
+          "probability": 0.146484375,
+          "factor_success": true
+        }
+      ],
+      "rep": 34
+    },
+    {
+      "seed_simulator": 7350000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.59375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 176,
+          "probability": 0.171875,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 160,
+          "probability": 0.15625,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 141,
+          "probability": 0.1376953125,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 128,
+          "count": 131,
+          "probability": 0.1279296875,
+          "factor_success": true
+        }
+      ],
+      "rep": 35
+    },
+    {
+      "seed_simulator": 7360000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.6025390625,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 161,
+          "probability": 0.1572265625,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 192,
+          "count": 160,
+          "probability": 0.15625,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 128,
+          "count": 157,
+          "probability": 0.1533203125,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 139,
+          "probability": 0.1357421875,
+          "factor_success": true
+        }
+      ],
+      "rep": 36
+    },
+    {
+      "seed_simulator": 7370000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.60546875,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 163,
+          "probability": 0.1591796875,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 192,
+          "count": 157,
+          "probability": 0.1533203125,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 128,
+          "count": 151,
+          "probability": 0.1474609375,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 149,
+          "probability": 0.1455078125,
+          "factor_success": true
+        }
+      ],
+      "rep": 37
+    },
+    {
+      "seed_simulator": 7380000,
+      "shots": 1024,
+      "top_value": 192,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.6396484375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 192,
+          "count": 174,
+          "probability": 0.169921875,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 0,
+          "count": 171,
+          "probability": 0.1669921875,
+          "factor_success": false
+        },
+        {
+          "rank": 3,
+          "value": 64,
+          "count": 167,
+          "probability": 0.1630859375,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 128,
+          "count": 143,
+          "probability": 0.1396484375,
+          "factor_success": true
+        }
+      ],
+      "rep": 38
+    },
+    {
+      "seed_simulator": 7390000,
+      "shots": 1024,
+      "top_value": 128,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.5859375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 128,
+          "count": 158,
+          "probability": 0.154296875,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 0,
+          "count": 155,
+          "probability": 0.1513671875,
+          "factor_success": false
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 148,
+          "probability": 0.14453125,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 139,
+          "probability": 0.1357421875,
+          "factor_success": true
+        }
+      ],
+      "rep": 39
+    },
+    {
+      "seed_simulator": 7400000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.6025390625,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 163,
+          "probability": 0.1591796875,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 154,
+          "probability": 0.150390625,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 128,
+          "count": 151,
+          "probability": 0.1474609375,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 149,
+          "probability": 0.1455078125,
+          "factor_success": true
+        }
+      ],
+      "rep": 40
+    },
+    {
+      "seed_simulator": 7410000,
+      "shots": 1024,
+      "top_value": 128,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.591796875,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 128,
+          "count": 175,
+          "probability": 0.1708984375,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 0,
+          "count": 154,
+          "probability": 0.150390625,
+          "factor_success": false
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 148,
+          "probability": 0.14453125,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 129,
+          "probability": 0.1259765625,
+          "factor_success": true
+        }
+      ],
+      "rep": 41
+    },
+    {
+      "seed_simulator": 7420000,
+      "shots": 1024,
+      "top_value": 192,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.5791015625,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 192,
+          "count": 160,
+          "probability": 0.15625,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 157,
+          "probability": 0.1533203125,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 0,
+          "count": 149,
+          "probability": 0.1455078125,
+          "factor_success": false
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 127,
+          "probability": 0.1240234375,
+          "factor_success": true
+        }
+      ],
+      "rep": 42
+    },
+    {
+      "seed_simulator": 7430000,
+      "shots": 1024,
+      "top_value": 128,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.6162109375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 128,
+          "count": 163,
+          "probability": 0.1591796875,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 192,
+          "count": 159,
+          "probability": 0.1552734375,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 0,
+          "count": 158,
+          "probability": 0.154296875,
+          "factor_success": false
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 151,
+          "probability": 0.1474609375,
+          "factor_success": true
+        }
+      ],
+      "rep": 43
+    },
+    {
+      "seed_simulator": 7440000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.6318359375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 179,
+          "probability": 0.1748046875,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 163,
+          "probability": 0.1591796875,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 64,
+          "count": 161,
+          "probability": 0.1572265625,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 144,
+          "probability": 0.140625,
+          "factor_success": true
+        }
+      ],
+      "rep": 44
+    },
+    {
+      "seed_simulator": 7450000,
+      "shots": 1024,
+      "top_value": 192,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.5908203125,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 192,
+          "count": 157,
+          "probability": 0.1533203125,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 156,
+          "probability": 0.15234375,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 64,
+          "count": 146,
+          "probability": 0.142578125,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 0,
+          "count": 146,
+          "probability": 0.142578125,
+          "factor_success": false
+        }
+      ],
+      "rep": 45
+    },
+    {
+      "seed_simulator": 7460000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.603515625,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 179,
+          "probability": 0.1748046875,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 160,
+          "probability": 0.15625,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 155,
+          "probability": 0.1513671875,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 128,
+          "count": 124,
+          "probability": 0.12109375,
+          "factor_success": true
+        }
+      ],
+      "rep": 46
+    },
+    {
+      "seed_simulator": 7470000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.5859375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 164,
+          "probability": 0.16015625,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 151,
+          "probability": 0.1474609375,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 148,
+          "probability": 0.14453125,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 137,
+          "probability": 0.1337890625,
+          "factor_success": true
+        }
+      ],
+      "rep": 47
+    },
+    {
+      "seed_simulator": 7480000,
+      "shots": 1024,
+      "top_value": 128,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.609375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 128,
+          "count": 164,
+          "probability": 0.16015625,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 155,
+          "probability": 0.1513671875,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 154,
+          "probability": 0.150390625,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 0,
+          "count": 151,
+          "probability": 0.1474609375,
+          "factor_success": false
+        }
+      ],
+      "rep": 48
+    },
+    {
+      "seed_simulator": 7490000,
+      "shots": 1024,
+      "top_value": 64,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.609375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 64,
+          "count": 180,
+          "probability": 0.17578125,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 164,
+          "probability": 0.16015625,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 0,
+          "count": 142,
+          "probability": 0.138671875,
+          "factor_success": false
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 138,
+          "probability": 0.134765625,
+          "factor_success": true
+        }
+      ],
+      "rep": 49
+    },
+    {
+      "seed_simulator": 7500000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.5771484375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 156,
+          "probability": 0.15234375,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 192,
+          "count": 150,
+          "probability": 0.146484375,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 64,
+          "count": 146,
+          "probability": 0.142578125,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 128,
+          "count": 139,
+          "probability": 0.1357421875,
+          "factor_success": true
+        }
+      ],
+      "rep": 50
+    },
+    {
+      "seed_simulator": 7510000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.5869140625,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 163,
+          "probability": 0.1591796875,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 152,
+          "probability": 0.1484375,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 64,
+          "count": 151,
+          "probability": 0.1474609375,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 135,
+          "probability": 0.1318359375,
+          "factor_success": true
+        }
+      ],
+      "rep": 51
+    },
+    {
+      "seed_simulator": 7520000,
+      "shots": 1024,
+      "top_value": 192,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.62109375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 192,
+          "count": 175,
+          "probability": 0.1708984375,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 0,
+          "count": 162,
+          "probability": 0.158203125,
+          "factor_success": false
+        },
+        {
+          "rank": 3,
+          "value": 64,
+          "count": 150,
+          "probability": 0.146484375,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 128,
+          "count": 149,
+          "probability": 0.1455078125,
+          "factor_success": true
+        }
+      ],
+      "rep": 52
+    },
+    {
+      "seed_simulator": 7530000,
+      "shots": 1024,
+      "top_value": 128,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.5791015625,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 128,
+          "count": 182,
+          "probability": 0.177734375,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 148,
+          "probability": 0.14453125,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 132,
+          "probability": 0.12890625,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 0,
+          "count": 131,
+          "probability": 0.1279296875,
+          "factor_success": false
+        }
+      ],
+      "rep": 53
+    },
+    {
+      "seed_simulator": 7540000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.6220703125,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 170,
+          "probability": 0.166015625,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 160,
+          "probability": 0.15625,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 64,
+          "count": 159,
+          "probability": 0.1552734375,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 148,
+          "probability": 0.14453125,
+          "factor_success": true
+        }
+      ],
+      "rep": 54
+    },
+    {
+      "seed_simulator": 7550000,
+      "shots": 1024,
+      "top_value": 128,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.5869140625,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 128,
+          "count": 159,
+          "probability": 0.1552734375,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 158,
+          "probability": 0.154296875,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 0,
+          "count": 143,
+          "probability": 0.1396484375,
+          "factor_success": false
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 141,
+          "probability": 0.1376953125,
+          "factor_success": true
+        }
+      ],
+      "rep": 55
+    },
+    {
+      "seed_simulator": 7560000,
+      "shots": 1024,
+      "top_value": 192,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.60546875,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 192,
+          "count": 175,
+          "probability": 0.1708984375,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 155,
+          "probability": 0.1513671875,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 0,
+          "count": 149,
+          "probability": 0.1455078125,
+          "factor_success": false
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 141,
+          "probability": 0.1376953125,
+          "factor_success": true
+        }
+      ],
+      "rep": 56
+    },
+    {
+      "seed_simulator": 7570000,
+      "shots": 1024,
+      "top_value": 192,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.5771484375,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 192,
+          "count": 153,
+          "probability": 0.1494140625,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 150,
+          "probability": 0.146484375,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 128,
+          "count": 149,
+          "probability": 0.1455078125,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 0,
+          "count": 139,
+          "probability": 0.1357421875,
+          "factor_success": false
+        }
+      ],
+      "rep": 57
+    },
+    {
+      "seed_simulator": 7580000,
+      "shots": 1024,
+      "top_value": 128,
+      "mode_is_zero": false,
+      "mode_factor_success": true,
+      "top4_factor_success": true,
+      "peak_mass": 0.6123046875,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 128,
+          "count": 167,
+          "probability": 0.1630859375,
+          "factor_success": true
+        },
+        {
+          "rank": 2,
+          "value": 64,
+          "count": 162,
+          "probability": 0.158203125,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 154,
+          "probability": 0.150390625,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 0,
+          "count": 144,
+          "probability": 0.140625,
+          "factor_success": false
+        }
+      ],
+      "rep": 58
+    },
+    {
+      "seed_simulator": 7590000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.61328125,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 178,
+          "probability": 0.173828125,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 178,
+          "probability": 0.173828125,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 64,
+          "count": 139,
+          "probability": 0.1357421875,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 192,
+          "count": 133,
+          "probability": 0.1298828125,
+          "factor_success": true
+        }
+      ],
+      "rep": 59
+    },
+    {
+      "seed_simulator": 7600000,
+      "shots": 1024,
+      "top_value": 0,
+      "mode_is_zero": true,
+      "mode_factor_success": false,
+      "top4_factor_success": true,
+      "peak_mass": 0.59765625,
+      "ordered_top4": [
+        {
+          "rank": 1,
+          "value": 0,
+          "count": 161,
+          "probability": 0.1572265625,
+          "factor_success": false
+        },
+        {
+          "rank": 2,
+          "value": 128,
+          "count": 154,
+          "probability": 0.150390625,
+          "factor_success": true
+        },
+        {
+          "rank": 3,
+          "value": 192,
+          "count": 149,
+          "probability": 0.1455078125,
+          "factor_success": true
+        },
+        {
+          "rank": 4,
+          "value": 64,
+          "count": 148,
+          "probability": 0.14453125,
+          "factor_success": true
+        }
+      ],
+      "rep": 60
+    }
+  ],
+  "representative_mode_zero": {
+    "seed_simulator": 7350000,
+    "shots": 1024,
+    "top_value": 0,
+    "mode_is_zero": true,
+    "mode_factor_success": false,
+    "top4_factor_success": true,
+    "peak_mass": 0.59375,
+    "ordered_top4": [
+      {
+        "rank": 1,
+        "value": 0,
+        "count": 176,
+        "probability": 0.171875,
+        "factor_success": false
+      },
+      {
+        "rank": 2,
+        "value": 64,
+        "count": 160,
+        "probability": 0.15625,
+        "factor_success": true
+      },
+      {
+        "rank": 3,
+        "value": 192,
+        "count": 141,
+        "probability": 0.1376953125,
+        "factor_success": true
+      },
+      {
+        "rank": 4,
+        "value": 128,
+        "count": 131,
+        "probability": 0.1279296875,
+        "factor_success": true
+      }
+    ],
+    "rep": 35,
+    "histogram_counts": [
+      176,
+      9,
+      8,
+      0,
+      7,
+      1,
+      1,
+      0,
+      5,
+      1,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      10,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      1,
+      0,
+      1,
+      1,
+      0,
+      15,
+      2,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      0,
+      1,
+      0,
+      2,
+      0,
+      0,
+      0,
+      3,
+      1,
+      0,
+      0,
+      2,
+      1,
+      2,
+      2,
+      160,
+      8,
+      9,
+      0,
+      17,
+      2,
+      2,
+      0,
+      14,
+      3,
+      1,
+      0,
+      3,
+      0,
+      0,
+      0,
+      15,
+      2,
+      1,
+      0,
+      2,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      24,
+      1,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      2,
+      0,
+      0,
+      0,
+      2,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      3,
+      1,
+      0,
+      0,
+      2,
+      0,
+      1,
+      0,
+      131,
+      11,
+      13,
+      0,
+      11,
+      0,
+      0,
+      0,
+      13,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      11,
+      2,
+      1,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      15,
+      1,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      9,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      3,
+      3,
+      1,
+      1,
+      0,
+      1,
+      2,
+      141,
+      14,
+      7,
+      0,
+      16,
+      2,
+      1,
+      0,
+      3,
+      1,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      4,
+      2,
+      2,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      9,
+      0,
+      1,
+      0,
+      2,
+      0,
+      0,
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      2,
+      0,
+      0,
+      1,
+      1,
+      1,
+      0,
+      3,
+      2,
+      0,
+      1,
+      2,
+      0,
+      2,
+      0
+    ]
+  }
+}

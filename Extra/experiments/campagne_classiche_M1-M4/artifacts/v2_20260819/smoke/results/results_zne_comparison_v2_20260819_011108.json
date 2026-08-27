@@ -1,0 +1,109 @@
+{
+  "schema_version": "2.0",
+  "timestamp": "2026-08-19T01:11:08.641159",
+  "config": {
+    "K_REPS": 1,
+    "SHOTS": 32,
+    "MAX_ITER": 1,
+    "zne_scaling": "eps_1q/eps_2q scalati; T1/T2 e readout fissi; non e gate-folding hardware"
+  },
+  "manifest": {
+    "circuit_revision": "shor-qpe-v2-amod15-correct",
+    "noise_model_revision": "uniform-rz-virtual-v2",
+    "circuit_sha256": "c7f4cf3bc1735dce9d5b56d8e09686ee4ab43cabead65e734ea23d5a50f4ba2c",
+    "basis_gates": [
+      "rz",
+      "sx",
+      "x",
+      "cx"
+    ],
+    "optimization_level": 2,
+    "seed_transpiler": 20260819,
+    "depth": 412,
+    "size": 604,
+    "gate_counts": {
+      "rz": 302,
+      "cx": 224,
+      "sx": 70,
+      "measure": 8,
+      "barrier": 1
+    },
+    "python": "3.12.3",
+    "packages": {
+      "numpy": "2.5.1",
+      "qiskit": "2.5.0",
+      "qiskit-aer": "0.17.2",
+      "scikit-learn": "1.9.0"
+    }
+  },
+  "strategies": {
+    "M1": {
+      "M_bar": 1.0,
+      "std": 0.0,
+      "success_rate": 1.0,
+      "shots_mean": 32.0,
+      "n_success": 1,
+      "all_iters": [
+        1
+      ],
+      "all_success": [
+        true
+      ],
+      "failure_sentinel": 2,
+      "all_shots": [
+        32
+      ]
+    },
+    "ZNE-2": {
+      "M_bar": 1.0,
+      "std": 0.0,
+      "success_rate": 1.0,
+      "shots_mean": 64.0,
+      "n_success": 1,
+      "all_iters": [
+        1
+      ],
+      "all_success": [
+        true
+      ],
+      "failure_sentinel": 2,
+      "all_shots": [
+        64
+      ]
+    },
+    "ZNE-3": {
+      "M_bar": 1.0,
+      "std": 0.0,
+      "success_rate": 1.0,
+      "shots_mean": 96.0,
+      "n_success": 1,
+      "all_iters": [
+        1
+      ],
+      "all_success": [
+        true
+      ],
+      "failure_sentinel": 2,
+      "all_shots": [
+        96
+      ]
+    },
+    "TOP4": {
+      "M_bar": 1.0,
+      "std": 0.0,
+      "success_rate": 1.0,
+      "shots_mean": 32.0,
+      "n_success": 1,
+      "all_iters": [
+        1
+      ],
+      "all_success": [
+        true
+      ],
+      "failure_sentinel": 2,
+      "all_shots": [
+        32
+      ]
+    }
+  }
+}

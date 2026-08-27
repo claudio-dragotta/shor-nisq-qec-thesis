@@ -1,0 +1,351 @@
+{
+  "schema_version": "2.0",
+  "created_at": "2026-08-26T09:16:50.560277+00:00",
+  "n_samples_per_use_case": 2000,
+  "shots": 1024,
+  "seed": 42,
+  "noise_factor": 0.5,
+  "label_top_k": [
+    1,
+    16
+  ],
+  "checkpoint_revision": "training-dataset-checkpoint-v1",
+  "manifest": {
+    "circuit_revision": "shor-qpe-v2-amod15-correct",
+    "noise_model_revision": "uniform-rz-virtual-v2",
+    "postprocess_revision": "seeded-sha256-tie-break-v1",
+    "circuit_sha256": "c7f4cf3bc1735dce9d5b56d8e09686ee4ab43cabead65e734ea23d5a50f4ba2c",
+    "basis_gates": [
+      "rz",
+      "sx",
+      "x",
+      "cx"
+    ],
+    "optimization_level": 2,
+    "seed_transpiler": 20260819,
+    "depth": 412,
+    "size": 604,
+    "gate_counts": {
+      "rz": 302,
+      "cx": 224,
+      "sx": 70,
+      "measure": 8,
+      "barrier": 1
+    },
+    "python": "3.12.3",
+    "packages": {
+      "numpy": "2.5.1",
+      "qiskit": "2.5.0",
+      "qiskit-aer": "0.17.2",
+      "scikit-learn": "1.9.0"
+    }
+  },
+  "outcomes": {
+    "UC1": {
+      "1": {
+        "schema_version": "2.0",
+        "created_at": "2026-08-26T08:43:05.030352+00:00",
+        "use_case": "UC1",
+        "label_top_k": 1,
+        "class_balance": {
+          "positive": 1262,
+          "negative": 738
+        },
+        "n_samples": 2000,
+        "shots": 1024,
+        "seed": 42,
+        "noise_base": {
+          "eps_1q": 0.001,
+          "eps_2q": 0.01,
+          "t1_ns": 100000,
+          "t2_ns": 80000,
+          "p_ro": 0.02
+        },
+        "noise_sampling": {
+          "distribution": "independent-uniform-relative",
+          "relative_half_width": 0.5,
+          "parameters": [
+            "eps_1q",
+            "eps_2q",
+            "t1_ns",
+            "t2_ns",
+            "p_ro"
+          ]
+        },
+        "manifest": {
+          "circuit_revision": "shor-qpe-v2-amod15-correct",
+          "noise_model_revision": "uniform-rz-virtual-v2",
+          "postprocess_revision": "seeded-sha256-tie-break-v1",
+          "circuit_sha256": "c7f4cf3bc1735dce9d5b56d8e09686ee4ab43cabead65e734ea23d5a50f4ba2c",
+          "basis_gates": [
+            "rz",
+            "sx",
+            "x",
+            "cx"
+          ],
+          "optimization_level": 2,
+          "seed_transpiler": 20260819,
+          "depth": 412,
+          "size": 604,
+          "gate_counts": {
+            "rz": 302,
+            "cx": 224,
+            "sx": 70,
+            "measure": 8,
+            "barrier": 1
+          },
+          "python": "3.12.3",
+          "packages": {
+            "numpy": "2.5.1",
+            "qiskit": "2.5.0",
+            "qiskit-aer": "0.17.2",
+            "scikit-learn": "1.9.0"
+          }
+        },
+        "trainable": true,
+        "metrics": {
+          "validation": {
+            "RandomForest": {
+              "f1": 0.8110749185667753,
+              "acc": 0.71,
+              "auc": 0.85372425997426
+            },
+            "SVM": {
+              "f1": 0.9080234833659491,
+              "acc": 0.8825,
+              "auc": 0.9597812097812098
+            },
+            "MLP": {
+              "f1": 0.8740458015267175,
+              "acc": 0.835,
+              "auc": 0.9397522522522522
+            }
+          },
+          "test": {
+            "f1": 0.918918918918919,
+            "acc": 0.895,
+            "auc": 0.9649560274560275
+          }
+        },
+        "selected_model": "SVM",
+        "model_path": "artifacts/v2_20260819/training/top1/clf_UC1.joblib"
+      },
+      "16": {
+        "schema_version": "2.0",
+        "created_at": "2026-08-26T08:43:41.816113+00:00",
+        "use_case": "UC1",
+        "label_top_k": 16,
+        "class_balance": {
+          "positive": 2000,
+          "negative": 0
+        },
+        "n_samples": 2000,
+        "shots": 1024,
+        "seed": 42,
+        "noise_base": {
+          "eps_1q": 0.001,
+          "eps_2q": 0.01,
+          "t1_ns": 100000,
+          "t2_ns": 80000,
+          "p_ro": 0.02
+        },
+        "noise_sampling": {
+          "distribution": "independent-uniform-relative",
+          "relative_half_width": 0.5,
+          "parameters": [
+            "eps_1q",
+            "eps_2q",
+            "t1_ns",
+            "t2_ns",
+            "p_ro"
+          ]
+        },
+        "manifest": {
+          "circuit_revision": "shor-qpe-v2-amod15-correct",
+          "noise_model_revision": "uniform-rz-virtual-v2",
+          "postprocess_revision": "seeded-sha256-tie-break-v1",
+          "circuit_sha256": "c7f4cf3bc1735dce9d5b56d8e09686ee4ab43cabead65e734ea23d5a50f4ba2c",
+          "basis_gates": [
+            "rz",
+            "sx",
+            "x",
+            "cx"
+          ],
+          "optimization_level": 2,
+          "seed_transpiler": 20260819,
+          "depth": 412,
+          "size": 604,
+          "gate_counts": {
+            "rz": 302,
+            "cx": 224,
+            "sx": 70,
+            "measure": 8,
+            "barrier": 1
+          },
+          "python": "3.12.3",
+          "packages": {
+            "numpy": "2.5.1",
+            "qiskit": "2.5.0",
+            "qiskit-aer": "0.17.2",
+            "scikit-learn": "1.9.0"
+          }
+        },
+        "trainable": false,
+        "reason": "single-class-dataset"
+      }
+    },
+    "UC2": {
+      "1": {
+        "schema_version": "2.0",
+        "created_at": "2026-08-26T09:15:58.180555+00:00",
+        "use_case": "UC2",
+        "label_top_k": 1,
+        "class_balance": {
+          "positive": 1453,
+          "negative": 547
+        },
+        "n_samples": 2000,
+        "shots": 1024,
+        "seed": 42,
+        "noise_base": {
+          "eps_1q": 0.005,
+          "eps_2q": 0.05,
+          "t1_ns": 50000,
+          "t2_ns": 30000,
+          "p_ro": 0.05
+        },
+        "noise_sampling": {
+          "distribution": "independent-uniform-relative",
+          "relative_half_width": 0.5,
+          "parameters": [
+            "eps_1q",
+            "eps_2q",
+            "t1_ns",
+            "t2_ns",
+            "p_ro"
+          ]
+        },
+        "manifest": {
+          "circuit_revision": "shor-qpe-v2-amod15-correct",
+          "noise_model_revision": "uniform-rz-virtual-v2",
+          "postprocess_revision": "seeded-sha256-tie-break-v1",
+          "circuit_sha256": "c7f4cf3bc1735dce9d5b56d8e09686ee4ab43cabead65e734ea23d5a50f4ba2c",
+          "basis_gates": [
+            "rz",
+            "sx",
+            "x",
+            "cx"
+          ],
+          "optimization_level": 2,
+          "seed_transpiler": 20260819,
+          "depth": 412,
+          "size": 604,
+          "gate_counts": {
+            "rz": 302,
+            "cx": 224,
+            "sx": 70,
+            "measure": 8,
+            "barrier": 1
+          },
+          "python": "3.12.3",
+          "packages": {
+            "numpy": "2.5.1",
+            "qiskit": "2.5.0",
+            "qiskit-aer": "0.17.2",
+            "scikit-learn": "1.9.0"
+          }
+        },
+        "trainable": true,
+        "metrics": {
+          "validation": {
+            "RandomForest": {
+              "f1": 0.8422575976845152,
+              "acc": 0.7275,
+              "auc": 0.7697121599041584
+            },
+            "SVM": {
+              "f1": 0.928695652173913,
+              "acc": 0.8975,
+              "auc": 0.9629874838424919
+            },
+            "MLP": {
+              "f1": 0.9059233449477352,
+              "acc": 0.865,
+              "auc": 0.9447019136794981
+            }
+          },
+          "test": {
+            "f1": 0.9228130360205832,
+            "acc": 0.8875,
+            "auc": 0.9576594470191369
+          }
+        },
+        "selected_model": "SVM",
+        "model_path": "artifacts/v2_20260819/training/top1/clf_UC2.joblib"
+      },
+      "16": {
+        "schema_version": "2.0",
+        "created_at": "2026-08-26T09:16:50.547307+00:00",
+        "use_case": "UC2",
+        "label_top_k": 16,
+        "class_balance": {
+          "positive": 2000,
+          "negative": 0
+        },
+        "n_samples": 2000,
+        "shots": 1024,
+        "seed": 42,
+        "noise_base": {
+          "eps_1q": 0.005,
+          "eps_2q": 0.05,
+          "t1_ns": 50000,
+          "t2_ns": 30000,
+          "p_ro": 0.05
+        },
+        "noise_sampling": {
+          "distribution": "independent-uniform-relative",
+          "relative_half_width": 0.5,
+          "parameters": [
+            "eps_1q",
+            "eps_2q",
+            "t1_ns",
+            "t2_ns",
+            "p_ro"
+          ]
+        },
+        "manifest": {
+          "circuit_revision": "shor-qpe-v2-amod15-correct",
+          "noise_model_revision": "uniform-rz-virtual-v2",
+          "postprocess_revision": "seeded-sha256-tie-break-v1",
+          "circuit_sha256": "c7f4cf3bc1735dce9d5b56d8e09686ee4ab43cabead65e734ea23d5a50f4ba2c",
+          "basis_gates": [
+            "rz",
+            "sx",
+            "x",
+            "cx"
+          ],
+          "optimization_level": 2,
+          "seed_transpiler": 20260819,
+          "depth": 412,
+          "size": 604,
+          "gate_counts": {
+            "rz": 302,
+            "cx": 224,
+            "sx": 70,
+            "measure": 8,
+            "barrier": 1
+          },
+          "python": "3.12.3",
+          "packages": {
+            "numpy": "2.5.1",
+            "qiskit": "2.5.0",
+            "qiskit-aer": "0.17.2",
+            "scikit-learn": "1.9.0"
+          }
+        },
+        "trainable": false,
+        "reason": "single-class-dataset"
+      }
+    }
+  }
+}
