@@ -1,162 +1,134 @@
 \begin{onehalfspace}
 
-Il Capitolo~\ref{chap:obiettivi} ha formalizzato il contratto sperimentale --- quattro use case, i parametri di rumore ipotizzati e le metriche di confronto --- e le sezioni precedenti hanno definito l'architettura della pipeline a tre stadi. Resta la terza domanda: che cosa è stato concretamente costruito. Le sezioni che seguono descrivono il setup dell'ambiente di esecuzione, l'integrazione dell'algoritmo di Shor con il simulatore rumoroso, l'implementazione dei due metodi di analisi della prima fase e, nella Sezione~\ref{sec:impl_qec}, quella dei codici correttori che costituiscono il nucleo della seconda. Non vengono qui riportati i risultati degli esperimenti --- quelli sono oggetto dei Capitoli~\ref{chap:risultati} e~\ref{chap:qec}--\ref{chap:integrazione} --- ma le scelte implementative, il codice sviluppato e la struttura del sistema che li ha prodotti.
+Il Capitolo~\ref{chap:obiettivi} ha formalizzato il contratto sperimentale versione~2: due preset rumorosi per N15, validazioni ideali separate per N21/N35 e confronto appaiato. Le sezioni seguenti descrivono il setup, l'integrazione di Shor con il simulatore, i metodi di analisi della prima fase e, nella Sezione~\ref{sec:impl_qec}, i codici correttori della seconda. Gli esiti quantitativi sono demandati agli artefatti schema~2 e ai capitoli dei risultati.
 
 % -----------------------------------------------
 \section{Setup dell'Ambiente di Esecuzione}
 \label{sec:setup}
 
-L'ambiente di esecuzione è stato configurato su \ac{WSL} (Ubuntu 22.04 LTS) su Windows 11. La scelta di WSL garantisce la compatibilità con l'ecosistema Linux di Qiskit e delle librerie scientifiche Python, mantenendo al contempo l'integrazione con l'ambiente di sviluppo Windows. Sebbene il sistema disponga di una \ac{GPU} NVIDIA RTX 4070, questa non è risultata utilizzabile per la simulazione quantistica in ambiente WSL2 (cfr. Sezione~\ref{sec:gpu_limit}); tutti gli esperimenti sono stati eseguiti su \ac{CPU}.
+L'ambiente Python è isolato in un virtual environment su \ac{WSL}; versioni di interprete, Qiskit, Aer, NumPy, SciPy e scikit-learn vengono registrate nel manifest di ogni artefatto. La campagna di riferimento usa Qiskit~2.5 e simulazione \ac{CPU}. Il Listato~\ref{lst:installazione_dellambiente_python_e} riporta le dipendenze necessarie.
 
-\subsection{Dipendenze e Virtual Environment}
-
-Tutte le dipendenze sono isolate in un virtual environment Python dedicato, per garantire la riproducibilità dell'ambiente (Listato~\ref{lst:installazione_dellambiente_python_e}).
-
-\subsection{Accelerazione GPU: Tentativo e Limitazione WSL}
+\subsection{Accelerazione GPU: limitazione dell'ambiente}
 \label{sec:gpu_limit}
 
-Il piano originale prevedeva l'uso di \texttt{qiskit-aer-gpu} con la scheda NVIDIA RTX 4070 per ridurre i tempi di simulazione di 10--20$\times$. Sebbene il driver CUDA per WSL rilevi correttamente la GPU (\texttt{AerSimulator.available\_devices()} restituisce \texttt{['GPU']}), il backend C++ di Qiskit Aer lancia un \texttt{RuntimeError} a runtime quando si tenta di eseguire un circuito con \texttt{device='GPU'} (Listato~\ref{lst:errore_gpu_su_wsl}).
-
-Questa limitazione è nota nell'ecosistema WSL: la modalità di accesso alla GPU tramite CUDA for WSL 2 non è ancora pienamente supportata dal backend \texttt{statevector} di Qiskit Aer nella versione installata. Tutti gli esperimenti sono stati eseguiti su CPU (modalità \texttt{statevector}). Il throughput misurato su macchina dedicata (22 core) è di $\approx 0.5$\,s per campione da $1\,024$ shot su 12 qubit, ossia circa mezzo millisecondo per traiettoria; il costo cresce però di oltre quattro ordini di grandezza per le istanze maggiori, ed è quantificato nel Capitolo~\ref{chap:risultati} (Tabella~\ref{tab:costo_simulazione}).
+L'accelerazione con \texttt{qiskit-aer-gpu} non è parte del contratto riproducibile: nell'ambiente WSL di sviluppo il backend ha prodotto l'errore riportato nel Listato~\ref{lst:errore_gpu_su_wsl}. Le campagne vengono pertanto orchestrate su CPU e il backend effettivo è registrato nei metadati.
 
 % -----------------------------------------------
 \section{L'Algoritmo di Shor: Implementazione di Riferimento}
 \label{sec:impl_shor}
 
-Il circuito dell'algoritmo di Shor è tratto dal repository open-source di riferimento \cite{github_shor}. L'implementazione costruisce il circuito per un generico numero $N$ e base $a$, usando $n_{\text{count}}$ qubit per il registro di controllo e $\lceil \log_2 N \rceil$ qubit per il registro di lavoro.
+L'implementazione costruisce la \ac{QPE} con un registro di conteggio, un registro di lavoro e la \ac{QFT} inversa. Il post-processing stima il periodo tramite frazioni continue e verifica i fattori non banali con il \ac{GCD} (Listato~\ref{lst:circuito_completo_di_shor}).
 
 \subsection{La Quantum Fourier Transform}
 
-La \ac{QFT} è la subroutine centrale del circuito. Il suo circuito è implementato ricorsivamente tramite porte di Hadamard e rotazioni di fase controllate $R_k = \mathrm{diag}(1,\, e^{2\pi i / 2^k})$ (Listato~\ref{lst:implementazione_della_quantum_fourier}).
+La \ac{QFT} inversa viene espressa mediante Hadamard, rotazioni di fase controllate e scambi (Listato~\ref{lst:implementazione_della_quantum_fourier}); la successiva compilazione riduce tutte le operazioni alla base nativa dichiarata.
 
 \subsection{La Moltiplicazione Modulare Controllata}
 
-Il blocco di \textit{modular exponentiation} implementa l'operazione $U_f\ket{x}\ket{y} = \ket{x}\ket{y \cdot a^x \bmod N}$. Per istanze concrete, questo blocco viene compilato come sequenza di porte SWAP che realizzano la permutazione degli stati della base computazionale indotta dall'operatore $x \mapsto ax \bmod N$ (Listato~\ref{lst:modular_exponentiation_per_n15}).
+Il blocco di \textit{modular exponentiation} implementa l'azione controllata
+\[
+U_a^x\ket{y}=\ket{a^x y\bmod N}.
+\]
+Per $N=15$, $a=7$, la rete textbook esegue realmente l'operazione elementare $\times7\bmod15$ \texttt{power} volte (Listato~\ref{lst:modular_exponentiation_per_n15}). Questo dettaglio corregge la precedente selezione mediante \texttt{power \% 4}, che non rappresentava $U^{\texttt{power}}$. Per $N=21$ e $N=35$ si usa l'aritmetica reversibile di Beauregard, validata idealmente mediante truth table, pulizia degli ausiliari e prove QPE.
 
-% Per UC3 (N=21) e UC4 (N=35) si usa c_amod() con UnitaryGate (matrice di
-% permutazione generale). La sintesi produce >8000 porte CX dopo traspilazione,
-% rendendo entrambi i use case inutilizzabili in regime NISQ (cfr. Sec. sec:impl_metodo1).
+\subsection{Compilazione del Circuito}
 
-\subsection{Circuito Completo e Post-Processing}
+La compilazione è centralizzata in una funzione comune a training, baseline e sweep. Il contratto fissa il livello di ottimizzazione a 2, il seed del transpiler e la base nativa \texttt{rz/sx/x/cx}. Nel manifest Qiskit~2.5 il circuito $N=15$, $a=7$, $n_{\text{count}}=8$ ha profondità 412 e contiene 224 porte \texttt{cx}; dimensione, conteggi completi e SHA-256 della netlist sono salvati insieme ai risultati.
 
-Il circuito completo combina i componenti precedenti nell'architettura a due registri dell'algoritmo di Shor. Il post-processing classico stima il periodo $r$ tramite frazioni continue e calcola i fattori tramite il \ac{GCD} (Listato~\ref{lst:circuito_completo_di_shor}).
+Per $N=21$, $a=2$, $n_{\text{count}}=8$, la compilazione globale Beauregard a livello~2 produce 21\,036 \texttt{cx} e profondità 23\,081. Il proxy circuitale registrato a $\lambda=10^{-3}$ è $7.2379\times10^{-10}$: documenta il costo della netlist, non la probabilità di successo dell'algoritmo. N21 e N35 sono quindi esclusi dalle campagne rumorose complete, ma non dalla validazione ideale.
 
 % -----------------------------------------------
 \section{Configurazione del Noise Model}
 \label{sec:noise_model}
 
-Il noise model è costruito con il modulo \texttt{qiskit\_aer.noise} e include le tre principali fonti di errore presenti nei processori superconduttori NISQ, in linea con i parametri di riferimento dell'hardware \texttt{ibm\_marrakesh} riportati nel tutorial ufficiale IBM \cite{ibm_shor_tutorial} (Listato~\ref{lst:costruzione_del_noise_model}).
+Il noise model è costruito con \texttt{qiskit\_aer.noise} come modello \textbf{uniforme illustrativo}, non come calibrazione di una QPU reale (Listato~\ref{lst:costruzione_del_noise_model}). Le rotazioni \texttt{rz} sono cambi di frame virtuali, con durata ed errore nulli; \texttt{sx/x} durano 50\,ns e \texttt{cx} 300\,ns. Depolarizzazione e rilassamento termico sono composti soltanto su \texttt{sx/x} e \texttt{cx}; il readout è una matrice di confusione simmetrica separata. I preset di riferimento e stress definiscono punti controllati nello spazio dei parametri e non rappresentano dati di calibrazione hardware.
+
+I simboli $\epsilon_{1q}$ e $\epsilon_{2q}$ usati dagli script sono il parametro Aer $\lambda$ di \texttt{depolarizing\_error}. Per un canale a due qubit, la probabilità aggregata della componente equivalente di Pauli non identità è $15\lambda/16$. Per i 224 \texttt{cx} del circuito N15 il proxy senza Pauli 2Q non identità è pertanto
+\begin{equation}
+    \left(1-\frac{15\lambda}{16}\right)^{224}.
+\end{equation}
+Non è $P(\text{successo})$ e non comprende rilassamento, errori 1Q o readout.
 
 % -----------------------------------------------
 \section{Implementazione del Metodo 1}
 \label{sec:impl_metodo1}
 
-Il Metodo 1 adotta la strategia \textit{TOP-1}: ad ogni iterazione esegue il circuito, identifica la misura più frequente nell'istogramma degli output e tenta la fattorizzazione tramite il post-processing classico. Il loop si interrompe non appena viene trovata una coppia di fattori non banali.
-
-Una scelta critica di implementazione riguarda la traspilazione del circuito. Affinché il noise model sia applicato correttamente a \emph{tutti} i gate, il simulatore deve essere istanziato con il noise model nel costruttore prima della traspilazione, e il livello di ottimizzazione deve essere pari a 2 (Listato~\ref{lst:pipeline_del_metodo_1}).
-
-Senza il noise model nel costruttore, Qiskit Aer non decompone le porte Toffoli (\texttt{CCX}) presenti nell'espansione di \texttt{.control()}: le 27 porte \texttt{CCX} del circuito per $N=15$ rimangono nella netlist finale come gate non rumorosi, rendendo la simulazione non fisicamente accurata. Con \texttt{optimization\_level=2} e il noise model nel costruttore, il circuito traspilato contiene esclusivamente porte elementari: per $N=15$, $a=7$, $n_{\text{count}}=8$ si ottengono 114 porte \texttt{cx}, 52 \texttt{cp}, 0 \texttt{ccx} e 0 \texttt{swap}, per una profondit\u00e0 complessiva di 311. Le porte soggette all'errore a due qubit sono dunque $k = 166$, non $114$: le \texttt{cp} della \ac{QFT} inversa appartengono al gate set nativo e sopravvivono alla traspilazione.\footnote{La ripartizione fra \texttt{cx} e \texttt{cp} dipende dalla versione del transpiler: le campagne riportate in questa tesi sono state eseguite con Qiskit 2.x, mentre versioni precedenti producevano 162 \texttt{cx} e 28 \texttt{cp} con profondit\u00e0 309 (cfr.\ Tabella~\ref{tab:sweep_optlevel}). Il totale $k$ \u00e8 assai pi\u00f9 stabile del solo conteggio \texttt{cx}: $166$ contro $194$.}
-
-\paragraph{Limite di scalabilità per UC3 e UC4.}
-Per $N=21$ e $N=35$, il blocco di moltiplicazione modulare viene implementato tramite \texttt{UnitaryGate} (matrice di permutazione) anzichè la decomposizione textbook valida solo per $N=15$. La sintesi di \texttt{UnitaryGate} da parte di Qiskit produce tuttavia circuiti con $>8000$ porte \texttt{cx} dopo la traspilazione, rendendo la probabilità di sopravvivenza coerente $(1 - \epsilon_{2q})^{8000} \approx 0$ già a $\epsilon_{2q} = 10^{-2}$. Entrambi i metodi risultano quindi inutilizzabili per UC3 e UC4 in regime NISQ: l'analisi scalabilità è discussa nel Capitolo~\ref{chap:risultati}.
+Il Metodo~1 adotta TOP-1: per ogni istogramma seleziona la prima misura nell'ordinamento per frequenza, tenta il post-processing e procede all'iterazione successiva in caso di fallimento. I pareggi sono risolti da una priorità SHA-256 calcolata a partire da seed e bitstring, così il risultato non dipende dall'ordine del dizionario o dal valore numerico del candidato (Listato~\ref{lst:pipeline_del_metodo_1}).
 
 % -----------------------------------------------
 \section{Implementazione del Metodo 2}
 \label{sec:impl_metodo2}
 
-Il Metodo 2 si articola in due fasi: la generazione del dataset e l'addestramento del classificatore (fase offline), e l'uso del classificatore con ricerca \textit{TOP-K} per identificare i fattori corretti (fase online).
+Il Metodo~2 comprende la generazione del dataset e l'addestramento offline, seguiti dal filtro del classificatore e dalla ricerca TOP-4 online.
 
-\subsection{Generazione del Dataset e Definizione dell'Etichetta}
+\subsection{Dataset ed Etichette}
 
-Il dataset viene generato eseguendo il circuito con parametri di rumore variabili nell'intorno dei valori nominali (fattore di variazione $\pm 50\%$). La stessa traspilazione con \texttt{optimization\_level=2} è usata per tutti i campioni, variando solo il noise model a run-time per efficienza.
+La stessa netlist compilata viene riusata per tutti i campioni e cambia soltanto il noise model. Da ciascun istogramma vengono calcolate nello stesso passaggio le etichette TOP-1 e TOP-16: in questo modo l'effetto della definizione del target è auditabile senza introdurre dataset diversi (Listato~\ref{lst:generazione_del_dataset_con}). La pipeline M2 accetta soltanto un modello schema~2 con \texttt{label\_top\_k=1} e manifest compatibile; TOP-16 resta un controllo di sensibilità.
 
-L'etichetta di un campione vale 1 se \emph{almeno uno} dei \textsc{TOP\_K=16} misure più frequenti nell'istogramma corrisponde a fattori non banali. Questa definizione è coerente con la strategia di inferenza del Metodo 2: il classificatore impara a riconoscere gli istogrammi che ``contengono segnale QPE utile'', indipendentemente da quale specifica misura sia la moda.
+\subsection{Addestramento e Compatibilità}
 
-\noindent\emph{Si veda il Listato~\ref{lst:generazione_del_dataset_con}.}
+L'addestramento confronta Random Forest, \ac{SVM} con kernel RBF e \ac{MLP} con split stratificato e seed registrato. Le metriche e la selezione finale provengono dalla rigenerazione sul circuito corretto; i valori della campagna precedente non vengono riutilizzati. Il file del modello include schema, revisione e hash del circuito, preset, seed e definizione dell'etichetta. L'inferenza rifiuta un classificatore incompatibile. L'audit delle etichette è descritto nella Sezione~\ref{app:classificatore} dell'Appendice~\ref{app:fase1}.
 
-\subsection{Addestramento e Selezione del Modello}
+\subsection{Inferenza}
 
-L'addestramento confronta tre architetture con scikit-learn \cite{scikit_learn}: \textbf{Random Forest} (200 alberi), \textbf{\ac{SVM}} con kernel RBF e \textbf{\ac{MLP}} con architettura $(256, 128)$. Il modello con F1-score più elevato sul test set (suddivisione 80/20 stratificata) viene serializzato per l'inferenza tramite \texttt{joblib}.
-
-La selezione del modello è stata eseguita su 2000 campioni per ciascun use case, con split stratificato 80/20 e criterio di scelta basato sull'F1-score: risulta selezionato il Random Forest per UC1 e l'\ac{SVM} per UC2, entrambi con metriche di classificazione elevate (F1 fino a $0.98$, \ac{AUC} fino a $0.99$).
-
-\noindent Le metriche complete dei tre modelli sui due use case, con le curve ROC e laudit delle etichette di addestramento, sono nella Sezione~\ref{app:classificatore} dellAppendice~
-ef{app:fase1}.
-
-Il \textbf{Random Forest} è il modello ottimale per UC1 (F1=0.949, \ac{AUC}=0.964), dove la maggiore variabilità dell'istogramma — il dataset ha il 25.8\% di esempi negativi — favorisce un classificatore ensemble capace di catturare relazioni non lineari tra le feature. Per UC2, tutti e tre i modelli raggiungono prestazioni quasi identiche (F1 $>$ 0.97): la scelta ricade sull'\textbf{\ac{SVM}} per il margine minimo di F1-score. In entrambi i casi, i valori di \ac{AUC}-ROC $>$ 0.96 indicano una buona separabilità delle classi nello spazio delle feature istogramma.
-
-\subsection{Inferenza: Classificatore + Ricerca TOP-K}
-
-In fase di inferenza il Metodo 2 adotta un design a due livelli. Il classificatore agisce da \textbf{gate di qualità} (primo livello): decide se l'istogramma corrente ``contiene segnale QPE'' (label positiva per TOP\_K=16) oppure è dominato dal rumore. Se il classificatore accetta l'istogramma, la \textbf{ricerca TOP-4} (secondo livello) tenta i 4 candidati più frequenti in ordine decrescente, restituendo il primo che produce fattori non banali.
-
-L'asimmetria tra TOP\_K=16 per le etichette di training e top\_k=4 per l'inferenza è intenzionale: il classificatore impara a rilevare la presenza di segnale QPE su una finestra ampia, mentre la ricerca usa una finestra stretta per limitare i tentativi per iterazione. Rispetto al Metodo 1, questa strategia trova la fase corretta anche quando il picco è stato spostato dal rumore: se la moda è $65$ invece di $64$, il Metodo 1 fallisce, ma il Metodo 2 trova $64$ tra i top-4 candidati.
-
-\noindent\emph{Si veda il Listato~\ref{lst:loop_di_inferenza_del}.}
+Il classificatore agisce da gate di qualità. Se accetta l'istogramma, M2 tenta fino a quattro candidati nello stesso ordinamento usato da TOP-4. M1, TOP-4 e M2 ricevono quindi gli stessi conteggi, lo stesso seed di tie-break e lo stesso post-processing (Listato~\ref{lst:loop_di_inferenza_del}).
 
 % -----------------------------------------------
 \section{Infrastruttura di Test e Raccolta Dati}
 \label{sec:infrastruttura}
 
-Per garantire la riproducibilità e la comparabilità dei risultati, tutti i use case vengono eseguiti tramite uno script di orchestrazione (\texttt{run\_experiments.py}). Per UC1 e UC2 vengono eseguite $K=30$ ripetizioni di entrambi i metodi; per UC3 e UC4, dove solo il Metodo 1 è applicabile a causa della profondità del circuito, $K=10$ ripetizioni con analisi esclusiva della scalabilità. I risultati vengono salvati in formato JSON con timestamp e parametri completi, per consentire l'analisi a posteriori (Listato~\ref{lst:schema_di_orchestrazione_degli}).
+Le campagne N15 usano $K=30$ repliche e un'output directory esplicita. Per ogni iterazione,
+\begin{equation}
+\texttt{seed\_simulator}=\texttt{rep}\cdot1\,000\,000+\texttt{iteration}\cdot10\,000,
+\end{equation}
+una distanza superiore al numero di shot che evita la sovrapposizione quasi completa degli stream Aer prodotta da semi consecutivi. Una sola simulazione genera l'istogramma comune alle tre strategie.
 
-Il seed di ogni ripetizione viene calcolato come \texttt{seed = rep} e propagato al simulatore come \texttt{seed\_simulator = rep * 10000 + iteration}, garantendo che ogni ripetizione e ogni iterazione interna abbiano realizzazioni di rumore indipendenti e riproducibili.
+La prima iterazione di successo viene registrata separatamente per M1, TOP-4 e M2. Un fallimento entro \texttt{max\_iter} è codificato, per il test inferenziale, con la sentinella \texttt{max\_iter + 1}. I confronti usano il Wilcoxon appaiato con \texttt{zero\_method='pratt'}: unilaterale per M1$>$TOP-4 e M1$>$M2, bilaterale per TOP-4--M2. L'output JSON schema~2 include input completi, vettori appaiati, seed, test, versioni software, hash e manifest della compilazione (Listato~\ref{lst:schema_di_orchestrazione_degli}).
 
 % -----------------------------------------------
 \section{Implementazione della Correzione d'Errore}
 \label{sec:impl_qec}
 
-Quanto descritto finora realizza la prima fase sperimentale. La seconda --- i codici correttori e la loro integrazione con Shor --- richiede strumenti e strutture dati differenti, perché differente è la natura dei circuiti: non più un singolo circuito profondo di cui interessa l'istogramma finale, ma circuiti poco profondi eseguiti milioni di volte, di cui interessa la \emph{sindrome}. Questa sezione descrive come tale seconda infrastruttura è stata costruita.
+La seconda fase richiede strumenti differenti: non più un singolo circuito profondo di cui interessa l'istogramma finale, ma circuiti di memoria di cui interessa la \emph{sindrome}.
 
 \subsection{Organizzazione del codice e divisione degli strumenti}
-
-Il codice sperimentale è organizzato in una cartella per milestone, ciascuna contenente il proprio script, i risultati in formato JSON e un file di documentazione che ne dichiara i criteri di validazione. La divisione degli strumenti segue la natura dei circuiti, secondo il criterio già motivato nella Sezione~\ref{chap:strumenti}.
 
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{llll}
+\begin{tabularx}{\textwidth}{lXXX}
 \toprule
 \textbf{Cartella} & \textbf{Oggetto} & \textbf{Strumento} & \textbf{Costo dominante} \\
 \midrule
-\texttt{M5\_repetition\_code}  & codice a ripetizione   & Qiskit Aer        & trascurabile \\
-\texttt{M6\_steane\_code}      & Steane $[[7,1,3]]$     & Qiskit Aer        & Monte Carlo Pauli \\
-\texttt{M7\_surface\_code}     & surface code           & Stim + PyMatching & decodifica \\
-\texttt{M8\_shor\_logico}      & Shor logico            & Qiskit Aer        & simulazione statevector \\
-\texttt{M10\_neural\_decoder}  & decodifica appresa     & Stim + scikit-learn & addestramento \\
+\texttt{M5}  & codice a ripetizione   & Qiskit Aer        & trascurabile \\
+\texttt{M6}  & Steane $[[7,1,3]]$     & Qiskit Aer        & Monte Carlo Pauli \\
+\texttt{M7}  & surface code           & Stim + PyMatching & decodifica \\
+\texttt{M8}  & proxy per gate su Shor & Qiskit Aer        & matrix product state \\
+\texttt{M10} & decodifica appresa     & Stim + scikit-learn & addestramento \\
 \bottomrule
-\end{tabular}
-\caption[Organizzazione del codice della parte QEC]{Struttura del codice sperimentale della seconda fase. I circuiti dei codici correttori sono \emph{stabilizer} e vengono trattati con Stim dove la scala lo richiede; quelli che contengono operazioni non-Clifford --- lo Shor logico --- restano su Qiskit Aer.}
+\end{tabularx}
+\caption[Organizzazione del codice della parte QEC]{Struttura del codice sperimentale della seconda fase. I circuiti stabilizer vengono trattati con Stim dove la scala lo richiede; lo Shor logico resta su Qiskit Aer.}
 \label{tab:organizzazione_qec}
 \end{table}
 
 \subsection{Il codice a ripetizione: sindrome senza collasso}
 
-L'implementazione del codice a ripetizione realizza in forma esplicita il ciclo descritto nel Capitolo~\ref{chap:qec}. Il punto delicato non è la codifica, ma il fatto che la misura di sindrome non deve collassare lo stato logico: per questo gli stabilizzatori sono misurati \emph{indirettamente}, copiandone la parità su due qubit ancillari che vengono poi letti al posto dei dati.
-
-\noindent\emph{Si veda il Listato~\ref{lst:qec_repetition}.}
-
-Merita attenzione la scelta del \textbf{punto di iniezione del rumore}. Poiché il noise model di Aer associa gli errori alle \emph{porte}, e non al tempo trascorso, per applicare un canale d'errore a probabilità nota sui soli qubit dati si inseriscono porte identità in corrispondenza dell'istante in cui il rumore deve agire: l'identità non altera lo stato ideale ma costituisce l'aggancio a cui il modello di rumore associa il canale. È una tecnica standard e rende il parametro $p$ delle curve del Capitolo~\ref{chap:qec} esattamente la probabilità di errore per qubit, anziché una quantità effettiva da calibrare.
+Gli stabilizzatori sono misurati indirettamente, copiandone la parità su qubit ancillari invece di misurare i dati. Porte identità poste nel punto di iniezione del rumore costituiscono l'aggancio a cui Aer associa il canale, senza alterare lo stato ideale (Listato~\ref{lst:qec_repetition}).
 
 \subsection{Il codice di Steane}
 
-Per lo Steane la difficoltà implementativa si sposta sulla \textbf{preparazione dello stato logico}. Lo stato $\ket{0_L}$ è la sovrapposizione uniforme degli otto \textit{codeword}, e si ottiene senza scriverli esplicitamente: si individuano i tre qubit che compaiono in un solo stabilizzatore di tipo X --- i ``semi'' --- li si pone in sovrapposizione con una porta di Hadamard, e si propaga ciascun seme sul proprio supporto con una rete di CNOT.
-
-\noindent\emph{Si veda il Listato~\ref{lst:qec_steane}.}
-
-La stima della curva $p \rightarrow p_L$ non viene condotta simulando il circuito completo per ogni campione, ma nel \textbf{formalismo di Pauli}: si campiona un errore di Pauli per qubit con probabilità $p$, se ne calcola la sindrome come prodotto scalare binario con le matrici di parità, si applica la correzione a peso minimo dalla lookup table e si verifica se il residuo contiene un operatore logico non banale. Questa scelta rende trattabili i $200\,000$ campioni per punto e non introduce approssimazioni, perché per errori di Pauli e circuiti Clifford il risultato coincide con quello della simulazione esplicita. Ne discende però il limite dichiarato nel Capitolo~\ref{chap:qec}: l'estrazione di sindrome così modellata è \emph{ideale}, cioè le ancilla non sono soggette a errore, e il protocollo non è fault-tolerant.
+Lo stato $\ket{0_L}$ è preparato individuando tre qubit ``seme'', ponendoli in sovrapposizione e propagandone il supporto con CNOT (Listato~\ref{lst:qec_steane}). La stima di $p_L$ usa il formalismo di Pauli e una lookup table a peso minimo; il limite dichiarato è che l'estrazione di sindrome così modellata è ideale e non costituisce un protocollo fault-tolerant.
 
 \subsection{Il surface code e l'iniezione del crosstalk}
 
-Per il surface code la generazione del circuito e la decodifica sono demandate a Stim e PyMatching secondo lo schema riportato nel Capitolo~\ref{chap:surface} (Listato~\ref{lst:stim_pymatching}). L'unico intervento non standard riguarda l'esperimento sul rumore correlato della Sezione~\ref{sec:decodifica_appresa}, che richiede di aggiungere al circuito generato un canale a due qubit fra dati adiacenti. Poiché Stim rappresenta i cicli intermedi con un blocco \texttt{REPEAT}, l'inserimento deve procedere ricorsivamente sulla struttura del circuito (Listato~\ref{lst:crosstalk}).
-
-Le coppie su cui il canale agisce sono determinate dalle coordinate della griglia: due qubit dati adiacenti distano 2 nel sistema di riferimento del layout ruotato, poiché fra di essi si trova un qubit di misura. L'identificazione dei qubit di misura richiede una cautela: nel \textit{memory experiment} l'ultima operazione legge \emph{anche} i qubit dati, sicché l'insieme dei qubit misurati nel circuito completo non è discriminante; si usa quindi il primo \texttt{MR}, che corrisponde al primo ciclo di estrazione della sindrome.
+Stim genera il circuito e PyMatching esegue la decodifica. Per lo studio del rumore correlato, il canale fra dati adiacenti viene inserito ricorsivamente anche nei blocchi \texttt{REPEAT}; i qubit di misura sono identificati dal primo \texttt{MR}, non dalla misura finale che include anche i dati (Listato~\ref{lst:crosstalk}).
 
 \subsection{Lo Shor logico e il decoder appreso}
 
-Il modello a livelli del Capitolo~\ref{chap:integrazione} è realizzato applicando un canale depolarizzante di intensità $p_L$ dopo ogni porta del circuito di Shor, con $p_L$ trattato come parametro libero: il circuito è quello della Sezione~\ref{sec:impl_shor}, e cambia soltanto il modello di rumore associato. Il decoder appreso, infine, non richiede alcuna infrastruttura di generazione del dataset, perché i dati di addestramento coincidono con l'output del campionatore di Stim --- la matrice dei \textit{detection events} come variabile indipendente, l'esito dell'osservabile logico come etichetta. È il motivo per cui il confronto con il \ac{MWPM} è leale per costruzione: i due decoder ricevono esattamente la stessa informazione, e differiscono solo per come la usano.
+Nel modello a livelli, $p_L$ è definito come probabilità totale del Pauli non identità dopo ogni gate compilato modellato. Prima di chiamare Aer viene convertito nel parametro depolarizzante: $\lambda_1=4p_L/3$ per un gate 1Q e $\lambda_2=16p_L/15$ per un gate 2Q. Le \texttt{rz} restano virtuali, mentre il canale viene associato a \texttt{sx/x} e \texttt{cx}. Questo sweep è un modello illustrativo per gate e non identifica direttamente il logical error rate per round o memoria dei codici M6/M7 senza un mapping separato. Il decoder appreso e \ac{MWPM} ricevono gli stessi \textit{detection events}.
 
 \subsection{Riproducibilità}
 
-Ogni script accetta un seed che viene propagato a tutte le sorgenti di casualità --- il campionatore di Stim, il generatore Monte Carlo e l'inizializzazione della rete --- e lo registra nel JSON dei risultati insieme al numero di campioni e ai parametri del modello di rumore. Le figure dei Capitoli~\ref{chap:qec}--\ref{chap:integrazione} sono prodotte da script dedicati che leggono quei JSON, cosicché nessun valore riportato in tesi è trascritto a mano. Questa disciplina ha una motivazione concreta: durante la revisione finale si è scoperto che il seed della campagna sul surface code, pur essendo accettato e registrato, non veniva propagato al campionatore; l'anomalia è stata corretta e la campagna rieseguita, con risultati coincidenti entro l'errore statistico.
+Ogni script propaga il seed alle sorgenti di casualità e lo registra nel JSON insieme a campioni, parametri e versioni. Le figure vengono generate leggendo gli artefatti, senza trascrivere manualmente i valori.
 
 \end{onehalfspace}

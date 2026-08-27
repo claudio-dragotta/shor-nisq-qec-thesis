@@ -12,6 +12,8 @@ Eseguire da WSL con quantum-env attivato:
   python generate_figures.py
 """
 
+import argparse
+import json
 from pathlib import Path
 
 import joblib
@@ -20,17 +22,21 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-from scipy.stats import mannwhitneyu
 from sklearn.metrics import roc_curve, auc
 
-from shor_core import build_noise_model, shor_circuit, run_method1, run_method2
-from qiskit import transpile
+from shor_core import (
+    build_noise_model,
+    compile_shor_circuit,
+    experiment_manifest,
+)
 from qiskit_aer import AerSimulator
 
 # Percorso relativo alla posizione di questo file, non alla cwd: il riordino del
 # 2026-07-09 ha spostato lo script in Extra/experiments/campagne_classiche_M1-M4/,
 # e il vecchio '../file_latex/figure' non punta piu' alla cartella delle figure.
-OUT_DIR = str(Path(__file__).resolve().parents[3] / 'file_latex' / 'figure')
+OUT_DIR = Path(__file__).resolve().parents[3] / 'file_latex' / 'figure'
+MODEL_DIR = Path('.')
+BASELINE_JSON = None
 FIGSIZE_WIDE  = (10, 4)
 FIGSIZE_SQUARE = (6, 5)
 FIGSIZE_BOX   = (6, 5)
@@ -47,20 +53,33 @@ def fig_istogrammi_qpe():
     print('Generazione fig_istogrammi_qpe.pdf ...')
     nm = build_noise_model(**NOISE_REALISTIC)
     sim = AerSimulator(noise_model=nm, method='statevector')
-    qc  = shor_circuit(15, 7, 8)
-    tc  = transpile(qc, sim, optimization_level=2)
+    tc  = compile_shor_circuit(15, 7, 8)
 
-    # Seed 0 → tipicamente buon segnale per UC1
-    counts_good = sim.run(tc, shots=1024, seed_simulator=1).result().get_counts()
-    # Seed 6 → iterazione difficile (segnale debole, trovato empiricamente con M1 K=30)
-    counts_flat = sim.run(tc, shots=1024, seed_simulator=60001).result().get_counts()
+    # Selezione dichiarata e riproducibile: tra le prime 30 repliche della campagna
+    # scegli i campioni con minima/massima massa sui quattro picchi teorici.
+    candidates = []
+    theoretical_peaks = {0, 64, 128, 192}
+    for rep in range(30):
+        simulator_seed = rep * 1_000_000 + 10_000
+        counts = sim.run(
+            tc, shots=1024, seed_simulator=simulator_seed
+        ).result().get_counts()
+        peak_mass = sum(
+            value for bits, value in counts.items()
+            if int(bits, 2) in theoretical_peaks
+        ) / 1024
+        candidates.append((peak_mass, rep, simulator_seed, counts))
+    weakest = min(candidates, key=lambda item: (item[0], item[1]))
+    strongest = max(candidates, key=lambda item: (item[0], -item[1]))
+    counts_good = strongest[3]
+    counts_flat = weakest[3]
 
     fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_WIDE)
 
     for ax, counts, title, color in zip(
         axes,
         [counts_good, counts_flat],
-        ['Iterazione con segnale QPE', 'Iterazione dominata dal rumore'],
+        ['Campione più concentrato sui picchi', 'Campione meno concentrato sui picchi'],
         ['steelblue', 'tomato']
     ):
         x = np.arange(256)
@@ -82,11 +101,34 @@ def fig_istogrammi_qpe():
     axes[0].annotate('128', xy=(128, axes[0].get_ylim()[1]*0.95), ha='center', fontsize=9)
     axes[0].annotate('192', xy=(192, axes[0].get_ylim()[1]*0.95), ha='center', fontsize=9)
 
-    fig.suptitle('Istogrammi QPE — UC1 ($N=15$, NISQ-realistico)', fontsize=12)
+    fig.suptitle(
+        'Istogrammi QPE — UC1 ($N=15$, preset uniforme di riferimento)',
+        fontsize=12,
+    )
     plt.tight_layout()
-    path = f'{OUT_DIR}/fig_istogrammi_qpe.pdf'
+    path = OUT_DIR / 'fig_istogrammi_qpe.pdf'
     plt.savefig(path, bbox_inches='tight')
     plt.close()
+    provenance = {
+        'schema_version': '2.0',
+        'artifact_type': 'qpe-histogram-selection-provenance',
+        'manifest': experiment_manifest(),
+        'noise': dict(NOISE_REALISTIC),
+        'selection_rule': 'max/min theoretical-peak mass over campaign reps 0..29',
+        'candidate_replicates': list(range(30)),
+        'shots': 1024,
+        'strongest': {
+            'rep': strongest[1], 'seed_simulator': strongest[2],
+            'peak_mass': strongest[0],
+        },
+        'weakest': {
+            'rep': weakest[1], 'seed_simulator': weakest[2],
+            'peak_mass': weakest[0],
+        },
+    }
+    (OUT_DIR / 'fig_istogrammi_qpe_provenance.json').write_text(
+        json.dumps(provenance, indent=2), encoding='utf-8'
+    )
     print(f'  → {path}')
 
 
@@ -98,15 +140,28 @@ def fig_roc_curve():
     print('Generazione fig_roc_curve.pdf ...')
 
     fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_WIDE)
+    current_manifest = experiment_manifest()
 
     configs = [
-        ('UC1', 'clf_UC1.joblib', NOISE_REALISTIC, 'steelblue', 'Random Forest'),
-        ('UC2', 'clf_UC2.joblib', NOISE_DEGRADED,  'darkorange', 'SVM'),
+        ('UC1', 'clf_UC1.joblib', NOISE_REALISTIC, 'steelblue'),
+        ('UC2', 'clf_UC2.joblib', NOISE_DEGRADED,  'darkorange'),
     ]
 
-    for ax, (uc_name, clf_path, noise_params, color, model_name) in zip(axes, configs):
-        data = joblib.load(clf_path)
+    for ax, (uc_name, clf_path, noise_params, color) in zip(axes, configs):
+        data = joblib.load(MODEL_DIR / clf_path)
+        model_manifest = data.get('manifest', {})
+        required = (
+            'circuit_sha256', 'circuit_revision', 'noise_model_revision',
+            'postprocess_revision',
+        )
+        if (data.get('schema_version') != '2.0'
+                or data.get('label_top_k') != 1
+                or data.get('use_case') != uc_name
+                or any(model_manifest.get(key) != current_manifest.get(key)
+                       for key in required)):
+            raise ValueError(f'Modello storico o incompatibile: {clf_path}')
         clf    = data['clf']
+        model_name = data['name']
         X_test = data['X_test']
         y_test = data['y_test']
 
@@ -130,7 +185,7 @@ def fig_roc_curve():
 
     fig.suptitle('Curve ROC dei classificatori selezionati', fontsize=12)
     plt.tight_layout()
-    path = f'{OUT_DIR}/fig_roc_curve.pdf'
+    path = OUT_DIR / 'fig_roc_curve.pdf'
     plt.savefig(path, bbox_inches='tight')
     plt.close()
     print(f'  → {path}')
@@ -140,39 +195,20 @@ def fig_roc_curve():
 # Figura 3: Distribuzione iterazioni M1 vs M2 (UC1)
 # ──────────────────────────────────────────────
 
-def _run_method_top4(N, a, n_count, noise_model, shots=1024, max_iter=50, seed=42):
-    """TOP-4 senza classificatore (ablazione)."""
-    from shor_core import extract_factors, shor_circuit
-    from qiskit import transpile
-    base_qc = shor_circuit(N, a, n_count)
-    sim = AerSimulator(noise_model=noise_model, method='statevector')
-    tc = transpile(base_qc, sim, optimization_level=2)
-    for iteration in range(1, max_iter + 1):
-        counts = sim.run(tc, shots=shots,
-                         seed_simulator=seed * 1_000_000 + iteration * 10_000).result().get_counts()
-        for meas_str, _ in sorted(counts.items(), key=lambda x: x[1], reverse=True)[:4]:
-            p, q = extract_factors(int(meas_str, 2), n_count, N, a)
-            if p is not None:
-                return iteration
-    return max_iter
-
-
 def fig_iterazioni_m1_m2():
-    print('Raccolta dati iterazioni M1 / M_TOP4 / M2 su UC1 (K=30) ...')
-    nm  = build_noise_model(**NOISE_REALISTIC)
-    data = joblib.load('clf_UC1.joblib')
-    clf  = data['clf']
-
-    K = 30
-    m1_iters, mt4_iters, m2_iters = [], [], []
-    for rep in range(K):
-        print(f'  rep {rep+1}/{K}', end='\r', flush=True)
-        r1 = run_method1(15, 7, 8, nm, shots=1024, max_iter=50, seed=rep)
-        r2 = run_method2(15, 7, 8, nm, clf, shots=1024, max_iter=50, seed=rep)
-        m1_iters.append(r1['iterations'])
-        mt4_iters.append(_run_method_top4(15, 7, 8, nm, shots=1024, max_iter=50, seed=rep))
-        m2_iters.append(r2['iterations'])
-    print()
+    print(f'Caricamento iterazioni v2 da {BASELINE_JSON} ...')
+    payload = json.loads(Path(BASELINE_JSON).read_text(encoding='utf-8'))
+    if (payload.get('schema_version') != '2.0'
+            or payload.get('analysis_revision')
+            != 'baseline-shared-hist-ties-holm-v3'):
+        raise ValueError('baseline-json non appartiene al contratto baseline v3')
+    uc1 = next(item for item in payload['use_case'] if item['use_case'] == 'UC1')
+    max_iter = int(uc1['max_iter'])
+    m1_iters = uc1['_iterazioni']['M1']
+    mt4_iters = uc1['_iterazioni']['M_TOP4']
+    m2_iters = uc1['_iterazioni']['M2']
+    if m2_iters is None:
+        raise ValueError('La baseline UC1 non contiene M2: modello TOP-1 mancante.')
 
     m1  = np.array(m1_iters)
     mt4 = np.array(mt4_iters)
@@ -194,22 +230,31 @@ def fig_iterazioni_m1_m2():
 
     y_max = max(m1.max(), mt4.max(), m2.max())
     for i, arr in enumerate([m1, mt4, m2], start=1):
-        ax.text(i, arr.mean() + 0.06 * y_max, f'$\\bar{{M}}={arr.mean():.2f}$',
+        successful = arr[arr <= max_iter]
+        mean_success = successful.mean() if len(successful) else float('nan')
+        censored = len(arr) - len(successful)
+        ax.text(i, arr.mean() + 0.06 * y_max,
+                f'$\\bar{{M}}_{{succ}}={mean_success:.2f}$\n'
+                f'cens.={censored}',
                 ha='center', fontsize=9, color='black')
 
-    # p-value M1 vs M_TOP4
-    _, p1 = mannwhitneyu(m1, mt4, alternative='greater')
-    # p-value M_TOP4 vs M2 (ablazione)
-    _, p2 = mannwhitneyu(mt4, m2, alternative='less')
+    # p-value corretti per i tre confronti della famiglia baseline.
+    p1 = uc1['wilcoxon_M1_gt_TOP4'].get(
+        'p_holm', uc1['wilcoxon_M1_gt_TOP4']['p']
+    )
+    p2 = uc1['wilcoxon_M2_vs_TOP4'].get(
+        'p_holm', uc1['wilcoxon_M2_vs_TOP4']['p']
+    )
     ax.text(0.98, 0.97,
-            f'M1$>$$M_{{\\mathrm{{TOP4}}}}$: $p={p1:.4f}$\n'
-            f'Ablazione $M_{{\\mathrm{{TOP4}}}}$vs M2: $p={p2:.3f}$',
+            f'M1$>$$M_{{\\mathrm{{TOP4}}}}$: $p_{{\\rm Holm}}={p1:.4f}$\n'
+            f'Ablazione bilaterale: $p_{{\\rm Holm}}={p2:.3f}$',
             transform=ax.transAxes, ha='right', va='top', fontsize=8,
             bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.8))
 
     ax.set_ylabel('Iterazioni per ottenere i fattori corretti', fontsize=10)
     ax.set_title('UC1 — Analisi di ablazione: M1, $M_{\\mathrm{TOP4}}$, M2\n'
-                 '($N=15$, NISQ-realistico, $K=30$, $M_{\\mathrm{max}}=50$)', fontsize=11)
+                 '($N=15$, preset uniforme di riferimento, $K=30$, '
+                 '$M_{\\mathrm{max}}=50$)', fontsize=11)
     # Scala adattiva: con il seeding corretto le iterazioni restano sotto la decina,
     # e un asse fisso a M_max = 50 schiaccerebbe i tre box sulla linea di base.
     ax.set_ylim(0, y_max * 1.25)
@@ -217,23 +262,30 @@ def fig_iterazioni_m1_m2():
     ax.text(3.38, 1.05, 'ottimo', fontsize=8, color='gray')
 
     plt.tight_layout()
-    path = f'{OUT_DIR}/fig_iterazioni_m1_m2.pdf'
+    path = OUT_DIR / 'fig_iterazioni_m1_m2.pdf'
     plt.savefig(path, bbox_inches='tight')
     plt.close()
     print(f'  → {path}')
 
 
 if __name__ == '__main__':
-    import os
-    os.makedirs(OUT_DIR, exist_ok=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--output-dir', type=Path, required=True)
+    parser.add_argument('--model-dir', type=Path, required=True)
+    parser.add_argument('--baseline-json', type=Path, required=True)
+    args = parser.parse_args()
+    OUT_DIR = args.output_dir
+    MODEL_DIR = args.model_dir
+    BASELINE_JSON = args.baseline_json
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Figura 1: solo simulazione leggera (2 run × 1024 shot)
+    # Figura 1: selezione riproducibile su 30 run x 1024 shot.
     fig_istogrammi_qpe()
 
     # Figura 2: usa solo i .joblib già addestrati
     fig_roc_curve()
 
-    # Figura 3: ri-esegue K=30 run (stessi seed deterministici di mwu_analysis.py)
+    # Figura 3: usa esclusivamente il JSON baseline v2, senza rilanciare la campagna.
     fig_iterazioni_m1_m2()
 
     print('\nTutte le figure generate.')

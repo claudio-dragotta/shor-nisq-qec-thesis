@@ -1,0 +1,11 @@
+Artefatto v2: artifacts/v2_20260819/diagnostics/diagnostic_effective_signal_fraction_v2.json
+ lambda_2q   massa picchi   f efficace   proxy no-evento-2Q
+     0.001         0.8066       0.8036            8.105e-01
+     0.005         0.7085       0.7039            3.491e-01
+      0.01         0.6001       0.5938            1.212e-01
+      0.02         0.4375       0.4286            1.441e-02
+      0.05         0.1818       0.1688            2.136e-05
+       0.1         0.0570       0.0421            2.652e-10
+       0.2         0.0202       0.0047            6.316e-21
+       0.3         0.0171       0.0015            7.472e-33
+Il proxy non è probabilità di successo, fedeltà o rendimento di Shor.

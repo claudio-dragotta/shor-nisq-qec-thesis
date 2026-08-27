@@ -6,6 +6,11 @@ verificando se lo stesso strumento applicato alla **sindrome** produca invece un
 
 È la gamba sperimentale del §9.6 della tesi e dell'Appendice E.1.
 
+> **Erratum 2026-08-19.** `propagazione_su_shor.json` è solo storico: trattava il
+> fallimento di memoria/decodifica di M10 come se fosse la probabilità indipendente di un
+> Pauli non-identità dopo ogni gate del proxy M8. Senza un mapping validato queste metriche
+> non sono intercambiabili; l'entry point ora blocca esplicitamente la propagazione.
+
 La campagna è cresciuta in tre ondate. Le prime quattro prove (E1–E4) stabiliscono il
 risultato; le tre successive (E5–E7) lo attaccano dall'esterno; le ultime cinque (E8–E12,
 2026-08-10) attaccano le *conclusioni delle precedenti*, e ne smentiscono due.
@@ -24,7 +29,7 @@ risultato; le tre successive (E5–E7) lo attaccano dall'esterno; le ultime cinq
 | `pavimento_comune.py` | **E10** sei decoder sugli stessi campioni: esiste un pavimento comune? |
 | `controllo_pavimento.py` | **E11** quel pavimento è del problema o del modello? |
 | `auc_per_dimensione.py` | **E12** a 336 detector la rete è cieca o solo indecisa? |
-| `propaga_su_shor.py` | collega il guadagno di E4 alla curva dello Shor logico (M8) |
+| `propaga_su_shor.py` | guardrail: blocca la vecchia propagazione M10→M8 finché non esiste un mapping di metrica validato |
 
 Risultati in `results_M10_*.json`, log completi in `run_M10_*.log`, uno per campagna.
 Figure da `figure_src/gen_qec_neural.py` e `figure_src/gen_confronto_decoder.py`.

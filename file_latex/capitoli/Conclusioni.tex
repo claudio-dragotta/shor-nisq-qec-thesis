@@ -1,126 +1,186 @@
 \begin{onehalfspace}
 
-Il Capitolo~\ref{chap:sviluppi} ha delineato ciò che resta oltre il perimetro di questo lavoro. Questo capitolo chiude il lavoro stesso: riprende la domanda da cui è partito, verifica una per una le ipotesi e le domande di ricerca formulate nel Capitolo~\ref{chap:obiettivi}, dichiara ciò che è stato stabilito e ciò che non lo è stato, e isola il criterio che unifica le due fasi sperimentali.
-
-% -----------------------------------------------
-\section{Il Problema e il Percorso}
-
-L'algoritmo di Shor fattorizza interi in tempo polinomiale, ma il divario fra questo risultato teorico e la sua esecuzione su hardware reale non è tecnologico: è fisico. Il rumore quantistico degrada l'informazione mentre il calcolo procede, e la sua azione cresce con la profondità del circuito --- cioè proprio con la dimensione dei numeri che renderebbero l'algoritmo interessante. La domanda operativa da cui questo lavoro è partito è se un modello appreso possa ridurre il costo di quella degradazione, e la risposta che il lavoro restituisce non è un sì né un no, ma una \emph{delimitazione}: l'intelligenza artificiale migliora l'esecuzione di Shor in ambiente rumoroso soltanto dove dispone di informazione che nessun metodo più semplice è in grado di sfruttare, e questo lavoro individua sperimentalmente dove quel confine cada.
-
-Il percorso ha attraversato due fasi. La prima ha messo alla prova l'ipotesi di partenza --- un classificatore che, a valle dell'esecuzione, riconosca gli output recuperabili --- e l'ha smentita nella sua attribuzione causale. La seconda ha spostato l'intervento dove l'informazione sull'errore è ancora presente: la correzione d'errore quantistica, con la sua progressione di codici, e infine la decodifica appresa applicata alla sindrome.
+Questo lavoro è partito da una domanda operativa: quanto dell'output
+rumoroso di Shor può essere recuperato a valle, e quando diventa invece
+necessario correggere l'errore durante il calcolo? La risposta è una
+delimitazione, non una promessa generale. Su $N=15$ una semplice ricerca
+multi-candidato usa meglio l'informazione già presente; un classificatore
+sullo stesso output non aggiunge valore. Per andare oltre occorre
+spostarsi sulla sindrome e sulla correzione d'errore.
 
 % -----------------------------------------------
 \section{Le Domande di Ricerca}
 \label{sec:risposte_dr}
 
-Le sei domande formulate nella Sezione~\ref{sec:ipotesi} ricevono le risposte seguenti.
+\paragraph{DR1 --- Come cambia Shor al variare dei canali di rumore?}
+Nel modello uniforme N=15 la struttura QPE si attenua all'aumentare di
+$\lambda_{2q}$: la frazione efficace sui quattro picchi passa da 0.804 a
+$\lambda_{2q}=10^{-3}$ a 0.042 a $10^{-1}$. Il proxy di nessun evento
+Pauli sulle 224 CX decade molto più rapidamente, da 0.811 a
+$2.65\times10^{-10}$, e non predice il successo dell'algoritmo. Gli
+sweep di $\lambda_{1q}$, $T_1/T_2$, readout e shot non mostrano un
+andamento monotono di M1 con 30 repliche; non è quindi lecito ordinarne
+causalmente l'importanza da questi soli dati. TOP-4 resta a una
+iterazione in tutti i punti salvo $\lambda_{2q}=0.1$, dove sale a 1.07.
 
-\paragraph{DR1 --- Come degrada la probabilità di successo al crescere dell'errore fisico, e quale fonte di rumore è la più dannosa?}
-La degradazione è governata dal numero di porte a due qubit, non dai tempi di coerenza né dalla lettura. Per l'istanza $N=15$ il circuito traspilato conta $166$ porte soggette all'errore a due qubit ($114$ \texttt{cx} più $52$ \texttt{cp}), da cui una probabilità di sopravvivenza coerente $P_{\text{surv}} = (1-\varepsilon_{2q})^{166}$ pari al $18.9\%$ nel regime NISQ-realistico e allo $0.02\%$ in quello degradato. La campagna parametrica (Sezione~\ref{app:parametrica}) conferma la gerarchia in modo netto: su sette parametri fatti variare singolarmente, $\varepsilon_{1q}$, $T_1$, $T_2$ e $p_{\text{ro}}$ risultano ininfluenti sull'esito entro tutti gli intervalli testati --- $p_{\text{ro}}$ fino al $20\%$ --- mentre l'unico parametro con effetto sulla strategia di estrazione è il numero di candidati $K$.
+\paragraph{DR2 --- Come si estrae una sindrome senza misurare lo stato
+logico?}
+Il codice a ripetizione misura parità, non i singoli qubit. Gli
+stabilizzatori $Z_1Z_2$ e $Z_2Z_3$ rivelano quale bit è stato alterato
+senza rivelare l'ampiezza logica. La curva Monte Carlo coincide con
+$p_L=3p^2-2p^3$ entro l'incertezza; il limite resta la protezione di un
+solo tipo di errore per volta.
 
-Va però aggiunta una qualificazione che la campagna rende inevitabile, ed è essa stessa parte della risposta. Il numero di porte a due qubit governa la probabilità di sopravvivenza \emph{analitica}, non l'esito osservato: facendo variare $\varepsilon_{2q}$ su tre ordini di grandezza, $P_{\text{surv}}$ crolla dall'$85\%$ a $2.5\times10^{-8}$, ma il tasso di successo resta del $100\%$ e $\bar{M}_1$ oscilla fra $1.3$ e $2.0$ senza andamento monotòno. La ragione è che il segnale della \ac{QPE} non è concentrato in un unico esito che il rumore possa distruggere: la misura della distribuzione delle mode su UC1 mostra che esse cadono sempre su uno dei quattro picchi attesi $\{0, 64, 128, 192\}$, e che il fallimento di TOP-1 è dovuto in due casi su cinque all'esito banale $y=0$, non alla perdita del segnale. $P_{\text{surv}}$ è dunque un limite superiore molto pessimistico della difficoltà effettiva --- una lezione che vale per l'intero lavoro, e che ridimensiona l'uso di questa stima come predittore di fattibilità. La fonte dominante di degradazione resta l'errore sui gate a due qubit, con meccanismo moltiplicativo nella profondità: è questa la ragione per cui la barriera si manifesta come barriera di \emph{scalabilità} e non di rumore.
+\paragraph{DR3 --- Quali vantaggi e limiti offre Steane $[[7,1,3]]$?}
+La struttura CSS corregge un errore Pauli arbitrario su un singolo qubit
+e la corrispondenza sindrome--errore è stata verificata sui 21 casi. La
+pendenza log--log misurata, 1.94, è compatibile con la soppressione
+quadratica attesa da un codice di distanza 3. La distanza fissa e
+l'estrazione di sindrome non fault-tolerant impediscono però di
+interpretarlo come soluzione scalabile.
 
-\paragraph{DR2 --- In che modo il codice a ripetizione introduce la sindrome senza collassare lo stato logico?}
-Misurando osservabili di \emph{parità} anziché i singoli qubit. Gli stabilizzatori $Z_1Z_2$ e $Z_2Z_3$ commutano con lo stato logico codificato e la loro misura, effettuata tramite qubit ancillari, rivela quale qubit sia stato colpito senza rivelare nulla sull'informazione codificata. La verifica sperimentale (Sezione~\ref{subsec:risultati_repetition}) mostra corrispondenza esatta fra errore iniettato e sindrome osservata in tutti i casi, e la curva Monte Carlo coincide con la previsione analitica $p_L = 3p^2 - 2p^3$ entro l'errore statistico. Il codice resta però protetto contro un solo tipo di errore per volta: un errore di fase sul codice bit-flip commuta con entrambi gli stabilizzatori e non produce alcuna sindrome.
+\paragraph{DR4 --- Il surface code mostra un comportamento di soglia?}
+Sì, nel memory experiment e nel modello circuit-level adottati. Le curve
+per $d=3,5,7,9$ si incrociano attorno allo $0.9\%$ in base Z e allo
+$0.7\%$ in base X; sotto la regione di incrocio aumentare la distanza
+sopprime il logical error rate, sopra la amplifica. Il parametro fisico
+$p$ di questa simulazione non coincide con $\lambda_{2q}$ della campagna
+Shor, quindi il confronto fra i due resta qualitativo.
 
-\paragraph{DR3 --- Quali vantaggi e limiti offre il codice di Steane $[[7,1,3]]$?}
-Il vantaggio è la correzione di un errore \emph{arbitrario} su un singolo qubit con soli sette qubit fisici: la struttura \ac{CSS} derivata dal codice di Hamming rende la corrispondenza sindrome--errore biiettiva, verificata su tutti e ventuno i casi ($X$, $Z$, $Y$ su sette qubit), e la soppressione misurata è quadratica con pendenza log-log $1.94$, la firma attesa per un codice di distanza 3. Il limite è strutturale: la distanza è fissa, quindi l'errore residuo non può essere ridotto a piacere --- la pseudo-soglia misurata, $p \approx 0.08$, separa il regime in cui la codifica conviene da quello in cui amplifica gli errori, ma nulla permette di spostarla. A ciò si aggiunge, nell'implementazione adottata, un'estrazione di sindrome non fault-tolerant, dichiarata nella Sezione~\ref{sec:steane}.
+\paragraph{DR5 --- Quale errore logico è compatibile con Shor?}
+Il modello fenomenologico mostra come la probabilità per singola misura
+decada al crescere della probabilità di Pauli non-identità per gate
+logico. A $p_L=0$ il limite dell'istanza è circa 0.75, perché una parte
+degli esiti QPE è intrinsecamente non utile; ripetere l'algoritmo aumenta
+la probabilità cumulativa. La curva è un'analisi di sensibilità, non una
+previsione end-to-end: il logical error rate di un memory experiment non
+può essere assegnato direttamente a ogni gate di Shor senza specificare
+le operazioni fault-tolerant e i rispettivi canali residui.
 
-\paragraph{DR4 --- Perché il surface code è più rilevante per scenari scalabili, ed esiste una soglia osservabile?}
-Perché la sua distanza cresce con la taglia della griglia mantenendo interazioni esclusivamente locali, condizione compatibile con le topologie reali delle QPU superconduttive. La soglia è stata osservata direttamente: le curve $p_L(p)$ per $d = 3, 5, 7, 9$ si incrociano a $p_{th} \approx 0.9\%$ in base $Z$ e $\approx 0.7\%$ in base $X$, con soppressione di circa un fattore 4--5 per incremento di distanza al di sotto della soglia e inversione dell'ordine al di sopra. Il confronto con l'hardware è il dato che orienta: il tasso d'errore a due qubit assunto per il regime NISQ-realistico, $\varepsilon_{2q} \approx 10^{-2}$, cade \emph{sopra} la soglia misurata. È la distanza che separa l'era attuale dal regime in cui aggiungere ridondanza produce il guadagno esponenziale atteso.
-
-\paragraph{DR5 --- Quale errore logico serve perché Shor mantenga una probabilità di successo accettabile?}
-Un errore logico per gate dell'ordine di $10^{-4}$ --- il valore che il surface code a distanza 7 raggiunge a errore fisico $2\times10^{-3}$, cioè sotto soglia --- riporta la probabilità di successo per singola misura al massimo consentito dall'istanza. Su questo punto la risposta richiede una precisazione che il Capitolo~\ref{chap:integrazione} sviluppa: per $N=15$ con base $a=7$ quel massimo vale $\approx 0.75$, un limite dovuto alla degenerazione del periodo e non al rumore, sicché la soglia dell'$80\%$ assunta come riferimento non è raggiungibile per singola esecuzione. Va letta in senso cumulativo: essendo Shor un algoritmo probabilistico che si ripete, con $P_s \approx 0.75$ bastano due esecuzioni indipendenti per superare il $94\%$.
-
-\paragraph{DR6 --- Esiste un regime in cui un decoder appreso supera quello analitico, e da che cosa dipende?}
-Sì, e non dipende dalla qualità della calibrazione bensì dalla \emph{rappresentabilità strutturale} degli errori. A parità di modello di rumore --- il regime per cui il \ac{MWPM} è costruito --- la rete non lo supera in nessuna delle quattordici configurazioni testate: lo pareggia a distanza 3, al prezzo di $10^5$--$10^6$ campioni di addestramento, e perde a distanza 5. Introducendo errori correlati fra qubit dati adiacenti, che il grafo di matching non può rappresentare con alcun arco, il quadro cambia: il decoder ibrido descritto dall'Equazione~\eqref{eq:decoder_ibrido} riduce l'errore logico del $18$--$21\%$ a distanza 3 e dell'$1$--$3\%$ a distanza 5, con significatività fino a $10^{-312}$ al test di McNemar. A sostegno della risposta concorrono due evidenze indipendenti. La prima è indiretta ma sorprendente: a distanza 3, fornire al matching il modello di rumore \emph{esatto} lo rende peggiore che fornirgli quello nominale sbagliato. La seconda è diretta, e verifica la stessa affermazione per la via opposta: perturbando deliberatamente il modello di rumore del decoder --- sbagliando l'errore di misura fino a un ordine di grandezza --- l'errore logico varia tipicamente dell'$1$--$3\%$, e la rete non supera il matching mis-calibrato in nessuna delle dodici configurazioni provate. Un modello con i parametri imprecisi continua a rappresentare le stesse classi di errore, e il matching che ne discende resta quasi ottimale; è la classe di errore \emph{assente} dalla struttura, non il parametro sbagliato, ad aprire spazio all'apprendimento.
-
-Il risultato va però delimitato, e il limite è netto: il guadagno del decoder ibrido vale $18$--$21\%$ a distanza 3, si riduce all'$1$--$3\%$ a distanza 5 e si annulla del tutto a distanza 7, dove la rete non ribalta alcuno shot in nessuna configurazione. La causa è stata isolata separando le due spiegazioni possibili: non la scarsità di esempi --- a distanza 7 la rete si astiene anche disponendo di oltre duecentomila fallimenti da cui imparare, mentre a distanza 5 interviene con appena diciassettemila --- ma la larghezza della sindrome: al crescere dei detector la capacità della rete densa di riconoscere i fallimenti del matching si degrada, e sotto una soglia netta --- quella che rende il ribaltamento conveniente --- il guadagno non si riduce gradualmente, si annulla. Poiché la crescita della distanza \emph{è} la strategia della correzione scalabile, il metodo così com'è non accompagna il codice nel regime che conta; il rimedio che la diagnosi indica è architetturale, non statistico.
+\paragraph{DR6 --- Quando un decoder appreso può superare quello
+analitico?}
+Nei dati della tesi il vantaggio compare quando il rumore contiene
+correlazioni assenti dal grafo del matching. Il decoder ibrido riduce
+l'errore rispetto a \ac{MWPM} a distanza 3, ma il beneficio si restringe
+con la distanza e scompare a distanza 7 per la rete densa adottata. Il
+risultato non sostiene la sostituzione generalizzata dei decoder
+analitici: indica una nicchia in cui un modello residuale può sfruttare
+informazione strutturale non rappresentata dal metodo base.
 
 % -----------------------------------------------
 \section{Verifica delle Ipotesi}
 \label{sec:verifica_ipotesi}
 
-Le ipotesi formulate a priori nella Sezione~\ref{sec:ipotesi} sono verificate come segue.
-
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{p{4.4cm}p{2.6cm}p{6.4cm}}
+\caption[Esito delle ipotesi]{Esito dopo la rigenerazione schema~2.}
+\label{tab:esito_ipotesi}
+\begin{tabular}{p{4.2cm}p{2.5cm}p{6.6cm}}
 \toprule
 \textbf{Ipotesi} & \textbf{Esito} & \textbf{Evidenza} \\
 \midrule
-\textbf{Principale} --- il classificatore \ac{ML} riduce le iterazioni, $\rho \gg 1$
-& \textbf{smentita} nell'attribuzione
-& $\rho = 1.90$ è misurato su UC1, ma l'ablazione lo attribuisce interamente al TOP-4: $M_{\text{TOP4}}$ equivale a M2 su UC1 ($p=0.849$) e lo supera su UC2 ($p<0.001$) \\
+Il classificatore riduce le iterazioni
+& smentita
+& M2 non migliora M1; TOP-4 è migliore di M2 in UC1 e UC2
+($p_{\mathrm{Holm}}=0.0033/0.0096$). \\
 \addlinespace
-\textbf{Secondaria 1} --- F1\,${>}$\,0.85 e \ac{AUC}\,${>}$\,0.90
-& \textbf{confermata}, ma non pertinente
-& F1 fino a $0.979$, \ac{AUC} fino a $0.987$; l'audit delle etichette mostra però che il compito appreso era ``la moda è $y=0$?'', non ``manca il segnale?'' \\
+F1 $>0.85$ e AUC $>0.90$
+& confermata, ma insufficiente
+& SVM: F1 $0.919/0.923$, AUC $0.965/0.958$ sul test; la metrica
+misura TOP-1, non l'utilità operativa. \\
 \addlinespace
-\textbf{Secondaria 2} --- il vantaggio si mantiene al crescere di $N$
-& \textbf{non verificabile} e mal formulata
-& la difficoltà cresce con il periodo $r$, non con $N$ (periodi $4 \to 6 \to 2$); l'unica istanza informativa, $N=21$, è preclusa da una barriera doppia --- fisica e computazionale \\
+Il vantaggio si mantiene crescendo $N$
+& non verificata
+& $N=21/35$ sono validati idealmente, ma esclusi dal rumore per costo;
+l'ordine $r$ deve essere controllato insieme a $N$. \\
 \addlinespace
-\textbf{QEC 1} --- soppressione $p_L \propto p^2$ e regime di break-even
-& \textbf{confermata}
-& ripetizione: coincidenza con $3p^2-2p^3$; Steane: pendenza $1.94$, pseudo-soglia $\approx 0.08$ \\
+Soppressione quadratica nei codici di distanza 3
+& confermata nel modello
+& ripetizione coerente con $3p^2-2p^3$; Steane con pendenza 1.94. \\
 \addlinespace
-\textbf{QEC 2} --- comportamento di soglia del surface code
-& \textbf{confermata}
-& incrocio delle curve $d=3,5,7,9$ a $p_{th} \approx 0.9\%$ (Z) e $0.7\%$ (X); la legge di scala adattata sulle quattro distanze dà $p_{th} = 0.86\%$, in accordo \\
+Comportamento di soglia del surface code
+& confermato nel modello
+& incrocio delle curve $d=3,5,7,9$ e inversione sopra soglia. \\
 \addlinespace
-\textbf{QEC 3} --- esiste un $p_L$ raggiungibile compatibile con Shor
-& \textbf{confermata} con riserva
-& $p_L \approx 10^{-4}$ è raggiungibile sotto soglia e riporta $P_{\text{success}}$ al massimo dell'istanza; la soglia dell'$80\%$ va però intesa in senso cumulativo \\
+Trasferimento diretto di $p_L$ a Shor
+& non dimostrato
+& la curva logica è fenomenologica; manca la mappatura per operazione
+fault-tolerant. \\
 \bottomrule
 \end{tabular}
-\caption[Esito delle ipotesi di lavoro]{Verifica delle sei ipotesi formulate prima dell'esecuzione degli esperimenti. Due esiti meritano attenzione: l'ipotesi principale è smentita non nella previsione numerica ma nella causa, e l'ipotesi secondaria 1 è confermata senza che ciò comporti alcun beneficio operativo.}
-\label{tab:esito_ipotesi}
 \end{table}
 
-Il caso dell'ipotesi secondaria 1 è quello metodologicamente più istruttivo dell'intero lavoro. Il classificatore soddisfa ampiamente i criteri di prestazione fissati a priori --- è, in senso stretto, un ottimo classificatore --- e nondimeno non riduce il numero di iterazioni. L'audit delle etichette di addestramento (Sezione~\ref{app:classificatore}, Sez.~\ref{sec:audit_etichette}) ne ha individuato la ragione meccanica, che è più specifica e più severa di quanto la sola ablazione lasciasse intendere: ricalcolando le etichette dagli istogrammi archiviati si scopre che esse corrispondono alla regola ``la moda conduce ai fattori?'' e non a quella dichiarata ``uno dei sedici candidati più frequenti vi conduce?''. Poiché fra i quattro picchi della \ac{QPE} l'unico sterile è l'esito banale $y=0$, il modello è stato addestrato di fatto a riconoscere se l'argmax dell'istogramma cada sulla cella $0$ --- e tutti i campioni negativi di entrambi gli use case, senza eccezione, sono esattamente quelli. Il compito è quasi banale, il che spiega F1 $=0.98$; ed è lo stesso caso che la ricerca TOP-4 risolve per costruzione, il che spiega il guadagno nullo.
-
-Due misure ulteriori chiudono la questione, e vale la pena riportarle qui perché sono la forma più netta del risultato. La prima riguarda \textbf{quanto sia fragile la distinzione appresa}: nel dataset di UC1, in $14$ dei $103$ campioni negativi i due picchi più alti raccolgono \emph{esattamente lo stesso numero di conteggi}, e l'etichetta è stata decisa dal criterio di spareggio della funzione che ne calcola il massimo; in $29$ casi differiscono di al più un conteggio. In oltre un quarto della classe negativa, dunque, ciò che separa un campione ``positivo'' da uno ``negativo'' è uno o due shot di differenza --- rumore di campionamento, non il rumore quantistico che il modello avrebbe dovuto diagnosticare.
-
-La seconda misura mostra che il problema \textbf{non ha soluzione nemmeno riformulandolo correttamente}. Poiché le frazioni continue con \texttt{limit\_denominator} mappano sul periodo $r=4$ un'intera banda di fasi, ben $63$ dei $256$ esiti possibili conducono ai fattori: per un istogramma privo di ogni informazione, la probabilità che nessuno dei sedici valori più frequenti sia utile vale $\binom{193}{16}/\binom{256}{16} = 0.9\%$. La regola dichiarata etichetta quindi come positivo il $99\%$ degli istogrammi per puro effetto combinatorio, e in effetti rigenerando il dataset con essa la classe negativa scompare del tutto: $2000$ campioni positivi su $2000$, per entrambi gli use case. Non esiste, a valle dell'esecuzione, un problema di classificazione sensato da porre --- né nella formulazione applicata, che chiedeva qualcosa di banale, né in quella documentata, che non ammette istanze negative.
-
-Se ne ricavano due avvertimenti di portata generale, entrambi guadagnati a spese di questo lavoro. Il primo: le metriche di classificazione misurano la separabilità delle classi, non l'utilità della decisione, e le due cose possono divergere completamente. Il secondo, meno ovvio e più insidioso: prima di interpretare una metrica conviene verificare \emph{quale} domanda le etichette codifichino davvero, perché un dataset può rispondere a una domanda diversa da quella che il codice dichiara, e in tal caso un'ottima metrica è la conferma di un equivoco anziché di un risultato.
+L'audit del classificatore è metodologicamente centrale. TOP-1 produce
+classi addestrabili, ma chiede soltanto se il candidato dominante porta
+ai fattori. TOP-16 produce invece $2\,000/2\,000$ positivi in entrambi
+gli scenari. Il conto combinatorio spiega il fenomeno: 63 dei 256 esiti
+sono utili e la probabilità di non includerne alcuno scegliendo sedici
+celle uniformi è appena
+$\binom{193}{16}/\binom{256}{16}=0.9275\%$. Una metrica elevata non
+garantisce dunque che l'etichetta rappresenti un problema utile.
 
 % -----------------------------------------------
-\section{I Contributi del Lavoro}
+\section{Contributi del Lavoro}
 
-Il lavoro apporta quattro contributi, i primi due relativi alla prima fase e gli altri due alla seconda.
+\textbf{Una demo scientificamente separata in ideale e rumoroso.}
+Il percorso ideale espone circuito, stato e QPE senza rumore; il percorso
+rumoroso rende attivabili separatamente depolarizzazione 1Q/2Q,
+$T_1/T_2$, readout e perturbazione coerente. N=21/35 sono validati
+idealmente, mentre l'esperimento pubblico rumoroso è limitato a N=15.
 
-\textbf{L'ablazione che separa la strategia di ricerca dal modello appreso.} La riduzione delle iterazioni da $\bar{M}_1 = 1.97$ a $\bar{M} = 1.00$ è reale e statisticamente significativa, ma l'analisi a tre bracci ne attribuisce il merito alla ricerca multi-candidato TOP-4 e non al classificatore. La strategia risultante non richiede addestramento né calibrazione, è invariante rispetto a sei dei sette parametri di rumore esplorati, e domina la Zero-Noise Extrapolation sullo stesso compito.
+\textbf{Un'ablazione causalmente interpretabile.}
+M1, TOP-4 e M2 ricevono lo stesso istogramma. TOP-4 riduce $\bar M$ da
+1.37 a 1.00 nello scenario moderato e da 1.50 a 1.00 nello stress; il
+classificatore peggiora la propria ablazione. Seed, tie-break,
+sentinelle, revisioni e manifest sono salvati negli artefatti.
 
-\textbf{La quantificazione della barriera di scalabilità.} L'impossibilità di estendere il confronto a $N=21$ e $N=35$ è stata caratterizzata anziché aggirata, e la caratterizzazione ha corretto due letture ingenue. La prima attribuiva la barriera alla sola decomposizione della moltiplicazione modulare: l'implementazione di Beauregard riduce sì le porte \texttt{cx} per $N=21$ da $10\,040$ a $3\,406$, ma ne introduce $11\,436$ di tipo \texttt{cp}, e il totale delle porte rumorose a due qubit \emph{cresce} a $14\,842$, con $P_{\text{surv}}$ di ordine $10^{-65}$. Il guadagno di Beauregard è nel numero di qubit e nello scaling asintotico, non nell'errore accumulato: la barriera resta doppia, fisica e computazionale, e la decomposizione non ne rimuove nessuna delle due. La seconda assumeva che la difficoltà crescesse con il modulo: essa cresce invece con il periodo $r$, poiché i gate controllati $U^{2^j}$ con $2^j \equiv 0 \pmod r$ collassano nell'identità. Lungo la sequenza $N = 15 \to 21 \to 35$ i periodi valgono $4 \to 6 \to 2$ e le profondità $311 \to 9\,883 \to 1\,480$: l'istanza più grande è anche la più corta, e l'asse di scalabilità va ridefinito sul periodo perché l'ipotesi sia verificabile.
+\textbf{Una validazione funzionale dell'aritmetica.}
+Il moltiplicatore $\times7\bmod15$ è coperto da truth table e il percorso
+Beauregard da proprietà esaustive e confronti QPE per N=21/35. Questo
+controllo ha mostrato perché i soli picchi o il solo ordine non bastano a
+validare l'operatore implementato.
 
-\textbf{La caratterizzazione end-to-end della correzione d'errore su Shor.} La progressione ripetizione $\rightarrow$ Steane $\rightarrow$ surface code è stata costruita, simulata e validata con criteri quantitativi dichiarati a priori, e connessa all'algoritmo attraverso il modello a livelli dello Shor logico. Il risultato è la relazione fra errore logico residuo e probabilità di successo, misurata su un'istanza trattabile e corredata della discussione dei limiti del modello di rumore adottato.
-
-\textbf{La delimitazione del regime di utilità dell'apprendimento automatico.} È il contributo che unifica le due fasi. Lo stesso strumento modellistico, applicato in due punti diversi della pipeline sotto il medesimo impianto statistico, produce esiti opposti; e la seconda applicazione fornisce, oltre al risultato positivo, il criterio strutturale che lo spiega e un decoder ibrido che degrada con grazia --- riducendo l'errore logico dove il modello analitico è inadeguato e ricadendo esattamente su di esso dove non lo è.
+\textbf{Una progressione QEC con limiti dichiarati.}
+Ripetizione, Steane, surface code e decodifica appresa sono collegati da
+metriche esplicite, ma i rispettivi modelli di rumore non vengono
+presentati come direttamente commensurabili. Lo Shor logico chiude la
+progressione come analisi fenomenologica di sensibilità.
 
 % -----------------------------------------------
 \section{Limiti}
 \label{sec:limiti_finali}
 
-I risultati vanno letti entro un perimetro che è opportuno enunciare per intero.
+La campagna Shor usa un simulatore e un rumore uniforme, indipendente e
+stazionario; non include topologia, routing, crosstalk, leakage o deriva
+di calibrazione. N=15 è un'istanza didattica e TOP-K beneficia di una
+post-elaborazione particolarmente permissiva. Gli sweep hanno 30
+repliche e i test non sono corretti globalmente fra le otto famiglie.
+N=21/35 non sono simulati sotto rumore.
 
-L'intero lavoro è condotto \textbf{su simulatore}: il rumore modellato è indipendente e stazionario, mentre quello dell'hardware reale è correlato spazialmente, non stazionario e soggetto a derive di calibrazione. L'istanza $N=15$ è \textbf{didattica} e non estrapolabile: le stime di risorse per moduli crittograficamente rilevanti derivano da analisi architetturali complete e non da estensioni dei risultati qui riportati. Il confronto quantitativo della prima fase poggia su \textbf{due use case} anziché sui quattro progettati. Nella parte \ac{QEC}, l'estrazione di sindrome dello Steane \textbf{non è fault-tolerant}, il modello dello Shor logico è un \textbf{modello efficace} che assume errori logici indipendenti e uniformi fra i gate, e le stime di errore logico dei diversi codici provengono da modelli di rumore non commensurabili fra loro --- ragione per cui la figura conclusiva del Capitolo~\ref{chap:integrazione} non costituisce una graduatoria fra codici. Infine, la decodifica appresa impiega un'architettura densa di capacità modesta, e il rumore correlato modellato resta di tipo Pauli: i risultati della Sezione~\ref{sec:decodifica_appresa} vanno intesi come verifica di un principio, non come stima del potenziale della decodifica neurale allo stato dell'arte. Su questo punto il lavoro dichiara anche il proprio limite più severo, emerso da due controlli condotti \emph{contro} il risultato: il vantaggio del decoder ibrido si annulla a distanza 7, e a distanza 5 un decoder analitico più espressivo del matching --- BP+OSD --- ne recupera assai più di quanto faccia il modello appreso. La nicchia in cui l'apprendimento è la scelta giusta è dunque reale ma stretta, e il primo controllo da eseguire prima di introdurre un modello appreso è verificare di avere già adottato il miglior metodo analitico disponibile.
+Nella parte QEC, Steane non usa un'estrazione fault-tolerant; i memory
+experiment e il modello per-gate di Shor non condividono la stessa
+definizione di $p_L$; il decoder appreso è una rete densa e il vantaggio
+non persiste alle distanze maggiori testate. Le stime di risorse
+crittografiche devono quindi provenire da architetture fault-tolerant
+complete, non da un'estrapolazione delle curve N=15.
 
 % -----------------------------------------------
 \section{Il Criterio che Unifica il Lavoro}
 
-Resta un fatto che attraversa entrambe le fasi e che costituisce, più di ogni singolo numero, ciò che questo lavoro ha appreso.
+In entrambe le fasi, il complemento semplice è utile quando sfrutta
+informazione che il metodo base lascia inutilizzata senza modificare il
+processo che la genera. TOP-4 prova altri candidati già presenti
+nell'istogramma; il decoder residuale interviene soltanto sui casi in cui
+il matching ha una debolezza rappresentazionale. Un modello più
+complesso non produce valore se replica una regola semplice, se le
+etichette sono degeneri o se il costo introdotto compensa il beneficio.
 
-In entrambi i casi il \textbf{complemento a basso costo ha battuto la sostituzione ambiziosa}. Nella prima fase, una ricerca multi-candidato che si limita a provare quattro esiti anziché uno ha battuto un classificatore addestrato su duemila istogrammi. Nella seconda, una rete che si limita a segnalare quando il decoder analitico sbaglia ha battuto la rete che pretendeva di sostituirlo --- e lo ha fatto proprio nel regime, la distanza 5, in cui la sostituzione falliva. Non è una coincidenza né una massima di prudenza ingegneristica: discende dal fatto che ciascun metodo esistente già sfrutta l'informazione che è in grado di rappresentare, sicché un modello appreso produce valore solo per la parte di informazione che a quel metodo sfugge --- ed è quella parte, non l'intero problema, che conviene affidargli.
-
-Va aggiunto che il complemento a basso costo eredita anche il limite del suo componente appreso. A distanza 7 la rete non dispone più di esempi sufficienti, e l'ibrido --- correttamente --- si astiene: coincide con il matching cifra per cifra. È una proprietà desiderabile del disegno, perché l'architettura residuale include fra i propri candidati la scelta ``non intervenire mai'' e la seleziona quando è quella giusta; ma significa anche che il vantaggio misurato non si estende al regime in cui la correzione d'errore diventa utile. Il superamento di questo limite --- architetture che sfruttino la simmetria traslazionale del reticolo anziché trattare i detector come dimensioni indipendenti --- è la direzione più concreta che questo lavoro lascia aperta.
-
-Il criterio ammette però una precisazione, che un'esplorazione condotta oltre il perimetro del lavoro principale ha reso necessaria. L'Sezione~\ref{app:compilazione} lo mette alla prova su un terzo caso --- la scelta della mappatura del circuito sui qubit fisici, dove il criterio di ottimizzazione generico ignora l'asimmetria fra registro di conteggio e registro di lavoro --- e trova che l'informazione mancante c'è ed è predittiva, ma che il vantaggio non si materializza: sfruttarla richiede di vincolare il collocamento dei qubit, e ogni vincolo si paga in porte di instradamento aggiuntive. Alla condizione va dunque aggiunto un termine: l'informazione deve essere non soltanto assente dal metodo esistente e predittiva dell'esito, ma anche \textbf{sfruttabile senza costi compensativi}. I due casi favorevoli di questa tesi la soddisfano per una ragione comune --- entrambi intervengono \emph{a valle} di ciò che migliorano, senza alterarne le condizioni --- mentre il terzo, che agisce a monte e modifica l'oggetto stesso su cui si misura il guadagno, non la soddisfa.
-
-Applicato all'algoritmo di Shor in ambiente rumoroso, il criterio individua un confine preciso. A valle dell'esecuzione non c'è nulla da apprendere, perché ciò che il rumore ha distrutto non è più nell'output: nessun post-processing, per quanto sofisticato, può recuperarlo. Sulla sindrome, invece, l'informazione sull'errore è ancora interamente presente, e la questione diventa se il decoder analitico sia in grado di rappresentarla tutta. Finché il rumore appartiene alla classe che il matching sa descrivere, la risposta è sì e l'apprendimento non serve. Quando il dispositivo esce da quella classe --- ed è ciò che i dispositivi reali fanno, con crosstalk, errori coerenti e leakage --- l'apprendimento diventa il modo per recuperare la differenza.
-
-È questa, in ultima analisi, la risposta che il lavoro dà alla domanda da cui era partito: l'intelligenza artificiale non rende l'algoritmo di Shor eseguibile su hardware rumoroso, e nessuna tecnica di post-elaborazione può farlo. A renderlo eseguibile sarà la correzione d'errore quantistica, con il costo in qubit fisici che le stime di risorse quantificano. L'apprendimento automatico ha però un ruolo preciso e misurabile in quella costruzione: colmare lo scarto fra il modello di rumore che il decoder assume e il dispositivo che si ha davanti.
+Applicato a Shor, questo criterio separa nettamente post-processing e
+correzione: TOP-K può recuperare un picco utile già misurato, ma non può
+ricostruire informazione fisicamente distrutta. Rendere Shor scalabile
+richiede operazioni logiche fault-tolerant; l'apprendimento può contribuire
+alla decodifica solo dove dispone di una struttura che il decoder
+analitico non rappresenta.
 
 \end{onehalfspace}

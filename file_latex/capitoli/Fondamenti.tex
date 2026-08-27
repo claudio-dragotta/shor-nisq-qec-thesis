@@ -42,11 +42,11 @@ e si visualizza come un punto sulla superficie della \textbf{sfera di Bloch}.\fo
 
 \subsection{Sistemi Multi-Qubit ed Entanglement}
 
-Un registro di $n$ qubit vive nello spazio $\mathbb{C}^{2^n}$, ottenuto per \textbf{prodotto tensoriale}: è la dimensione esponenziale $2^n$ la fonte del potere computazionale quantistico. Due qubit sono \textbf{entangled} quando il loro stato congiunto non è fattorizzabile nel prodotto degli stati individuali; l'esempio canonico è lo stato di Bell $\ket{\Phi^+} = \tfrac{1}{\sqrt{2}}(\ket{00} + \ket{11})$, in cui misurare il primo qubit determina istantaneamente l'esito del secondo.
+Un registro di $n$ qubit vive nello spazio $\mathbb{C}^{2^n}$, ottenuto per \textbf{prodotto tensoriale}. La dimensione esponenziale rende possibile rappresentare ampiezze e correlazioni non disponibili a un registro classico di $n$ bit, ma non implica da sola un vantaggio computazionale: alcune famiglie di stati e circuiti quantistici ammettono infatti descrizioni classiche efficienti. Due qubit sono \textbf{entangled} quando il loro stato congiunto non è fattorizzabile nel prodotto degli stati individuali; l'esempio canonico è lo stato di Bell $\ket{\Phi^+} = \tfrac{1}{\sqrt{2}}(\ket{00} + \ket{11})$, per il quale misure nella stessa base producono esiti perfettamente correlati, senza consentire comunicazione istantanea.
 
 \subsubsection{L'Entanglement come Risorsa Fisica Fragile}
 
-L'entanglement non è solo una proprietà astratta: è la \textbf{risorsa} che gli algoritmi quantistici consumano per ottenere il loro vantaggio. Nell'algoritmo di Shor il registro di controllo e quello di lavoro devono restare entangled per tutta la phase estimation, affinché la Quantum Fourier Transform estragga il periodo corretto. Ma un qubit reale non è mai isolato: l'accoppiamento con l'ambiente trasferisce ad esso l'informazione di fase, riducendo lo stato puro a un \textbf{miscuglio statistico} in cui la fase relativa è persa --- la \textbf{decoerenza}~\cite{zurek2003}. Il tempo caratteristico di questa perdita è $T_2$ (\textit{dephasing time}): sui processori superconduttori attuali $T_2 \sim 50$--$200\,\mu$s, mentre una porta a due qubit dura $\sim 300$--$500\,$ns. Poiché la profondità di Shor cresce come $O(n^3)$, il limite imposto da $T_2$ è superato già per $n \gtrsim 10$--$15$ bit: è questo il collo di bottiglia che il Capitolo~\ref{chap:rumore} tratta quantitativamente.
+L'entanglement è una risorsa importante per Shor: durante l'esponenziazione modulare il registro di controllo si correla con quello di lavoro, permettendo alla successiva Quantum Fourier Transform di rendere osservabile la periodicità. Un qubit reale, però, non è perfettamente isolato: l'accoppiamento con l'ambiente riduce le coerenze dello stato --- la \textbf{decoerenza}~\cite{zurek2003}. Il tempo caratteristico della perdita di fase è $T_2$ (\textit{dephasing time}); nei dispositivi superconduttori è spesso dello stesso ordine di poche centinaia di durate di una porta a due qubit. Questo confronto segnala un budget di profondità severo, ma non determina una soglia universale nella dimensione di $N$: compilazione, parallelismo, tempi di idle, qualità dei gate e architettura fault-tolerant concorrono tutti al limite discusso nel Capitolo~\ref{chap:rumore}.
 
 \subsection{Porte, Misura e Interferenza}
 
@@ -70,13 +70,16 @@ CNOT & $\begin{pmatrix} 1&0&0&0 \\ 0&1&0&0 \\ 0&0&0&1 \\ 0&0&1&0 \end{pmatrix}$ 
 \label{tab:porte_essenziali}
 \end{table}
 
-Con l'identità, le tre matrici di Pauli formano una base per le matrici $2\times2$ hermitiane a traccia nulla: ogni errore su un singolo qubit si scrive dunque come loro combinazione, ed è questa la ragione per cui un codice capace di correggere $X$ e $Z$ corregge \emph{qualunque} errore a un qubit --- proprietà su cui si fonda l'intera parte \ac{QEC}. Valgono inoltre le relazioni
+L'identità e le tre matrici di Pauli formano una base dello spazio degli operatori lineari $2\times2$: ogni operatore d'errore su un singolo qubit si può quindi decomporre in tale base. Poiché $Y=iXZ$, un codice che soddisfa le condizioni di correzione per gli errori di Pauli singoli corregge, per linearità, anche le loro combinazioni --- proprietà su cui si fonda l'intera parte \ac{QEC}. Valgono inoltre le relazioni
 \begin{equation}
-    X^2 = Y^2 = Z^2 = I, \qquad XY = iZ, \quad YZ = iX, \quad ZX = iY, \qquad
-    \{X,Y\} = \{Y,Z\} = \{X,Z\} = 0,
+\begin{aligned}
+    X^2 = Y^2 = Z^2 &= I, \\
+    XY = iZ, \quad YZ = iX, \quad ZX &= iY, \\
+    \{X,Y\} = \{Y,Z\} = \{X,Z\} &= 0,
+\end{aligned}
     \label{eq:algebra_pauli}
 \end{equation}
-dove $\{A,B\} = AB+BA$ è l'anticommutatore. L'\textbf{anticommutazione} è la proprietà operativamente decisiva: è essa a garantire che un errore $X$ e un errore $Z$ producano sindromi \emph{indipendenti}, e quindi distinguibili, nella misura degli stabilizzatori del Capitolo~\ref{chap:qec}.
+dove $\{A,B\} = AB+BA$ è l'anticommutatore. Nella teoria degli stabilizzatori, un errore è rilevato quando anticommuta con almeno uno dei generatori misurati; è il vettore completo di questi esiti di commutazione a costituire la sindrome. Nei codici \ac{CSS}, le famiglie di stabilizzatori $X$ e $Z$ permettono di diagnosticare separatamente le due componenti di Pauli, come discusso nel Capitolo~\ref{chap:qec}.
 
 Insieme alle porte a singolo qubit, la \ac{CNOT} forma un insieme universale: ogni operazione unitaria su $n$ qubit si approssima a piacere componendo elementi di questo insieme. La \textbf{misura} in base computazionale collassa lo stato $\ket{\psi}=\sum_x\alpha_x\ket{x}$ sull'esito $x$ con probabilità $|\alpha_x|^2$: è un'operazione non unitaria e irreversibile. Il meccanismo che rende utile tutto ciò è l'\textbf{interferenza}: un algoritmo efficiente è costruito perché le ampiezze degli esiti sbagliati si cancellino (interferenza distruttiva) e quelle degli esiti corretti si sommino (costruttiva). È esattamente ciò che la QFT realizza nell'algoritmo di Shor (Capitolo~\ref{chap:shor}) per far emergere il periodo.
 

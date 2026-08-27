@@ -1,0 +1,142 @@
+{
+  "schema_version": "2.0",
+  "nota": "circuito \u00d77 corretto; modello uniforme RZ-virtuale; seeding seed*1e6 + iterazione*1e4",
+  "timestamp": "2026-08-19T01:10:40.060223",
+  "manifest": {
+    "circuit_revision": "shor-qpe-v2-amod15-correct",
+    "noise_model_revision": "uniform-rz-virtual-v2",
+    "circuit_sha256": "c7f4cf3bc1735dce9d5b56d8e09686ee4ab43cabead65e734ea23d5a50f4ba2c",
+    "basis_gates": [
+      "rz",
+      "sx",
+      "x",
+      "cx"
+    ],
+    "optimization_level": 2,
+    "seed_transpiler": 20260819,
+    "depth": 412,
+    "size": 604,
+    "gate_counts": {
+      "rz": 302,
+      "cx": 224,
+      "sx": 70,
+      "measure": 8,
+      "barrier": 1
+    },
+    "python": "3.12.3",
+    "packages": {
+      "numpy": "2.5.1",
+      "qiskit": "2.5.0",
+      "qiskit-aer": "0.17.2",
+      "scikit-learn": "1.9.0"
+    }
+  },
+  "use_case": [
+    {
+      "use_case": "UC1",
+      "K": 1,
+      "shots": 32,
+      "max_iter": 2,
+      "failure_sentinel": 3,
+      "M1": {
+        "n_succ": 1,
+        "P_succ": 1.0,
+        "M_bar": 1.0,
+        "sigma": 0.0,
+        "mediana": 1.0
+      },
+      "M_TOP4": {
+        "n_succ": 1,
+        "P_succ": 1.0,
+        "M_bar": 1.0,
+        "sigma": 0.0,
+        "mediana": 1.0
+      },
+      "M2": {
+        "n_succ": 1,
+        "P_succ": 1.0,
+        "M_bar": 1.0,
+        "sigma": 0.0,
+        "mediana": 1.0
+      },
+      "rho_TOP4": 1.0,
+      "mwu_M1_gt_TOP4": {
+        "U": 0.5,
+        "p": 1.0
+      },
+      "rho_M2": 1.0,
+      "mwu_TOP4_gt_M2": {
+        "U": 0.5,
+        "p": 1.0
+      },
+      "mwu_M1_gt_M2": {
+        "U": 0.5,
+        "p": 1.0
+      },
+      "_iterazioni": {
+        "M1": [
+          1
+        ],
+        "M_TOP4": [
+          1
+        ],
+        "M2": [
+          1
+        ]
+      }
+    },
+    {
+      "use_case": "UC2",
+      "K": 1,
+      "shots": 32,
+      "max_iter": 2,
+      "failure_sentinel": 3,
+      "M1": {
+        "n_succ": 1,
+        "P_succ": 1.0,
+        "M_bar": 2.0,
+        "sigma": 0.0,
+        "mediana": 2.0
+      },
+      "M_TOP4": {
+        "n_succ": 1,
+        "P_succ": 1.0,
+        "M_bar": 1.0,
+        "sigma": 0.0,
+        "mediana": 1.0
+      },
+      "M2": {
+        "n_succ": 0,
+        "P_succ": 0.0,
+        "M_bar": null,
+        "sigma": null,
+        "mediana": null
+      },
+      "rho_TOP4": 2.0,
+      "mwu_M1_gt_TOP4": {
+        "U": 1.0,
+        "p": 0.5
+      },
+      "rho_M2": null,
+      "mwu_TOP4_gt_M2": {
+        "U": 0.0,
+        "p": 1.0
+      },
+      "mwu_M1_gt_M2": {
+        "U": 0.0,
+        "p": 1.0
+      },
+      "_iterazioni": {
+        "M1": [
+          2
+        ],
+        "M_TOP4": [
+          1
+        ],
+        "M2": [
+          3
+        ]
+      }
+    }
+  ]
+}

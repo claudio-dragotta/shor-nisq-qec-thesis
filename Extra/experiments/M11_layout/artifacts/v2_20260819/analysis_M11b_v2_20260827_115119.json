@@ -1,0 +1,115 @@
+{
+  "schema_version": "2.0",
+  "milestone": "M11b_analisi_osservazionale",
+  "timestamp": "2026-08-27T11:51:19.158906+02:00",
+  "source": {
+    "path": "/mnt/c/Users/ludov/Desktop/tesi_magistrale_quantum/Extra/experiments/M11_layout/artifacts/v2_20260819/results_M11b_ruoli_v2_20260827_115109.json",
+    "sha256": "1c4b5b4fad1e2289990fdc59fc2b64365cf841d50113f1b4f41c196b42152215",
+    "calibration_sha256": "04b6a48ff808e71fee3ba0770d87079fcac7b50abb7cc931f90e632e6d9f2c11",
+    "circuit_manifest": {
+      "circuit_revision": "shor-qpe-v2-amod15-correct",
+      "noise_model_revision": "uniform-rz-virtual-v2",
+      "postprocess_revision": "seeded-sha256-tie-break-v1",
+      "circuit_sha256": "c7f4cf3bc1735dce9d5b56d8e09686ee4ab43cabead65e734ea23d5a50f4ba2c",
+      "basis_gates": [
+        "rz",
+        "sx",
+        "x",
+        "cx"
+      ],
+      "optimization_level": 2,
+      "seed_transpiler": 20260819,
+      "depth": 412,
+      "size": 604,
+      "gate_counts": {
+        "rz": 302,
+        "cx": 224,
+        "sx": 70,
+        "measure": 8,
+        "barrier": 1
+      },
+      "python": "3.12.3",
+      "packages": {
+        "numpy": "2.5.1",
+        "qiskit": "2.5.0",
+        "qiskit-aer": "0.17.2",
+        "scikit-learn": "1.9.0"
+      }
+    }
+  },
+  "seed": 42,
+  "bootstrap_resamples": 2000,
+  "analysis": {
+    "analysis_type": "observational within-subgraph fixed-effects",
+    "outcome_partition": "holdout",
+    "n_observations": 45,
+    "n_subgraphs": 9,
+    "raw_spearman": {
+      "readout_vs_success": -0.5031480698040641,
+      "ecr_vs_success": -0.41595282385458543,
+      "depth_vs_success": -0.304701661411182
+    },
+    "controlled_fit": {
+      "partial_spearman_readout": -0.6047430830039525,
+      "ols_coefficients": {
+        "readout_misurati": -4.8480010231853825,
+        "n_ecr": -0.0006500654188160473,
+        "depth": -4.800522187017376e-06
+      },
+      "standardized_coefficients": {
+        "readout_misurati": -0.5991552244661229,
+        "n_ecr": -0.6843491420162096,
+        "depth": -0.01122941129870838
+      },
+      "within_r_squared": 0.6132014440517088,
+      "matrix_rank": 3
+    },
+    "cluster_bootstrap": {
+      "partial_spearman_readout": {
+        "ci_low": -0.8257458745874586,
+        "ci_high": -0.1903298326533414,
+        "n_valid": 2000,
+        "confidence": 0.95
+      },
+      "standardized_readout_coefficient": {
+        "ci_low": -0.9376235467148183,
+        "ci_high": -0.1910047304268972,
+        "n_valid": 2000,
+        "confidence": 0.95
+      }
+    },
+    "within_subgraph_success_range": {
+      "mean": 0.09144422743055555,
+      "median": 0.085693359375,
+      "max": 0.190673828125
+    },
+    "descriptive_by_initial_strategy": {
+      "casuale-1": {
+        "n": 9,
+        "mean_P_success": 0.3818359375,
+        "se_across_subgraphs": 0.012730671474750198
+      },
+      "casuale-2": {
+        "n": 9,
+        "mean_P_success": 0.3743760850694444,
+        "se_across_subgraphs": 0.012620107217212974
+      },
+      "init-readout-alto": {
+        "n": 9,
+        "mean_P_success": 0.3839789496527778,
+        "se_across_subgraphs": 0.012166189936777124
+      },
+      "init-readout-basso": {
+        "n": 9,
+        "mean_P_success": 0.373046875,
+        "se_across_subgraphs": 0.01810554183402017
+      },
+      "transpiler": {
+        "n": 9,
+        "mean_P_success": 0.4222005208333333,
+        "se_across_subgraphs": 0.01710587007417139
+      }
+    },
+    "interpretation": "Association with the readout of the qubits actually measured after routing, controlling for ECR count, depth, and subgraph. Initial-layout labels are descriptive instruments only; no causal best-vs-worst claim is made."
+  }
+}

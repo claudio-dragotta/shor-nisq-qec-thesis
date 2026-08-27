@@ -33,12 +33,12 @@ Per capire dove nascono gli errori bisogna prima capire com'è fatta la macchina
 \node[font=\footnotesize, gray!50!black] at (4.4,-0.75) {accoppiatori fisici: entanglement diretto solo tra qubit \emph{adiacenti}};
 % qubit di test isolati
 \node[testq] (T0) at (11.2,0.2) {$T_0$};
-\node[font=\scriptsize, align=center, gray!30!black] at (11.2,-1.0) {qubit di test\\isolato: misura\\``pura'' di $T_1$};
+\node[font=\scriptsize, align=center, gray!30!black] at (11.2,-1.0) {qubit di riferimento\\non accoppiato\\ai qubit dati};
 % onde
 \foreach \q in {Q0,Q1,Q2,Q3,Q4}{ \draw[wave] (E.south -| \q) -- (\q.north); }
 \node[font=\footnotesize, orange!60!black, align=center] at (11.0,2.0) {microonde:\\controllo $\downarrow$ / lettura $\uparrow$};
 \end{tikzpicture}
-\caption[Anatomia di una QPU superconduttiva a 5 qubit (topologia a catena)]{Anatomia di una \ac{QPU} superconduttiva a 5 qubit con topologia a catena lineare. Nel chip criogenico risiedono solo i qubit e gli accoppiatori fisici; le porte logiche sono impulsi a microonde generati dall'elettronica esterna e convogliati tramite guide d'onda, usate sia per il controllo sia per la lettura. L'entanglement diretto è possibile solo tra qubit adiacenti ($Q_1$--$Q_2$ sì, $Q_0$--$Q_2$ solo tramite operazioni intermedie, che amplificano il disturbo). Il qubit di test $T_0$, privo di collegamenti, serve a misurare il tempo di coerenza ``puro'': un qubit collegato a una guida d'onda perde sempre un po' di energia attraverso di essa.}
+\caption[Anatomia schematica di una QPU superconduttiva a 5 qubit]{Schema didattico di una \ac{QPU} superconduttiva a 5 qubit con topologia a catena. Nel chip criogenico risiedono qubit, risonatori e accoppiatori; le operazioni sono pilotate dall'elettronica esterna mediante linee di controllo e lettura. L'interazione a due qubit diretta è disponibile solo lungo gli accoppiamenti disegnati ($Q_1$--$Q_2$ sì, $Q_0$--$Q_2$ mediante routing). $T_0$ rappresenta un qubit di riferimento non accoppiato alla catena, ma ancora dotato delle linee necessarie a preparazione e misura: non fornisce una misura ``pura'' di $T_1$ e non elimina perdite, Purcell effect o altre sorgenti di decoerenza.}
 \label{fig:qpu_anatomia}
 \end{figure}
 

@@ -1,177 +1,199 @@
 \begin{onehalfspace}
 
-Il criterio stabilito nel Capitolo~\ref{chap:conclusioni} --- un modello appreso produce valore dove il metodo esistente è strutturalmente cieco a una classe di informazione --- ha la forma di una regola generale, e come tale può essere messo alla prova su casi che il corpo della tesi non ha trattato. Questa appendice riporta una di queste prove, condotta sulla \textbf{terza posizione} in cui è possibile intervenire sull'effetto del rumore.
-
-Il lavoro principale ne ha esplorate due: \emph{dopo} l'esecuzione, dove il Capitolo~\ref{chap:risultati} ha dimostrato che non resta informazione da sfruttare; \emph{durante} il calcolo, con la correzione d'errore dei Capitoli~\ref{chap:qec}--\ref{chap:integrazione}. Ne resta una terza: \emph{prima} dell'esecuzione, nel modo in cui il circuito viene mappato sui qubit fisici del dispositivo. È l'unica che agisce sull'hardware \ac{NISQ} odierno senza richiedere il regime sotto-soglia, ed è l'unica che sfugge per costruzione al risultato negativo della prima fase --- non ricostruisce l'informazione perduta, ma riduce la probabilità che venga perduta.
+Questa appendice esamina due verifiche esterne al confronto principale M1--M2: la sensibilit\`a alla mappatura su una topologia eterogenea (M11/M11b) e il comportamento della ricerca TOP-4 nel proxy per gate (M13). Entrambe sono analisi esplorative. Il loro scopo \`e verificare se una metrica disponibile prima dell'esecuzione o una regola disponibile dopo la misura conservino potere informativo; non dimostrare prestazioni su una QPU reale.
 
 % -----------------------------------------------
-\subsection{La Previsione e il suo Fondamento}
+\section{Previsione e selezione non sono la stessa domanda}
 \label{sec:app_comp_previsione}
 
-Il transpiler di Qiskit non è ingenuo rispetto al rumore: ai livelli di ottimizzazione superiori sceglie la mappatura tenendo conto dei tempi di coerenza e degli errori per arco. Esistono inoltre strumenti dedicati al solo ordinamento dei layout, che assegnano a ciascuno un punteggio di fedeltà ricavato dai dati di calibrazione, e ranker appresi che li superano. Qualunque proposta va confrontata con questi, non con il layout predefinito: superare quest'ultimo dimostrerebbe soltanto che il transpiler svolge il proprio compito.
+M11 usa la snapshot offline \texttt{FakeSherbrooke} distribuita con Qiskit IBM Runtime. Le propriet\`a \texttt{target.error} sono interpretate come \emph{average gate infidelity} (AGI) complessiva e convertite in un canale depolarizzante con la stessa AGI. Il readout, esposto dalla snapshot come un solo errore medio, viene modellato simmetricamente. Le direzioni native ECR sono conservate e ogni ECR compilato deve avere una calibrazione esplicita; \texttt{rz} \`e virtuale.
 
-Il margine ipotizzato sta altrove. Tutti quei metodi ottimizzano la \textbf{fedeltà del circuito}; per l'algoritmo di Shor, però, l'obiettivo non è la fedeltà ma che \emph{escano i fattori}, e le due cose non coincidono per ragioni strutturali: i qubit di conteggio portano la fase da cui si estrae il periodo e sono gli unici misurati, mentre il registro di lavoro viene scartato; e il post-processing con frazioni continue tollera fasi lievemente spostate. Il transpiler ignora questa asimmetria perché minimizza un costo generico, indipendente dall'algoritmo. Da qui la previsione, conforme al criterio del Capitolo~\ref{chap:conclusioni}: \emph{esiste un margine accessibile a chi conosce la struttura di Shor e inaccessibile a un criterio di sola fedeltà}.
+Non viene aggiunto un secondo canale $T_1/T_2$. L'AGI del gate \`e gi\`a una misura complessiva della sua non idealit\`a e sommarvi il rilassamento ricavato dalla stessa snapshot produrrebbe un doppio conteggio non quantificato. Di conseguenza M11 non separa il contributo della decoerenza: studia l'eterogeneit\`a della snapshot attraverso AGI e readout.
 
-\paragraph{Condizione sperimentale necessaria.}
-La verifica richiede rumore \textbf{eterogeneo per qubit e per arco}: sotto rumore uniforme non esiste informazione topologica da sfruttare, e un esito nullo sarebbe conseguenza del disegno anziché proprietà del metodo. Si adottano perciò i dati di calibrazione reali di un processore a 127 qubit, la cui disomogeneità è considerevole: fra il qubit migliore e il peggiore l'errore di lettura varia di un fattore $171$, l'errore di gate a due qubit di un fattore $288$ e il tempo di coerenza $T_2$ di un fattore $185$.
+Il punteggio di calibrazione di un circuito compilato \`e
+\begin{equation}
+    s = 1-\prod_{g\in C}(1-e_g),
+\end{equation}
+dove $e_g$ \`e l'errore target dell'istruzione fisica o della misura. Un punteggio minore indica una fedelt\`a nominale maggiore. La correlazione fra $s$ e successo risponde alla domanda \emph{predittiva}; scegliere il layout con $s$ minimo e valutarlo su dati non usati per la scelta risponde alla domanda \emph{decisionale}. Le due non vanno confuse.
 
 % -----------------------------------------------
-\subsection{Primo Esperimento: la Fedeltà è un Buon Criterio di Scelta?}
+\section{M11: pilota sui layout}
 \label{sec:app_comp_pilota}
 
-Si campionano sessanta sottoinsiemi connessi di dodici qubit fisici. Per ciascuno si costruisce il modello di rumore dai parametri reali di quei qubit e di quegli archi, si traspila il circuito di Shor per $N=15$ e si misurano due grandezze: il \textbf{punteggio di fedeltà} $s = 1 - \prod_x (1 - e_x)$ calcolato dai soli dati di calibrazione, senza eseguire nulla, e la \textbf{probabilità di successo} della fattorizzazione, misurata su $8\,192$ campioni.
+Si campionano 60 sottografi connessi di 12 qubit mediante crescita casuale. Il campionamento non \`e uniforme sullo spazio dei sottografi: l'esperimento resta quindi esplorativo e le incertezze non descrivono l'intera topologia Sherbrooke. Su ciascun sottografo il circuito $N=15$, $a=7$ viene compilato in \texttt{sx/rz/x/ecr} con direzioni ECR native, livello di ottimizzazione 3 e seed 42.
+
+Gli 8192 shot per layout sono divisi in otto batch con seed comuni. Quattro batch costituiscono la partizione di selezione e quattro l'holdout. Si confrontano due regole: layout con punteggio $s$ minimo e layout con successo massimo sulla partizione di selezione; entrambe sono valutate soltanto sull'holdout. Questo evita di chiamare ``migliore'' il massimo osservato sugli stessi dati usati per stimarne la prestazione.
 
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{lc}
+\begin{tabular}{ll}
 \toprule
-\textbf{Grandezza} & \textbf{Valore} \\
+\textbf{Voce} & \textbf{Contratto M11} \\
 \midrule
-Sottografi valutati & 60 \\
-$P_{\text{success}}$ minima / mediana / massima & 0.196 / 0.549 / 0.631 \\
-\textbf{Forbice fra migliore e peggiore} & \textbf{43.5 punti percentuali} \\
-Correlazione di Spearman (fedeltà, successo) & $-0.460$ \\
-$P_{\text{success}}$ del layout migliore \emph{per fedeltà} & 0.611 \\
-$P_{\text{success}}$ del layout migliore \emph{in assoluto} & 0.631 \\
-\textbf{Perdita usando il criterio di fedeltà} & \textbf{1.9 punti percentuali} \\
+backend & snapshot offline \texttt{FakeSherbrooke}, 127 qubit \\
+layout richiesti & 60 sottografi connessi, random-growth non uniforme \\
+circuito & $N=15$, $a=7$, 8 qubit di conteggio \\
+base / ottimizzazione & \texttt{sx/rz/x/ecr}, livello 3, seed 42 \\
+campionamento & 8192 shot, 8 batch, split 4/4 \\
+inferenza & Spearman + bootstrap 2000 sui layout \\
 \bottomrule
 \end{tabular}
-\caption[Fedeltà stimata contro successo misurato nella scelta del layout]{Scelta del layout su calibrazione reale. La forbice fra il migliore e il peggiore sottografo è larghissima, ma il criterio di fedeltà --- pur essendo un predittore mediocre --- seleziona un layout quasi ottimale.}
+\caption[Disegno del pilota sui layout]{Contratto preregistrato di M11. La snapshot \`e riproducibile tramite hash di calibrazione; non \`e una misura live di un dispositivo al momento dell'esecuzione.}
 \label{tab:app_comp_pilota}
 \end{table}
 
-Il risultato è duplice e va letto per intero. Da un lato \textbf{la scelta del layout conta enormemente}: fra il sottografo migliore e il peggiore corrono più di quaranta punti percentuali di probabilità di successo --- più di quanto qualunque tecnica esaminata in questa tesi abbia mai recuperato. Dall'altro, \textbf{il criterio di fedeltà quella scelta la compie già bene}: sbaglia di meno di due punti su quarantatré, e tale perdita è per di più sovrastimata, poiché il ``migliore su sessanta'' è il massimo di sessanta stime rumorose ed è quindi affetto da distorsione di selezione.
-
-Ne discende una distinzione che vale la pena isolare, perché è la stessa che il Capitolo~\ref{chap:risultati} ha incontrato in forma speculare: il punteggio di fedeltà è un \emph{predittore} mediocre --- con una correlazione di rango di $-0.46$ spiega meno di un terzo della variabilità --- ma un \emph{selettore} efficace. Nella prima fase sperimentale il classificatore era eccellente come predittore e inutile come decisore; qui accade l'opposto. In entrambi i casi la lezione è che \textbf{la qualità di una stima e la sua utilità operativa sono grandezze distinte}, e che confonderle porta a conclusioni sbagliate in entrambe le direzioni.
-
-\paragraph{Quali grandezze predicono davvero il successo.}
-L'analisi delle singole componenti chiarisce il quadro e riserva una sorpresa.
-
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{lc}
+\begin{tabular}{p{0.30\textwidth}p{0.55\textwidth}}
 \toprule
-\textbf{Grandezza del layout} & \textbf{Correlazione di Spearman con} $P_{\text{success}}$ \\
+\textbf{Stima} & \textbf{Interpretazione ammessa} \\
 \midrule
-Errore di lettura medio & $\mathbf{-0.564}$ \\
-Errore di gate a due qubit medio & $-0.541$ \\
-Errore di lettura del qubit peggiore & $-0.518$ \\
-\emph{Punteggio di fedeltà composito} & \emph{$-0.460$} \\
-$T_2$ medio & $+0.221$ \\
-Profondità del circuito traspilato & $+0.098$ \\
-Numero di porte a due qubit (routing) & $+0.032$ \\
+Spearman $s$--$P_{\rm holdout}$ & associazione di rango sul campione random-growth \\
+$P_{\rm holdout}$, minimo $s$ & resa della regola basata solo sulla calibrazione \\
+$P_{\rm holdout}$, massimo train & resa di una selezione empirica su dati separati \\
+differenza holdout & confronto esplorativo tra le due regole, non oracolo globale \\
 \bottomrule
 \end{tabular}
-\caption[Potere predittivo delle singole grandezze del layout]{Il punteggio composito predice \emph{peggio} del solo errore di lettura, di cui è funzione: l'aggregazione moltiplicativa diluisce il segnale anziché concentrarlo. I tempi di coerenza risultano quasi irrilevanti, in accordo indipendente con la campagna parametrica della Sezione~\ref{app:parametrica}.}
+\caption[Stimandi del pilota M11]{La correlazione valuta capacit\`a predittiva; il confronto holdout valuta una decisione. Nessuna riga autorizza un claim causale sull'hardware.}
 \label{tab:app_comp_predittori}
 \end{table}
 
-Tre osservazioni. La prima è che il punteggio composito predice \emph{peggio} del singolo ingrediente da cui dipende: aggregare moltiplicativamente tutti i contributi di errore diluisce l'informazione che conta. La seconda è che l'errore di lettura domina --- ed è coerente con la struttura dell'algoritmo, poiché gli unici qubit misurati sono gli otto di conteggio. La terza è una conferma incrociata di un risultato già acquisito: i tempi di coerenza risultano quasi ininfluenti, esattamente come la campagna parametrica della Sezione~\ref{app:parametrica} aveva trovato per via del tutto indipendente, con strumenti e modello di rumore diversi.
+% M11_RESULTS_BEGIN
+Dei 60 layout richiesti, 40 producono un modello di rumore valido. I 20
+fallimenti non sono simulazioni con successo nullo: la snapshot assegna ad
+almeno un gate usato un'AGI pari a 1, valore fuori dal dominio della
+conversione depolarizzante adottata, e quei layout vengono pertanto esclusi.
+Fra i layout validi, $P_{\rm holdout}$ varia da 0,297 a 0,516, con mediana
+0,431.
+
+La correlazione di rango tra punteggio di calibrazione e successo holdout è
+$\rho_s=-0,184$, con IC bootstrap al 95\% $[-0,456;0,124]$ (2000
+ricampionamenti). L'intervallo include ampiamente lo zero: sul campione
+random-growth il punteggio non mostra una capacità predittiva conclusiva. Il
+layout selezionato dal minimo punteggio (ID 35) ottiene
+$P_{\rm holdout}=0,451$; quello selezionato dal massimo successo sulla
+partizione train (ID 48) ottiene 0,516 sull'holdout. La differenza descrittiva
+è quindi $+0,065$, ma non è accompagnata da un intervallo dedicato e non va
+generalizzata oltre questo pilota.
+
+La snapshot \texttt{fake\_sherbrooke} è identificata nel JSON dal proprio hash
+SHA-256, il cui prefisso è \texttt{04b6a48f}. Il risultato completo è nel file
+\path{results_M11_pilota_v2_20260826_222137.json}.
+% M11_RESULTS_END
 
 % -----------------------------------------------
-\subsection{Secondo Esperimento: Conta il Ruolo Assegnato ai Qubit?}
+\section{M11b: readout effettivo dopo il routing}
 \label{sec:app_comp_ruoli}
 
-Il primo esperimento ha variato \emph{quale} gruppo di dodici qubit utilizzare, lasciando al transpiler la scelta del ruolo da assegnare a ciascuno. Non ha quindi messo alla prova l'ipotesi di partenza, che riguarda proprio l'assegnazione dei ruoli. Il secondo esperimento colma questa lacuna: si \textbf{fissa il sottografo} e si varia \textbf{soltanto} quali qubit fisici ricevano il registro di conteggio, confrontando l'assegnazione ai qubit a lettura migliore con quella ai qubit a lettura peggiore, con la scelta libera del transpiler e con permutazioni casuali. Il confronto è appaiato: stesso sottografo, stessi campioni, stesso seme.
-
-\paragraph{L'intervento non è affidabile, e i dati lo rivelano.}
-Il protocollo prevedeva un controllo di verifica: misurare, dopo la traspilazione, l'errore di lettura medio dei qubit fisici su cui le misure \emph{effettivamente} cadono, per accertare che la manipolazione avesse avuto l'effetto voluto. Il controllo ha rivelato che l'intervento riesce solo in circa metà dei casi. La ragione è strutturale: imporre la mappatura iniziale non determina la mappatura \emph{finale}, perché l'instradamento inserisce porte di scambio che permutano i qubit lungo il circuito. Su circuiti con oltre quattrocento porte a due qubit la permutazione è sostanziale, e il qubit che porta il registro di conteggio al momento della misura non è quello a cui era stato assegnato in partenza.
-
-Il confronto fra le due strategie intenzionali, di conseguenza, non mette alla prova l'ipotesi: su dodici sottografi l'assegnazione ai qubit a lettura migliore prevale in sei casi su dodici, con una differenza appaiata media di $+4.3$ punti percentuali ma un rapporto $t$ di $1.29$, non significativo. L'esito non è una smentita: è una misura priva di potere informativo, perché la variabile indipendente non è stata controllata.
-
-\paragraph{L'analisi corretta.}
-Si abbandona quindi l'intervento e si utilizza la grandezza effettivamente misurata --- l'errore di lettura dei qubit realmente misurati --- correlandola con la probabilità di successo su tutte le sessanta esecuzioni. Per isolare l'effetto del \emph{ruolo} da quello del gruppo di qubit impiegato, entrambe le variabili sono centrate sulla media del proprio sottografo, ottenendo una correlazione parziale che controlla per il sottografo.
+Una seconda verifica genera variazione entro 12 sottografi. Per ciascuno vengono proposti cinque \emph{initial layout}: registri di conteggio inizialmente assegnati ai qubit con readout nominale basso o alto, layout scelto dal transpiler e due permutazioni casuali. Queste etichette non sono trattamenti. Il routing pu\`o spostare i qubit virtuali, perci\`o l'esposizione analizzata \`e l'errore medio di readout dei qubit \textbf{effettivamente misurati nel circuito finale}.
 
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{lcc}
+\begin{tabular}{p{0.29\textwidth}p{0.61\textwidth}}
 \toprule
-\textbf{Grandezza} & \textbf{Correlazione grezza} & \textbf{Correlazione parziale} \\
- & (sottografi confusi) & (entro sottografo) \\
+\textbf{Voce} & \textbf{Contratto M11b} \\
 \midrule
-Errore di lettura dei qubit misurati & $-0.685$ & $\mathbf{-0.465}$ \\
-Numero di porte di instradamento & $-0.081$ & $-0.188$ \\
+sottografi & 12, ciascuno con cinque strategie descrittive \\
+base / ottimizzazione & \texttt{sx/rz/x/ecr}, livello 2, seed 42 \\
+shot & 8192 per strategia, otto batch, holdout 50\% \\
+esposizione & readout medio sui qubit misurati dopo routing \\
+controlli & effetti fissi di sottografo, numero ECR, profondit\`a \\
+stima primaria & Spearman parziale readout--successo \\
+incertezza & cluster bootstrap sui sottografi analizzabili, 2000 ri-campionamenti \\
 \bottomrule
 \end{tabular}
-\caption[Effetto del ruolo dei qubit, a sottografo fissato]{Correlazione di Spearman con la probabilità di successo, su 60 esecuzioni e 12 sottografi. La correlazione parziale isola l'effetto dell'assegnazione dei ruoli, a parità di gruppo di qubit fisici impiegato.}
+\caption[Disegno osservazionale M11b]{L'unit\`a indipendente del bootstrap \`e il sottografo, non la singola strategia annidata.}
 \label{tab:app_comp_ruoli}
 \end{table}
 
-Tre elementi convergono. Il primo: a sottografo fissato, la sola riassegnazione dei ruoli fa variare la probabilità di successo di \textbf{13.2 punti percentuali in media}, con un massimo di $36.4$ --- non è dunque una variabile marginale. Il secondo: la correlazione parziale con l'errore di lettura dei qubit misurati è $-0.465$, mentre quella con il costo di instradamento è meno della metà: \emph{a parità di sottografo è la lettura, non il routing, a governare l'esito}. Il terzo, non parametrico e quindi indipendente da assunzioni di forma: in \textbf{sei sottografi su dodici} la configurazione con l'errore di lettura più basso è anche quella che ottiene il successo massimo, contro i $2.4$ attesi per puro caso fra cinque configurazioni ($p = 0.019$).
-
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{lcc}
+\begin{tabular}{lp{0.62\textwidth}}
 \toprule
-\textbf{Strategia di assegnazione} & $P_{\text{success}}$ \textbf{media} & \textbf{Porte di instradamento} \\
+\textbf{Etichetta iniziale} & \textbf{Uso nell'analisi} \\
 \midrule
-Conteggio sui qubit a lettura migliore & $0.482 \pm 0.025$ & 431 \\
-Scelta libera del transpiler           & $0.468 \pm 0.034$ & \textbf{353} \\
-Permutazione casuale (media)           & $0.444$           & 438 \\
-Conteggio sui qubit a lettura peggiore & $0.438 \pm 0.035$ & 427 \\
+\texttt{init-readout-basso} & genera una permutazione iniziale; non garantisce il readout finale \\
+\texttt{init-readout-alto} & genera variazione nella direzione opposta \\
+\texttt{transpiler} & lascia la scelta iniziale al transpiler \\
+\texttt{casuale-1/2} & due permutazioni riproducibili di confronto \\
 \bottomrule
 \end{tabular}
-\caption[Prestazione media per strategia di assegnazione dei ruoli]{L'ordinamento medio segue la direzione prevista, ma le differenze non raggiungono la significatività con dodici sottografi. Si noti che il transpiler ottiene il costo di instradamento nettamente più basso senza ottenere il successo più alto: ottimizza la grandezza che sa misurare, non quella che conta per l'algoritmo.}
+\caption[Strategie descrittive di M11b]{Le etichette sono strumenti per produrre variazione entro sottografo. Il predittore usato nel modello \`e sempre la propriet\`a osservata dopo il routing.}
 \label{tab:app_comp_strategie}
 \end{table}
 
+% M11B_RESULTS_BEGIN
+Dei 12 sottografi richiesti, nove risultano analizzabili per tutte le cinque
+strategie, per un totale di 45 osservazioni holdout. Nei tre sottografi esclusi
+la conversione del modello di calibrazione incontra un'AGI pari a 1, fuori dal
+dominio della parametrizzazione depolarizzante: anche in questo caso le righe
+escluse non rappresentano esecuzioni con successo nullo.
+
+Dopo la rimozione degli effetti fissi di sottografo e il controllo per numero di
+ECR e profondit\`a, la correlazione parziale di Spearman fra errore medio di
+readout effettivo e successo \`e $\rho_s=-0,605$. L'IC al 95\% ottenuto con 2000
+ricampionamenti cluster a livello di sottografo \`e $[-0,826;-0,190]$. Nel
+campione osservato, a maggiore errore di lettura corrisponde quindi un successo
+inferiore anche entro sottografo; l'intervallo non include lo zero. Il risultato
+resta associativo, non causale, sia per il numero ridotto di cluster sia per la
+possibile presenza di propriet\`a topologiche non misurate correlate con readout,
+conteggio ECR e profondit\`a.
+
+Il risultato canonico \`e
+\path{results_M11b_ruoli_v2_20260827_115109.json}; l'analisi indipendente
+\`e \path{analysis_M11b_v2_20260827_115119.json} e vincola il sorgente
+all'hash SHA-256 \texttt{1c4b5b4fad1e2289\ldots f41c196b42152215}.
+% M11B_RESULTS_END
+
 % -----------------------------------------------
-\subsection{Un Terzo Caso: la Ricerca Multi-Candidato a Livello Logico}
+\section{M13: TOP-4 sotto il proxy per gate}
 \label{sec:app_comp_topk}
 
-Il Capitolo~\ref{chap:sviluppi} propone come estensione naturale l'applicazione della strategia TOP-K allo Shor logico, dove essa non dovrebbe più compensare il rumore fisico dei gate --- compito del codice correttore --- ma l'errore logico residuo. La verifica è riportata qui perché il suo esito, negativo, è istruttivo quanto i precedenti.
+M13 usa lo stesso circuito, lo stesso manifest e la stessa definizione di $p_L$ di M8. Per ciascun punto esegue 200 repliche da 1024 shot e riusa ogni istogramma per tre endpoint: massa di successo per singola misura, TOP-1 e TOP-4. Il successo TOP-K \`e binario per replica: almeno uno dei candidati selezionati conduce ai fattori.
+
+Un pareggio al confine del quarto posto rende la selezione non identificata. Il runner salva quindi: (i) una scelta pseudo-casuale riproducibile; (ii) un limite inferiore, vero solo quando ogni scelta ammissibile contiene un esito utile; (iii) un limite superiore, vero quando almeno una scelta ammissibile pu\`o contenerlo. Il contrasto primario fra $p_L=0$ e il massimo preregistrato usa un intervallo Newcombe; l'equivalenza richiede che l'intero intervallo cada entro $\pm0,10$. Una seconda verifica usa un inviluppo Wilson simultaneo su tutte le risoluzioni dei pareggi.
 
 \begin{table}[H]
 \centering
-\small
-\begin{tabular}{cccc}
+\scriptsize
+\begin{tabular}{rcccc}
 \toprule
-\textbf{Errore logico} $p_L$ & \textbf{Per singola misura} & \textbf{TOP-4} & \textbf{TOP-1} \\
+$p_L$ & per misura & TOP-1 & TOP-4 seeded & identificato \\
 \midrule
-0                  & 0.751 & 1.000 & 0.700 \\
-$2\times10^{-3}$   & 0.699 & 1.000 & 0.000 \\
-$5\times10^{-3}$   & 0.674 & 1.000 & 0.000 \\
-$10^{-2}$          & 0.620 & 1.000 & 0.000 \\
-$2\times10^{-2}$   & 0.562 & 1.000 & 0.000 \\
-$5\times10^{-2}$   & 0.402 & 1.000 & 0.700 \\
-$10^{-1}$          & 0.283 & 1.000 & 0.000 \\
-$2\times10^{-1}$   & 0.245 & 1.000 & 1.000 \\
+$0$ & $0{,}7512$ & $0{,}805$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$10^{-4}$ & $0{,}7459$ & $0{,}730$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$5\times10^{-4}$ & $0{,}7377$ & $0{,}690$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$10^{-3}$ & $0{,}7229$ & $0{,}620$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$1{,}7\times10^{-3}$ & $0{,}7080$ & $0{,}620$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$2\times10^{-3}$ & $0{,}7003$ & $0{,}650$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$5\times10^{-3}$ & $0{,}6396$ & $0{,}505$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$10^{-2}$ & $0{,}5652$ & $0{,}645$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$2\times10^{-2}$ & $0{,}4528$ & $0{,}695$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$5\times10^{-2}$ & $0{,}2979$ & $0{,}760$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$10^{-1}$ & $0{,}2506$ & $0{,}535$ & $0{,}915$ & $[0{,}855;0{,}940]$ \\
+$2\times10^{-1}$ & $0{,}2469$ & $0{,}245$ & $0{,}670$ & $[0{,}535;0{,}860]$ \\
 \bottomrule
 \end{tabular}
-\caption[Comportamento della ricerca multi-candidato a livello logico]{Frazione di iterazioni risolte al variare dell'errore logico per gate ($N=15$, 30 iterazioni da $1\,024$ shot per punto). La metrica per singola misura decresce in modo monotòno di oltre cinquanta punti percentuali; la strategia TOP-4 resta invece a 1.000 su tutto l'intervallo.}
+\caption[Endpoint preregistrati di M13]{Endpoint estratti dall'artefatto M13 schema~2 del 26 agosto 2026. La colonna ``identificato'' riporta i limiti inferiore e superiore generati dai pareggi al confine del TOP-4.}
 \label{tab:app_comp_topk}
 \end{table}
 
-La strategia TOP-4 risolve la totalità delle iterazioni per ogni valore di $p_L$ esaminato, compreso quello a cui la probabilità per singola misura è già scesa al livello del caso: l'escursione della curva è \emph{esattamente nulla}. Il criterio non discrimina, e non perché la strategia sia particolarmente efficace, ma perché l'istanza è degenere --- con periodo $r=4$ una frazione elevata degli esiti conduce ai fattori attraverso le frazioni continue, sicché è sufficiente guardare quattro candidati per trovarne uno valido quale che sia il livello di rumore.
+% M13_APPENDIX_RESULTS_BEGIN
+Il contrasto primario preregistrato confronta il TOP-4 seeded a $p_L=0$ con quello al massimo valore della griglia, $p_L=0,2$. La differenza stimata \`e 0,330 e l'IC Newcombe 95\% \`e $[0,266;0,398]$. La regola di equivalenza richiedeva l'intero intervallo entro $\pm0,10$; la regola di discriminazione richiedeva invece che il limite inferiore della diminuzione superasse 0,10. L'esito preregistrato \`e una diminuzione discriminante: il TOP-4 non \`e equivalente sul dominio completo della griglia.
 
-La colonna TOP-1 mostra il rovescio della stessa medaglia, con un andamento erratico che non dipende dal rumore: la misura più frequente coincide spesso con l'esito $y=0$, che non porta informazione sul periodo ed è scartato per costruzione. È la medesima osservazione riportata nel Capitolo~\ref{chap:risultati} a livello fisico, e conferma che la differenza fra TOP-1 e TOP-K non è primariamente una questione di robustezza al rumore, ma di quale candidato la strategia guardi per primo.
-
-Ne segue che la proposta del Capitolo~\ref{chap:sviluppi} non è, come poteva sembrare, un'estensione a basso costo: richiede un'istanza con periodo meno degenere, e ricade quindi nella barriera di scalabilità. Le due limitazioni --- degenerazione dell'istanza piccola e intrattabilità di quelle grandi --- non sono indipendenti, ma lo stesso ostacolo che si manifesta due volte.
+Le analisi di sensibilit\`a confermano che la gestione dei pareggi \`e materiale. Se tutti i pareggi sono risolti nel senso pi\`u sfavorevole, la diminuzione stimata \`e 0,465 con IC $[0,395;0,534]$; nel senso pi\`u favorevole \`e 0,140 con IC $[0,095;0,195]$, non sufficiente per superare il margine con la stessa regola di discriminazione. L'inviluppo simultaneo Bonferroni-Wilson su tutte le risoluzioni ammissibili \`e $[0,059;0,553]$ e non supporta equivalenza per tutte le risoluzioni dei pareggi. Il risultato va quindi letto cos\`i: TOP-4 \`e estremamente efficace fino a $p_L=0,05$ su $N=15$, ma degrada in modo statisticamente visibile agli errori pi\`u alti della griglia.
+% M13_APPENDIX_RESULTS_END
 
 % -----------------------------------------------
-\subsection{Conclusione: il Criterio va Precisato}
+\section{Conclusione e limiti}
 \label{sec:app_comp_conclusione}
 
-I due esperimenti restituiscono un esito che non è né una conferma né una smentita, e la distinzione merita di essere formulata con precisione perché è proprio ciò che rende il caso istruttivo.
+M11 e M11b non sono un benchmark su hardware. Il simulatore e il punteggio derivano dalla stessa snapshot; questa coerenza rende il confronto controllato, ma pu\`o favorire la metrica nominale e non include deriva, crosstalk, leakage o errori coerenti. Il campionamento random-growth non \`e uniforme. M11b aumenta il controllo confrontando strategie entro lo stesso sottografo, ma resta osservazionale: readout, numero ECR e profondit\`a possono essere correlati con variabili topologiche non misurate.
 
-\textbf{Il meccanismo ipotizzato esiste.} A parità di gruppo di qubit fisici, il ruolo assegnato a ciascuno muove la probabilità di successo di oltre tredici punti percentuali in media; la grandezza che governa quel movimento è l'errore di lettura dei qubit effettivamente misurati --- coerentemente con la struttura dell'algoritmo, dove gli unici qubit letti sono quelli del registro di conteggio --- e non il costo di instradamento. L'asimmetria fra registro di conteggio e registro di lavoro, che il criterio di sola fedeltà ignora, è dunque reale e misurabile.
-
-\textbf{Ma non è sfruttabile con lo strumento ovvio.} Imporre la mappatura iniziale non basta a determinare quali qubit portino il conteggio al momento della misura, perché l'instradamento li permuta. Controllare davvero la variabile richiederebbe di vincolare anche l'instradamento, e ogni vincolo aggiuntivo si paga in porte: il transpiler, lasciato libero, ottiene un costo di instradamento inferiore di circa un quinto rispetto a qualunque assegnazione imposta. È questo il compromesso che il primo esperimento aveva già lasciato intravedere, e che spiega perché il criterio di sola fedeltà --- pur essendo un predittore mediocre --- si riveli un selettore difficile da battere: bilancia implicitamente due grandezze in tensione fra loro.
-
-\paragraph{Che cosa se ne ricava per il criterio del Capitolo~\ref{chap:conclusioni}.}
-Il criterio afferma che un modello appreso produce valore dove il metodo esistente è strutturalmente cieco a una classe di informazione. Il caso qui esaminato ne mostra il limite: l'informazione mancava davvero, ed era davvero rilevante, eppure il guadagno non si è materializzato. La condizione va perciò integrata:
-
-\begin{quote}
-non basta che l'informazione sia \emph{assente} dal metodo esistente e \emph{predittiva} dell'esito; occorre anche che sia \textbf{sfruttabile senza costi compensativi}, ossia che agire su di essa non degradi un'altra grandezza che concorre al medesimo risultato.
-\end{quote}
-
-I due casi favorevoli incontrati nel corpo della tesi soddisfano la condizione aggiuntiva, e si vede ora che non è un caso: la ricerca multi-candidato non modifica il circuito e non costa nulla oltre al tentativo aggiuntivo, mentre la rete che corregge il decoder agisce dopo la decodifica, senza toccare né il circuito né la sindrome. Entrambe intervengono \emph{a valle} di ciò che hanno migliorato, e non ne alterano le condizioni. La mappatura consapevole della struttura, al contrario, agisce \emph{a monte} e modifica l'oggetto stesso su cui poi misura il guadagno: è questa la ragione strutturale per cui il vantaggio si annulla.
-
-\paragraph{Perimetro.}
-L'esplorazione riguarda una sola istanza ($N=15$), un solo dispositivo e dodici sottografi; con questa numerosità l'ordinamento medio fra strategie segue la direzione prevista ma non raggiunge la significatività statistica, ed è possibile che un campione più ampio, unito a un controllo effettivo dell'instradamento, riveli un effetto che qui resta sotto la soglia di rilevabilità. Ciò che l'esperimento stabilisce con sicurezza è di natura diversa e non dipende dalla potenza statistica: la scelta della mappatura è di gran lunga la leva più influente fra quelle esaminate in questa tesi --- oltre quaranta punti percentuali fra la migliore e la peggiore --- e il criterio di sola fedeltà, per quanto imperfetto, la sfrutta già quasi interamente.
+M13 risponde a una domanda diversa. Una strategia TOP-4 pu\`o restare efficace anche quando la massa utile per misura \`e fortemente degradata, soprattutto nell'istanza $N=15$ con pochi picchi strutturali. Perci\`o TOP-4 deve essere riportato insieme alla metrica per misura e all'incertezza dei pareggi; da solo non misura la fedelt\`a dello stato quantistico e non pu\`o essere estrapolato a moduli maggiori.
 
 \end{onehalfspace}

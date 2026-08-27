@@ -19,11 +19,11 @@ Nel 1994, Peter Shor dimostrò che un computer quantistico è in grado di esegui
     T_{\text{Shor}}(N) = O\!\left((\log N)^3\right)
     \label{eq:shor_obiettivi}
 \end{equation}
-Lo scarto tra le due espressioni non è una differenza di grado, ma una differenza di \textit{natura}: il tempo classico cresce in modo super-polinomiale con la lunghezza della chiave, mentre il tempo quantistico cresce polinomialmente. Ciò significa che \textbf{aumentare la lunghezza della chiave RSA non è una contromisura efficace} contro Shor: raddoppiare $n$ (i bit di $N$) porta il tempo classico da impraticabile a ancora più impraticabile, ma porta il tempo quantistico da $O(n^3)$ a $O((2n)^3) = 8\,O(n^3)$ --- un fattore costante, del tutto gestibile. La sicurezza di RSA è quindi \textbf{irrecuperabilmente compromessa} dalla disponibilità di un computer quantistico fault-tolerant, indipendentemente dalla lunghezza della chiave scelta. La stessa rottura si estende a tutti i sistemi basati sul logaritmo discreto (Diffie-Hellman, \ac{ECDSA}), per i quali Shor fornisce un algoritmo analogamente efficiente.
+Lo scarto tra le due espressioni non è una differenza di grado, ma una differenza di \textit{natura}: il tempo classico cresce in modo super-polinomiale con la lunghezza della chiave, mentre il tempo quantistico cresce polinomialmente. \textbf{Aumentare la lunghezza della chiave RSA non è quindi una contromisura strutturale} contro Shor: raddoppiare $n$ porta il costo asintotico textbook da $O(n^3)$ a $8\,O(n^3)$. Sul piano concreto questo fattore può richiedere molte più risorse fault-tolerant e ritardare un attacco, ma non ripristina un problema computazionalmente difficile per un avversario quantistico scalabile. La stessa vulnerabilità asintotica si estende ai sistemi basati sul logaritmo discreto (Diffie--Hellman, \ac{ECDSA}).
 
-La minaccia non è futura in senso astratto. Il fenomeno del \textit{harvest now, decrypt later} --- già documentato in ambito di intelligence --- consiste nel raccogliere oggi grandi quantità di dati cifrati con RSA, conservarli, e decifrarli non appena sarà disponibile un computer quantistico fault-tolerant. I dati cifrati oggi con chiavi RSA-2048 potrebbero quindi diventare leggibili in un orizzonte di dieci-quindici anni, secondo le roadmap pubblicate da \ac{IBM} e da altri produttori di hardware quantistico~\cite{ibm_roadmap2025}.
+La minaccia ha già una conseguenza operativa: nel modello \textit{harvest now, decrypt later}, dati cifrati oggi e destinati a restare sensibili vengono conservati in vista di una futura macchina crittograficamente rilevante. Non esiste però una previsione affidabile della sua data di arrivo. Le roadmap dei produttori descrivono obiettivi ingegneristici e il \ac{NIST} sottolinea che le stime spaziano da pochi anni a decenni; proprio l'incertezza, unita ai tempi lunghi di migrazione, motiva l'adozione anticipata della \ac{PQC}~\cite{nist_pqc_explainer2026,ibm_roadmap2025}.
 
-Il problema pratico che impedisce questa minaccia di materializzarsi oggi è il \textbf{rumore}. I processori quantistici attuali operano in regime \ac{NISQ}: dispongono di decine o centinaia di qubit fisici, ma sono affetti da decoerenza, errori di gate e readout error che degradano l'output dell'algoritmo di Shor fino a renderlo inaffidabile senza un numero elevato di ripetizioni. Comprendere questo limite e stabilire quali strategie lo superino --- e in quale punto della pipeline di esecuzione i modelli di machine learning contribuiscano davvero --- è la ragione d'essere del presente lavoro.
+Gli ostacoli pratici sono la scala, la profondità fault-tolerant e il \textbf{rumore}. I processori attuali operano in regime \ac{NISQ}: dispongono di molti qubit fisici, ma decoerenza, errori di gate, readout, connettività e overhead di correzione impediscono di sostenere il numero di operazioni logiche richiesto da Shor su chiavi crittografiche. Comprendere questi limiti e stabilire quali strategie li riducano --- e in quale punto della pipeline i modelli di machine learning contribuiscano davvero --- è la ragione d'essere del presente lavoro.
 
 \subsection{Requisiti Funzionali}
 \label{sec:requisiti}
@@ -34,23 +34,23 @@ Il sistema sperimentale deve soddisfare i seguenti requisiti funzionali:
 
 \begin{enumerate}
 
-    \item \textbf{Esecuzione configurabile del circuito di Shor.}
-    Dato un intero $N$ da fattorizzare e una base $a$ con $\gcd(a, N) = 1$, il sistema costruisce il circuito dell'algoritmo di Shor a partire dall'implementazione di riferimento \cite{github_shor}, lo configura con il numero di qubit $n_{\text{count}}$ specificato e lo esegue tramite \texttt{AerSimulator} con il noise model attivo per un numero di shot $M_{\text{shots}}$ configurabile.
+    \item \textbf{Esecuzione configurabile entro il perimetro validato.}
+    La campagna rumorosa e la demo pubblica usano l'istanza canonica $N=15$, $a=7$ e un numero configurabile di shot entro limiti dichiarati. Le implementazioni Beauregard per $N=21$ e $N=35$ sono sottoposte a test ideali e audit di risorse, ma non sono esposte come campagne rumorose equivalenti.
 
     \item \textbf{Modello di rumore parametrizzabile.}
-    Il sistema permette di configurare in modo indipendente tutti i parametri del noise model --- tassi di errore depolarizzante per gate a singolo e doppio qubit, tempi di rilassamento $T_1$ e $T_2$, probabilità di readout error --- in modo da poter riprodurre diverse condizioni operative e generare dataset con distribuzione di rumore variabile. Questo requisito è fondamentale per la creazione di un dataset di addestramento sufficientemente ricco per il Metodo 2, come indicato dalla metodologia di selezione dei noise model proposta in letteratura \cite{epjqt_noise2024}.
+    Il sistema permette di configurare separatamente i parametri Aer $\lambda_{1q}$ e $\lambda_{2q}$, i tempi $T_1/T_2$, il readout asimmetrico della demo e l'eventuale sovrarotazione coerente. I preset della campagna restano uniformi e illustrativi; non riproducono una calibrazione hardware nominata.
 
     \item \textbf{Raccolta e archiviazione degli output.}
-    Il sistema registra la distribuzione di misura del registro di controllo per ogni esecuzione e la archivia in formato strutturato, garantendo la riproducibilità degli esperimenti tramite seed fisso per il generatore di numeri casuali di Qiskit Aer.
+    Il sistema registra la distribuzione di misura del registro di controllo per ogni esecuzione e la archivia in formato strutturato. La riproducibilità usa un seed base e calendari derivati separati per replica, iterazione, simulatore e risoluzione dei pareggi.
 
     \item \textbf{Analisi statistica del Metodo 1.}
     Il sistema implementa la pipeline del Metodo 1: selezione della misura più frequente dell'istogramma (strategia TOP-1, senza sogliatura preliminare), stima del periodo $r$ tramite frazioni continue, verifica della correttezza dei fattori estratti. Misura e registra il numero di iterazioni necessarie per raggiungere il primo risultato corretto.
 
     \item \textbf{Training, validazione e inferenza del Metodo 2.}
-    Il sistema genera il dataset dal simulatore rumoroso, addestra il classificatore con divisione training/validation/test, ne valuta le metriche di accuratezza e lo utilizza in modalità inferenza: dopo ogni esecuzione del circuito, il classificatore decide se l'istogramma contiene segnale \ac{QPE} recuperabile e, in caso affermativo, la ricerca multi-candidato TOP-K tenta l'estrazione dei fattori dai $K$ esiti più frequenti.
+    Il sistema genera il dataset dal simulatore rumoroso, addestra il classificatore con divisione training/validation/test e ne valuta le metriche. Il modello corrente apprende l'etichetta TOP-1: decide se il candidato dominante conduce ai fattori; se accetta l'istogramma, M2 applica poi la ricerca TOP-4. L'audit TOP-16 è a classe singola e non produce un classificatore.
 
     \item \textbf{Confronto sistematico sui use case previsti.}
-    Entrambi i metodi vengono eseguiti sugli stessi use case, nelle medesime condizioni di rumore, producendo metriche confrontabili secondo i criteri definiti nella Sezione~\ref{sec:metriche}. Come documentato nel Capitolo~\ref{chap:risultati}, il confronto risulterà praticabile sui due use case per $N=15$: per $N=21$ e $N=35$ la profondità del circuito traspilato azzera la probabilità di successo di qualunque strategia di estrazione.
+    M1, TOP-4 e M2 vengono eseguiti sugli stessi istogrammi nei due preset $N=15$, producendo metriche appaiate secondo la Sezione~\ref{sec:metriche}. Per $N=21$ e $N=35$ si riportano correttezza ideale e costo compilato; non si afferma che la probabilità rumorosa sia zero, perché la campagna rumorosa non viene eseguita.
 
     \item \textbf{Riproducibilità.}
     Tutti gli esperimenti sono riproducibili: seed fisso, parametri esplicitati, codice disponibile nel repository del progetto. Questo requisito è condizione necessaria per la validazione accademica dei risultati \cite{shor_hpec2023}.
@@ -75,14 +75,14 @@ $N$                 & intero         & Numero da fattorizzare \\
 $a$                 & intero         & Base della moltiplicazione modulare ($\gcd(a,N)=1$) \\
 $n_{\text{count}}$  & intero         & Qubit del registro di controllo \\
 $M_{\text{shots}}$  & intero         & Shot per esecuzione del simulatore \\
-$\epsilon_{1q}$     & adimensionale  & Tasso di errore depolarizzante su gate a 1 qubit \\
-$\epsilon_{2q}$     & adimensionale  & Tasso di errore depolarizzante su gate a 2 qubit \\
+$\lambda_{1q}$      & adimensionale  & Parametro Aer del canale depolarizzante 1Q \\
+$\lambda_{2q}$      & adimensionale  & Parametro Aer del canale depolarizzante 2Q \\
 $T_1$               & ns             & Tempo di rilassamento (amplitude damping) \\
 $T_2$               & ns             & Tempo di dephasing \\
 $p_{\text{ro}}$     & adimensionale  & Probabilità di readout error \\
 \bottomrule
 \end{tabular}
-\caption{Parametri di input del sistema sperimentale. I valori di $\epsilon_{1q}$, $\epsilon_{2q}$, $T_1$, $T_2$ e $p_{\text{ro}}$ definiscono il noise model e vengono variati tra i use case per coprire scenari di rumore diversi.}
+\caption{Parametri principali del sistema sperimentale. $\lambda$ segue la convenzione Aer e non coincide con la probabilità aggregata di Pauli non identità.}
 \label{tab:input_params}
 \end{table}
 

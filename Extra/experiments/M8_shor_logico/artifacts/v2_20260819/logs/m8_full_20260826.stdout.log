@@ -1,0 +1,17 @@
+
+=== SHOR LOGICO — N=15, a=7, 20 repliche x 4096 shot/punto ===
+p_L=0         P_success=0.7489 CI 95.0%=[0.7459, 0.7518]
+p_L=0.0001    P_success=0.7469 CI 95.0%=[0.7439, 0.7498]
+p_L=0.0005    P_success=0.7373 CI 95.0%=[0.7343, 0.7403]
+p_L=0.001     P_success=0.7250 CI 95.0%=[0.7219, 0.7280]
+p_L=0.0017    P_success=0.7083 CI 95.0%=[0.7051, 0.7114]
+p_L=0.002     P_success=0.6992 CI 95.0%=[0.6961, 0.7024]
+p_L=0.005     P_success=0.6450 CI 95.0%=[0.6417, 0.6483]
+p_L=0.01      P_success=0.5651 CI 95.0%=[0.5617, 0.5685]
+p_L=0.02      P_success=0.4518 CI 95.0%=[0.4484, 0.4552]
+p_L=0.05      P_success=0.2953 CI 95.0%=[0.2921, 0.2984]
+p_L=0.1       P_success=0.2503 CI 95.0%=[0.2474, 0.2533]
+p_L=0.2       P_success=0.2441 CI 95.0%=[0.2412, 0.2471]
+p_L=0.5       P_success=0.2459 CI 95.0%=[0.2430, 0.2489]
+Monotonia compatibile con l'incertezza combinata: si
+Risultati salvati in: artifacts/v2_20260819/results_M8_shor_logico_v2_20260826_123421.json

@@ -1,0 +1,2354 @@
+{
+  "schema_version": "2.0",
+  "milestone": "M8_shor_logico",
+  "revision": "m8-logical-pauli-proxy-v2-replicated",
+  "generated_at": "2026-08-26T12:34:21.094241+02:00",
+  "config": {
+    "N": 15,
+    "a": 7,
+    "n_count": 8,
+    "shots_per_replicate": 4096,
+    "replicate_count": 20,
+    "seed": 42,
+    "confidence": 0.95,
+    "p_grid": [
+      0.0,
+      0.0001,
+      0.0005,
+      0.001,
+      0.0017,
+      0.002,
+      0.005,
+      0.01,
+      0.02,
+      0.05,
+      0.1,
+      0.2,
+      0.5
+    ]
+  },
+  "logical_noise_manifest": {
+    "revision": "phenomenological-pauli-per-gate-v2",
+    "kind": "phenomenological_per_gate_proxy",
+    "p_L_definition": "total_probability_of_nonidentity_Pauli_after_each_modeled_compiled_gate",
+    "aer_lambda": {
+      "1q": "4*p_L/3",
+      "2q": "16*p_L/15"
+    },
+    "gate_scope": {
+      "1q": [
+        "sx",
+        "x"
+      ],
+      "2q": [
+        "cx"
+      ],
+      "virtual": [
+        "rz"
+      ]
+    },
+    "direct_equivalence_to_M6_M7": false,
+    "interpretation": "Proxy uniforme per gate; non convertire direttamente metriche per ciclo, round o memoria di M6/M7 in p_L senza un modello di mapping separato."
+  },
+  "circuit_manifest": {
+    "circuit_revision": "shor-qpe-v2-amod15-correct",
+    "noise_model_revision": "uniform-rz-virtual-v2",
+    "postprocess_revision": "seeded-sha256-tie-break-v1",
+    "circuit_sha256": "c7f4cf3bc1735dce9d5b56d8e09686ee4ab43cabead65e734ea23d5a50f4ba2c",
+    "basis_gates": [
+      "rz",
+      "sx",
+      "x",
+      "cx"
+    ],
+    "optimization_level": 2,
+    "seed_transpiler": 20260819,
+    "depth": 412,
+    "size": 604,
+    "gate_counts": {
+      "rz": 302,
+      "cx": 224,
+      "sx": 70,
+      "measure": 8,
+      "barrier": 1
+    },
+    "python": "3.12.3",
+    "packages": {
+      "numpy": "2.5.1",
+      "qiskit": "2.5.0",
+      "qiskit-aer": "0.17.2",
+      "scikit-learn": "1.9.0"
+    }
+  },
+  "curve": {
+    "N": 15,
+    "a": 7,
+    "n_count": 8,
+    "shots_per_replicate": 4096,
+    "replicate_count": 20,
+    "confidence": 0.95,
+    "p_grid": [
+      0.0,
+      0.0001,
+      0.0005,
+      0.001,
+      0.0017,
+      0.002,
+      0.005,
+      0.01,
+      0.02,
+      0.05,
+      0.1,
+      0.2,
+      0.5
+    ],
+    "points": [
+      {
+        "p_L": 0.0,
+        "P_success": 0.74888916015625,
+        "successes": 61349,
+        "total_shots": 81920,
+        "P_success_se": 0.0015151182543507785,
+        "replicate_mean": 0.74888916015625,
+        "replicate_sd": 0.006089094290822875,
+        "replicate_se": 0.0013615628755685822,
+        "uncertainty_se": 0.0015151182543507785,
+        "wilson_ci": {
+          "low": 0.7459079590712036,
+          "high": 0.7518470201126913,
+          "confidence": 0.95,
+          "method": "Wilson score"
+        },
+        "replicates": [
+          {
+            "replicate": 0,
+            "simulator_seed": 1097454,
+            "successes": 3113,
+            "shots": 4096,
+            "P_success": 0.760009765625
+          },
+          {
+            "replicate": 1,
+            "simulator_seed": 1194863,
+            "successes": 3073,
+            "shots": 4096,
+            "P_success": 0.750244140625
+          },
+          {
+            "replicate": 2,
+            "simulator_seed": 1292272,
+            "successes": 3082,
+            "shots": 4096,
+            "P_success": 0.75244140625
+          },
+          {
+            "replicate": 3,
+            "simulator_seed": 1389681,
+            "successes": 3048,
+            "shots": 4096,
+            "P_success": 0.744140625
+          },
+          {
+            "replicate": 4,
+            "simulator_seed": 1487090,
+            "successes": 3070,
+            "shots": 4096,
+            "P_success": 0.74951171875
+          },
+          {
+            "replicate": 5,
+            "simulator_seed": 1584499,
+            "successes": 3010,
+            "shots": 4096,
+            "P_success": 0.73486328125
+          },
+          {
+            "replicate": 6,
+            "simulator_seed": 1681908,
+            "successes": 3056,
+            "shots": 4096,
+            "P_success": 0.74609375
+          },
+          {
+            "replicate": 7,
+            "simulator_seed": 1779317,
+            "successes": 3041,
+            "shots": 4096,
+            "P_success": 0.742431640625
+          },
+          {
+            "replicate": 8,
+            "simulator_seed": 1876726,
+            "successes": 3076,
+            "shots": 4096,
+            "P_success": 0.7509765625
+          },
+          {
+            "replicate": 9,
+            "simulator_seed": 1974135,
+            "successes": 3059,
+            "shots": 4096,
+            "P_success": 0.746826171875
+          },
+          {
+            "replicate": 10,
+            "simulator_seed": 2071544,
+            "successes": 3055,
+            "shots": 4096,
+            "P_success": 0.745849609375
+          },
+          {
+            "replicate": 11,
+            "simulator_seed": 2168953,
+            "successes": 3066,
+            "shots": 4096,
+            "P_success": 0.74853515625
+          },
+          {
+            "replicate": 12,
+            "simulator_seed": 2266362,
+            "successes": 3064,
+            "shots": 4096,
+            "P_success": 0.748046875
+          },
+          {
+            "replicate": 13,
+            "simulator_seed": 2363771,
+            "successes": 3093,
+            "shots": 4096,
+            "P_success": 0.755126953125
+          },
+          {
+            "replicate": 14,
+            "simulator_seed": 2461180,
+            "successes": 3051,
+            "shots": 4096,
+            "P_success": 0.744873046875
+          },
+          {
+            "replicate": 15,
+            "simulator_seed": 2558589,
+            "successes": 3054,
+            "shots": 4096,
+            "P_success": 0.74560546875
+          },
+          {
+            "replicate": 16,
+            "simulator_seed": 2655998,
+            "successes": 3046,
+            "shots": 4096,
+            "P_success": 0.74365234375
+          },
+          {
+            "replicate": 17,
+            "simulator_seed": 2753407,
+            "successes": 3095,
+            "shots": 4096,
+            "P_success": 0.755615234375
+          },
+          {
+            "replicate": 18,
+            "simulator_seed": 2850816,
+            "successes": 3113,
+            "shots": 4096,
+            "P_success": 0.760009765625
+          },
+          {
+            "replicate": 19,
+            "simulator_seed": 2948225,
+            "successes": 3084,
+            "shots": 4096,
+            "P_success": 0.7529296875
+          }
+        ]
+      },
+      {
+        "p_L": 0.0001,
+        "P_success": 0.7468505859375,
+        "successes": 61182,
+        "total_shots": 81920,
+        "P_success_se": 0.0015191839184589882,
+        "replicate_mean": 0.7468505859375,
+        "replicate_sd": 0.006513473061009479,
+        "replicate_se": 0.001456456853403083,
+        "uncertainty_se": 0.0015191839184589882,
+        "wilson_ci": {
+          "low": 0.7438615125085553,
+          "high": 0.7498165094178129,
+          "confidence": 0.95,
+          "method": "Wilson score"
+        },
+        "replicates": [
+          {
+            "replicate": 0,
+            "simulator_seed": 2097457,
+            "successes": 3088,
+            "shots": 4096,
+            "P_success": 0.75390625
+          },
+          {
+            "replicate": 1,
+            "simulator_seed": 2194866,
+            "successes": 3065,
+            "shots": 4096,
+            "P_success": 0.748291015625
+          },
+          {
+            "replicate": 2,
+            "simulator_seed": 2292275,
+            "successes": 3056,
+            "shots": 4096,
+            "P_success": 0.74609375
+          },
+          {
+            "replicate": 3,
+            "simulator_seed": 2389684,
+            "successes": 2997,
+            "shots": 4096,
+            "P_success": 0.731689453125
+          },
+          {
+            "replicate": 4,
+            "simulator_seed": 2487093,
+            "successes": 3039,
+            "shots": 4096,
+            "P_success": 0.741943359375
+          },
+          {
+            "replicate": 5,
+            "simulator_seed": 2584502,
+            "successes": 3045,
+            "shots": 4096,
+            "P_success": 0.743408203125
+          },
+          {
+            "replicate": 6,
+            "simulator_seed": 2681911,
+            "successes": 3092,
+            "shots": 4096,
+            "P_success": 0.7548828125
+          },
+          {
+            "replicate": 7,
+            "simulator_seed": 2779320,
+            "successes": 3078,
+            "shots": 4096,
+            "P_success": 0.75146484375
+          },
+          {
+            "replicate": 8,
+            "simulator_seed": 2876729,
+            "successes": 3097,
+            "shots": 4096,
+            "P_success": 0.756103515625
+          },
+          {
+            "replicate": 9,
+            "simulator_seed": 2974138,
+            "successes": 3043,
+            "shots": 4096,
+            "P_success": 0.742919921875
+          },
+          {
+            "replicate": 10,
+            "simulator_seed": 3071547,
+            "successes": 3039,
+            "shots": 4096,
+            "P_success": 0.741943359375
+          },
+          {
+            "replicate": 11,
+            "simulator_seed": 3168956,
+            "successes": 3069,
+            "shots": 4096,
+            "P_success": 0.749267578125
+          },
+          {
+            "replicate": 12,
+            "simulator_seed": 3266365,
+            "successes": 3101,
+            "shots": 4096,
+            "P_success": 0.757080078125
+          },
+          {
+            "replicate": 13,
+            "simulator_seed": 3363774,
+            "successes": 3048,
+            "shots": 4096,
+            "P_success": 0.744140625
+          },
+          {
+            "replicate": 14,
+            "simulator_seed": 3461183,
+            "successes": 3050,
+            "shots": 4096,
+            "P_success": 0.74462890625
+          },
+          {
+            "replicate": 15,
+            "simulator_seed": 3558592,
+            "successes": 3057,
+            "shots": 4096,
+            "P_success": 0.746337890625
+          },
+          {
+            "replicate": 16,
+            "simulator_seed": 3656001,
+            "successes": 3076,
+            "shots": 4096,
+            "P_success": 0.7509765625
+          },
+          {
+            "replicate": 17,
+            "simulator_seed": 3753410,
+            "successes": 3051,
+            "shots": 4096,
+            "P_success": 0.744873046875
+          },
+          {
+            "replicate": 18,
+            "simulator_seed": 3850819,
+            "successes": 3015,
+            "shots": 4096,
+            "P_success": 0.736083984375
+          },
+          {
+            "replicate": 19,
+            "simulator_seed": 3948228,
+            "successes": 3076,
+            "shots": 4096,
+            "P_success": 0.7509765625
+          }
+        ]
+      },
+      {
+        "p_L": 0.0005,
+        "P_success": 0.73734130859375,
+        "successes": 60403,
+        "total_shots": 81920,
+        "P_success_se": 0.0015375710700156915,
+        "replicate_mean": 0.73734130859375,
+        "replicate_sd": 0.006851648618258435,
+        "replicate_se": 0.0015320752068368367,
+        "uncertainty_se": 0.0015375710700156915,
+        "wilson_ci": {
+          "low": 0.7343166456994651,
+          "high": 0.7403437133310155,
+          "confidence": 0.95,
+          "method": "Wilson score"
+        },
+        "replicates": [
+          {
+            "replicate": 0,
+            "simulator_seed": 3097460,
+            "successes": 2977,
+            "shots": 4096,
+            "P_success": 0.726806640625
+          },
+          {
+            "replicate": 1,
+            "simulator_seed": 3194869,
+            "successes": 3031,
+            "shots": 4096,
+            "P_success": 0.739990234375
+          },
+          {
+            "replicate": 2,
+            "simulator_seed": 3292278,
+            "successes": 3043,
+            "shots": 4096,
+            "P_success": 0.742919921875
+          },
+          {
+            "replicate": 3,
+            "simulator_seed": 3389687,
+            "successes": 3035,
+            "shots": 4096,
+            "P_success": 0.740966796875
+          },
+          {
+            "replicate": 4,
+            "simulator_seed": 3487096,
+            "successes": 3012,
+            "shots": 4096,
+            "P_success": 0.7353515625
+          },
+          {
+            "replicate": 5,
+            "simulator_seed": 3584505,
+            "successes": 3044,
+            "shots": 4096,
+            "P_success": 0.7431640625
+          },
+          {
+            "replicate": 6,
+            "simulator_seed": 3681914,
+            "successes": 2972,
+            "shots": 4096,
+            "P_success": 0.7255859375
+          },
+          {
+            "replicate": 7,
+            "simulator_seed": 3779323,
+            "successes": 3024,
+            "shots": 4096,
+            "P_success": 0.73828125
+          },
+          {
+            "replicate": 8,
+            "simulator_seed": 3876732,
+            "successes": 3013,
+            "shots": 4096,
+            "P_success": 0.735595703125
+          },
+          {
+            "replicate": 9,
+            "simulator_seed": 3974141,
+            "successes": 3040,
+            "shots": 4096,
+            "P_success": 0.7421875
+          },
+          {
+            "replicate": 10,
+            "simulator_seed": 4071550,
+            "successes": 3020,
+            "shots": 4096,
+            "P_success": 0.7373046875
+          },
+          {
+            "replicate": 11,
+            "simulator_seed": 4168959,
+            "successes": 3042,
+            "shots": 4096,
+            "P_success": 0.74267578125
+          },
+          {
+            "replicate": 12,
+            "simulator_seed": 4266368,
+            "successes": 3009,
+            "shots": 4096,
+            "P_success": 0.734619140625
+          },
+          {
+            "replicate": 13,
+            "simulator_seed": 4363777,
+            "successes": 3040,
+            "shots": 4096,
+            "P_success": 0.7421875
+          },
+          {
+            "replicate": 14,
+            "simulator_seed": 4461186,
+            "successes": 3030,
+            "shots": 4096,
+            "P_success": 0.73974609375
+          },
+          {
+            "replicate": 15,
+            "simulator_seed": 4558595,
+            "successes": 2977,
+            "shots": 4096,
+            "P_success": 0.726806640625
+          },
+          {
+            "replicate": 16,
+            "simulator_seed": 4656004,
+            "successes": 2991,
+            "shots": 4096,
+            "P_success": 0.730224609375
+          },
+          {
+            "replicate": 17,
+            "simulator_seed": 4753413,
+            "successes": 2982,
+            "shots": 4096,
+            "P_success": 0.72802734375
+          },
+          {
+            "replicate": 18,
+            "simulator_seed": 4850822,
+            "successes": 3048,
+            "shots": 4096,
+            "P_success": 0.744140625
+          },
+          {
+            "replicate": 19,
+            "simulator_seed": 4948231,
+            "successes": 3073,
+            "shots": 4096,
+            "P_success": 0.750244140625
+          }
+        ]
+      },
+      {
+        "p_L": 0.001,
+        "P_success": 0.724951171875,
+        "successes": 59388,
+        "total_shots": 81920,
+        "P_success_se": 0.0015601426368336995,
+        "replicate_mean": 0.724951171875,
+        "replicate_sd": 0.008431422850285997,
+        "replicate_se": 0.0018853234640284521,
+        "uncertainty_se": 0.0018853234640284521,
+        "wilson_ci": {
+          "low": 0.7218828538976109,
+          "high": 0.7279983936574833,
+          "confidence": 0.95,
+          "method": "Wilson score"
+        },
+        "replicates": [
+          {
+            "replicate": 0,
+            "simulator_seed": 4097463,
+            "successes": 2970,
+            "shots": 4096,
+            "P_success": 0.72509765625
+          },
+          {
+            "replicate": 1,
+            "simulator_seed": 4194872,
+            "successes": 2981,
+            "shots": 4096,
+            "P_success": 0.727783203125
+          },
+          {
+            "replicate": 2,
+            "simulator_seed": 4292281,
+            "successes": 2923,
+            "shots": 4096,
+            "P_success": 0.713623046875
+          },
+          {
+            "replicate": 3,
+            "simulator_seed": 4389690,
+            "successes": 2973,
+            "shots": 4096,
+            "P_success": 0.725830078125
+          },
+          {
+            "replicate": 4,
+            "simulator_seed": 4487099,
+            "successes": 3010,
+            "shots": 4096,
+            "P_success": 0.73486328125
+          },
+          {
+            "replicate": 5,
+            "simulator_seed": 4584508,
+            "successes": 2932,
+            "shots": 4096,
+            "P_success": 0.7158203125
+          },
+          {
+            "replicate": 6,
+            "simulator_seed": 4681917,
+            "successes": 2944,
+            "shots": 4096,
+            "P_success": 0.71875
+          },
+          {
+            "replicate": 7,
+            "simulator_seed": 4779326,
+            "successes": 2945,
+            "shots": 4096,
+            "P_success": 0.718994140625
+          },
+          {
+            "replicate": 8,
+            "simulator_seed": 4876735,
+            "successes": 3000,
+            "shots": 4096,
+            "P_success": 0.732421875
+          },
+          {
+            "replicate": 9,
+            "simulator_seed": 4974144,
+            "successes": 2944,
+            "shots": 4096,
+            "P_success": 0.71875
+          },
+          {
+            "replicate": 10,
+            "simulator_seed": 5071553,
+            "successes": 2995,
+            "shots": 4096,
+            "P_success": 0.731201171875
+          },
+          {
+            "replicate": 11,
+            "simulator_seed": 5168962,
+            "successes": 2963,
+            "shots": 4096,
+            "P_success": 0.723388671875
+          },
+          {
+            "replicate": 12,
+            "simulator_seed": 5266371,
+            "successes": 2962,
+            "shots": 4096,
+            "P_success": 0.72314453125
+          },
+          {
+            "replicate": 13,
+            "simulator_seed": 5363780,
+            "successes": 3022,
+            "shots": 4096,
+            "P_success": 0.73779296875
+          },
+          {
+            "replicate": 14,
+            "simulator_seed": 5461189,
+            "successes": 3003,
+            "shots": 4096,
+            "P_success": 0.733154296875
+          },
+          {
+            "replicate": 15,
+            "simulator_seed": 5558598,
+            "successes": 2979,
+            "shots": 4096,
+            "P_success": 0.727294921875
+          },
+          {
+            "replicate": 16,
+            "simulator_seed": 5656007,
+            "successes": 2981,
+            "shots": 4096,
+            "P_success": 0.727783203125
+          },
+          {
+            "replicate": 17,
+            "simulator_seed": 5753416,
+            "successes": 2879,
+            "shots": 4096,
+            "P_success": 0.702880859375
+          },
+          {
+            "replicate": 18,
+            "simulator_seed": 5850825,
+            "successes": 2975,
+            "shots": 4096,
+            "P_success": 0.726318359375
+          },
+          {
+            "replicate": 19,
+            "simulator_seed": 5948234,
+            "successes": 3007,
+            "shots": 4096,
+            "P_success": 0.734130859375
+          }
+        ]
+      },
+      {
+        "p_L": 0.0017,
+        "P_success": 0.708251953125,
+        "successes": 58020,
+        "total_shots": 81920,
+        "P_success_se": 0.0015881916093879104,
+        "replicate_mean": 0.708251953125,
+        "replicate_sd": 0.005117460176920419,
+        "replicate_se": 0.0011442988827742157,
+        "uncertainty_se": 0.0015881916093879104,
+        "wilson_ci": {
+          "low": 0.7051294473733438,
+          "high": 0.7113549287548255,
+          "confidence": 0.95,
+          "method": "Wilson score"
+        },
+        "replicates": [
+          {
+            "replicate": 0,
+            "simulator_seed": 5097466,
+            "successes": 2910,
+            "shots": 4096,
+            "P_success": 0.71044921875
+          },
+          {
+            "replicate": 1,
+            "simulator_seed": 5194875,
+            "successes": 2892,
+            "shots": 4096,
+            "P_success": 0.7060546875
+          },
+          {
+            "replicate": 2,
+            "simulator_seed": 5292284,
+            "successes": 2854,
+            "shots": 4096,
+            "P_success": 0.69677734375
+          },
+          {
+            "replicate": 3,
+            "simulator_seed": 5389693,
+            "successes": 2889,
+            "shots": 4096,
+            "P_success": 0.705322265625
+          },
+          {
+            "replicate": 4,
+            "simulator_seed": 5487102,
+            "successes": 2897,
+            "shots": 4096,
+            "P_success": 0.707275390625
+          },
+          {
+            "replicate": 5,
+            "simulator_seed": 5584511,
+            "successes": 2874,
+            "shots": 4096,
+            "P_success": 0.70166015625
+          },
+          {
+            "replicate": 6,
+            "simulator_seed": 5681920,
+            "successes": 2907,
+            "shots": 4096,
+            "P_success": 0.709716796875
+          },
+          {
+            "replicate": 7,
+            "simulator_seed": 5779329,
+            "successes": 2873,
+            "shots": 4096,
+            "P_success": 0.701416015625
+          },
+          {
+            "replicate": 8,
+            "simulator_seed": 5876738,
+            "successes": 2930,
+            "shots": 4096,
+            "P_success": 0.71533203125
+          },
+          {
+            "replicate": 9,
+            "simulator_seed": 5974147,
+            "successes": 2890,
+            "shots": 4096,
+            "P_success": 0.70556640625
+          },
+          {
+            "replicate": 10,
+            "simulator_seed": 6071556,
+            "successes": 2914,
+            "shots": 4096,
+            "P_success": 0.71142578125
+          },
+          {
+            "replicate": 11,
+            "simulator_seed": 6168965,
+            "successes": 2903,
+            "shots": 4096,
+            "P_success": 0.708740234375
+          },
+          {
+            "replicate": 12,
+            "simulator_seed": 6266374,
+            "successes": 2909,
+            "shots": 4096,
+            "P_success": 0.710205078125
+          },
+          {
+            "replicate": 13,
+            "simulator_seed": 6363783,
+            "successes": 2910,
+            "shots": 4096,
+            "P_success": 0.71044921875
+          },
+          {
+            "replicate": 14,
+            "simulator_seed": 6461192,
+            "successes": 2875,
+            "shots": 4096,
+            "P_success": 0.701904296875
+          },
+          {
+            "replicate": 15,
+            "simulator_seed": 6558601,
+            "successes": 2926,
+            "shots": 4096,
+            "P_success": 0.71435546875
+          },
+          {
+            "replicate": 16,
+            "simulator_seed": 6656010,
+            "successes": 2915,
+            "shots": 4096,
+            "P_success": 0.711669921875
+          },
+          {
+            "replicate": 17,
+            "simulator_seed": 6753419,
+            "successes": 2938,
+            "shots": 4096,
+            "P_success": 0.71728515625
+          },
+          {
+            "replicate": 18,
+            "simulator_seed": 6850828,
+            "successes": 2912,
+            "shots": 4096,
+            "P_success": 0.7109375
+          },
+          {
+            "replicate": 19,
+            "simulator_seed": 6948237,
+            "successes": 2902,
+            "shots": 4096,
+            "P_success": 0.70849609375
+          }
+        ]
+      },
+      {
+        "p_L": 0.002,
+        "P_success": 0.69923095703125,
+        "successes": 57281,
+        "total_shots": 81920,
+        "P_success_se": 0.0016022560455657225,
+        "replicate_mean": 0.69923095703125,
+        "replicate_sd": 0.0065626903496768816,
+        "replicate_se": 0.0014674621737159371,
+        "uncertainty_se": 0.0016022560455657225,
+        "wilson_ci": {
+          "low": 0.6960813105588385,
+          "high": 0.702361919381833,
+          "confidence": 0.95,
+          "method": "Wilson score"
+        },
+        "replicates": [
+          {
+            "replicate": 0,
+            "simulator_seed": 6097469,
+            "successes": 2830,
+            "shots": 4096,
+            "P_success": 0.69091796875
+          },
+          {
+            "replicate": 1,
+            "simulator_seed": 6194878,
+            "successes": 2821,
+            "shots": 4096,
+            "P_success": 0.688720703125
+          },
+          {
+            "replicate": 2,
+            "simulator_seed": 6292287,
+            "successes": 2860,
+            "shots": 4096,
+            "P_success": 0.6982421875
+          },
+          {
+            "replicate": 3,
+            "simulator_seed": 6389696,
+            "successes": 2871,
+            "shots": 4096,
+            "P_success": 0.700927734375
+          },
+          {
+            "replicate": 4,
+            "simulator_seed": 6487105,
+            "successes": 2861,
+            "shots": 4096,
+            "P_success": 0.698486328125
+          },
+          {
+            "replicate": 5,
+            "simulator_seed": 6584514,
+            "successes": 2884,
+            "shots": 4096,
+            "P_success": 0.7041015625
+          },
+          {
+            "replicate": 6,
+            "simulator_seed": 6681923,
+            "successes": 2843,
+            "shots": 4096,
+            "P_success": 0.694091796875
+          },
+          {
+            "replicate": 7,
+            "simulator_seed": 6779332,
+            "successes": 2868,
+            "shots": 4096,
+            "P_success": 0.7001953125
+          },
+          {
+            "replicate": 8,
+            "simulator_seed": 6876741,
+            "successes": 2836,
+            "shots": 4096,
+            "P_success": 0.6923828125
+          },
+          {
+            "replicate": 9,
+            "simulator_seed": 6974150,
+            "successes": 2849,
+            "shots": 4096,
+            "P_success": 0.695556640625
+          },
+          {
+            "replicate": 10,
+            "simulator_seed": 7071559,
+            "successes": 2916,
+            "shots": 4096,
+            "P_success": 0.7119140625
+          },
+          {
+            "replicate": 11,
+            "simulator_seed": 7168968,
+            "successes": 2921,
+            "shots": 4096,
+            "P_success": 0.713134765625
+          },
+          {
+            "replicate": 12,
+            "simulator_seed": 7266377,
+            "successes": 2864,
+            "shots": 4096,
+            "P_success": 0.69921875
+          },
+          {
+            "replicate": 13,
+            "simulator_seed": 7363786,
+            "successes": 2864,
+            "shots": 4096,
+            "P_success": 0.69921875
+          },
+          {
+            "replicate": 14,
+            "simulator_seed": 7461195,
+            "successes": 2875,
+            "shots": 4096,
+            "P_success": 0.701904296875
+          },
+          {
+            "replicate": 15,
+            "simulator_seed": 7558604,
+            "successes": 2864,
+            "shots": 4096,
+            "P_success": 0.69921875
+          },
+          {
+            "replicate": 16,
+            "simulator_seed": 7656013,
+            "successes": 2822,
+            "shots": 4096,
+            "P_success": 0.68896484375
+          },
+          {
+            "replicate": 17,
+            "simulator_seed": 7753422,
+            "successes": 2883,
+            "shots": 4096,
+            "P_success": 0.703857421875
+          },
+          {
+            "replicate": 18,
+            "simulator_seed": 7850831,
+            "successes": 2861,
+            "shots": 4096,
+            "P_success": 0.698486328125
+          },
+          {
+            "replicate": 19,
+            "simulator_seed": 7948240,
+            "successes": 2888,
+            "shots": 4096,
+            "P_success": 0.705078125
+          }
+        ]
+      },
+      {
+        "p_L": 0.005,
+        "P_success": 0.64503173828125,
+        "successes": 52841,
+        "total_shots": 81920,
+        "P_success_se": 0.001671823140591426,
+        "replicate_mean": 0.64503173828125,
+        "replicate_sd": 0.005641417053291053,
+        "replicate_se": 0.0012614592020585348,
+        "uncertainty_se": 0.001671823140591426,
+        "wilson_ci": {
+          "low": 0.6417482942777613,
+          "high": 0.6483015810316632,
+          "confidence": 0.95,
+          "method": "Wilson score"
+        },
+        "replicates": [
+          {
+            "replicate": 0,
+            "simulator_seed": 7097472,
+            "successes": 2663,
+            "shots": 4096,
+            "P_success": 0.650146484375
+          },
+          {
+            "replicate": 1,
+            "simulator_seed": 7194881,
+            "successes": 2640,
+            "shots": 4096,
+            "P_success": 0.64453125
+          },
+          {
+            "replicate": 2,
+            "simulator_seed": 7292290,
+            "successes": 2650,
+            "shots": 4096,
+            "P_success": 0.64697265625
+          },
+          {
+            "replicate": 3,
+            "simulator_seed": 7389699,
+            "successes": 2611,
+            "shots": 4096,
+            "P_success": 0.637451171875
+          },
+          {
+            "replicate": 4,
+            "simulator_seed": 7487108,
+            "successes": 2651,
+            "shots": 4096,
+            "P_success": 0.647216796875
+          },
+          {
+            "replicate": 5,
+            "simulator_seed": 7584517,
+            "successes": 2663,
+            "shots": 4096,
+            "P_success": 0.650146484375
+          },
+          {
+            "replicate": 6,
+            "simulator_seed": 7681926,
+            "successes": 2614,
+            "shots": 4096,
+            "P_success": 0.63818359375
+          },
+          {
+            "replicate": 7,
+            "simulator_seed": 7779335,
+            "successes": 2671,
+            "shots": 4096,
+            "P_success": 0.652099609375
+          },
+          {
+            "replicate": 8,
+            "simulator_seed": 7876744,
+            "successes": 2631,
+            "shots": 4096,
+            "P_success": 0.642333984375
+          },
+          {
+            "replicate": 9,
+            "simulator_seed": 7974153,
+            "successes": 2648,
+            "shots": 4096,
+            "P_success": 0.646484375
+          },
+          {
+            "replicate": 10,
+            "simulator_seed": 8071562,
+            "successes": 2652,
+            "shots": 4096,
+            "P_success": 0.6474609375
+          },
+          {
+            "replicate": 11,
+            "simulator_seed": 8168971,
+            "successes": 2643,
+            "shots": 4096,
+            "P_success": 0.645263671875
+          },
+          {
+            "replicate": 12,
+            "simulator_seed": 8266380,
+            "successes": 2629,
+            "shots": 4096,
+            "P_success": 0.641845703125
+          },
+          {
+            "replicate": 13,
+            "simulator_seed": 8363789,
+            "successes": 2647,
+            "shots": 4096,
+            "P_success": 0.646240234375
+          },
+          {
+            "replicate": 14,
+            "simulator_seed": 8461198,
+            "successes": 2622,
+            "shots": 4096,
+            "P_success": 0.64013671875
+          },
+          {
+            "replicate": 15,
+            "simulator_seed": 8558607,
+            "successes": 2587,
+            "shots": 4096,
+            "P_success": 0.631591796875
+          },
+          {
+            "replicate": 16,
+            "simulator_seed": 8656016,
+            "successes": 2645,
+            "shots": 4096,
+            "P_success": 0.645751953125
+          },
+          {
+            "replicate": 17,
+            "simulator_seed": 8753425,
+            "successes": 2690,
+            "shots": 4096,
+            "P_success": 0.65673828125
+          },
+          {
+            "replicate": 18,
+            "simulator_seed": 8850834,
+            "successes": 2629,
+            "shots": 4096,
+            "P_success": 0.641845703125
+          },
+          {
+            "replicate": 19,
+            "simulator_seed": 8948243,
+            "successes": 2655,
+            "shots": 4096,
+            "P_success": 0.648193359375
+          }
+        ]
+      },
+      {
+        "p_L": 0.01,
+        "P_success": 0.5651123046875,
+        "successes": 46294,
+        "total_shots": 81920,
+        "P_success_se": 0.0017320521740471933,
+        "replicate_mean": 0.5651123046875,
+        "replicate_sd": 0.008411941037917673,
+        "replicate_se": 0.0018809671983504052,
+        "uncertainty_se": 0.0018809671983504052,
+        "wilson_ci": {
+          "low": 0.5617145698705178,
+          "high": 0.5685039331932368,
+          "confidence": 0.95,
+          "method": "Wilson score"
+        },
+        "replicates": [
+          {
+            "replicate": 0,
+            "simulator_seed": 8097475,
+            "successes": 2316,
+            "shots": 4096,
+            "P_success": 0.5654296875
+          },
+          {
+            "replicate": 1,
+            "simulator_seed": 8194884,
+            "successes": 2306,
+            "shots": 4096,
+            "P_success": 0.56298828125
+          },
+          {
+            "replicate": 2,
+            "simulator_seed": 8292293,
+            "successes": 2360,
+            "shots": 4096,
+            "P_success": 0.576171875
+          },
+          {
+            "replicate": 3,
+            "simulator_seed": 8389702,
+            "successes": 2290,
+            "shots": 4096,
+            "P_success": 0.55908203125
+          },
+          {
+            "replicate": 4,
+            "simulator_seed": 8487111,
+            "successes": 2300,
+            "shots": 4096,
+            "P_success": 0.5615234375
+          },
+          {
+            "replicate": 5,
+            "simulator_seed": 8584520,
+            "successes": 2297,
+            "shots": 4096,
+            "P_success": 0.560791015625
+          },
+          {
+            "replicate": 6,
+            "simulator_seed": 8681929,
+            "successes": 2380,
+            "shots": 4096,
+            "P_success": 0.5810546875
+          },
+          {
+            "replicate": 7,
+            "simulator_seed": 8779338,
+            "successes": 2362,
+            "shots": 4096,
+            "P_success": 0.57666015625
+          },
+          {
+            "replicate": 8,
+            "simulator_seed": 8876747,
+            "successes": 2316,
+            "shots": 4096,
+            "P_success": 0.5654296875
+          },
+          {
+            "replicate": 9,
+            "simulator_seed": 8974156,
+            "successes": 2233,
+            "shots": 4096,
+            "P_success": 0.545166015625
+          },
+          {
+            "replicate": 10,
+            "simulator_seed": 9071565,
+            "successes": 2323,
+            "shots": 4096,
+            "P_success": 0.567138671875
+          },
+          {
+            "replicate": 11,
+            "simulator_seed": 9168974,
+            "successes": 2275,
+            "shots": 4096,
+            "P_success": 0.555419921875
+          },
+          {
+            "replicate": 12,
+            "simulator_seed": 9266383,
+            "successes": 2297,
+            "shots": 4096,
+            "P_success": 0.560791015625
+          },
+          {
+            "replicate": 13,
+            "simulator_seed": 9363792,
+            "successes": 2335,
+            "shots": 4096,
+            "P_success": 0.570068359375
+          },
+          {
+            "replicate": 14,
+            "simulator_seed": 9461201,
+            "successes": 2323,
+            "shots": 4096,
+            "P_success": 0.567138671875
+          },
+          {
+            "replicate": 15,
+            "simulator_seed": 9558610,
+            "successes": 2319,
+            "shots": 4096,
+            "P_success": 0.566162109375
+          },
+          {
+            "replicate": 16,
+            "simulator_seed": 9656019,
+            "successes": 2304,
+            "shots": 4096,
+            "P_success": 0.5625
+          },
+          {
+            "replicate": 17,
+            "simulator_seed": 9753428,
+            "successes": 2363,
+            "shots": 4096,
+            "P_success": 0.576904296875
+          },
+          {
+            "replicate": 18,
+            "simulator_seed": 9850837,
+            "successes": 2315,
+            "shots": 4096,
+            "P_success": 0.565185546875
+          },
+          {
+            "replicate": 19,
+            "simulator_seed": 9948246,
+            "successes": 2280,
+            "shots": 4096,
+            "P_success": 0.556640625
+          }
+        ]
+      },
+      {
+        "p_L": 0.02,
+        "P_success": 0.45179443359375,
+        "successes": 37011,
+        "total_shots": 81920,
+        "P_success_se": 0.0017387902111895138,
+        "replicate_mean": 0.45179443359375,
+        "replicate_sd": 0.008342052173429737,
+        "replicate_se": 0.0018653395731638754,
+        "uncertainty_se": 0.0018653395731638754,
+        "wilson_ci": {
+          "low": 0.44838880694362043,
+          "high": 0.4552045810206152,
+          "confidence": 0.95,
+          "method": "Wilson score"
+        },
+        "replicates": [
+          {
+            "replicate": 0,
+            "simulator_seed": 9097478,
+            "successes": 1861,
+            "shots": 4096,
+            "P_success": 0.454345703125
+          },
+          {
+            "replicate": 1,
+            "simulator_seed": 9194887,
+            "successes": 1864,
+            "shots": 4096,
+            "P_success": 0.455078125
+          },
+          {
+            "replicate": 2,
+            "simulator_seed": 9292296,
+            "successes": 1806,
+            "shots": 4096,
+            "P_success": 0.44091796875
+          },
+          {
+            "replicate": 3,
+            "simulator_seed": 9389705,
+            "successes": 1819,
+            "shots": 4096,
+            "P_success": 0.444091796875
+          },
+          {
+            "replicate": 4,
+            "simulator_seed": 9487114,
+            "successes": 1838,
+            "shots": 4096,
+            "P_success": 0.44873046875
+          },
+          {
+            "replicate": 5,
+            "simulator_seed": 9584523,
+            "successes": 1958,
+            "shots": 4096,
+            "P_success": 0.47802734375
+          },
+          {
+            "replicate": 6,
+            "simulator_seed": 9681932,
+            "successes": 1864,
+            "shots": 4096,
+            "P_success": 0.455078125
+          },
+          {
+            "replicate": 7,
+            "simulator_seed": 9779341,
+            "successes": 1843,
+            "shots": 4096,
+            "P_success": 0.449951171875
+          },
+          {
+            "replicate": 8,
+            "simulator_seed": 9876750,
+            "successes": 1849,
+            "shots": 4096,
+            "P_success": 0.451416015625
+          },
+          {
+            "replicate": 9,
+            "simulator_seed": 9974159,
+            "successes": 1864,
+            "shots": 4096,
+            "P_success": 0.455078125
+          },
+          {
+            "replicate": 10,
+            "simulator_seed": 10071568,
+            "successes": 1839,
+            "shots": 4096,
+            "P_success": 0.448974609375
+          },
+          {
+            "replicate": 11,
+            "simulator_seed": 10168977,
+            "successes": 1839,
+            "shots": 4096,
+            "P_success": 0.448974609375
+          },
+          {
+            "replicate": 12,
+            "simulator_seed": 10266386,
+            "successes": 1873,
+            "shots": 4096,
+            "P_success": 0.457275390625
+          },
+          {
+            "replicate": 13,
+            "simulator_seed": 10363795,
+            "successes": 1888,
+            "shots": 4096,
+            "P_success": 0.4609375
+          },
+          {
+            "replicate": 14,
+            "simulator_seed": 10461204,
+            "successes": 1861,
+            "shots": 4096,
+            "P_success": 0.454345703125
+          },
+          {
+            "replicate": 15,
+            "simulator_seed": 10558613,
+            "successes": 1838,
+            "shots": 4096,
+            "P_success": 0.44873046875
+          },
+          {
+            "replicate": 16,
+            "simulator_seed": 10656022,
+            "successes": 1804,
+            "shots": 4096,
+            "P_success": 0.4404296875
+          },
+          {
+            "replicate": 17,
+            "simulator_seed": 10753431,
+            "successes": 1804,
+            "shots": 4096,
+            "P_success": 0.4404296875
+          },
+          {
+            "replicate": 18,
+            "simulator_seed": 10850840,
+            "successes": 1852,
+            "shots": 4096,
+            "P_success": 0.4521484375
+          },
+          {
+            "replicate": 19,
+            "simulator_seed": 10948249,
+            "successes": 1847,
+            "shots": 4096,
+            "P_success": 0.450927734375
+          }
+        ]
+      },
+      {
+        "p_L": 0.05,
+        "P_success": 0.29525146484375,
+        "successes": 24187,
+        "total_shots": 81920,
+        "P_success_se": 0.0015937424837114806,
+        "replicate_mean": 0.29525146484375,
+        "replicate_sd": 0.007472321735532893,
+        "replicate_se": 0.0016708619350400754,
+        "uncertainty_se": 0.0016708619350400754,
+        "wilson_ci": {
+          "low": 0.2921374462404341,
+          "high": 0.29838468501409193,
+          "confidence": 0.95,
+          "method": "Wilson score"
+        },
+        "replicates": [
+          {
+            "replicate": 0,
+            "simulator_seed": 10097481,
+            "successes": 1211,
+            "shots": 4096,
+            "P_success": 0.295654296875
+          },
+          {
+            "replicate": 1,
+            "simulator_seed": 10194890,
+            "successes": 1269,
+            "shots": 4096,
+            "P_success": 0.309814453125
+          },
+          {
+            "replicate": 2,
+            "simulator_seed": 10292299,
+            "successes": 1239,
+            "shots": 4096,
+            "P_success": 0.302490234375
+          },
+          {
+            "replicate": 3,
+            "simulator_seed": 10389708,
+            "successes": 1235,
+            "shots": 4096,
+            "P_success": 0.301513671875
+          },
+          {
+            "replicate": 4,
+            "simulator_seed": 10487117,
+            "successes": 1207,
+            "shots": 4096,
+            "P_success": 0.294677734375
+          },
+          {
+            "replicate": 5,
+            "simulator_seed": 10584526,
+            "successes": 1186,
+            "shots": 4096,
+            "P_success": 0.28955078125
+          },
+          {
+            "replicate": 6,
+            "simulator_seed": 10681935,
+            "successes": 1193,
+            "shots": 4096,
+            "P_success": 0.291259765625
+          },
+          {
+            "replicate": 7,
+            "simulator_seed": 10779344,
+            "successes": 1155,
+            "shots": 4096,
+            "P_success": 0.281982421875
+          },
+          {
+            "replicate": 8,
+            "simulator_seed": 10876753,
+            "successes": 1169,
+            "shots": 4096,
+            "P_success": 0.285400390625
+          },
+          {
+            "replicate": 9,
+            "simulator_seed": 10974162,
+            "successes": 1226,
+            "shots": 4096,
+            "P_success": 0.29931640625
+          },
+          {
+            "replicate": 10,
+            "simulator_seed": 11071571,
+            "successes": 1202,
+            "shots": 4096,
+            "P_success": 0.29345703125
+          },
+          {
+            "replicate": 11,
+            "simulator_seed": 11168980,
+            "successes": 1235,
+            "shots": 4096,
+            "P_success": 0.301513671875
+          },
+          {
+            "replicate": 12,
+            "simulator_seed": 11266389,
+            "successes": 1210,
+            "shots": 4096,
+            "P_success": 0.29541015625
+          },
+          {
+            "replicate": 13,
+            "simulator_seed": 11363798,
+            "successes": 1216,
+            "shots": 4096,
+            "P_success": 0.296875
+          },
+          {
+            "replicate": 14,
+            "simulator_seed": 11461207,
+            "successes": 1170,
+            "shots": 4096,
+            "P_success": 0.28564453125
+          },
+          {
+            "replicate": 15,
+            "simulator_seed": 11558616,
+            "successes": 1230,
+            "shots": 4096,
+            "P_success": 0.30029296875
+          },
+          {
+            "replicate": 16,
+            "simulator_seed": 11656025,
+            "successes": 1166,
+            "shots": 4096,
+            "P_success": 0.28466796875
+          },
+          {
+            "replicate": 17,
+            "simulator_seed": 11753434,
+            "successes": 1203,
+            "shots": 4096,
+            "P_success": 0.293701171875
+          },
+          {
+            "replicate": 18,
+            "simulator_seed": 11850843,
+            "successes": 1207,
+            "shots": 4096,
+            "P_success": 0.294677734375
+          },
+          {
+            "replicate": 19,
+            "simulator_seed": 11948252,
+            "successes": 1258,
+            "shots": 4096,
+            "P_success": 0.30712890625
+          }
+        ]
+      },
+      {
+        "p_L": 0.1,
+        "P_success": 0.25030517578125,
+        "successes": 20505,
+        "total_shots": 81920,
+        "P_success_se": 0.0015134992129683627,
+        "replicate_mean": 0.25030517578125,
+        "replicate_sd": 0.007351953296909341,
+        "replicate_se": 0.001643946733929298,
+        "uncertainty_se": 0.001643946733929298,
+        "wilson_ci": {
+          "low": 0.24735052661788373,
+          "high": 0.2532832416293785,
+          "confidence": 0.95,
+          "method": "Wilson score"
+        },
+        "replicates": [
+          {
+            "replicate": 0,
+            "simulator_seed": 11097484,
+            "successes": 994,
+            "shots": 4096,
+            "P_success": 0.24267578125
+          },
+          {
+            "replicate": 1,
+            "simulator_seed": 11194893,
+            "successes": 1064,
+            "shots": 4096,
+            "P_success": 0.259765625
+          },
+          {
+            "replicate": 2,
+            "simulator_seed": 11292302,
+            "successes": 1021,
+            "shots": 4096,
+            "P_success": 0.249267578125
+          },
+          {
+            "replicate": 3,
+            "simulator_seed": 11389711,
+            "successes": 1071,
+            "shots": 4096,
+            "P_success": 0.261474609375
+          },
+          {
+            "replicate": 4,
+            "simulator_seed": 11487120,
+            "successes": 1023,
+            "shots": 4096,
+            "P_success": 0.249755859375
+          },
+          {
+            "replicate": 5,
+            "simulator_seed": 11584529,
+            "successes": 1018,
+            "shots": 4096,
+            "P_success": 0.24853515625
+          },
+          {
+            "replicate": 6,
+            "simulator_seed": 11681938,
+            "successes": 1064,
+            "shots": 4096,
+            "P_success": 0.259765625
+          },
+          {
+            "replicate": 7,
+            "simulator_seed": 11779347,
+            "successes": 1054,
+            "shots": 4096,
+            "P_success": 0.25732421875
+          },
+          {
+            "replicate": 8,
+            "simulator_seed": 11876756,
+            "successes": 1047,
+            "shots": 4096,
+            "P_success": 0.255615234375
+          },
+          {
+            "replicate": 9,
+            "simulator_seed": 11974165,
+            "successes": 1017,
+            "shots": 4096,
+            "P_success": 0.248291015625
+          },
+          {
+            "replicate": 10,
+            "simulator_seed": 12071574,
+            "successes": 1003,
+            "shots": 4096,
+            "P_success": 0.244873046875
+          },
+          {
+            "replicate": 11,
+            "simulator_seed": 12168983,
+            "successes": 990,
+            "shots": 4096,
+            "P_success": 0.24169921875
+          },
+          {
+            "replicate": 12,
+            "simulator_seed": 12266392,
+            "successes": 1002,
+            "shots": 4096,
+            "P_success": 0.24462890625
+          },
+          {
+            "replicate": 13,
+            "simulator_seed": 12363801,
+            "successes": 1010,
+            "shots": 4096,
+            "P_success": 0.24658203125
+          },
+          {
+            "replicate": 14,
+            "simulator_seed": 12461210,
+            "successes": 1004,
+            "shots": 4096,
+            "P_success": 0.2451171875
+          },
+          {
+            "replicate": 15,
+            "simulator_seed": 12558619,
+            "successes": 1026,
+            "shots": 4096,
+            "P_success": 0.25048828125
+          },
+          {
+            "replicate": 16,
+            "simulator_seed": 12656028,
+            "successes": 957,
+            "shots": 4096,
+            "P_success": 0.233642578125
+          },
+          {
+            "replicate": 17,
+            "simulator_seed": 12753437,
+            "successes": 1060,
+            "shots": 4096,
+            "P_success": 0.2587890625
+          },
+          {
+            "replicate": 18,
+            "simulator_seed": 12850846,
+            "successes": 1025,
+            "shots": 4096,
+            "P_success": 0.250244140625
+          },
+          {
+            "replicate": 19,
+            "simulator_seed": 12948255,
+            "successes": 1055,
+            "shots": 4096,
+            "P_success": 0.257568359375
+          }
+        ]
+      },
+      {
+        "p_L": 0.2,
+        "P_success": 0.24412841796875,
+        "successes": 19999,
+        "total_shots": 81920,
+        "P_success_se": 0.0015008531652018471,
+        "replicate_mean": 0.24412841796875,
+        "replicate_sd": 0.010728592003617494,
+        "replicate_se": 0.0023989861022949387,
+        "uncertainty_se": 0.0023989861022949387,
+        "wilson_ci": {
+          "low": 0.2411988422925966,
+          "high": 0.24708198959353703,
+          "confidence": 0.95,
+          "method": "Wilson score"
+        },
+        "replicates": [
+          {
+            "replicate": 0,
+            "simulator_seed": 12097487,
+            "successes": 999,
+            "shots": 4096,
+            "P_success": 0.243896484375
+          },
+          {
+            "replicate": 1,
+            "simulator_seed": 12194896,
+            "successes": 1046,
+            "shots": 4096,
+            "P_success": 0.25537109375
+          },
+          {
+            "replicate": 2,
+            "simulator_seed": 12292305,
+            "successes": 949,
+            "shots": 4096,
+            "P_success": 0.231689453125
+          },
+          {
+            "replicate": 3,
+            "simulator_seed": 12389714,
+            "successes": 978,
+            "shots": 4096,
+            "P_success": 0.23876953125
+          },
+          {
+            "replicate": 4,
+            "simulator_seed": 12487123,
+            "successes": 1013,
+            "shots": 4096,
+            "P_success": 0.247314453125
+          },
+          {
+            "replicate": 5,
+            "simulator_seed": 12584532,
+            "successes": 1009,
+            "shots": 4096,
+            "P_success": 0.246337890625
+          },
+          {
+            "replicate": 6,
+            "simulator_seed": 12681941,
+            "successes": 994,
+            "shots": 4096,
+            "P_success": 0.24267578125
+          },
+          {
+            "replicate": 7,
+            "simulator_seed": 12779350,
+            "successes": 1056,
+            "shots": 4096,
+            "P_success": 0.2578125
+          },
+          {
+            "replicate": 8,
+            "simulator_seed": 12876759,
+            "successes": 1007,
+            "shots": 4096,
+            "P_success": 0.245849609375
+          },
+          {
+            "replicate": 9,
+            "simulator_seed": 12974168,
+            "successes": 1023,
+            "shots": 4096,
+            "P_success": 0.249755859375
+          },
+          {
+            "replicate": 10,
+            "simulator_seed": 13071577,
+            "successes": 960,
+            "shots": 4096,
+            "P_success": 0.234375
+          },
+          {
+            "replicate": 11,
+            "simulator_seed": 13168986,
+            "successes": 901,
+            "shots": 4096,
+            "P_success": 0.219970703125
+          },
+          {
+            "replicate": 12,
+            "simulator_seed": 13266395,
+            "successes": 950,
+            "shots": 4096,
+            "P_success": 0.23193359375
+          },
+          {
+            "replicate": 13,
+            "simulator_seed": 13363804,
+            "successes": 1061,
+            "shots": 4096,
+            "P_success": 0.259033203125
+          },
+          {
+            "replicate": 14,
+            "simulator_seed": 13461213,
+            "successes": 1017,
+            "shots": 4096,
+            "P_success": 0.248291015625
+          },
+          {
+            "replicate": 15,
+            "simulator_seed": 13558622,
+            "successes": 1003,
+            "shots": 4096,
+            "P_success": 0.244873046875
+          },
+          {
+            "replicate": 16,
+            "simulator_seed": 13656031,
+            "successes": 934,
+            "shots": 4096,
+            "P_success": 0.22802734375
+          },
+          {
+            "replicate": 17,
+            "simulator_seed": 13753440,
+            "successes": 1062,
+            "shots": 4096,
+            "P_success": 0.25927734375
+          },
+          {
+            "replicate": 18,
+            "simulator_seed": 13850849,
+            "successes": 1000,
+            "shots": 4096,
+            "P_success": 0.244140625
+          },
+          {
+            "replicate": 19,
+            "simulator_seed": 13948258,
+            "successes": 1037,
+            "shots": 4096,
+            "P_success": 0.253173828125
+          }
+        ]
+      },
+      {
+        "p_L": 0.5,
+        "P_success": 0.24593505859375,
+        "successes": 20147,
+        "total_shots": 81920,
+        "P_success_se": 0.0015045950352408032,
+        "replicate_mean": 0.24593505859375,
+        "replicate_sd": 0.007105631330778069,
+        "replicate_se": 0.0015888674678672056,
+        "uncertainty_se": 0.0015888674678672056,
+        "wilson_ci": {
+          "low": 0.24299806484886025,
+          "high": 0.24889587885831496,
+          "confidence": 0.95,
+          "method": "Wilson score"
+        },
+        "replicates": [
+          {
+            "replicate": 0,
+            "simulator_seed": 13097490,
+            "successes": 1046,
+            "shots": 4096,
+            "P_success": 0.25537109375
+          },
+          {
+            "replicate": 1,
+            "simulator_seed": 13194899,
+            "successes": 1014,
+            "shots": 4096,
+            "P_success": 0.24755859375
+          },
+          {
+            "replicate": 2,
+            "simulator_seed": 13292308,
+            "successes": 985,
+            "shots": 4096,
+            "P_success": 0.240478515625
+          },
+          {
+            "replicate": 3,
+            "simulator_seed": 13389717,
+            "successes": 987,
+            "shots": 4096,
+            "P_success": 0.240966796875
+          },
+          {
+            "replicate": 4,
+            "simulator_seed": 13487126,
+            "successes": 996,
+            "shots": 4096,
+            "P_success": 0.2431640625
+          },
+          {
+            "replicate": 5,
+            "simulator_seed": 13584535,
+            "successes": 1037,
+            "shots": 4096,
+            "P_success": 0.253173828125
+          },
+          {
+            "replicate": 6,
+            "simulator_seed": 13681944,
+            "successes": 975,
+            "shots": 4096,
+            "P_success": 0.238037109375
+          },
+          {
+            "replicate": 7,
+            "simulator_seed": 13779353,
+            "successes": 1034,
+            "shots": 4096,
+            "P_success": 0.25244140625
+          },
+          {
+            "replicate": 8,
+            "simulator_seed": 13876762,
+            "successes": 1012,
+            "shots": 4096,
+            "P_success": 0.2470703125
+          },
+          {
+            "replicate": 9,
+            "simulator_seed": 13974171,
+            "successes": 1047,
+            "shots": 4096,
+            "P_success": 0.255615234375
+          },
+          {
+            "replicate": 10,
+            "simulator_seed": 14071580,
+            "successes": 1075,
+            "shots": 4096,
+            "P_success": 0.262451171875
+          },
+          {
+            "replicate": 11,
+            "simulator_seed": 14168989,
+            "successes": 1020,
+            "shots": 4096,
+            "P_success": 0.2490234375
+          },
+          {
+            "replicate": 12,
+            "simulator_seed": 14266398,
+            "successes": 968,
+            "shots": 4096,
+            "P_success": 0.236328125
+          },
+          {
+            "replicate": 13,
+            "simulator_seed": 14363807,
+            "successes": 1009,
+            "shots": 4096,
+            "P_success": 0.246337890625
+          },
+          {
+            "replicate": 14,
+            "simulator_seed": 14461216,
+            "successes": 1007,
+            "shots": 4096,
+            "P_success": 0.245849609375
+          },
+          {
+            "replicate": 15,
+            "simulator_seed": 14558625,
+            "successes": 1004,
+            "shots": 4096,
+            "P_success": 0.2451171875
+          },
+          {
+            "replicate": 16,
+            "simulator_seed": 14656034,
+            "successes": 997,
+            "shots": 4096,
+            "P_success": 0.243408203125
+          },
+          {
+            "replicate": 17,
+            "simulator_seed": 14753443,
+            "successes": 965,
+            "shots": 4096,
+            "P_success": 0.235595703125
+          },
+          {
+            "replicate": 18,
+            "simulator_seed": 14850852,
+            "successes": 980,
+            "shots": 4096,
+            "P_success": 0.2392578125
+          },
+          {
+            "replicate": 19,
+            "simulator_seed": 14948261,
+            "successes": 989,
+            "shots": 4096,
+            "P_success": 0.241455078125
+          }
+        ]
+      }
+    ],
+    "P_ideal": 0.74888916015625,
+    "P_at_max_p": 0.24593505859375,
+    "monotonicity": {
+      "criterion": "monotone-compatible iff no adjacent increase is significant after combining the uncertainty of both point estimates with Bonferroni family-wise control",
+      "familywise_confidence": 0.95,
+      "component_confidence": 0.9958333333333333,
+      "monotone_compatible": true,
+      "all_adjacent_decreases_confirmed": false,
+      "comparisons": [
+        {
+          "p_L_left": 0.0,
+          "p_L_right": 0.0001,
+          "estimated_drop": 0.002038574218749978,
+          "combined_se": 0.0021455775685748015,
+          "drop_ci": {
+            "low": -0.004109063877173852,
+            "high": 0.008186212314673808,
+            "confidence": 0.9958333333333333,
+            "method": "normal difference with combined point uncertainty and Bonferroni adjustment"
+          },
+          "compatible_with_nonincrease": true,
+          "confirmed_decrease": false
+        },
+        {
+          "p_L_left": 0.0001,
+          "p_L_right": 0.0005,
+          "estimated_drop": 0.009509277343749956,
+          "combined_se": 0.002161491284611993,
+          "drop_ci": {
+            "low": 0.003316042310017469,
+            "high": 0.015702512377482443,
+            "confidence": 0.9958333333333333,
+            "method": "normal difference with combined point uncertainty and Bonferroni adjustment"
+          },
+          "compatible_with_nonincrease": true,
+          "confirmed_decrease": true
+        },
+        {
+          "p_L_left": 0.0005,
+          "p_L_right": 0.001,
+          "estimated_drop": 0.01239013671875,
+          "combined_se": 0.0024328109995158773,
+          "drop_ci": {
+            "low": 0.00541950009397354,
+            "high": 0.019360773343526462,
+            "confidence": 0.9958333333333333,
+            "method": "normal difference with combined point uncertainty and Bonferroni adjustment"
+          },
+          "compatible_with_nonincrease": true,
+          "confirmed_decrease": true
+        },
+        {
+          "p_L_left": 0.001,
+          "p_L_right": 0.0017,
+          "estimated_drop": 0.016699218750000022,
+          "combined_se": 0.0024651160524702285,
+          "drop_ci": {
+            "low": 0.009636019741489785,
+            "high": 0.02376241775851026,
+            "confidence": 0.9958333333333333,
+            "method": "normal difference with combined point uncertainty and Bonferroni adjustment"
+          },
+          "compatible_with_nonincrease": true,
+          "confirmed_decrease": true
+        },
+        {
+          "p_L_left": 0.0017,
+          "p_L_right": 0.002,
+          "estimated_drop": 0.009020996093749956,
+          "combined_se": 0.002256009092109796,
+          "drop_ci": {
+            "low": 0.0025569429443607792,
+            "high": 0.015485049243139131,
+            "confidence": 0.9958333333333333,
+            "method": "normal difference with combined point uncertainty and Bonferroni adjustment"
+          },
+          "compatible_with_nonincrease": true,
+          "confirmed_decrease": true
+        },
+        {
+          "p_L_left": 0.002,
+          "p_L_right": 0.005,
+          "estimated_drop": 0.05419921875,
+          "combined_se": 0.0023156461407064953,
+          "drop_ci": {
+            "low": 0.04756428993652329,
+            "high": 0.06083414756347671,
+            "confidence": 0.9958333333333333,
+            "method": "normal difference with combined point uncertainty and Bonferroni adjustment"
+          },
+          "compatible_with_nonincrease": true,
+          "confirmed_decrease": true
+        },
+        {
+          "p_L_left": 0.005,
+          "p_L_right": 0.01,
+          "estimated_drop": 0.07991943359375009,
+          "combined_se": 0.0025165512541347437,
+          "drop_ci": {
+            "low": 0.07270885934704964,
+            "high": 0.08713000784045054,
+            "confidence": 0.9958333333333333,
+            "method": "normal difference with combined point uncertainty and Bonferroni adjustment"
+          },
+          "compatible_with_nonincrease": true,
+          "confirmed_decrease": true
+        },
+        {
+          "p_L_left": 0.01,
+          "p_L_right": 0.02,
+          "estimated_drop": 0.11331787109374997,
+          "combined_se": 0.002649061970675915,
+          "drop_ci": {
+            "low": 0.1057276191597647,
+            "high": 0.12090812302773524,
+            "confidence": 0.9958333333333333,
+            "method": "normal difference with combined point uncertainty and Bonferroni adjustment"
+          },
+          "compatible_with_nonincrease": true,
+          "confirmed_decrease": true
+        },
+        {
+          "p_L_left": 0.02,
+          "p_L_right": 0.05,
+          "estimated_drop": 0.15654296875,
+          "combined_se": 0.0025042506522265405,
+          "drop_ci": {
+            "low": 0.14936763892885715,
+            "high": 0.16371829857114287,
+            "confidence": 0.9958333333333333,
+            "method": "normal difference with combined point uncertainty and Bonferroni adjustment"
+          },
+          "compatible_with_nonincrease": true,
+          "confirmed_decrease": true
+        },
+        {
+          "p_L_left": 0.05,
+          "p_L_right": 0.1,
+          "estimated_drop": 0.04494628906249998,
+          "combined_se": 0.002344000953490137,
+          "drop_ci": {
+            "low": 0.03823011633138328,
+            "high": 0.05166246179361667,
+            "confidence": 0.9958333333333333,
+            "method": "normal difference with combined point uncertainty and Bonferroni adjustment"
+          },
+          "compatible_with_nonincrease": true,
+          "confirmed_decrease": true
+        },
+        {
+          "p_L_left": 0.1,
+          "p_L_right": 0.2,
+          "estimated_drop": 0.006176757812499989,
+          "combined_se": 0.002908211681257241,
+          "drop_ci": {
+            "low": -0.0021560254830410696,
+            "high": 0.014509541108041047,
+            "confidence": 0.9958333333333333,
+            "method": "normal difference with combined point uncertainty and Bonferroni adjustment"
+          },
+          "compatible_with_nonincrease": true,
+          "confirmed_decrease": false
+        },
+        {
+          "p_L_left": 0.2,
+          "p_L_right": 0.5,
+          "estimated_drop": -0.0018066406249999944,
+          "combined_se": 0.0028774353423580185,
+          "drop_ci": {
+            "low": -0.01005124170040552,
+            "high": 0.006437960450405532,
+            "confidence": 0.9958333333333333,
+            "method": "normal difference with combined point uncertainty and Bonferroni adjustment"
+          },
+          "compatible_with_nonincrease": true,
+          "confirmed_decrease": false
+        }
+      ]
+    }
+  }
+}
