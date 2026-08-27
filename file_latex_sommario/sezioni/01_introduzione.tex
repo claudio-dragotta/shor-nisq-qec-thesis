@@ -1,0 +1,25 @@
+\section{Introduzione}
+
+L'algoritmo di Shor~\cite{shor1994} fattorizza un intero composto in tempo polinomiale,
+$O\!\left((\log N)^{3}\right)$, contro il tempo sub-esponenziale del miglior algoritmo classico
+noto.
+È questo divario a minacciare RSA~\cite{rsa1978}, ma è asintotico e i dispositivi \emph{Noisy
+Intermediate-Scale Quantum}~\cite{preskill2018} non lo realizzano: il rumore distrugge la struttura
+periodica su cui l'algoritmo si fonda, le dimostrazioni restano confinate a moduli
+didattici~\cite{skosana2021} e RSA-2048 richiederebbe venti milioni di qubit
+fisici~\cite{gidney2021}. Fra i due estremi restano due rimedi, la
+mitigazione a valle e la correzione d'errore durante il calcolo, ai quali un numero crescente di
+lavori applica modelli appresi dai dati, spesso senza un termine di confronto che isoli il
+contributo del modello da quello della regola decisionale.
+
+Il lavoro riprende un'attività già avviata nello stesso progetto --- implementazione di riferimento
+di Shor in Qiskit e prima campagna rumorosa su $N=15$ --- rigenerandola integralmente dopo che un
+audit per truth table ne ha invalidato il moltiplicatore modulare. L'obiettivo è perciò formulato
+come domanda di localizzazione, non di promozione: \emph{in quale punto della pipeline di esecuzione
+un modello appreso migliora effettivamente la resa dell'algoritmo di Shor in ambiente rumoroso?} Due
+impieghi sono confrontati con la stessa tecnologia e sotto lo stesso impianto statistico: un
+classificatore che giudica l'istogramma di output e un decoder addestrato sulle sindromi di un
+codice correttore. Il contributo è metodologico prima che numerico: un disegno appaiato con
+ablazione, che separa il modello dalla ricerca multi-candidato sugli stessi istogrammi; un contratto
+interpretativo che vieta la conversione diretta fra metriche della correzione d'errore e successo di
+Shor; artefatti riproducibili --- seed, manifest e hash del circuito --- per ogni numero riportato.

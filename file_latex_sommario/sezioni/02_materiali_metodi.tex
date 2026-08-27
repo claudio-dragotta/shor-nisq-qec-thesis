@@ -1,0 +1,140 @@
+\section{Materiali e Metodi}
+
+\subsection{Formalizzazione matematica del problema}
+
+Sia $N$ composto, dispari e non potenza di un primo. Scelto $a$ con $1<a<N$ e $\gcd(a,N)=1$, la
+fattorizzazione si riduce alla ricerca dell'\emph{ordine}
+\begin{equation}
+  r=\operatorname{ord}_N(a)=\min\{k\in\mathbb{N}^{+}:a^{k}\equiv1 \!\!\pmod N\}:
+  \label{eq:ordine}
+\end{equation}
+se $r$ è pari e $a^{r/2}\not\equiv-1\pmod N$, allora $\gcd\!\left(a^{r/2}\pm1,N\right)$ è un fattore
+non banale, condizione soddisfatta con probabilità almeno $1/2$ su $a$ casuale~\cite{nielsenChuang2000}. La
+parte quantistica stima $r$ per \emph{phase estimation} dell'unitario
+$U_a\lvert y\rangle=\lvert ay\bmod N\rangle$: con $n$ qubit di conteggio e $M=2^{n}$, dopo la
+trasformata di Fourier quantistica inversa la misura ha distribuzione
+\begin{equation}
+  P(y)=\frac{1}{r}\sum_{s=0}^{r-1}F_M\!\left(\frac{y}{M}-\frac{s}{r}\right),
+  \qquad
+  F_M(\delta)=\frac{1}{M^{2}}\left|\frac{\sin(\pi M\delta)}{\sin(\pi\delta)}\right|^{2}
+  \ \ \text{(nucleo di Fej\'er)} .
+  \label{eq:qpe}
+\end{equation}
+Il post-processing $\Phi$ è deterministico: frazioni continue di $y/M$, che restituiscono $s/r$
+quando $|y/M-s/r|\le1/(2r^{2})$ --- garantito da $M\ge N^{2}$ --- seguite dai controlli di parità e
+dal massimo comun divisore. Detto $\mathcal{U}=\{y:\Phi(y)\ \text{d\`a un fattore non banale}\}$,
+ogni esecuzione è delimitata da due costanti in forma chiusa,
+\begin{equation}
+  P_{\mathrm{id}}=\!\!\sum_{y\in\mathcal{U}}\!P(y)=\frac{3}{4},
+  \qquad
+  P_{\mathrm{unif}}=\frac{|\mathcal{U}|}{M}=\frac{63}{256}\simeq0{,}2461 ,
+  \label{eq:limiti}
+\end{equation}
+per l'istanza canonica $N=15$, $a=7$, $n=8$, dove $r=4$ divide $M$ e $P$ è supportata su
+$\{0,64,128,192\}$. Le due costanti sono gli estremi entro cui leggere ogni campagna rumorosa:
+$P_{\mathrm{id}}$ è il \emph{soffitto}, la resa per shot del circuito ideale; $P_{\mathrm{unif}}$
+è il \emph{pavimento}, quella che sopravvive quando il rumore ha appiattito la distribuzione su
+tutte le $M$ celle. Non è nullo perché il post-processing è permissivo: $63$ celle su $256$ danno
+comunque un fattore, sicché anche indovinare a caso riesce nel $24{,}6\%$ dei casi. Assestarsi sul
+pavimento significa non fattorizzare più.
+
+\subsection{Modello di rumore e osservabile misurata}
+
+Il circuito è compilato deterministicamente nella base $\{r_z,\sqrt{X},X,\mathrm{CX}\}$ (livello di
+ottimizzazione 2, seed del transpiler registrato): sono le porte elementari con cui l'hardware
+superconduttivo esegue fisicamente ogni circuito --- la rotazione $r_z(\theta)$ attorno a $z$, la
+sua radice $\sqrt{X}$ (mezza rotazione attorno a $x$), la negazione $X$ e l'unica porta a due
+qubit, la CX (\emph{controlled-NOT}), che nega il bersaglio se il controllo vale $1$. Ogni altra
+porta vi si decompone, ed è su queste che il rumore va iniettato. Dopo ogni gate $g$ su $q$ qubit si compone il
+canale depolarizzante $\mathcal{E}_{\lambda}(\rho)=(1-\lambda)\rho+\lambda I/2^{q}$ con il
+rilassamento termico, applicato \emph{per la durata} di $g$: il depolarizzante è un difetto della
+porta, il rilassamento è invece un processo nel tempo --- il qubit perde energia con costante $T_1$
+e coerenza di fase con costante $T_2$ anche da fermo --- e il danno cresce perciò con quanto a
+lungo la porta occupa il qubit. Da qui le durate: $r_z$ virtuali (nulla, quindi nessun
+rilassamento), $\sqrt{X}/X$ a 50\,ns, CX a 300\,ns, sei volte una porta a un qubit; la lettura è una matrice di confusione simmetrica $R$ di parametro $p_{\mathrm{ro}}$, e
+l'osservabile è l'istogramma empirico $\hat h\sim\mathrm{Multinomiale}(S,R\,p_{\mathrm{rum}})$ su
+$S$ shot. Lo accompagnano la frazione efficace $f=(m-4/M)/(1-4/M)$, con $m$ massa sui picchi
+teorici, e il proxy $P_0=(1-\tfrac{15}{16}\lambda_{2q})^{n_{\mathrm{CX}}}$: indicatori dichiarati,
+non fedeltà né probabilità di fattorizzazione. I preset sono scenari uniformi illustrativi, non la
+calibrazione di una QPU.
+
+\subsection{Politiche decisionali e stimando statistico}
+
+Su $\hat h$ si definisce l'ordinamento totale $\prec$ per conteggio decrescente, con pareggi risolti
+dalla priorità deterministica $\tau(y)=\mathrm{SHA}\text{-}256(\text{seed}\,\Vert\,y)$; la politica
+$\pi_K$ prova i primi $K$ candidati secondo $\prec$. Il Metodo~1 è $\pi_1$, l'ablazione è $\pi_4$, il
+Metodo~2 applica un classificatore $g_\theta(\hat h)\in\{0,1\}$ ed esegue $\pi_4$ solo se il gate è
+positivo. Per ogni replica si osserva
+\begin{equation}
+  M^{(\pi)}=\min\{m\ge1:\pi\ \text{riesce all'iterazione}\ m\},
+  \quad M^{(\pi)}:=M_{\max}+1\ \text{se non riesce},
+  \label{eq:iterazioni}
+\end{equation}
+con $M_{\max}=50$: la sentinella è la codifica esplicita della censura. Lo stimando dichiarato a
+priori è $\rho=\bar M_1/\bar M_2$, ma l'inferenza usa le differenze appaiate
+$D_i=M_i^{(A)}-M_i^{(B)}$ con il test dei ranghi con segno di Wilcoxon (zeri \texttt{pratt}),
+$H_0$ di simmetria attorno a zero, $\alpha=0{,}05$ e correzione di Holm entro famiglia. Poiché per
+ogni coppia (replica, iterazione) le tre strategie ricevono \emph{lo stesso} istogramma, le
+differenze sono attribuibili alla sola regola decisionale. La simulazione è campionaria, di tipo
+\emph{Monte Carlo}: $P$ non si osserva mai, la si stima estraendo $S$ shot, e due esecuzioni
+identiche danno istogrammi diversi per solo effetto del caso. Con istogrammi separati una parte
+della differenza misurata sarebbe questa fluttuazione anziché merito della strategia;
+condividendoli, si elide nella differenza appaiata $D_i$. Il classificatore riceve le $M$ frequenze normalizzate, etichettate con
+$\mathbf{1}[\pi_1\ \text{ha successo}]$. La variante etichettata con $\pi_{16}$ resta un audit
+perché un conto in forma chiusa la mostra degenere: appiattita la distribuzione, i sedici candidati
+equivalgono a sedici estrazioni senza reimmissione dalle $256$ celle, $63$ delle quali danno un
+fattore, e la probabilità che \emph{nessuna} sia utile vale
+$\binom{193}{16}\big/\binom{256}{16}=0{,}93\%$. Dunque $\pi_{16}$ riesce nel $99{,}07\%$ dei casi e
+l'etichetta vale $1$ quasi sempre: priva di variabilità non è apprendibile, ed è questa --- non un
+difetto del modello --- la ragione dei $2000/2000$ positivi.
+
+\subsection{Correzione d'errore: formalismo, metriche e decodifica appresa}
+
+Un codice stabilizzatore è un sottogruppo abeliano $\mathcal{S}\subset\mathcal{P}_n$ con
+$-I\notin\mathcal{S}$; la sindrome di $E\in\mathcal{P}_n$ è $\sigma(E)_j=0$ se $[E,s_j]=0$ e $1$
+altrimenti, un decoder è una mappa $\mathcal{D}:\mathbb{F}_2^{\,n-k}\!\to\mathcal{P}_n$ e il
+fallimento logico è l'evento
+$\mathcal{D}(\sigma(E))\,E\in\mathcal{N}(\mathcal{S})\setminus\mathcal{S}$, la cui probabilità
+definisce il \emph{logical error rate} $p_L(p,d)$. Si simulano il codice a ripetizione, la cui forma
+chiusa $p_L=3p^{2}-2p^{3}$ serve da test di correttezza; il codice di
+Steane~\cite{steane1996}, con verifica della corrispondenza sindrome$\rightarrow$errore sui 21 casi
+e stima di $\gamma$ in $p_L\propto p^{\gamma}$; il surface code ruotato~\cite{fowler2012} sotto
+rumore \emph{circuit-level}, decodificato per matching di peso minimo e descritto dalla legge di
+scala
+\begin{equation}
+  p_L(p,d)=A\left(p/p_{\mathrm{th}}\right)^{\lfloor(d+1)/2\rfloor},
+  \label{eq:scaling}
+\end{equation}
+adattata ai punti sotto soglia per $d=3,5,7,9$ così da stimare $p_{\mathrm{th}}$ indipendentemente
+dall'incrocio delle curve. Il decoder appreso è un percettrone multistrato $f_\theta$ sugli stessi
+\emph{detection events}, confrontato con il matching sia come sostituto sia nella forma ibrida
+$\mathcal{D}_{\mathrm{hyb}}(\sigma)=\mathcal{D}_{\mathrm{MWPM}}(\sigma)\oplus\mathbf{1}[f_\theta(\sigma)>t]$,
+con soglia $t$ scelta in validazione fra candidate che includono l'astensione totale e
+significatività valutata con il test esatto di McNemar.
+
+\subsection{Proxy fenomenologico per la sensibilità di Shor}
+
+Dopo ogni gate compilato su $q$ qubit si applica il canale di Pauli
+$\mathcal{E}_{p_L}(\rho)=(1-p_L)\rho+\frac{p_L}{4^{q}-1}\sum_{P\neq I}P\rho P^{\dagger}$, ossia
+$\lambda_1=\tfrac{4}{3}p_L$ e $\lambda_2=\tfrac{16}{15}p_L$, e si misura il successo per singola
+misura su una griglia preregistrata di $p_L$, con probabilità cumulativa $P(k)=1-(1-P_s)^{k}$ dopo
+$k$ tentativi indipendenti. Non è una compilazione fault-tolerant: $p_L$ è la probabilità di un
+Pauli non identità \emph{per gate compilato}, non il tasso per ciclo di sindrome, e la conversione
+fra le due unità richiederebbe un modello architetturale esplicito.
+
+\subsection{Strumenti, verifica e validazione}
+
+\emph{Strumenti di comunità}: Qiskit/Aer per i circuiti generali, Stim e PyMatching per quelli
+stabilizzatori, scikit-learn per classificatore e decoder appreso; versioni esatte e ambiente di
+esecuzione sono registrati in ogni artefatto. \emph{Strumenti ad hoc}:
+i moduli sperimentali delle due fasi,
+un formato di artefatto JSON versionato (input, seed, vettori
+appaiati, versioni, manifest e hash SHA-256 della netlist), l'aritmetica reversibile di Beauregard
+per $N=21/35$ e una demo web che separa esecuzione ideale e rumorosa; codice e artefatti sono
+pubblici e riutilizzabili. La verifica è su tre livelli: \emph{funzionale} (truth table esaustive
+dei moltiplicatori, ripristino a zero delle ancille, confronto con la legge teorica di phase
+estimation: distanza di variazione totale $1{,}38\times10^{-9}$ per $N=21$); \emph{di identità}
+(profondità, conteggi e hash del circuito in ogni artefatto); \emph{statistico} (ipotesi e griglie
+preregistrate, seed separati, intervalli di Wilson al 95\%, Bonferroni per la monotonia, Holm entro
+famiglia, censura esplicita). Il controllo causale resta l'ablazione: la stessa ricerca con e senza
+il modello appreso, sugli stessi dati.
