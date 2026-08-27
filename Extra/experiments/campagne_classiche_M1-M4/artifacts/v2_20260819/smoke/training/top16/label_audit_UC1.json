@@ -1,0 +1,51 @@
+{
+  "schema_version": "2.0",
+  "created_at": "2026-08-18T23:09:48.195735+00:00",
+  "use_case": "UC1",
+  "label_top_k": 16,
+  "class_balance": {
+    "positive": 10,
+    "negative": 0
+  },
+  "n_samples": 10,
+  "shots": 32,
+  "seed": 42,
+  "noise_base": {
+    "eps_1q": 0.001,
+    "eps_2q": 0.01,
+    "t1_ns": 100000,
+    "t2_ns": 80000,
+    "p_ro": 0.02
+  },
+  "manifest": {
+    "circuit_revision": "shor-qpe-v2-amod15-correct",
+    "noise_model_revision": "uniform-rz-virtual-v2",
+    "circuit_sha256": "c7f4cf3bc1735dce9d5b56d8e09686ee4ab43cabead65e734ea23d5a50f4ba2c",
+    "basis_gates": [
+      "rz",
+      "sx",
+      "x",
+      "cx"
+    ],
+    "optimization_level": 2,
+    "seed_transpiler": 20260819,
+    "depth": 412,
+    "size": 604,
+    "gate_counts": {
+      "rz": 302,
+      "cx": 224,
+      "sx": 70,
+      "measure": 8,
+      "barrier": 1
+    },
+    "python": "3.12.3",
+    "packages": {
+      "numpy": "2.5.1",
+      "qiskit": "2.5.0",
+      "qiskit-aer": "0.17.2",
+      "scikit-learn": "1.9.0"
+    }
+  },
+  "trainable": false,
+  "reason": "single-class-dataset"
+}

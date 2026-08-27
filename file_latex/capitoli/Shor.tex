@@ -13,7 +13,7 @@ Nella sua formulazione decisionale il problema appartiene a NP, e più precisame
 
 \subsection{Perché la Fattorizzazione Conta}
 
-La difficoltà di fattorizzare interi non è una curiosità matematica: è il fondamento su cui poggia \ac{RSA}, e con esso buona parte della sicurezza delle comunicazioni odierne. Un algoritmo polinomiale per la fattorizzazione compromette \ac{RSA} in modo irrecuperabile, e non per una debolezza implementativa ma perché ne viola l'assunzione di sicurezza. La trattazione estesa --- il confronto fra la complessità sub-esponenziale del \ac{GNFS} e quella polinomiale di Shor, la risposta della crittografia post-quantistica con gli standard \ac{NIST} del 2024, e lo scenario \emph{harvest now, decrypt later} --- è nella Sezione~\ref{app:obiettivi} dell'Appendice~\ref{app:contesto}. Qui basta il punto che motiva l'intero lavoro: l'unico ostacolo che oggi separa l'algoritmo dalla sua applicazione è il rumore dei dispositivi, ed è quello che questa tesi studia.
+La difficoltà di fattorizzare interi non è una curiosità matematica: è il fondamento su cui poggia \ac{RSA}, e con esso buona parte della sicurezza delle comunicazioni odierne. Un algoritmo polinomiale per la fattorizzazione compromette \ac{RSA} in modo irrecuperabile, e non per una debolezza implementativa ma perché ne viola l'assunzione di sicurezza. La trattazione estesa --- il confronto fra la complessità sub-esponenziale del \ac{GNFS} e quella polinomiale di Shor, la risposta della crittografia post-quantistica con gli standard \ac{NIST} del 2024, e lo scenario \emph{harvest now, decrypt later} --- è nella Sezione~\ref{app:obiettivi} dell'Appendice~\ref{app:contesto}. Fra l'algoritmo teorico e un'applicazione crittografica restano scala, compilazione fault-tolerant, overhead QEC e qualità dell'hardware; questa tesi isola soprattutto il ruolo del rumore.
 
 \section{Riduzione alla Ricerca del Periodo}
 
@@ -161,7 +161,7 @@ La QFT è impiegata, all'interno dell'algoritmo di Shor, attraverso la subroutin
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.7\textwidth]{10_histogram_simulator_N15.pdf}
-\caption[Istogramma QPE ideale per $N=15$]{Distribuzione di misura del registro di controllo per $N=15$, $a=7$, su simulatore a basso rumore (1024 shot). I quattro stati più frequenti --- $\{0, 64, 128, 192\}$ --- corrispondono ai multipli di $2^8/r = 256/4 = 64$ attesi per il periodo $r=4$. Ogni picco raccoglie circa 250--270 conteggi su 1024, confermando la struttura teorica della QPE.}
+\caption[Istogramma QPE ideale per $N=15$]{Distribuzione ideale campionata del registro di controllo per $N=15$, $a=7$ (1024 shot). I quattro stati attesi --- $\{0,64,128,192\}$ --- sono i multipli di $2^8/r=64$ per $r=4$; le oscillazioni dei conteggi fra i picchi sono fluttuazioni di campionamento.}
 \label{fig:histogram_ideal_N15}
 \end{figure}
 
@@ -282,7 +282,11 @@ La complessità dell'algoritmo di Shor è \textbf{polinomiale} nel numero di bit
     \item Il numero atteso di iterazioni (con basi $a$ diverse) prima del successo è $O(1)$.
 \end{itemize}
 
-Complessivamente, nella versione con aritmetica elementare, $T_{\text{Shor}}(N) = O\!\left((\log N)^3\right)$, a fronte della complessità sub-esponenziale dell'Equazione~\eqref{eq:gnfs_complexity} del miglior algoritmo classico. Si tratta di uno \textbf{speedup esponenziale}.
+Complessivamente, nella versione con aritmetica elementare,
+\[
+T_{\text{Shor}}(N) = O\!\left((\log N)^3\right),
+\]
+a fronte della complessità sub-esponenziale dell'Equazione~\eqref{eq:gnfs_complexity} del miglior algoritmo classico generale noto. In funzione della lunghezza dell'input $n=\log N$, il divario è \textbf{superpolinomiale}; chiamarlo semplicemente ``esponenziale'' nasconderebbe il fatto che GNFS è già sub-esponenziale in $n$.
 
 \section{Stato dell'Arte e Confronto con Altri Algoritmi}
 \label{sec:shor_stato_arte}

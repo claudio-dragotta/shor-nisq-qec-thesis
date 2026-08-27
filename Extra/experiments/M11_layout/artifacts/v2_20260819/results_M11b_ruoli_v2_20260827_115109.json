@@ -1,0 +1,5726 @@
+{
+  "schema_version": "2.0",
+  "milestone": "M11b_ruoli",
+  "timestamp": "2026-08-27T11:51:09.100725+02:00",
+  "seed": 42,
+  "backend": {
+    "name": "fake_sherbrooke",
+    "class": "FakeSherbrooke",
+    "num_qubits": 127,
+    "calibration_sha256": "04b6a48ff808e71fee3ba0770d87079fcac7b50abb7cc931f90e632e6d9f2c11"
+  },
+  "software_versions": {
+    "qiskit": "2.5.0",
+    "qiskit-aer": "0.17.2",
+    "qiskit-ibm-runtime": "0.48.0",
+    "numpy": "2.5.1",
+    "scipy": "1.18.0"
+  },
+  "manifest": {
+    "circuit_revision": "shor-qpe-v2-amod15-correct",
+    "noise_model_revision": "uniform-rz-virtual-v2",
+    "postprocess_revision": "seeded-sha256-tie-break-v1",
+    "circuit_sha256": "c7f4cf3bc1735dce9d5b56d8e09686ee4ab43cabead65e734ea23d5a50f4ba2c",
+    "basis_gates": [
+      "rz",
+      "sx",
+      "x",
+      "cx"
+    ],
+    "optimization_level": 2,
+    "seed_transpiler": 20260819,
+    "depth": 412,
+    "size": 604,
+    "gate_counts": {
+      "rz": 302,
+      "cx": 224,
+      "sx": 70,
+      "measure": 8,
+      "barrier": 1
+    },
+    "python": "3.12.3",
+    "packages": {
+      "numpy": "2.5.1",
+      "qiskit": "2.5.0",
+      "qiskit-aer": "0.17.2",
+      "scikit-learn": "1.9.0"
+    }
+  },
+  "noise_model": {
+    "revision": "m11-target-agi-depolarizing-only-v2",
+    "description": "target.error converted from average gate infidelity to a depolarizing channel; symmetric readout; no separate T1/T2",
+    "rz_virtual": true,
+    "ecr_directional": true
+  },
+  "design": {
+    "type": "observational within-subgraph",
+    "initial_layout_labels_are_not_treatments": true,
+    "requested_subgraphs": 12,
+    "valid_subgraphs": 9,
+    "analyzable_subgraphs": 9,
+    "random_initial_layouts_per_subgraph": 2,
+    "shots_per_strategy": 8192,
+    "batch_shots": [
+      1024,
+      1024,
+      1024,
+      1024,
+      1024,
+      1024,
+      1024,
+      1024
+    ],
+    "n_train_batches": 4,
+    "n_holdout_batches": 4,
+    "common_simulator_seeds": [
+      3856145595,
+      345490874,
+      4250104717,
+      1759788091,
+      3402090276,
+      3735947907,
+      2913099212,
+      1040526586
+    ],
+    "common_seed_transpiler": 42,
+    "basis_gates": [
+      "sx",
+      "rz",
+      "x",
+      "ecr"
+    ],
+    "optimization_level": 2,
+    "analysis_seed": 42,
+    "bootstrap_resamples": 2000
+  },
+  "analysis": {
+    "analysis_type": "observational within-subgraph fixed-effects",
+    "outcome_partition": "holdout",
+    "n_observations": 45,
+    "n_subgraphs": 9,
+    "raw_spearman": {
+      "readout_vs_success": -0.5031480698040641,
+      "ecr_vs_success": -0.41595282385458543,
+      "depth_vs_success": -0.304701661411182
+    },
+    "controlled_fit": {
+      "partial_spearman_readout": -0.6047430830039525,
+      "ols_coefficients": {
+        "readout_misurati": -4.8480010231853825,
+        "n_ecr": -0.0006500654188160473,
+        "depth": -4.800522187017376e-06
+      },
+      "standardized_coefficients": {
+        "readout_misurati": -0.5991552244661229,
+        "n_ecr": -0.6843491420162096,
+        "depth": -0.01122941129870838
+      },
+      "within_r_squared": 0.6132014440517088,
+      "matrix_rank": 3
+    },
+    "cluster_bootstrap": {
+      "partial_spearman_readout": {
+        "ci_low": -0.8257458745874586,
+        "ci_high": -0.1903298326533414,
+        "n_valid": 2000,
+        "confidence": 0.95
+      },
+      "standardized_readout_coefficient": {
+        "ci_low": -0.9376235467148183,
+        "ci_high": -0.1910047304268972,
+        "n_valid": 2000,
+        "confidence": 0.95
+      }
+    },
+    "within_subgraph_success_range": {
+      "mean": 0.09144422743055555,
+      "median": 0.085693359375,
+      "max": 0.190673828125
+    },
+    "descriptive_by_initial_strategy": {
+      "casuale-1": {
+        "n": 9,
+        "mean_P_success": 0.3818359375,
+        "se_across_subgraphs": 0.012730671474750198
+      },
+      "casuale-2": {
+        "n": 9,
+        "mean_P_success": 0.3743760850694444,
+        "se_across_subgraphs": 0.012620107217212974
+      },
+      "init-readout-alto": {
+        "n": 9,
+        "mean_P_success": 0.3839789496527778,
+        "se_across_subgraphs": 0.012166189936777124
+      },
+      "init-readout-basso": {
+        "n": 9,
+        "mean_P_success": 0.373046875,
+        "se_across_subgraphs": 0.01810554183402017
+      },
+      "transpiler": {
+        "n": 9,
+        "mean_P_success": 0.4222005208333333,
+        "se_across_subgraphs": 0.01710587007417139
+      }
+    },
+    "interpretation": "Association with the readout of the qubits actually measured after routing, controlling for ECR count, depth, and subgraph. Initial-layout labels are descriptive instruments only; no causal best-vs-worst claim is made."
+  },
+  "failures": [
+    {
+      "subgraph_id": 3,
+      "strategy": "init-readout-basso",
+      "error_type": "ValueError",
+      "message": "Average gate infidelity fuori dominio: 1.0"
+    },
+    {
+      "subgraph_id": 3,
+      "strategy": "init-readout-alto",
+      "error_type": "ValueError",
+      "message": "Average gate infidelity fuori dominio: 1.0"
+    },
+    {
+      "subgraph_id": 3,
+      "strategy": "transpiler",
+      "error_type": "ValueError",
+      "message": "Average gate infidelity fuori dominio: 1.0"
+    },
+    {
+      "subgraph_id": 3,
+      "strategy": "casuale-1",
+      "error_type": "ValueError",
+      "message": "Average gate infidelity fuori dominio: 1.0"
+    },
+    {
+      "subgraph_id": 3,
+      "strategy": "casuale-2",
+      "error_type": "ValueError",
+      "message": "Average gate infidelity fuori dominio: 1.0"
+    },
+    {
+      "subgraph_id": 4,
+      "strategy": "init-readout-basso",
+      "error_type": "ValueError",
+      "message": "Average gate infidelity fuori dominio: 1.0"
+    },
+    {
+      "subgraph_id": 4,
+      "strategy": "init-readout-alto",
+      "error_type": "ValueError",
+      "message": "Average gate infidelity fuori dominio: 1.0"
+    },
+    {
+      "subgraph_id": 4,
+      "strategy": "transpiler",
+      "error_type": "ValueError",
+      "message": "Average gate infidelity fuori dominio: 1.0"
+    },
+    {
+      "subgraph_id": 4,
+      "strategy": "casuale-1",
+      "error_type": "ValueError",
+      "message": "Average gate infidelity fuori dominio: 1.0"
+    },
+    {
+      "subgraph_id": 4,
+      "strategy": "casuale-2",
+      "error_type": "ValueError",
+      "message": "Average gate infidelity fuori dominio: 1.0"
+    },
+    {
+      "subgraph_id": 8,
+      "strategy": "init-readout-basso",
+      "error_type": "ValueError",
+      "message": "Average gate infidelity fuori dominio: 1.0"
+    },
+    {
+      "subgraph_id": 8,
+      "strategy": "init-readout-alto",
+      "error_type": "ValueError",
+      "message": "Average gate infidelity fuori dominio: 1.0"
+    },
+    {
+      "subgraph_id": 8,
+      "strategy": "transpiler",
+      "error_type": "ValueError",
+      "message": "Average gate infidelity fuori dominio: 1.0"
+    },
+    {
+      "subgraph_id": 8,
+      "strategy": "casuale-1",
+      "error_type": "ValueError",
+      "message": "Average gate infidelity fuori dominio: 1.0"
+    },
+    {
+      "subgraph_id": 8,
+      "strategy": "casuale-2",
+      "error_type": "ValueError",
+      "message": "Average gate infidelity fuori dominio: 1.0"
+    }
+  ],
+  "righe": [
+    {
+      "subgraph_id": 0,
+      "sottografo": [
+        81,
+        72,
+        62,
+        80,
+        63,
+        64,
+        61,
+        54,
+        82,
+        45,
+        79,
+        65
+      ],
+      "strategie": {
+        "init-readout-basso": {
+          "P_success": 0.289306640625,
+          "P_success_se": 0.0050098573281723525,
+          "train": {
+            "P_success": 0.291259765625,
+            "P_success_se": 0.007099108565177963,
+            "successes": 1193,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.287353515625,
+            "P_success_se": 0.007070747961088455,
+            "successes": 1177,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.05755615234375,
+          "qubit_fisici_misurati": [
+            54,
+            82,
+            81,
+            72,
+            61,
+            64,
+            62,
+            63
+          ],
+          "n_ecr": 433,
+          "depth": 1538,
+          "operations": {
+            "rz": 1519,
+            "sx": 941,
+            "ecr": 433,
+            "x": 112,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 296,
+              "P_success": 0.2890625
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 285,
+              "P_success": 0.2783203125
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 302,
+              "P_success": 0.294921875
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 310,
+              "P_success": 0.302734375
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 284,
+              "P_success": 0.27734375
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 298,
+              "P_success": 0.291015625
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 296,
+              "P_success": 0.2890625
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 299,
+              "P_success": 0.2919921875
+            }
+          ],
+          "initial_layout": [
+            0,
+            3,
+            2,
+            10,
+            11,
+            6,
+            8,
+            9,
+            4,
+            7,
+            1,
+            5
+          ]
+        },
+        "init-readout-alto": {
+          "P_success": 0.402587890625,
+          "P_success_se": 0.005418416594990125,
+          "train": {
+            "P_success": 0.406982421875,
+            "P_success_se": 0.007676117878428851,
+            "successes": 1667,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.398193359375,
+            "P_success_se": 0.007648839014050075,
+            "successes": 1631,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.05401611328125,
+          "qubit_fisici_misurati": [
+            80,
+            81,
+            72,
+            62,
+            65,
+            54,
+            63,
+            64
+          ],
+          "n_ecr": 395,
+          "depth": 1409,
+          "operations": {
+            "rz": 1402,
+            "sx": 879,
+            "ecr": 395,
+            "x": 103,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 402,
+              "P_success": 0.392578125
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 405,
+              "P_success": 0.3955078125
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 417,
+              "P_success": 0.4072265625
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 443,
+              "P_success": 0.4326171875
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 393,
+              "P_success": 0.3837890625
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 417,
+              "P_success": 0.4072265625
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 408,
+              "P_success": 0.3984375
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 413,
+              "P_success": 0.4033203125
+            }
+          ],
+          "initial_layout": [
+            11,
+            6,
+            8,
+            9,
+            4,
+            7,
+            1,
+            5,
+            0,
+            3,
+            2,
+            10
+          ]
+        },
+        "transpiler": {
+          "P_success": 0.3961181640625,
+          "P_success_se": 0.005403726878734962,
+          "train": {
+            "P_success": 0.4072265625,
+            "P_success_se": 0.007676839173189955,
+            "successes": 1668,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.385009765625,
+            "P_success_se": 0.007603087847961766,
+            "successes": 1577,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.051788330078125,
+          "qubit_fisici_misurati": [
+            64,
+            63,
+            62,
+            79,
+            80,
+            82,
+            81,
+            72
+          ],
+          "n_ecr": 354,
+          "depth": 1361,
+          "operations": {
+            "rz": 1358,
+            "sx": 902,
+            "ecr": 354,
+            "x": 47,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 430,
+              "P_success": 0.419921875
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 412,
+              "P_success": 0.40234375
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 409,
+              "P_success": 0.3994140625
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 417,
+              "P_success": 0.4072265625
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 386,
+              "P_success": 0.376953125
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 410,
+              "P_success": 0.400390625
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 376,
+              "P_success": 0.3671875
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 405,
+              "P_success": 0.3955078125
+            }
+          ],
+          "initial_layout": null
+        },
+        "casuale-1": {
+          "P_success": 0.39794921875,
+          "P_success_se": 0.005407984255415266,
+          "train": {
+            "P_success": 0.40380859375,
+            "P_success_se": 0.007666562145943203,
+            "successes": 1654,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.39208984375,
+            "P_success_se": 0.007628383569493955,
+            "successes": 1606,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.059844970703125,
+          "qubit_fisici_misurati": [
+            72,
+            61,
+            62,
+            65,
+            63,
+            45,
+            64,
+            54
+          ],
+          "n_ecr": 415,
+          "depth": 1496,
+          "operations": {
+            "rz": 1518,
+            "sx": 943,
+            "ecr": 415,
+            "x": 104,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 431,
+              "P_success": 0.4208984375
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 394,
+              "P_success": 0.384765625
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 421,
+              "P_success": 0.4111328125
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 408,
+              "P_success": 0.3984375
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 372,
+              "P_success": 0.36328125
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 400,
+              "P_success": 0.390625
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 422,
+              "P_success": 0.412109375
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 412,
+              "P_success": 0.40234375
+            }
+          ],
+          "initial_layout": [
+            2,
+            6,
+            4,
+            7,
+            10,
+            9,
+            5,
+            8,
+            1,
+            11,
+            0,
+            3
+          ]
+        },
+        "casuale-2": {
+          "P_success": 0.40283203125,
+          "P_success_se": 0.005418951682298237,
+          "train": {
+            "P_success": 0.408935546875,
+            "P_success_se": 0.007681833299167103,
+            "successes": 1675,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.396728515625,
+            "P_success_se": 0.007644043210899815,
+            "successes": 1625,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.05670166015625,
+          "qubit_fisici_misurati": [
+            81,
+            72,
+            62,
+            63,
+            65,
+            45,
+            64,
+            54
+          ],
+          "n_ecr": 414,
+          "depth": 1438,
+          "operations": {
+            "rz": 1460,
+            "sx": 947,
+            "ecr": 414,
+            "x": 97,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 440,
+              "P_success": 0.4296875
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 414,
+              "P_success": 0.404296875
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 418,
+              "P_success": 0.408203125
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 403,
+              "P_success": 0.3935546875
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 417,
+              "P_success": 0.4072265625
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 373,
+              "P_success": 0.3642578125
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 418,
+              "P_success": 0.408203125
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 417,
+              "P_success": 0.4072265625
+            }
+          ],
+          "initial_layout": [
+            0,
+            3,
+            5,
+            10,
+            7,
+            9,
+            1,
+            6,
+            11,
+            4,
+            2,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "subgraph_id": 1,
+      "sottografo": [
+        4,
+        3,
+        2,
+        1,
+        0,
+        15,
+        22,
+        5,
+        14,
+        23,
+        18,
+        24
+      ],
+      "strategie": {
+        "init-readout-basso": {
+          "P_success": 0.331298828125,
+          "P_success_se": 0.00520033139400001,
+          "train": {
+            "P_success": 0.334228515625,
+            "P_success_se": 0.007370625936865777,
+            "successes": 1369,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.328369140625,
+            "P_success_se": 0.0073378108981428545,
+            "successes": 1345,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.029632568359375,
+          "qubit_fisici_misurati": [
+            1,
+            2,
+            3,
+            4,
+            15,
+            24,
+            22,
+            23
+          ],
+          "n_ecr": 477,
+          "depth": 1522,
+          "operations": {
+            "rz": 1640,
+            "sx": 1063,
+            "ecr": 477,
+            "x": 99,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 336,
+              "P_success": 0.328125
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 341,
+              "P_success": 0.3330078125
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 349,
+              "P_success": 0.3408203125
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 343,
+              "P_success": 0.3349609375
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 348,
+              "P_success": 0.33984375
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 327,
+              "P_success": 0.3193359375
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 327,
+              "P_success": 0.3193359375
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 343,
+              "P_success": 0.3349609375
+            }
+          ],
+          "initial_layout": [
+            4,
+            1,
+            9,
+            0,
+            2,
+            6,
+            3,
+            11,
+            8,
+            10,
+            7,
+            5
+          ]
+        },
+        "init-readout-alto": {
+          "P_success": 0.365478515625,
+          "P_success_se": 0.0053205817461417036,
+          "train": {
+            "P_success": 0.361083984375,
+            "P_success_se": 0.007504919294952393,
+            "successes": 1479,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.369873046875,
+            "P_success_se": 0.007543282919570795,
+            "successes": 1515,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.034271240234375,
+          "qubit_fisici_misurati": [
+            15,
+            4,
+            3,
+            1,
+            2,
+            18,
+            0,
+            14
+          ],
+          "n_ecr": 439,
+          "depth": 1496,
+          "operations": {
+            "rz": 1573,
+            "sx": 1018,
+            "ecr": 439,
+            "x": 100,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 381,
+              "P_success": 0.3720703125
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 363,
+              "P_success": 0.3544921875
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 361,
+              "P_success": 0.3525390625
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 374,
+              "P_success": 0.365234375
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 381,
+              "P_success": 0.3720703125
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 404,
+              "P_success": 0.39453125
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 380,
+              "P_success": 0.37109375
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 350,
+              "P_success": 0.341796875
+            }
+          ],
+          "initial_layout": [
+            2,
+            6,
+            3,
+            11,
+            8,
+            10,
+            7,
+            5,
+            4,
+            1,
+            9,
+            0
+          ]
+        },
+        "transpiler": {
+          "P_success": 0.3734130859375,
+          "P_success_se": 0.005344295398749801,
+          "train": {
+            "P_success": 0.375732421875,
+            "P_success_se": 0.007567366219545575,
+            "successes": 1539,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.37109375,
+            "P_success_se": 0.0075483981820631966,
+            "successes": 1520,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.034149169921875,
+          "qubit_fisici_misurati": [
+            2,
+            3,
+            5,
+            4,
+            15,
+            24,
+            22,
+            23
+          ],
+          "n_ecr": 362,
+          "depth": 1383,
+          "operations": {
+            "rz": 1376,
+            "sx": 892,
+            "ecr": 362,
+            "x": 73,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 402,
+              "P_success": 0.392578125
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 402,
+              "P_success": 0.392578125
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 364,
+              "P_success": 0.35546875
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 371,
+              "P_success": 0.3623046875
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 350,
+              "P_success": 0.341796875
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 393,
+              "P_success": 0.3837890625
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 384,
+              "P_success": 0.375
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 393,
+              "P_success": 0.3837890625
+            }
+          ],
+          "initial_layout": null
+        },
+        "casuale-1": {
+          "P_success": 0.3458251953125,
+          "P_success_se": 0.005255091114065974,
+          "train": {
+            "P_success": 0.343017578125,
+            "P_success_se": 0.00741745788331467,
+            "successes": 1405,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.3486328125,
+            "P_success_se": 0.007445898202112072,
+            "successes": 1428,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.03094482421875,
+          "qubit_fisici_misurati": [
+            5,
+            4,
+            3,
+            2,
+            1,
+            18,
+            0,
+            14
+          ],
+          "n_ecr": 480,
+          "depth": 1642,
+          "operations": {
+            "rz": 1735,
+            "sx": 1106,
+            "ecr": 480,
+            "x": 94,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 357,
+              "P_success": 0.3486328125
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 324,
+              "P_success": 0.31640625
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 353,
+              "P_success": 0.3447265625
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 371,
+              "P_success": 0.3623046875
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 378,
+              "P_success": 0.369140625
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 350,
+              "P_success": 0.341796875
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 358,
+              "P_success": 0.349609375
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 342,
+              "P_success": 0.333984375
+            }
+          ],
+          "initial_layout": [
+            6,
+            9,
+            4,
+            5,
+            2,
+            0,
+            10,
+            3,
+            1,
+            11,
+            8,
+            7
+          ]
+        },
+        "casuale-2": {
+          "P_success": 0.3662109375,
+          "P_success_se": 0.005322835611742134,
+          "train": {
+            "P_success": 0.373291015625,
+            "P_success_se": 0.007557475624318737,
+            "successes": 1529,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.359130859375,
+            "P_success_se": 0.0074960257246713775,
+            "successes": 1471,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.03094482421875,
+          "qubit_fisici_misurati": [
+            18,
+            14,
+            0,
+            1,
+            2,
+            3,
+            5,
+            4
+          ],
+          "n_ecr": 459,
+          "depth": 1578,
+          "operations": {
+            "rz": 1725,
+            "sx": 1106,
+            "ecr": 459,
+            "x": 85,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 390,
+              "P_success": 0.380859375
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 368,
+              "P_success": 0.359375
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 379,
+              "P_success": 0.3701171875
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 392,
+              "P_success": 0.3828125
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 377,
+              "P_success": 0.3681640625
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 361,
+              "P_success": 0.3525390625
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 352,
+              "P_success": 0.34375
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 381,
+              "P_success": 0.3720703125
+            }
+          ],
+          "initial_layout": [
+            6,
+            10,
+            4,
+            2,
+            5,
+            7,
+            8,
+            11,
+            1,
+            0,
+            3,
+            9
+          ]
+        }
+      }
+    },
+    {
+      "subgraph_id": 2,
+      "sottografo": [
+        75,
+        90,
+        76,
+        77,
+        94,
+        78,
+        79,
+        91,
+        80,
+        81,
+        82,
+        71
+      ],
+      "strategie": {
+        "init-readout-basso": {
+          "P_success": 0.3865966796875,
+          "P_success_se": 0.00538030814091297,
+          "train": {
+            "P_success": 0.389404296875,
+            "P_success_se": 0.007618987615024851,
+            "successes": 1595,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.3837890625,
+            "P_success_se": 0.007598555224858049,
+            "successes": 1572,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.018280029296875,
+          "qubit_fisici_misurati": [
+            71,
+            79,
+            78,
+            76,
+            77,
+            94,
+            75,
+            90
+          ],
+          "n_ecr": 446,
+          "depth": 1548,
+          "operations": {
+            "rz": 1537,
+            "sx": 991,
+            "ecr": 446,
+            "x": 102,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 397,
+              "P_success": 0.3876953125
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 415,
+              "P_success": 0.4052734375
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 390,
+              "P_success": 0.380859375
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 393,
+              "P_success": 0.3837890625
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 398,
+              "P_success": 0.388671875
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 392,
+              "P_success": 0.3828125
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 383,
+              "P_success": 0.3740234375
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 399,
+              "P_success": 0.3896484375
+            }
+          ],
+          "initial_layout": [
+            9,
+            3,
+            4,
+            1,
+            8,
+            2,
+            6,
+            5,
+            11,
+            7,
+            10,
+            0
+          ]
+        },
+        "init-readout-alto": {
+          "P_success": 0.4111328125,
+          "P_success_se": 0.005436317029474197,
+          "train": {
+            "P_success": 0.4169921875,
+            "P_success_se": 0.007704086892656442,
+            "successes": 1708,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.4052734375,
+            "P_success_se": 0.007671013800265304,
+            "successes": 1660,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.01519775390625,
+          "qubit_fisici_misurati": [
+            76,
+            77,
+            82,
+            81,
+            91,
+            78,
+            80,
+            79
+          ],
+          "n_ecr": 429,
+          "depth": 1480,
+          "operations": {
+            "rz": 1552,
+            "sx": 1018,
+            "ecr": 429,
+            "x": 89,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 423,
+              "P_success": 0.4130859375
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 436,
+              "P_success": 0.42578125
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 428,
+              "P_success": 0.41796875
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 421,
+              "P_success": 0.4111328125
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 410,
+              "P_success": 0.400390625
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 422,
+              "P_success": 0.412109375
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 425,
+              "P_success": 0.4150390625
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 403,
+              "P_success": 0.3935546875
+            }
+          ],
+          "initial_layout": [
+            8,
+            2,
+            6,
+            5,
+            11,
+            7,
+            10,
+            0,
+            9,
+            3,
+            4,
+            1
+          ]
+        },
+        "transpiler": {
+          "P_success": 0.439208984375,
+          "P_success_se": 0.005483289293568507,
+          "train": {
+            "P_success": 0.435302734375,
+            "P_success_se": 0.00774682180013765,
+            "successes": 1783,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.443115234375,
+            "P_success_se": 0.007761774753506262,
+            "successes": 1815,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.01519775390625,
+          "qubit_fisici_misurati": [
+            76,
+            77,
+            91,
+            78,
+            79,
+            80,
+            82,
+            81
+          ],
+          "n_ecr": 353,
+          "depth": 1379,
+          "operations": {
+            "rz": 1348,
+            "sx": 847,
+            "ecr": 353,
+            "x": 80,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 443,
+              "P_success": 0.4326171875
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 453,
+              "P_success": 0.4423828125
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 462,
+              "P_success": 0.451171875
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 425,
+              "P_success": 0.4150390625
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 478,
+              "P_success": 0.466796875
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 441,
+              "P_success": 0.4306640625
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 440,
+              "P_success": 0.4296875
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 456,
+              "P_success": 0.4453125
+            }
+          ],
+          "initial_layout": null
+        },
+        "casuale-1": {
+          "P_success": 0.33447265625,
+          "P_success_se": 0.005212766715006697,
+          "train": {
+            "P_success": 0.336181640625,
+            "P_success_se": 0.007381279522255263,
+            "successes": 1377,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.332763671875,
+            "P_success_se": 0.007362542619704796,
+            "successes": 1363,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.018280029296875,
+          "qubit_fisici_misurati": [
+            79,
+            71,
+            78,
+            94,
+            90,
+            77,
+            76,
+            75
+          ],
+          "n_ecr": 464,
+          "depth": 1576,
+          "operations": {
+            "rz": 1580,
+            "sx": 1030,
+            "ecr": 464,
+            "x": 104,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 346,
+              "P_success": 0.337890625
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 354,
+              "P_success": 0.345703125
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 335,
+              "P_success": 0.3271484375
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 342,
+              "P_success": 0.333984375
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 327,
+              "P_success": 0.3193359375
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 331,
+              "P_success": 0.3232421875
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 348,
+              "P_success": 0.33984375
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 357,
+              "P_success": 0.3486328125
+            }
+          ],
+          "initial_layout": [
+            9,
+            1,
+            0,
+            8,
+            6,
+            11,
+            5,
+            2,
+            3,
+            7,
+            10,
+            4
+          ]
+        },
+        "casuale-2": {
+          "P_success": 0.3658447265625,
+          "P_success_se": 0.00532171033638697,
+          "train": {
+            "P_success": 0.3662109375,
+            "P_success_se": 0.007527626312408216,
+            "successes": 1500,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.365478515625,
+            "P_success_se": 0.0075244388651083205,
+            "successes": 1497,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.0169677734375,
+          "qubit_fisici_misurati": [
+            81,
+            80,
+            79,
+            78,
+            77,
+            90,
+            76,
+            75
+          ],
+          "n_ecr": 428,
+          "depth": 1397,
+          "operations": {
+            "rz": 1603,
+            "sx": 1095,
+            "ecr": 428,
+            "x": 59,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 378,
+              "P_success": 0.369140625
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 371,
+              "P_success": 0.3623046875
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 383,
+              "P_success": 0.3740234375
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 368,
+              "P_success": 0.359375
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 378,
+              "P_success": 0.369140625
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 360,
+              "P_success": 0.3515625
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 378,
+              "P_success": 0.369140625
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 381,
+              "P_success": 0.3720703125
+            }
+          ],
+          "initial_layout": [
+            8,
+            0,
+            7,
+            4,
+            5,
+            10,
+            2,
+            11,
+            9,
+            1,
+            3,
+            6
+          ]
+        }
+      }
+    },
+    {
+      "subgraph_id": 3,
+      "sottografo": [
+        11,
+        12,
+        10,
+        13,
+        17,
+        30,
+        9,
+        31,
+        29,
+        32,
+        8,
+        36
+      ],
+      "strategie": {}
+    },
+    {
+      "subgraph_id": 4,
+      "sottografo": [
+        10,
+        11,
+        12,
+        17,
+        9,
+        30,
+        8,
+        7,
+        13,
+        29,
+        6,
+        16
+      ],
+      "strategie": {}
+    },
+    {
+      "subgraph_id": 5,
+      "sottografo": [
+        110,
+        100,
+        101,
+        102,
+        118,
+        103,
+        99,
+        104,
+        105,
+        98,
+        117,
+        97
+      ],
+      "strategie": {
+        "init-readout-basso": {
+          "P_success": 0.4365234375,
+          "P_success_se": 0.005479573285419331,
+          "train": {
+            "P_success": 0.439453125,
+            "P_success_se": 0.0077550083981769175,
+            "successes": 1800,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.43359375,
+            "P_success_se": 0.007743290473290054,
+            "successes": 1776,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.015655517578125,
+          "qubit_fisici_misurati": [
+            118,
+            110,
+            99,
+            100,
+            101,
+            104,
+            102,
+            103
+          ],
+          "n_ecr": 450,
+          "depth": 1628,
+          "operations": {
+            "rz": 1643,
+            "sx": 1077,
+            "ecr": 450,
+            "x": 82,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 453,
+              "P_success": 0.4423828125
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 447,
+              "P_success": 0.4365234375
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 450,
+              "P_success": 0.439453125
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 450,
+              "P_success": 0.439453125
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 441,
+              "P_success": 0.4306640625
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 447,
+              "P_success": 0.4365234375
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 453,
+              "P_success": 0.4423828125
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 435,
+              "P_success": 0.4248046875
+            }
+          ],
+          "initial_layout": [
+            2,
+            7,
+            0,
+            5,
+            8,
+            4,
+            1,
+            6,
+            11,
+            9,
+            10,
+            3
+          ]
+        },
+        "init-readout-alto": {
+          "P_success": 0.3912353515625,
+          "P_success_se": 0.00539198636852168,
+          "train": {
+            "P_success": 0.396240234375,
+            "P_success_se": 0.007642428708328017,
+            "successes": 1623,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.38623046875,
+            "P_success_se": 0.007607569950166004,
+            "successes": 1582,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.019805908203125,
+          "qubit_fisici_misurati": [
+            102,
+            118,
+            110,
+            101,
+            100,
+            99,
+            97,
+            98
+          ],
+          "n_ecr": 448,
+          "depth": 1559,
+          "operations": {
+            "rz": 1582,
+            "sx": 982,
+            "ecr": 448,
+            "x": 120,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 411,
+              "P_success": 0.4013671875
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 426,
+              "P_success": 0.416015625
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 400,
+              "P_success": 0.390625
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 386,
+              "P_success": 0.376953125
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 406,
+              "P_success": 0.396484375
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 404,
+              "P_success": 0.39453125
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 398,
+              "P_success": 0.388671875
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 374,
+              "P_success": 0.365234375
+            }
+          ],
+          "initial_layout": [
+            8,
+            4,
+            1,
+            6,
+            11,
+            9,
+            10,
+            3,
+            2,
+            7,
+            0,
+            5
+          ]
+        },
+        "transpiler": {
+          "P_success": 0.4515380859375,
+          "P_success_se": 0.0054982623640652635,
+          "train": {
+            "P_success": 0.457763671875,
+            "P_success_se": 0.007784576544625289,
+            "successes": 1875,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.4453125,
+            "P_success_se": 0.007765629359652794,
+            "successes": 1824,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.01611328125,
+          "qubit_fisici_misurati": [
+            117,
+            118,
+            101,
+            110,
+            100,
+            97,
+            99,
+            98
+          ],
+          "n_ecr": 367,
+          "depth": 1418,
+          "operations": {
+            "rz": 1410,
+            "sx": 880,
+            "ecr": 367,
+            "x": 81,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 472,
+              "P_success": 0.4609375
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 476,
+              "P_success": 0.46484375
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 474,
+              "P_success": 0.462890625
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 453,
+              "P_success": 0.4423828125
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 468,
+              "P_success": 0.45703125
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 441,
+              "P_success": 0.4306640625
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 449,
+              "P_success": 0.4384765625
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 466,
+              "P_success": 0.455078125
+            }
+          ],
+          "initial_layout": null
+        },
+        "casuale-1": {
+          "P_success": 0.4151611328125,
+          "P_success_se": 0.005444167591868592,
+          "train": {
+            "P_success": 0.416015625,
+            "P_success_se": 0.007701502503377895,
+            "successes": 1704,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.414306640625,
+            "P_success_se": 0.007696904945622622,
+            "successes": 1697,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.015472412109375,
+          "qubit_fisici_misurati": [
+            99,
+            110,
+            100,
+            101,
+            103,
+            102,
+            105,
+            104
+          ],
+          "n_ecr": 456,
+          "depth": 1480,
+          "operations": {
+            "rz": 1604,
+            "sx": 1036,
+            "ecr": 456,
+            "x": 111,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 430,
+              "P_success": 0.419921875
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 418,
+              "P_success": 0.408203125
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 441,
+              "P_success": 0.4306640625
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 415,
+              "P_success": 0.4052734375
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 433,
+              "P_success": 0.4228515625
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 402,
+              "P_success": 0.392578125
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 442,
+              "P_success": 0.431640625
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 420,
+              "P_success": 0.41015625
+            }
+          ],
+          "initial_layout": [
+            9,
+            5,
+            6,
+            4,
+            0,
+            1,
+            10,
+            3,
+            2,
+            7,
+            8,
+            11
+          ]
+        },
+        "casuale-2": {
+          "P_success": 0.392578125,
+          "P_success_se": 0.005395271330609248,
+          "train": {
+            "P_success": 0.405029296875,
+            "P_success_se": 0.007670276780255606,
+            "successes": 1659,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.380126953125,
+            "P_success_se": 0.007584653319356798,
+            "successes": 1557,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.01904296875,
+          "qubit_fisici_misurati": [
+            99,
+            103,
+            102,
+            101,
+            100,
+            117,
+            110,
+            118
+          ],
+          "n_ecr": 468,
+          "depth": 1579,
+          "operations": {
+            "rz": 1647,
+            "sx": 1090,
+            "ecr": 468,
+            "x": 82,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 417,
+              "P_success": 0.4072265625
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 412,
+              "P_success": 0.40234375
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 412,
+              "P_success": 0.40234375
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 418,
+              "P_success": 0.408203125
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 372,
+              "P_success": 0.36328125
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 407,
+              "P_success": 0.3974609375
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 393,
+              "P_success": 0.3837890625
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 385,
+              "P_success": 0.3759765625
+            }
+          ],
+          "initial_layout": [
+            3,
+            8,
+            5,
+            1,
+            6,
+            4,
+            10,
+            2,
+            7,
+            9,
+            11,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "subgraph_id": 6,
+      "sottografo": [
+        89,
+        74,
+        70,
+        69,
+        68,
+        67,
+        66,
+        73,
+        65,
+        85,
+        55,
+        64
+      ],
+      "strategie": {
+        "init-readout-basso": {
+          "P_success": 0.309814453125,
+          "P_success_se": 0.005109034031052379,
+          "train": {
+            "P_success": 0.301513671875,
+            "P_success_se": 0.0071705502852585585,
+            "successes": 1235,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.318115234375,
+            "P_success_se": 0.007277257690942083,
+            "successes": 1303,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.047515869140625,
+          "qubit_fisici_misurati": [
+            69,
+            68,
+            85,
+            67,
+            73,
+            64,
+            66,
+            65
+          ],
+          "n_ecr": 432,
+          "depth": 1513,
+          "operations": {
+            "rz": 1505,
+            "sx": 970,
+            "ecr": 432,
+            "x": 104,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 314,
+              "P_success": 0.306640625
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 316,
+              "P_success": 0.30859375
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 289,
+              "P_success": 0.2822265625
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 316,
+              "P_success": 0.30859375
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 314,
+              "P_success": 0.306640625
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 341,
+              "P_success": 0.3330078125
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 327,
+              "P_success": 0.3193359375
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 321,
+              "P_success": 0.3134765625
+            }
+          ],
+          "initial_layout": [
+            1,
+            7,
+            4,
+            6,
+            0,
+            5,
+            3,
+            8,
+            10,
+            9,
+            2,
+            11
+          ]
+        },
+        "init-readout-alto": {
+          "P_success": 0.3406982421875,
+          "P_success_se": 0.005236391285611334,
+          "train": {
+            "P_success": 0.34716796875,
+            "P_success_se": 0.0074385892424550844,
+            "successes": 1422,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.334228515625,
+            "P_success_se": 0.007370625936865777,
+            "successes": 1369,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.04022216796875,
+          "qubit_fisici_misurati": [
+            70,
+            55,
+            69,
+            68,
+            73,
+            65,
+            67,
+            66
+          ],
+          "n_ecr": 442,
+          "depth": 1519,
+          "operations": {
+            "rz": 1620,
+            "sx": 1033,
+            "ecr": 442,
+            "x": 97,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 340,
+              "P_success": 0.33203125
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 363,
+              "P_success": 0.3544921875
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 355,
+              "P_success": 0.3466796875
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 364,
+              "P_success": 0.35546875
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 352,
+              "P_success": 0.34375
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 358,
+              "P_success": 0.349609375
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 332,
+              "P_success": 0.32421875
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 327,
+              "P_success": 0.3193359375
+            }
+          ],
+          "initial_layout": [
+            0,
+            5,
+            3,
+            8,
+            10,
+            9,
+            2,
+            11,
+            1,
+            7,
+            4,
+            6
+          ]
+        },
+        "transpiler": {
+          "P_success": 0.507568359375,
+          "P_success_se": 0.005523638830493244,
+          "train": {
+            "P_success": 0.524169921875,
+            "P_success_se": 0.0078033667688278486,
+            "successes": 2147,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.490966796875,
+            "P_success_se": 0.007811224915341535,
+            "successes": 2011,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.0389404296875,
+          "qubit_fisici_misurati": [
+            66,
+            67,
+            55,
+            68,
+            69,
+            89,
+            70,
+            74
+          ],
+          "n_ecr": 339,
+          "depth": 1289,
+          "operations": {
+            "rz": 1231,
+            "sx": 785,
+            "ecr": 339,
+            "x": 104,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 545,
+              "P_success": 0.5322265625
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 531,
+              "P_success": 0.5185546875
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 526,
+              "P_success": 0.513671875
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 545,
+              "P_success": 0.5322265625
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 510,
+              "P_success": 0.498046875
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 507,
+              "P_success": 0.4951171875
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 494,
+              "P_success": 0.482421875
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 500,
+              "P_success": 0.48828125
+            }
+          ],
+          "initial_layout": null
+        },
+        "casuale-1": {
+          "P_success": 0.329345703125,
+          "P_success_se": 0.0051925463848436024,
+          "train": {
+            "P_success": 0.328125,
+            "P_success_se": 0.00733641562564293,
+            "successes": 1344,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.33056640625,
+            "P_success_se": 0.007350267342557705,
+            "successes": 1354,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.047515869140625,
+          "qubit_fisici_misurati": [
+            64,
+            65,
+            69,
+            68,
+            67,
+            85,
+            66,
+            73
+          ],
+          "n_ecr": 455,
+          "depth": 1508,
+          "operations": {
+            "rz": 1677,
+            "sx": 1123,
+            "ecr": 455,
+            "x": 58,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 333,
+              "P_success": 0.3251953125
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 321,
+              "P_success": 0.3134765625
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 353,
+              "P_success": 0.3447265625
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 337,
+              "P_success": 0.3291015625
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 327,
+              "P_success": 0.3193359375
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 343,
+              "P_success": 0.3349609375
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 341,
+              "P_success": 0.3330078125
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 343,
+              "P_success": 0.3349609375
+            }
+          ],
+          "initial_layout": [
+            7,
+            2,
+            8,
+            5,
+            0,
+            9,
+            4,
+            11,
+            1,
+            6,
+            3,
+            10
+          ]
+        },
+        "casuale-2": {
+          "P_success": 0.2965087890625,
+          "P_success_se": 0.0050460686162962405,
+          "train": {
+            "P_success": 0.292724609375,
+            "P_success_se": 0.0071095795376012174,
+            "successes": 1199,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.30029296875,
+            "P_success_se": 0.007162270626326141,
+            "successes": 1230,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.047515869140625,
+          "qubit_fisici_misurati": [
+            69,
+            68,
+            85,
+            73,
+            67,
+            64,
+            65,
+            66
+          ],
+          "n_ecr": 425,
+          "depth": 1586,
+          "operations": {
+            "rz": 1538,
+            "sx": 1016,
+            "ecr": 425,
+            "x": 84,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 293,
+              "P_success": 0.2861328125
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 304,
+              "P_success": 0.296875
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 313,
+              "P_success": 0.3056640625
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 289,
+              "P_success": 0.2822265625
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 316,
+              "P_success": 0.30859375
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 286,
+              "P_success": 0.279296875
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 313,
+              "P_success": 0.3056640625
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 315,
+              "P_success": 0.3076171875
+            }
+          ],
+          "initial_layout": [
+            7,
+            0,
+            9,
+            6,
+            2,
+            1,
+            8,
+            11,
+            10,
+            5,
+            3,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "subgraph_id": 7,
+      "sottografo": [
+        105,
+        104,
+        106,
+        111,
+        107,
+        93,
+        103,
+        108,
+        102,
+        112,
+        122,
+        126
+      ],
+      "strategie": {
+        "init-readout-basso": {
+          "P_success": 0.4423828125,
+          "P_success_se": 0.005487470855477999,
+          "train": {
+            "P_success": 0.445556640625,
+            "P_success_se": 0.0077660481621999065,
+            "successes": 1825,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.439208984375,
+            "P_success_se": 0.00775454208537977,
+            "successes": 1799,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.017730712890625,
+          "qubit_fisici_misurati": [
+            103,
+            102,
+            104,
+            93,
+            106,
+            105,
+            108,
+            107
+          ],
+          "n_ecr": 412,
+          "depth": 1559,
+          "operations": {
+            "rz": 1572,
+            "sx": 986,
+            "ecr": 412,
+            "x": 72,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 470,
+              "P_success": 0.458984375
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 458,
+              "P_success": 0.447265625
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 452,
+              "P_success": 0.44140625
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 445,
+              "P_success": 0.4345703125
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 471,
+              "P_success": 0.4599609375
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 465,
+              "P_success": 0.4541015625
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 422,
+              "P_success": 0.412109375
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 441,
+              "P_success": 0.4306640625
+            }
+          ],
+          "initial_layout": [
+            1,
+            10,
+            6,
+            5,
+            7,
+            0,
+            2,
+            11,
+            9,
+            4,
+            3,
+            8
+          ]
+        },
+        "init-readout-alto": {
+          "P_success": 0.4278564453125,
+          "P_success_se": 0.005466465008315712,
+          "train": {
+            "P_success": 0.434326171875,
+            "P_success_se": 0.007744815369791597,
+            "successes": 1779,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.42138671875,
+            "P_success_se": 0.007715332492606006,
+            "successes": 1726,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.0157470703125,
+          "qubit_fisici_misurati": [
+            122,
+            111,
+            104,
+            93,
+            106,
+            105,
+            108,
+            107
+          ],
+          "n_ecr": 415,
+          "depth": 1460,
+          "operations": {
+            "rz": 1489,
+            "sx": 943,
+            "ecr": 415,
+            "x": 110,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 447,
+              "P_success": 0.4365234375
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 457,
+              "P_success": 0.4462890625
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 446,
+              "P_success": 0.435546875
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 429,
+              "P_success": 0.4189453125
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 456,
+              "P_success": 0.4453125
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 430,
+              "P_success": 0.419921875
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 424,
+              "P_success": 0.4140625
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 416,
+              "P_success": 0.40625
+            }
+          ],
+          "initial_layout": [
+            7,
+            0,
+            2,
+            11,
+            9,
+            4,
+            3,
+            8,
+            1,
+            10,
+            6,
+            5
+          ]
+        },
+        "transpiler": {
+          "P_success": 0.4989013671875,
+          "P_success_se": 0.00552425839247752,
+          "train": {
+            "P_success": 0.50341796875,
+            "P_success_se": 0.0078123174586428095,
+            "successes": 2062,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.494384765625,
+            "P_success_se": 0.007812007314822752,
+            "successes": 2025,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.01434326171875,
+          "qubit_fisici_misurati": [
+            104,
+            105,
+            93,
+            106,
+            107,
+            126,
+            108,
+            112
+          ],
+          "n_ecr": 351,
+          "depth": 1339,
+          "operations": {
+            "rz": 1258,
+            "sx": 755,
+            "ecr": 351,
+            "x": 122,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 520,
+              "P_success": 0.5078125
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 537,
+              "P_success": 0.5244140625
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 509,
+              "P_success": 0.4970703125
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 496,
+              "P_success": 0.484375
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 532,
+              "P_success": 0.51953125
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 498,
+              "P_success": 0.486328125
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 505,
+              "P_success": 0.4931640625
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 490,
+              "P_success": 0.478515625
+            }
+          ],
+          "initial_layout": null
+        },
+        "casuale-1": {
+          "P_success": 0.4228515625,
+          "P_success_se": 0.005458115984612099,
+          "train": {
+            "P_success": 0.426025390625,
+            "P_success_se": 0.007726523116175792,
+            "successes": 1745,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.419677734375,
+            "P_success_se": 0.007711033808366187,
+            "successes": 1719,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.0174560546875,
+          "qubit_fisici_misurati": [
+            112,
+            108,
+            107,
+            106,
+            111,
+            103,
+            105,
+            104
+          ],
+          "n_ecr": 439,
+          "depth": 1468,
+          "operations": {
+            "rz": 1593,
+            "sx": 1011,
+            "ecr": 439,
+            "x": 98,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 442,
+              "P_success": 0.431640625
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 437,
+              "P_success": 0.4267578125
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 429,
+              "P_success": 0.4189453125
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 437,
+              "P_success": 0.4267578125
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 431,
+              "P_success": 0.4208984375
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 422,
+              "P_success": 0.412109375
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 442,
+              "P_success": 0.431640625
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 424,
+              "P_success": 0.4140625
+            }
+          ],
+          "initial_layout": [
+            3,
+            5,
+            11,
+            2,
+            6,
+            10,
+            4,
+            8,
+            1,
+            9,
+            7,
+            0
+          ]
+        },
+        "casuale-2": {
+          "P_success": 0.4229736328125,
+          "P_success_se": 0.005458326436289311,
+          "train": {
+            "P_success": 0.42529296875,
+            "P_success_se": 0.007724802464508503,
+            "successes": 1742,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.420654296875,
+            "P_success_se": 0.007713501812017921,
+            "successes": 1723,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.017303466796875,
+          "qubit_fisici_misurati": [
+            122,
+            111,
+            104,
+            105,
+            106,
+            112,
+            107,
+            108
+          ],
+          "n_ecr": 425,
+          "depth": 1478,
+          "operations": {
+            "rz": 1651,
+            "sx": 1089,
+            "ecr": 425,
+            "x": 63,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 433,
+              "P_success": 0.4228515625
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 416,
+              "P_success": 0.40625
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 433,
+              "P_success": 0.4228515625
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 460,
+              "P_success": 0.44921875
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 429,
+              "P_success": 0.4189453125
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 447,
+              "P_success": 0.4365234375
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 418,
+              "P_success": 0.408203125
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 429,
+              "P_success": 0.4189453125
+            }
+          ],
+          "initial_layout": [
+            6,
+            11,
+            9,
+            0,
+            7,
+            8,
+            10,
+            2,
+            4,
+            5,
+            3,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "subgraph_id": 8,
+      "sottografo": [
+        58,
+        57,
+        59,
+        56,
+        52,
+        71,
+        77,
+        76,
+        78,
+        79,
+        75,
+        60
+      ],
+      "strategie": {}
+    },
+    {
+      "subgraph_id": 9,
+      "sottografo": [
+        49,
+        50,
+        55,
+        51,
+        68,
+        67,
+        36,
+        32,
+        66,
+        65,
+        31,
+        64
+      ],
+      "strategie": {
+        "init-readout-basso": {
+          "P_success": 0.3475341796875,
+          "P_success_se": 0.005261174092964332,
+          "train": {
+            "P_success": 0.34521484375,
+            "P_success_se": 0.007428723080884532,
+            "successes": 1414,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.349853515625,
+            "P_success_se": 0.007451929824733385,
+            "successes": 1433,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.047332763671875,
+          "qubit_fisici_misurati": [
+            51,
+            50,
+            55,
+            68,
+            67,
+            64,
+            66,
+            65
+          ],
+          "n_ecr": 452,
+          "depth": 1528,
+          "operations": {
+            "rz": 1650,
+            "sx": 1078,
+            "ecr": 452,
+            "x": 97,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 335,
+              "P_success": 0.3271484375
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 361,
+              "P_success": 0.3525390625
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 361,
+              "P_success": 0.3525390625
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 357,
+              "P_success": 0.3486328125
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 340,
+              "P_success": 0.33203125
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 363,
+              "P_success": 0.3544921875
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 361,
+              "P_success": 0.3525390625
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 369,
+              "P_success": 0.3603515625
+            }
+          ],
+          "initial_layout": [
+            6,
+            3,
+            10,
+            4,
+            8,
+            5,
+            7,
+            9,
+            1,
+            0,
+            2,
+            11
+          ]
+        },
+        "init-readout-alto": {
+          "P_success": 0.401611328125,
+          "P_success_se": 0.005416262283608327,
+          "train": {
+            "P_success": 0.4052734375,
+            "P_success_se": 0.007671013800265304,
+            "successes": 1660,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.39794921875,
+            "P_success_se": 0.007648044679108434,
+            "successes": 1630,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.02685546875,
+          "qubit_fisici_misurati": [
+            68,
+            55,
+            49,
+            50,
+            51,
+            31,
+            36,
+            32
+          ],
+          "n_ecr": 475,
+          "depth": 1649,
+          "operations": {
+            "rz": 1661,
+            "sx": 1117,
+            "ecr": 475,
+            "x": 81,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 404,
+              "P_success": 0.39453125
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 420,
+              "P_success": 0.41015625
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 392,
+              "P_success": 0.3828125
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 444,
+              "P_success": 0.43359375
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 412,
+              "P_success": 0.40234375
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 423,
+              "P_success": 0.4130859375
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 399,
+              "P_success": 0.3896484375
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 396,
+              "P_success": 0.38671875
+            }
+          ],
+          "initial_layout": [
+            8,
+            5,
+            7,
+            9,
+            1,
+            0,
+            2,
+            11,
+            6,
+            3,
+            10,
+            4
+          ]
+        },
+        "transpiler": {
+          "P_success": 0.3741455078125,
+          "P_success_se": 0.005346406581024071,
+          "train": {
+            "P_success": 0.375,
+            "P_success_se": 0.007564420598061361,
+            "successes": 1536,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.373291015625,
+            "P_success_se": 0.007557475624318737,
+            "successes": 1529,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.053314208984375,
+          "qubit_fisici_misurati": [
+            50,
+            49,
+            55,
+            67,
+            68,
+            64,
+            66,
+            65
+          ],
+          "n_ecr": 361,
+          "depth": 1339,
+          "operations": {
+            "rz": 1342,
+            "sx": 821,
+            "ecr": 361,
+            "x": 114,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 366,
+              "P_success": 0.357421875
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 413,
+              "P_success": 0.4033203125
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 352,
+              "P_success": 0.34375
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 405,
+              "P_success": 0.3955078125
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 403,
+              "P_success": 0.3935546875
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 375,
+              "P_success": 0.3662109375
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 374,
+              "P_success": 0.365234375
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 377,
+              "P_success": 0.3681640625
+            }
+          ],
+          "initial_layout": null
+        },
+        "casuale-1": {
+          "P_success": 0.436279296875,
+          "P_success_se": 0.005479227374034063,
+          "train": {
+            "P_success": 0.436767578125,
+            "P_success_se": 0.007749774140229244,
+            "successes": 1789,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.435791015625,
+            "P_success_se": 0.007747813551291041,
+            "successes": 1785,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.02685546875,
+          "qubit_fisici_misurati": [
+            68,
+            55,
+            49,
+            50,
+            51,
+            31,
+            36,
+            32
+          ],
+          "n_ecr": 458,
+          "depth": 1561,
+          "operations": {
+            "rz": 1691,
+            "sx": 1172,
+            "ecr": 458,
+            "x": 57,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 456,
+              "P_success": 0.4453125
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 438,
+              "P_success": 0.427734375
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 451,
+              "P_success": 0.4404296875
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 444,
+              "P_success": 0.43359375
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 466,
+              "P_success": 0.455078125
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 427,
+              "P_success": 0.4169921875
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 443,
+              "P_success": 0.4326171875
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 449,
+              "P_success": 0.4384765625
+            }
+          ],
+          "initial_layout": [
+            9,
+            11,
+            6,
+            3,
+            1,
+            7,
+            8,
+            2,
+            5,
+            10,
+            0,
+            4
+          ]
+        },
+        "casuale-2": {
+          "P_success": 0.4102783203125,
+          "P_success_se": 0.005434603442245758,
+          "train": {
+            "P_success": 0.41552734375,
+            "P_success_se": 0.00770019864461436,
+            "successes": 1702,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.405029296875,
+            "P_success_se": 0.007670276780255606,
+            "successes": 1659,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.02685546875,
+          "qubit_fisici_misurati": [
+            68,
+            55,
+            49,
+            50,
+            36,
+            51,
+            31,
+            32
+          ],
+          "n_ecr": 513,
+          "depth": 1610,
+          "operations": {
+            "rz": 1752,
+            "sx": 1170,
+            "ecr": 513,
+            "x": 90,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 418,
+              "P_success": 0.408203125
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 424,
+              "P_success": 0.4140625
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 443,
+              "P_success": 0.4326171875
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 417,
+              "P_success": 0.4072265625
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 393,
+              "P_success": 0.3837890625
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 420,
+              "P_success": 0.41015625
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 392,
+              "P_success": 0.3828125
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 454,
+              "P_success": 0.443359375
+            }
+          ],
+          "initial_layout": [
+            6,
+            5,
+            3,
+            11,
+            7,
+            10,
+            4,
+            2,
+            9,
+            1,
+            0,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "subgraph_id": 10,
+      "sottografo": [
+        55,
+        49,
+        50,
+        48,
+        68,
+        67,
+        51,
+        36,
+        66,
+        73,
+        85,
+        47
+      ],
+      "strategie": {
+        "init-readout-basso": {
+          "P_success": 0.4122314453125,
+          "P_success_se": 0.005438495338230376,
+          "train": {
+            "P_success": 0.41943359375,
+            "P_success_se": 0.007710411965753247,
+            "successes": 1718,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.405029296875,
+            "P_success_se": 0.007670276780255606,
+            "successes": 1659,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.02655029296875,
+          "qubit_fisici_misurati": [
+            68,
+            47,
+            36,
+            51,
+            48,
+            55,
+            50,
+            49
+          ],
+          "n_ecr": 441,
+          "depth": 1556,
+          "operations": {
+            "rz": 1654,
+            "sx": 1079,
+            "ecr": 441,
+            "x": 63,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 419,
+              "P_success": 0.4091796875
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 442,
+              "P_success": 0.431640625
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 415,
+              "P_success": 0.4052734375
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 442,
+              "P_success": 0.431640625
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 400,
+              "P_success": 0.390625
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 423,
+              "P_success": 0.4130859375
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 407,
+              "P_success": 0.3974609375
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 429,
+              "P_success": 0.4189453125
+            }
+          ],
+          "initial_layout": [
+            9,
+            7,
+            6,
+            11,
+            4,
+            8,
+            5,
+            3,
+            2,
+            1,
+            0,
+            10
+          ]
+        },
+        "init-readout-alto": {
+          "P_success": 0.3109130859375,
+          "P_success_se": 0.005114009496583152,
+          "train": {
+            "P_success": 0.302490234375,
+            "P_success_se": 0.007177130639707155,
+            "successes": 1239,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.3193359375,
+            "P_success_se": 0.0072846775818114495,
+            "successes": 1308,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.026885986328125,
+          "qubit_fisici_misurati": [
+            51,
+            50,
+            49,
+            55,
+            68,
+            73,
+            67,
+            66
+          ],
+          "n_ecr": 474,
+          "depth": 1455,
+          "operations": {
+            "rz": 1610,
+            "sx": 1077,
+            "ecr": 474,
+            "x": 102,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 307,
+              "P_success": 0.2998046875
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 307,
+              "P_success": 0.2998046875
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 308,
+              "P_success": 0.30078125
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 317,
+              "P_success": 0.3095703125
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 327,
+              "P_success": 0.3193359375
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 309,
+              "P_success": 0.3017578125
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 336,
+              "P_success": 0.328125
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 336,
+              "P_success": 0.328125
+            }
+          ],
+          "initial_layout": [
+            4,
+            8,
+            5,
+            3,
+            2,
+            1,
+            0,
+            10,
+            9,
+            7,
+            6,
+            11
+          ]
+        },
+        "transpiler": {
+          "P_success": 0.3590087890625,
+          "P_success_se": 0.005300094412926504,
+          "train": {
+            "P_success": 0.35595703125,
+            "P_success_se": 0.007481285622070948,
+            "successes": 1458,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.362060546875,
+            "P_success_se": 0.007509315622027389,
+            "successes": 1483,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.035552978515625,
+          "qubit_fisici_misurati": [
+            50,
+            49,
+            55,
+            68,
+            85,
+            67,
+            73,
+            66
+          ],
+          "n_ecr": 360,
+          "depth": 1293,
+          "operations": {
+            "rz": 1306,
+            "sx": 839,
+            "ecr": 360,
+            "x": 96,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 372,
+              "P_success": 0.36328125
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 365,
+              "P_success": 0.3564453125
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 362,
+              "P_success": 0.353515625
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 359,
+              "P_success": 0.3505859375
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 384,
+              "P_success": 0.375
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 374,
+              "P_success": 0.365234375
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 353,
+              "P_success": 0.3447265625
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 372,
+              "P_success": 0.36328125
+            }
+          ],
+          "initial_layout": null
+        },
+        "casuale-1": {
+          "P_success": 0.3856201171875,
+          "P_success_se": 0.005377784099176746,
+          "train": {
+            "P_success": 0.38623046875,
+            "P_success_se": 0.007607569950166004,
+            "successes": 1582,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.385009765625,
+            "P_success_se": 0.007603087847961766,
+            "successes": 1577,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.028167724609375,
+          "qubit_fisici_misurati": [
+            73,
+            66,
+            67,
+            68,
+            48,
+            50,
+            55,
+            49
+          ],
+          "n_ecr": 437,
+          "depth": 1536,
+          "operations": {
+            "rz": 1575,
+            "sx": 1049,
+            "ecr": 437,
+            "x": 63,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 387,
+              "P_success": 0.3779296875
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 417,
+              "P_success": 0.4072265625
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 392,
+              "P_success": 0.3828125
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 386,
+              "P_success": 0.376953125
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 384,
+              "P_success": 0.375
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 380,
+              "P_success": 0.37109375
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 420,
+              "P_success": 0.41015625
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 393,
+              "P_success": 0.3837890625
+            }
+          ],
+          "initial_layout": [
+            3,
+            2,
+            10,
+            8,
+            6,
+            7,
+            1,
+            9,
+            11,
+            5,
+            4,
+            0
+          ]
+        },
+        "casuale-2": {
+          "P_success": 0.3345947265625,
+          "P_success_se": 0.005213239693832878,
+          "train": {
+            "P_success": 0.330078125,
+            "P_success_se": 0.007347514932460868,
+            "successes": 1352,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.339111328125,
+            "P_success_se": 0.007396995062368882,
+            "successes": 1389,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.028411865234375,
+          "qubit_fisici_misurati": [
+            66,
+            67,
+            68,
+            55,
+            48,
+            51,
+            49,
+            50
+          ],
+          "n_ecr": 478,
+          "depth": 1641,
+          "operations": {
+            "rz": 1724,
+            "sx": 1143,
+            "ecr": 478,
+            "x": 58,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 344,
+              "P_success": 0.3359375
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 333,
+              "P_success": 0.3251953125
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 345,
+              "P_success": 0.3369140625
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 330,
+              "P_success": 0.322265625
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 354,
+              "P_success": 0.345703125
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 352,
+              "P_success": 0.34375
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 323,
+              "P_success": 0.3154296875
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 360,
+              "P_success": 0.3515625
+            }
+          ],
+          "initial_layout": [
+            6,
+            5,
+            4,
+            7,
+            1,
+            0,
+            11,
+            8,
+            10,
+            3,
+            2,
+            9
+          ]
+        }
+      }
+    },
+    {
+      "subgraph_id": 11,
+      "sottografo": [
+        19,
+        20,
+        18,
+        33,
+        39,
+        14,
+        38,
+        40,
+        0,
+        1,
+        37,
+        41
+      ],
+      "strategie": {
+        "init-readout-basso": {
+          "P_success": 0.409423828125,
+          "P_success_se": 0.0054328729087864906,
+          "train": {
+            "P_success": 0.40673828125,
+            "P_success_se": 0.0076753946199668325,
+            "successes": 1666,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.412109375,
+            "P_success_se": 0.007690853531072066,
+            "successes": 1688,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.033447265625,
+          "qubit_fisici_misurati": [
+            39,
+            33,
+            20,
+            19,
+            18,
+            1,
+            14,
+            0
+          ],
+          "n_ecr": 405,
+          "depth": 1393,
+          "operations": {
+            "rz": 1433,
+            "sx": 872,
+            "ecr": 405,
+            "x": 144,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 420,
+              "P_success": 0.41015625
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 410,
+              "P_success": 0.400390625
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 432,
+              "P_success": 0.421875
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 404,
+              "P_success": 0.39453125
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 412,
+              "P_success": 0.40234375
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 412,
+              "P_success": 0.40234375
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 428,
+              "P_success": 0.41796875
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 436,
+              "P_success": 0.42578125
+            }
+          ],
+          "initial_layout": [
+            7,
+            3,
+            11,
+            8,
+            9,
+            0,
+            1,
+            5,
+            6,
+            4,
+            10,
+            2
+          ]
+        },
+        "init-readout-alto": {
+          "P_success": 0.4197998046875,
+          "P_success_se": 0.005452743636734523,
+          "train": {
+            "P_success": 0.416259765625,
+            "P_success_se": 0.007702151515992,
+            "successes": 1705,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.42333984375,
+            "P_success_se": 0.007720129248668311,
+            "successes": 1734,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.03125,
+          "qubit_fisici_misurati": [
+            19,
+            20,
+            41,
+            40,
+            33,
+            37,
+            39,
+            38
+          ],
+          "n_ecr": 442,
+          "depth": 1480,
+          "operations": {
+            "rz": 1481,
+            "sx": 976,
+            "ecr": 442,
+            "x": 105,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 455,
+              "P_success": 0.4443359375
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 422,
+              "P_success": 0.412109375
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 411,
+              "P_success": 0.4013671875
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 417,
+              "P_success": 0.4072265625
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 419,
+              "P_success": 0.4091796875
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 429,
+              "P_success": 0.4189453125
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 459,
+              "P_success": 0.4482421875
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 427,
+              "P_success": 0.4169921875
+            }
+          ],
+          "initial_layout": [
+            9,
+            0,
+            1,
+            5,
+            6,
+            4,
+            10,
+            2,
+            7,
+            3,
+            11,
+            8
+          ]
+        },
+        "transpiler": {
+          "P_success": 0.4293212890625,
+          "P_success_se": 0.005468800444189373,
+          "train": {
+            "P_success": 0.424072265625,
+            "P_success_se": 0.007721896169801633,
+            "successes": 1737,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.4345703125,
+            "P_success_se": 0.007745319844308418,
+            "successes": 1780,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.033447265625,
+          "qubit_fisici_misurati": [
+            39,
+            33,
+            20,
+            18,
+            19,
+            1,
+            14,
+            0
+          ],
+          "n_ecr": 360,
+          "depth": 1405,
+          "operations": {
+            "rz": 1339,
+            "sx": 809,
+            "ecr": 360,
+            "x": 102,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 444,
+              "P_success": 0.43359375
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 438,
+              "P_success": 0.427734375
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 426,
+              "P_success": 0.416015625
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 429,
+              "P_success": 0.4189453125
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 443,
+              "P_success": 0.4326171875
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 439,
+              "P_success": 0.4287109375
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 465,
+              "P_success": 0.4541015625
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 433,
+              "P_success": 0.4228515625
+            }
+          ],
+          "initial_layout": null
+        },
+        "casuale-1": {
+          "P_success": 0.37646484375,
+          "P_success_se": 0.0053530057949991924,
+          "train": {
+            "P_success": 0.375244140625,
+            "P_success_se": 0.007565404522803365,
+            "successes": 1537,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.377685546875,
+            "P_success_se": 0.007575131086374987,
+            "successes": 1547,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.033447265625,
+          "qubit_fisici_misurati": [
+            39,
+            33,
+            20,
+            19,
+            18,
+            1,
+            14,
+            0
+          ],
+          "n_ecr": 437,
+          "depth": 1464,
+          "operations": {
+            "rz": 1559,
+            "sx": 961,
+            "ecr": 437,
+            "x": 112,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 397,
+              "P_success": 0.3876953125
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 372,
+              "P_success": 0.36328125
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 383,
+              "P_success": 0.3740234375
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 385,
+              "P_success": 0.3759765625
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 403,
+              "P_success": 0.3935546875
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 382,
+              "P_success": 0.373046875
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 408,
+              "P_success": 0.3984375
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 354,
+              "P_success": 0.345703125
+            }
+          ],
+          "initial_layout": [
+            7,
+            10,
+            5,
+            11,
+            9,
+            3,
+            8,
+            0,
+            6,
+            1,
+            2,
+            4
+          ]
+        },
+        "casuale-2": {
+          "P_success": 0.4130859375,
+          "P_success_se": 0.005440170251086711,
+          "train": {
+            "P_success": 0.42333984375,
+            "P_success_se": 0.007720129248668311,
+            "successes": 1734,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "holdout": {
+            "P_success": 0.40283203125,
+            "P_success_se": 0.007663554962950666,
+            "successes": 1650,
+            "shots": 4096,
+            "n_batches": 4
+          },
+          "readout_misurati": 0.033447265625,
+          "qubit_fisici_misurati": [
+            39,
+            33,
+            20,
+            19,
+            18,
+            1,
+            14,
+            0
+          ],
+          "n_ecr": 396,
+          "depth": 1423,
+          "operations": {
+            "rz": 1495,
+            "sx": 920,
+            "ecr": 396,
+            "x": 107,
+            "measure": 8,
+            "barrier": 1
+          },
+          "batches": [
+            {
+              "batch": 0,
+              "partition": "train",
+              "seed_simulator": 3856145595,
+              "shots": 1024,
+              "successes": 425,
+              "P_success": 0.4150390625
+            },
+            {
+              "batch": 1,
+              "partition": "train",
+              "seed_simulator": 345490874,
+              "shots": 1024,
+              "successes": 455,
+              "P_success": 0.4443359375
+            },
+            {
+              "batch": 2,
+              "partition": "train",
+              "seed_simulator": 4250104717,
+              "shots": 1024,
+              "successes": 423,
+              "P_success": 0.4130859375
+            },
+            {
+              "batch": 3,
+              "partition": "train",
+              "seed_simulator": 1759788091,
+              "shots": 1024,
+              "successes": 431,
+              "P_success": 0.4208984375
+            },
+            {
+              "batch": 4,
+              "partition": "holdout",
+              "seed_simulator": 3402090276,
+              "shots": 1024,
+              "successes": 401,
+              "P_success": 0.3916015625
+            },
+            {
+              "batch": 5,
+              "partition": "holdout",
+              "seed_simulator": 3735947907,
+              "shots": 1024,
+              "successes": 409,
+              "P_success": 0.3994140625
+            },
+            {
+              "batch": 6,
+              "partition": "holdout",
+              "seed_simulator": 2913099212,
+              "shots": 1024,
+              "successes": 409,
+              "P_success": 0.3994140625
+            },
+            {
+              "batch": 7,
+              "partition": "holdout",
+              "seed_simulator": 1040526586,
+              "shots": 1024,
+              "successes": 431,
+              "P_success": 0.4208984375
+            }
+          ],
+          "initial_layout": [
+            6,
+            11,
+            1,
+            8,
+            5,
+            2,
+            7,
+            9,
+            0,
+            10,
+            3,
+            4
+          ]
+        }
+      }
+    }
+  ]
+}

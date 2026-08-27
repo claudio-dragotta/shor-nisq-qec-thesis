@@ -1,0 +1,28 @@
+==================================================================
+  CAMPAGNA BASE RIESEGUITA — seeding corretto
+  K=30 ripetizioni, 1024 shot, max 50 iterazioni
+==================================================================
+  UC1 rep 1/30  UC1 rep 2/30  UC1 rep 3/30  UC1 rep 4/30  UC1 rep 5/30  UC1 rep 6/30  UC1 rep 7/30  UC1 rep 8/30  UC1 rep 9/30  UC1 rep 10/30  UC1 rep 11/30  UC1 rep 12/30  UC1 rep 13/30  UC1 rep 14/30  UC1 rep 15/30  UC1 rep 16/30  UC1 rep 17/30  UC1 rep 18/30  UC1 rep 19/30  UC1 rep 20/30  UC1 rep 21/30  UC1 rep 22/30  UC1 rep 23/30  UC1 rep 24/30  UC1 rep 25/30  UC1 rep 26/30  UC1 rep 27/30  UC1 rep 28/30  UC1 rep 29/30  UC1 rep 30/30
+
+==================================================================
+  UC1
+==================================================================
+  M1       successo 30/30 = 100.0% | M_bar(succ) 1.37 | budget medio 1.37 | sigma 0.55 | mediana 1.0
+  M_TOP4   successo 30/30 = 100.0% | M_bar(succ) 1.00 | budget medio 1.00 | sigma 0.00 | mediana 1.0
+  M2       successo 30/30 = 100.0% | M_bar(succ) 1.50 | budget medio 1.50 | sigma 0.85 | mediana 1.0
+  rho(M1/M_TOP4) = 1.367   [Wilcoxon p_Holm=0.0024]
+  rho(M1/M2)     = 0.911   [p_Holm=0.7314]
+  ABLAZIONE M_TOP4 vs M2: p_Holm=0.0033 (bilaterale)
+  UC2 rep 1/30  UC2 rep 2/30  UC2 rep 3/30  UC2 rep 4/30  UC2 rep 5/30  UC2 rep 6/30  UC2 rep 7/30  UC2 rep 8/30  UC2 rep 9/30  UC2 rep 10/30  UC2 rep 11/30  UC2 rep 12/30  UC2 rep 13/30  UC2 rep 14/30  UC2 rep 15/30  UC2 rep 16/30  UC2 rep 17/30  UC2 rep 18/30  UC2 rep 19/30  UC2 rep 20/30  UC2 rep 21/30  UC2 rep 22/30  UC2 rep 23/30  UC2 rep 24/30  UC2 rep 25/30  UC2 rep 26/30  UC2 rep 27/30  UC2 rep 28/30  UC2 rep 29/30  UC2 rep 30/30
+
+==================================================================
+  UC2
+==================================================================
+  M1       successo 30/30 = 100.0% | M_bar(succ) 1.50 | budget medio 1.50 | sigma 0.72 | mediana 1.0
+  M_TOP4   successo 30/30 = 100.0% | M_bar(succ) 1.00 | budget medio 1.00 | sigma 0.00 | mediana 1.0
+  M2       successo 30/30 = 100.0% | M_bar(succ) 1.37 | budget medio 1.37 | sigma 0.66 | mediana 1.0
+  rho(M1/M_TOP4) = 1.500   [Wilcoxon p_Holm=0.0015]
+  rho(M1/M2)     = 1.098   [p_Holm=0.0874]
+  ABLAZIONE M_TOP4 vs M2: p_Holm=0.0096 (bilaterale)
+
+Risultati salvati in: artifacts/v2_20260819/results/results_baseline_v2_20260826_112144.json

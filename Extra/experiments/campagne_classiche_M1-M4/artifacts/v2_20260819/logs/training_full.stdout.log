@@ -1,0 +1,13 @@
+
+=======================================================
+Training classificatore per UC1  (N=15, a=7, n_count=8)
+=======================================================
+  Circuito traspilato: depth=412, cx=224
+  Campioni: 200/2000 | TOP-1: pos=125 neg=75, TOP-16: pos=200 neg=0
+  Campioni: 400/2000 | TOP-1: pos=257 neg=143, TOP-16: pos=400 neg=0
+  Campioni: 600/2000 | TOP-1: pos=375 neg=225, TOP-16: pos=600 neg=0
+  Campioni: 800/2000 | TOP-1: pos=492 neg=308, TOP-16: pos=800 neg=0
+  Campioni: 1000/2000 | TOP-1: pos=616 neg=384, TOP-16: pos=1000 neg=0
+  Campioni: 1200/2000 | TOP-1: pos=749 neg=451, TOP-16: pos=1200 neg=0
+  Campioni: 1400/2000 | TOP-1: pos=866 neg=534, TOP-16: pos=1400 neg=0
+  Campioni: 1600/2000 | TOP-1: pos=1000 neg=600, TOP-16: pos=1600 neg=0

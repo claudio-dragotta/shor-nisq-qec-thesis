@@ -1,159 +1,88 @@
-# Guida agli esperimenti di analisi parametrica
+# Guida v2 agli esperimenti parametrici
 
-## Cosa abbiamo aggiunto
+La guida precedente conteneva valori attesi e righe LaTeX derivate dal circuito N=15
+errato. È stata sostituita: nessun numero storico va precompilato o copiato nella tesi.
 
-### Nel LaTeX (`file_latex/capitoli/ConclusioniMetodo2.tex`)
+## Prerequisiti
 
-Nuova sezione: **"Analisi Sperimentale dei Parametri di Mitigazione"**
+- eseguire da WSL2 distro `Ubuntu` 24.04;
+- usare `/home/claudio/quantum-env/bin/python`;
+- installare le versioni in `Extra/experiments/requirements.txt`;
+- completare prima i test scientifici e congelare il manifest del circuito;
+- scrivere in una nuova directory sotto `artifacts/`, senza sovrascrivere i JSON storici.
 
-Contiene 7 tabelle con struttura pronta, da riempire con i risultati degli esperimenti:
+Esempio:
 
-| Tabella | Label LaTeX | Parametro variato |
-|---|---|---|
-| Tab. sweep_k | `tab:sweep_k` | K = 1, 2, 3, 4, 6, 8 |
-| Tab. sweep_eps | `tab:sweep_eps` | ε₂q = 0.001 → 0.1 |
-| Tab. sweep_shots | `tab:sweep_shots` | shots = 128, 256, 512, 1024, 2048 |
-| Tab. sweep_joint | `tab:sweep_joint` | Griglia K × ε₂q (4×4) |
-| Tab. sweep_t1 | `tab:sweep_t1` | T₁ = 20, 50, 100, 200, 500 µs |
-| Tab. sweep_eps1q | `tab:sweep_eps1q` | ε₁q = 0.0001 → 0.02 |
-| Tab. sweep_pro | `tab:sweep_pro` | p_ro = 0%, 1%, 2%, 5%, 10%, 20% |
-
-I valori di riferimento UC1 (già noti) sono precompilati nelle tabelle come riga di riferimento.
-
-### Il nuovo script (`experiments/run_parameter_analysis.py`)
-
-7 sweep indipendenti, eseguibili tutti insieme o uno alla volta.
-
----
-
-## Come eseguire
-
-### Prerequisiti
 ```bash
-source ~/quantum-env/bin/activate
-cd ~/path/to/experiments
+PY=/home/claudio/quantum-env/bin/python
+RUN=artifacts/v2_20260819
+
+$PY run_parameter_analysis.py --sweep all \
+  --k-reps 30 --shots 1024 --max-iter 50 \
+  --output-dir "$RUN/results"
 ```
 
-### Eseguire tutto (lungo, circa 2-4 ore)
+Per un singolo sweep:
+
 ```bash
-python run_parameter_analysis.py
+$PY run_parameter_analysis.py --sweep k       --output-dir "$RUN/results"
+$PY run_parameter_analysis.py --sweep eps     --output-dir "$RUN/results"
+$PY run_parameter_analysis.py --sweep shots   --output-dir "$RUN/results"
+$PY run_parameter_analysis.py --sweep joint   --output-dir "$RUN/results"
+$PY run_parameter_analysis.py --sweep t1t2    --output-dir "$RUN/results"
+$PY run_parameter_analysis.py --sweep eps1q   --output-dir "$RUN/results"
+$PY run_parameter_analysis.py --sweep pro     --output-dir "$RUN/results"
+$PY run_parameter_analysis.py --sweep optlevel --output-dir "$RUN/results"
 ```
 
-### Eseguire uno sweep alla volta (consigliato)
-```bash
-python run_parameter_analysis.py --sweep k
-python run_parameter_analysis.py --sweep eps
-python run_parameter_analysis.py --sweep shots
-python run_parameter_analysis.py --sweep joint
-python run_parameter_analysis.py --sweep t1t2
-python run_parameter_analysis.py --sweep eps1q
-python run_parameter_analysis.py --sweep pro
-```
+Sono quindi **otto** sweep, non sette.
 
-### Output
-- File JSON con tutti i dati: `results_parameter_analysis_YYYYMMDD_HHMMSS.json`
-- **Righe LaTeX pronte** stampate a terminale dopo ogni sweep
+## Disegno
 
----
-
-## Cosa aspettarsi dai risultati
-
-### Sweep K (priorità alta)
-
-K varia il numero di candidati tentati per iterazione.
-
-| K | Previsione |
+| Sweep | Valori |
 |---|---|
-| 1 | Identico a M1: M̄ ≈ 1.97, sr = 100% |
-| 2 | Miglioramento parziale: M̄ tra 2 e 4 |
-| 3 | Miglioramento significativo: M̄ intorno a 1-2 |
-| 4 | M̄ = 1.00, sr = 100% (già noto) |
-| 6 | M̄ = 1.00, sr = 100% (nessun guadagno aggiuntivo) |
-| 8 | M̄ = 1.00, sr = 100% (nessun guadagno aggiuntivo) |
+| `k` | TOP-K = 1, 2, 3, 4, 6, 8 |
+| `eps` | λ₂q = 0,001; 0,005; 0,01; 0,02; 0,05; 0,10 |
+| `shots` | 128, 256, 512, 1024, 2048 |
+| `joint` | griglia TOP-K × λ₂q |
+| `t1t2` | T1 = 20, 50, 100, 200, 500 µs con T2/T1 = 0,8 |
+| `eps1q` | λ₁q da 1e-4 a 2e-2 |
+| `pro` | readout simmetrico da 0% a 20% |
+| `optlevel` | livelli di compilazione 0, 1, 2, 3 |
 
-**Conclusione attesa**: il ginocchio della curva è a K=4=r. Questo conferma che K=r è il valore ottimale.
+`eps_1q` e `eps_2q` sono i parametri λ del canale depolarizzante Aer,
+`E(ρ)=(1-λ)ρ+λI/d`; non sono direttamente la probabilità di un Pauli non-identità.
+Lo sweep ε₂q riporta per questo la proxy
 
----
-
-### Sweep ε₂q (priorità alta)
-
-ε₂q è il parametro dominante. Si cerca la soglia critica.
-
-| ε₂q | P_surv | Previsione M̄ TOP4 |
-|---|---|---|
-| 0.001 | 85% | 1.00, sr ≈ 100% |
-| 0.005 | 45% | 1.00, sr ≈ 100% |
-| 0.01 | 19.7% | 1.00, sr = 100% (noto) |
-| 0.02 | 3.9% | 1.00 o leggermente > 1 |
-| 0.05 | 0.025% | 1.00, sr = 100% (noto da UC2) |
-| 0.10 | ~8e-8 | degradazione attesa, M̄ > 1 o sr < 100% |
-
-**Conclusione attesa**: TOP-4 funziona fino a ε₂q ≈ 0.05. A 0.10 probabilmente degrada.
-
----
-
-### Sweep shots (priorità media)
-
-| shots | Previsione |
-|---|---|
-| 128 | Istogramma molto sparso, sr < 100%, M̄ > 1 |
-| 256 | Istogramma sparso, sr probabilmente < 100% |
-| 512 | Borderline, potrebbe funzionare |
-| 1024 | M̄ = 1.00, sr = 100% (noto) |
-| 2048 | M̄ = 1.00, sr = 100% (nessun guadagno) |
-
-**Conclusione attesa**: la soglia minima è intorno a 512-1024 shot.
-
----
-
-### Sweep joint K × ε₂q (priorità alta)
-
-Verifica se K alto compensa rumore elevato.
-
-**Previsione**: per ε₂q = 0.05 (UC2), K=4 già basta. Per ε₂q = 0.10 (fuori range testato), K più alto potrebbe aiutare ma è probabile che l'istogramma sia troppo piatto per qualsiasi K.
-
----
-
-### Sweep T₁/T₂ (priorità bassa)
-
-**Previsione forte**: nessuna variazione significativa di M̄. Il tempo totale di gate per N=15 è ~8 µs, molto inferiore anche al T₁ minimo testato (20 µs). La tabella dovrebbe mostrare M̄ ≈ 1.00 e sr ≈ 100% per tutti i valori.
-
-**Se questa previsione è confermata**: è un risultato importante — significa che per N=15 il rilassamento termico è irrilevante e il collo di bottiglia è solo ε₂q.
-
----
-
-### Sweep ε₁q (priorità bassa)
-
-**Previsione forte**: nessuna variazione significativa. Le porte a singolo qubit sono poche rispetto alle 162 CX. La curva dovrebbe essere piatta fino a ε₁q ≈ ε₂q = 0.01, e degradare solo per ε₁q > 0.01 (ovvero quando l'errore singolo qubit diventa comparabile a quello a due qubit).
-
----
-
-### Sweep p_ro (priorità bassa)
-
-**Previsione**: degrado graduale del sr per p_ro > 10%. Ogni bit flippato sposta la stringa misurata di un valore diverso nel registro a 8 bit, allargando i picchi. TOP-4 dovrebbe compensare fino a p_ro ≈ 10-15%.
-
----
-
-## Come riempire le tabelle LaTeX
-
-Dopo ogni sweep, lo script stampa righe LaTeX già formattate come:
-
-```
-2 & 85.0\% & 3.12 & 4.21 & 2.060 & $0.045$ (sign.) \\
+```text
+P(no Pauli 2Q non-identità) = (1 - 15 λ₂q / 16) ^ n_CX
 ```
 
-Copia queste righe direttamente nelle tabelle corrispondenti in `ConclusioniMetodo2.tex`.
+La proxy non include rilassamento o readout e non va chiamata probabilità di successo del
+circuito.
 
-Le righe di riferimento (K=4 o UC1) sono già presenti nelle tabelle — non sovrascriverle.
+## Regole statistiche
 
----
+- la baseline M1 viene ricalcolata sul contratto corrente all'avvio, non è hardcoded;
+- i fallimenti sono rappresentati con `max_iter+1`; un successo a `max_iter` resta valido;
+- le statistiche descrittive `M_bar` riguardano i successi, mentre i test sui tempi includono
+  il sentinel dei run censurati;
+- ogni punto usa gli stessi seed di replica; i confronti tra strategie usano quindi il test
+  di Wilcoxon appaiato unilaterale, non Mann–Whitney per campioni indipendenti;
+- non interpretare `p<0,05` da decine di test come conferma isolata senza discutere la
+  molteplicità e le dimensioni dell'effetto.
 
-## Ordine consigliato di esecuzione
+## Output e LaTeX
 
-1. **`--sweep k`** — il più importante, conferma la teoria su K=r
-2. **`--sweep eps`** — trova la soglia critica, risultato chiave
-3. **`--sweep joint`** — completa il quadro K vs rumore
-4. **`--sweep shots`** — utile per raccomandazioni pratiche
-5. **`--sweep eps1q`** — conferma che è parametro secondario
-6. **`--sweep t1t2`** — conferma che è parametro secondario
-7. **`--sweep pro`** — conferma che è parametro secondario
+Il JSON v2 contiene:
+
+```text
+schema_version, timestamp, config, manifest, baseline_m1, sweeps
+```
+
+Usare `extract_latex.py` indicando esplicitamente il percorso del JSON v2. Lo script rifiuta
+per default gli schemi storici. Le tabelle della tesi vanno aggiornate soltanto dopo aver
+verificato hash circuito, versioni, numero di repliche e completezza di tutti gli sweep.
+
+Non esistono più “conclusioni attese” precompilate: il punto della nuova campagna è misurare
+gli effetti del circuito corretto e dichiarare anche risultati nulli o contrari alle ipotesi.

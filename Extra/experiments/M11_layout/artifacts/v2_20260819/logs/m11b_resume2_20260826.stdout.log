@@ -1,0 +1,83 @@
+Backend snapshot: fake_sherbrooke | sottografi: 12 | 8192 shot per strategia
+Le etichette initial-layout sono descrittive; il readout analizzato e quello finale.
+
+  sg  strategia             readout eff.   P_holdout   ECR   depth
+  -------------------------------------------------------------------------
+  0   init-readout-basso    0.05756       0.2874      433   1538
+  0   init-readout-alto     0.05402       0.3982      395   1409
+  0   transpiler            0.05179       0.3850      354   1361
+  0   casuale-1             0.05984       0.3921      415   1496
+  0   casuale-2             0.05670       0.3967      414   1438
+
+  1   init-readout-basso    0.02963       0.3284      477   1522
+  1   init-readout-alto     0.03427       0.3699      439   1496
+  1   transpiler            0.03415       0.3711      362   1383
+  1   casuale-1             0.03094       0.3486      480   1642
+  1   casuale-2             0.03094       0.3591      459   1578
+
+  2   init-readout-basso    0.01828       0.3838      446   1548
+  2   init-readout-alto     0.01520       0.4053      429   1480
+  2   transpiler            0.01520       0.4431      353   1379
+  2   casuale-1             0.01828       0.3328      464   1576
+  2   casuale-2             0.01697       0.3655      428   1397
+
+  3   init-readout-basso    errore: ValueError: Average gate infidelity fuori dominio: 1.0
+  3   init-readout-alto     errore: ValueError: Average gate infidelity fuori dominio: 1.0
+  3   transpiler            errore: ValueError: Average gate infidelity fuori dominio: 1.0
+  3   casuale-1             errore: ValueError: Average gate infidelity fuori dominio: 1.0
+  3   casuale-2             errore: ValueError: Average gate infidelity fuori dominio: 1.0
+
+  4   init-readout-basso    errore: ValueError: Average gate infidelity fuori dominio: 1.0
+  4   init-readout-alto     errore: ValueError: Average gate infidelity fuori dominio: 1.0
+  4   transpiler            errore: ValueError: Average gate infidelity fuori dominio: 1.0
+  4   casuale-1             errore: ValueError: Average gate infidelity fuori dominio: 1.0
+  4   casuale-2             errore: ValueError: Average gate infidelity fuori dominio: 1.0
+
+  5   init-readout-basso    0.01566       0.4336      450   1628
+  5   init-readout-alto     0.01981       0.3862      448   1559
+  5   transpiler            0.01611       0.4453      367   1418
+  5   casuale-1             0.01547       0.4143      456   1480
+  5   casuale-2             0.01904       0.3801      468   1579
+
+  6   init-readout-basso    0.04752       0.3181      432   1513
+  6   init-readout-alto     0.04022       0.3342      442   1519
+  6   transpiler            0.03894       0.4910      339   1289
+  6   casuale-1             0.04752       0.3306      455   1508
+  6   casuale-2             0.04752       0.3003      425   1586
+
+  7   init-readout-basso    0.01773       0.4392      412   1559
+  7   init-readout-alto     0.01575       0.4214      415   1460
+  7   transpiler            0.01434       0.4944      351   1339
+  7   casuale-1             0.01746       0.4197      439   1468
+  7   casuale-2             0.01730       0.4207      425   1478
+
+  8   init-readout-basso    errore: ValueError: Average gate infidelity fuori dominio: 1.0
+  8   init-readout-alto     errore: ValueError: Average gate infidelity fuori dominio: 1.0
+  8   transpiler            errore: ValueError: Average gate infidelity fuori dominio: 1.0
+  8   casuale-1             errore: ValueError: Average gate infidelity fuori dominio: 1.0
+  8   casuale-2             errore: ValueError: Average gate infidelity fuori dominio: 1.0
+
+  9   init-readout-basso    0.04733       0.3499      452   1528
+  9   init-readout-alto     0.02686       0.3979      475   1649
+  9   transpiler            0.05331       0.3733      361   1339
+  9   casuale-1             0.02686       0.4358      458   1561
+  9   casuale-2             0.02686       0.4050      513   1610
+
+  10  init-readout-basso    0.02655       0.4050      441   1556
+  10  init-readout-alto     0.02689       0.3193      474   1455
+  10  transpiler            0.03555       0.3621      360   1293
+  10  casuale-1             0.02817       0.3850      437   1536
+  10  casuale-2             0.02841       0.3391      478   1641
+
+  11  init-readout-basso    0.03345       0.4121      405   1393
+  11  init-readout-alto     0.03125       0.4233      442   1480
+  11  transpiler            0.03345       0.4346      360   1405
+  11  casuale-1             0.03345       0.3777      437   1464
+  11  casuale-2             0.03345       0.4028      396   1423
+
+=== M11b — analisi osservazionale entro sottografo ===
+Osservazioni: 45 | sottografi: 9
+Spearman parziale readout vs successo (controlli ECR/depth): -0.6047430830039525
+CI cluster-bootstrap: [-0.8279247773012208, -0.20606261265968287]
+Nessun claim causale: l’esposizione e’ il readout effettivo dopo routing.
+Risultati salvati in: artifacts/v2_20260819/results_M11b_ruoli_v2_20260826_233845.json

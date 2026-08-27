@@ -2,14 +2,14 @@
 
 Il Capitolo~\ref{chap:introduzione} ha inquadrato il contesto storico e tecnologico del calcolo quantistico. Il presente capitolo costruisce su quel fondamento e svolge una funzione duplice: da un lato motiva e definisce gli obiettivi scientifici del lavoro; dall'altro stabilisce il contratto sperimentale completo --- requisiti, parametri, use case e metriche --- che guiderà tutta la parte implementativa. Il lettore che avrà letto questo capitolo avrà una visione completa di \textit{perché} il lavoro esiste, \textit{cosa} si propone di dimostrare e \textit{come} intende farlo.
 
-La motivazione crittografica in forma estesa --- il confronto tra la complessità sub-esponenziale del \ac{GNFS} e quella polinomiale $O((\log N)^3)$ di Shor, la conseguente compromissione irrecuperabile di \ac{RSA} indipendentemente dalla lunghezza della chiave, e lo scenario \emph{harvest now, decrypt later} --- è sviluppata nella Sezione~\ref{app:obiettivi} (Sez.~\ref{sec:motivazione}). In sintesi: la sicurezza di RSA cade con la disponibilità di un computer quantistico fault-tolerant, e l'unico ostacolo che oggi impedisce alla minaccia di materializzarsi è il \textbf{rumore} dei dispositivi \ac{NISQ} --- la cui comprensione e mitigazione è la ragione d'essere di questo lavoro.
+La motivazione crittografica in forma estesa --- il confronto tra la complessità sub-esponenziale del \ac{GNFS} e quella polinomiale $O((\log N)^3)$ di Shor, la conseguente compromissione di \ac{RSA} e lo scenario \emph{harvest now, decrypt later} --- è sviluppata nella Sezione~\ref{app:obiettivi} (Sez.~\ref{sec:motivazione}). In sintesi: RSA sarebbe vulnerabile a un computer quantistico fault-tolerant sufficientemente grande; oggi profondità, numero di qubit logici, overhead di correzione e rumore separano gli esperimenti dimostrativi da quella scala.
 \section{Obiettivi Generali}
 
 Partendo dal contesto delineato, il presente lavoro si propone di analizzare in profondità l'algoritmo di Shor per la fattorizzazione di interi e di affrontare il problema della sua esecuzione su hardware quantistico reale, afflitto da rumore e decoerenza.
 
 Il filo conduttore del lavoro è duplice: da un lato la comprensione del \textbf{potenziale computazionale} offerto dall'algoritmo di Shor rispetto ai migliori approcci classici noti; dall'altro lo studio delle \textbf{limitazioni pratiche} imposte dal rumore nei dispositivi \ac{NISQ} attuali, e delle strategie per superarle.
 
-Coerentemente con questo secondo asse, il lavoro sperimentale si articola in \textbf{due fasi}. La prima verifica se un'ottimizzazione basata su \textbf{modelli di intelligenza artificiale}, applicata a valle dell'esecuzione, riduca il costo dell'algoritmo; il suo esito --- l'\ac{ML} in quella posizione non è il meccanismo attivo --- motiva la seconda fase, dedicata alla \textbf{Correzione degli Errori Quantistici} (\ac{QEC}): la costruzione, la simulazione e la caratterizzazione dei codici correttori (ripetizione, Steane, surface code) e la loro integrazione con Shor tramite il modello a livelli dello \textbf{Shor logico}. Le due fasi condividono l'infrastruttura di simulazione e l'impianto statistico, e insieme coprono l'arco che va dalla fragilità del calcolo rumoroso alla sua correzione strutturale.
+Coerentemente con questo secondo asse, il lavoro sperimentale si articola in \textbf{due fasi}. La prima verifica se un'ottimizzazione basata su \textbf{modelli di intelligenza artificiale}, applicata a valle dell'esecuzione, riduca il costo dell'algoritmo; la seconda è dedicata alla \textbf{Correzione degli Errori Quantistici} (\ac{QEC}): costruzione, simulazione e caratterizzazione dei codici correttori (ripetizione, Steane, surface code). Una successiva analisi di sensibilità applica a Shor un proxy Pauli per gate compilato, mantenendolo distinto dalle metriche QEC per ciclo o memoria. Gli esiti quantitativi sono riportati nei capitoli dei risultati e non anticipati nella metodologia.
 
 \section{Obiettivi Specifici}
 
@@ -31,7 +31,7 @@ Coerentemente con questo secondo asse, il lavoro sperimentale si articola in \te
     Determinare \emph{in quale punto} della pipeline di esecuzione un modello appreso migliori effettivamente la resa dell'algoritmo di Shor in ambiente rumoroso. L'obiettivo non è assumere che l'apprendimento automatico giovi, ma stabilirlo sperimentalmente confrontandone due impieghi distinti, con lo stesso strumento e sotto lo stesso impianto statistico: \textbf{(i) a valle dell'esecuzione}, come classificatore che giudica l'istogramma di output, misurandone il contributo tramite analisi di ablazione contro la sola strategia di ricerca multi-candidato; \textbf{(ii) durante la correzione d'errore}, come decoder addestrato sulle sindromi del surface code, confrontato con il decoder analitico di riferimento a parità di informazione. Il criterio di valutazione è in entrambi i casi quantitativo --- numero medio di iterazioni nel primo, \textit{logical error rate} nel secondo --- e l'esito atteso è una delimitazione, non una promozione: individuare il regime in cui l'intelligenza artificiale apporta un guadagno misurabile e quello in cui non lo apporta, con la spiegazione del perché.
 
     \item \textbf{Correzione degli errori quantistici e integrazione con Shor.}
-    Costruire e simulare i codici correttori d'errore in ordine di complessità crescente --- il codice a ripetizione, il codice di Steane $[[7,1,3]]$ e il surface code --- caratterizzandone quantitativamente la capacità di protezione: la corrispondenza sindrome$\rightarrow$errore, la soppressione dell'errore logico $p_L$ in funzione dell'errore fisico $p$ e della distanza di codice $d$, e il comportamento di soglia. Integrare infine la correzione con l'algoritmo di Shor tramite un modello a livelli (lo \textbf{Shor logico}), per stabilire quale livello di errore logico sia compatibile con un'esecuzione affidabile della fattorizzazione.
+    Costruire e simulare i codici correttori d'errore in ordine di complessità crescente --- il codice a ripetizione, il codice di Steane $[[7,1,3]]$ e il surface code --- caratterizzandone quantitativamente la capacità di protezione: la corrispondenza sindrome$\rightarrow$errore, la soppressione dell'errore logico $p_L$ in funzione dell'errore fisico $p$ e della distanza di codice $d$, e il comportamento di soglia. Studiare infine la sensibilità di Shor a un residuo Pauli fenomenologico per gate, senza identificare direttamente questo parametro con le metriche aggregate dei benchmark QEC.
 
 \end{enumerate}
 
@@ -42,7 +42,7 @@ Questo secondo blocco di obiettivi si traduce in un insieme di \textbf{domande d
     \item[\textbf{DR2.}] In che modo un codice a ripetizione permette di introdurre il concetto di sindrome senza collassare lo stato logico?
     \item[\textbf{DR3.}] Quali vantaggi e limiti offre il codice di Steane $[[7,1,3]]$ come primo codice capace di correggere un errore arbitrario su un qubit?
     \item[\textbf{DR4.}] Perché il surface code è più rilevante per scenari scalabili, e come si stima il suo logical error rate tramite decodifica? Esiste un comportamento di soglia osservabile?
-    \item[\textbf{DR5.}] Quale livello di errore logico $p_L$ è necessario affinché una versione logica di Shor mantenga una probabilità di successo accettabile?
+    \item[\textbf{DR5.}] Come varia il successo di Shor al crescere di un proxy Pauli uniforme per gate, e quante ripetizioni indipendenti servono per superare una soglia operativa prefissata?
     \item[\textbf{DR6.}] Esiste un regime in cui un decoder \emph{appreso dai dati} supera il decoder analitico standard, e da che cosa dipende? In particolare: il vantaggio dipende dalla qualità della calibrazione del modello di rumore, oppure dalla sua rappresentabilità nella struttura del decoder?
 \end{description}
 
@@ -58,11 +58,11 @@ Il contributo sperimentale della tesi è strutturato attorno a un'ipotesi princi
     \rho = \frac{\bar{M}_1}{\bar{M}_2} \gg 1
     \label{eq:ipotesi_rho}
 \end{equation}
-dove $\bar{M}_1$ e $\bar{M}_2$ sono rispettivamente il numero medio di iterazioni del Metodo 1 (baseline classico) e del Metodo 2 (classificatore ML). La verifica statistica avviene tramite il test di Mann-Whitney U (non parametrico, unilaterale) sull'ipotesi nulla $H_0\colon \bar{M}_1 = \bar{M}_2$, con soglia di significatività $\alpha = 0.05$.
+dove $\bar{M}_1$ e $\bar{M}_2$ sono rispettivamente il numero medio di iterazioni del Metodo 1 (baseline classico) e del Metodo 2 (classificatore ML). Le strategie sono valutate sulle stesse repliche e sugli stessi istogrammi; la verifica inferenziale riguarda la distribuzione delle differenze appaiate, non l'uguaglianza delle medie. Si usa il test dei ranghi con segno di Wilcoxon unilaterale, con gestione degli zeri \texttt{zero\_method='pratt'} e soglia $\alpha=0.05$.
 
 \textbf{Ipotesi secondaria 1.} Il classificatore ML raggiunge prestazioni sufficienti a distinguere esecuzioni corrette da errate anche in presenza di rumore variabile: F1\,$>\,0.85$ e AUC\,$>\,0.90$ sul test set.
 
-\textbf{Ipotesi secondaria 2.} Il vantaggio del Metodo 2 si mantiene al crescere della dimensione dell'istanza ($N = 15 \to 21 \to 35$) e al peggiorare del livello di rumore, confermando la generalizzabilità dell'approccio oltre il caso baseline.
+\textbf{Ipotesi secondaria 2.} Il vantaggio del Metodo 2, se osservato, si mantiene passando dal preset di riferimento al preset di stress sul medesimo circuito $N=15$. Le istanze $N=21$ e $N=35$ sono riservate alla validazione ideale dell'aritmetica di Beauregard e all'analisi delle risorse; non entrano nelle campagne rumorose né nella verifica inferenziale di questa ipotesi.
 
 \medskip
 La seconda fase del lavoro, sulla correzione d'errore, è retta da un'ulteriore terna di ipotesi, anch'esse formulate a priori e verificate quantitativamente.
@@ -71,86 +71,77 @@ La seconda fase del lavoro, sulla correzione d'errore, è retta da un'ulteriore 
 
 \textbf{Ipotesi QEC 2 (soglia).} Il surface code esibisce un comportamento di soglia: al di sotto di un errore fisico critico $p_{th}$, aumentare la distanza di codice $d$ riduce l'errore logico $p_L$; al di sopra, lo aumenta. Le curve $p_L(p)$ a distanze crescenti si incrociano in prossimità di $p_{th}$.
 
-\textbf{Ipotesi QEC 3 (integrazione).} Esiste un livello di errore logico $p_L$ sufficientemente basso perché l'algoritmo di Shor, eseguito con quell'errore residuo su ogni gate logico, mantenga una probabilità di successo elevata; tale livello è raggiungibile dai codici studiati nel regime sotto-soglia.
+\textbf{Ipotesi QEC 3 (sensibilità).} Nel proxy fenomenologico M8, la probabilità di successo di Shor è compatibile con una funzione non crescente di $p_L$, definito per gate compilato incluso nel modello; poche ripetizioni indipendenti possono inoltre superare una soglia cumulativa che il singolo run ideale non raggiunge. L'ipotesi non afferma una conversione diretta dai benchmark Steane o surface code.
 
 \section{Contributo Originale}
 \label{sec:contributo_originale}
 
 Rispetto alla letteratura esistente sull'algoritmo di Shor e sulla mitigazione del rumore nei sistemi NISQ, questo lavoro apporta i seguenti contributi originali.
 
-\textbf{Progettazione e validazione sperimentale della strategia TOP-K.} La maggioranza degli studi di mitigazione del rumore sull'algoritmo di Shor si concentra su tecniche strutturali (Zero-Noise Extrapolation, Probabilistic Error Cancellation, Dynamical Decoupling) applicate al circuito prima della misura. Il presente lavoro adotta invece un approccio \textit{post-processing}: la strategia di ricerca multi-candidato TOP-K, applicata direttamente all'istogramma di output del simulatore rumoroso, riduce il numero di iterazioni necessarie sfruttando la struttura residua dei picchi QPE. L'analisi di ablazione dimostra che questo componente è il meccanismo attivo del miglioramento, applicabile senza modifiche al circuito né accesso al modello di rumore dell'hardware.
+\textbf{Progettazione e verifica della strategia TOP-K.} La maggioranza degli studi di mitigazione del rumore sull'algoritmo di Shor si concentra su tecniche strutturali applicate al circuito prima della misura. Il presente lavoro valuta invece un approccio di \textit{post-processing}: la ricerca multi-candidato TOP-K applicata direttamente all'istogramma rumoroso. Il protocollo appaiato consente di separarne il contributo da quello del classificatore senza confonderlo con una diversa realizzazione Monte Carlo. La quantificazione del guadagno proviene dagli artefatti schema~2 della campagna corrente.
 
-\textbf{Quantificazione empirica del fattore di riduzione $\rho$.} La letteratura fornisce stime teoriche del numero di iterazioni necessarie a ottenere un risultato corretto da Shor in presenza di rumore, ma raramente misure sperimentali sistematiche su più configurazioni. Il presente lavoro progetta quattro use case --- due livelli di rumore per $N=15$ e due istanze di dimensione crescente ($N=21$, $N=35$) --- e misura $\bar{M}_1$ e $\bar{M}$ (Metodo 1 e $M_{\text{TOP4}}$) sui due in cui il confronto è possibile, producendo stime empiriche di $\rho$ validate statisticamente con test di Mann-Whitney U. Sui due use case di dimensione maggiore nessuna strategia di estrazione risulta applicabile: la profondità del circuito traspilato azzera la probabilità di successo (Capitolo~\ref{chap:risultati}, Tabella~\ref{tab:circuit_depth}). Anche questo è un risultato del lavoro --- la barriera di scalabilità è quantificata e attribuita alla decomposizione della moltiplicazione modulare --- ma va dichiarato che la validazione quantitativa del confronto poggia su due configurazioni, non su quattro.
+\textbf{Quantificazione empirica del fattore di riduzione $\rho$.} La campagna quantitativa comprende due preset illustrativi sullo stesso circuito $N=15$, uno di riferimento e uno di stress. Per ogni coppia (replica, iterazione), M1, TOP-4 e M2 ricevono lo stesso istogramma. Le differenze vengono analizzate con Wilcoxon appaiato--Pratt; $N=21$ e $N=35$ forniscono soltanto controlli ideali di correttezza e di costo circuitale. I risultati riportati provengono esclusivamente dagli artefatti schema~2 generati dopo la correzione del moltiplicatore $\times7\bmod15$.
 
-\textbf{Analisi di ablazione che separa il contributo TOP-K da quello del classificatore ML.} Il lavoro conduce un'analisi di ablazione esplicita che isola il contributo della strategia di ricerca rispetto a quello del classificatore ML. Il risultato --- che $M_{\text{TOP4}}$ (TOP-K senza classificatore) è statisticamente equivalente a M2 su UC1 e significativamente migliore su UC2 --- chiarisce quale componente è responsabile del guadagno, e orienta gli sviluppi futuri verso l'ottimizzazione della strategia di ricerca piuttosto che del modello apprenditivo.
+\textbf{Analisi di ablazione che separa TOP-K dal classificatore ML.} Il confronto M1--TOP-4--M2 è costruito sul medesimo calendario di seed e sul medesimo istogramma per iterazione. In questo modo l'ablazione misura soltanto la diversa regola decisionale. L'esito quantitativo riportato nel Capitolo~\ref{chap:risultati} usa la rigenerazione schema~2 e non le metriche della campagna precedente.
 
-\textbf{Caratterizzazione sperimentale end-to-end della correzione d'errore su Shor.} La seconda fase costruisce e simula una progressione di codici correttori --- ripetizione, Steane $[[7,1,3]]$, surface code con decodifica \ac{MWPM} --- misurandone il logical error rate con protocollo di validazione a flag, e li integra con l'algoritmo di Shor in un modello a livelli. Il risultato è una \textbf{figura conclusiva} che colloca sullo stesso grafico la probabilità di successo di Shor in funzione dell'errore per i tre regimi (fisico non corretto, Steane, surface), quantificando in un'unica misura il beneficio della correzione. Rispetto alla letteratura, che tratta separatamente la stima di soglia e l'esecuzione dell'algoritmo, il contributo è l'integrazione esplicita dei due livelli su un'istanza trattabile, con una discussione critica dei limiti del modello di rumore Clifford-Pauli adottato.
+\textbf{Caratterizzazione a livelli della correzione d'errore e di Shor.} La seconda fase costruisce e simula una progressione di codici correttori --- ripetizione, Steane $[[7,1,3]]$, surface code con decodifica \ac{MWPM} --- misurandone il logical error rate nei rispettivi protocolli. Separatamente, M8 misura la sensibilità di Shor a un proxy Pauli uniforme per gate. Il contributo metodologico è rendere esplicito il confine fra i due livelli: senza compilazione fault-tolerant non si sovrappongono sulla curva M8 tassi per ciclo o per memoria, e non si presenta un confronto numerico fra codici sotto unità non commensurabili.
 
-\textbf{Delimitazione sperimentale del regime di utilità dell'apprendimento automatico.} Il contributo che unifica le due fasi è la determinazione, sotto un unico impianto sperimentale e con il medesimo strumento modellistico, di \emph{dove} un modello appreso migliori l'esecuzione di Shor in ambiente rumoroso. A valle dell'esecuzione l'ablazione mostra che non apporta nulla; sulla sindrome del surface code il quadro cambia, ma non nella forma attesa: sostituire il decoder analitico non conviene, mentre affiancarlo --- con una rete che apprende soltanto \emph{quando ribaltarne} la decisione --- riduce l'errore logico in presenza di rumore correlato. Ne discende un criterio di applicabilità formulato in termini strutturali anziché prestazionali: il guadagno non dipende dalla bontà della calibrazione del modello di rumore, ma dal fatto che la classe di errori presente nel dispositivo sia o non sia rappresentabile nella struttura del decoder analitico. Questa delimitazione --- corredata della quantificazione del costo in dati necessario anche solo al pareggio --- è, a conoscenza dell'autore, assente dalla letteratura, che tende a riportare i successi della decodifica appresa senza caratterizzarne le condizioni di fallimento.
+\textbf{Delimitazione sperimentale del regime di utilità dell'apprendimento automatico.} Il contributo che unifica le due fasi è la determinazione, sotto un impianto sperimentale esplicito, di \emph{dove} un modello appreso migliori l'esecuzione. A valle di Shor, il confronto appaiato M1--TOP-4--M2 separa il classificatore dalla ricerca multi-candidato usando l'artefatto schema~2 corrente. Nella parte surface code, il modello appreso viene confrontato con il decoder analitico a parità di detection events. Questa struttura consente di formulare il criterio di applicabilità in termini verificabili.
 
-I \textbf{requisiti funzionali} del sistema sperimentale e la specifica completa dei \textbf{parametri di input e output} sono formalizzati nella Sezione~\ref{app:obiettivi} (Sez.~\ref{sec:requisiti} e Sez.~\ref{sec:input_output}): esecuzione configurabile del circuito di Shor, noise model parametrizzabile, raccolta riproducibile degli output e le pipeline dei due metodi. I quattro use case e le metriche di valutazione, che costituiscono il nucleo del contratto sperimentale, sono definiti qui di seguito.
+I \textbf{requisiti funzionali} del sistema sperimentale e la specifica completa dei \textbf{parametri di input e output} sono formalizzati nella Sezione~\ref{app:obiettivi} (Sez.~\ref{sec:requisiti} e Sez.~\ref{sec:input_output}). Le configurazioni e le metriche che costituiscono il contratto sperimentale versione~2 sono definite qui di seguito.
 % -----------------------------------------------
-\section{I Quattro Use Case}
+\section{Campagne Rumorose e Validazioni Ideali}
 \label{sec:use_case}
 
-I quattro use case sono scelti per garantire che i risultati non dipendano da una singola configurazione e che coprano un intervallo rappresentativo di condizioni operative. Il disegno sperimentale segue due assi di variazione indipendenti:
+Il disegno separa due domande che non devono essere confuse:
 
 \begin{itemize}
-    \item \textbf{Asse rumore (Use Case 1 vs.\ 2)}: stesso numero $N = 15$, stessa base $a = 7$, stesso circuito --- livello di rumore diverso. Il confronto isola l'effetto del rumore sul numero di iterazioni necessarie, a parità di complessità circuitale. Il Use Case 2 utilizza parametri di errore circa cinque volte superiori a quelli del Use Case 1, per coprire sia un regime \textit{NISQ-realistico} sia uno \textit{NISQ-degradato}.
+    \item \textbf{Campagne rumorose N15}: stesso $N=15$, stessa base $a=7$, stesso circuito e due preset, \emph{riferimento} e \emph{stress}. I preset sono scenari uniformi illustrativi, non calibrazioni di una QPU reale.
 
-    \item \textbf{Asse scalabilità (Use Case 1, 3, 4)}: numeri $N$ di dimensione crescente ($15 \to 21 \to 35$), stesso livello di rumore NISQ-realistico. Il confronto valuta come il numero medio di iterazioni e l'accuratezza del classificatore varino al crescere della profondità del circuito. Si vedrà più avanti (\S\ref{subsec:razionale_istanze}) che l'identificazione fra ``$N$ crescente'' e ``profondità crescente'' non è automatica, e che per Use Case 4 non vale.
+    \item \textbf{Validazioni ideali N21/N35}: i moltiplicatori modulari di Beauregard sono verificati senza rumore, mediante controlli di truth table e di ripristino dei registri ausiliari, e con prove QPE ideali. Queste istanze sono escluse dalle campagne Aer rumorose per il loro costo.
 \end{itemize}
-
-La scelta di quattro use case soddisfa il requisito metodologico minimo per la validazione accademica dei risultati in questo dominio \cite{shor_hpec2023}.
 
 \subsection{Parametri dei Use Case}
 
-La Tabella~\ref{tab:use_case_params} riporta la configurazione completa dei quattro use case. I parametri di rumore del livello \textit{NISQ-realistico} sono derivati dalle specifiche di calibrazione di \texttt{ibm\_marrakesh} riportate nel tutorial ufficiale IBM \cite{ibm_shor_tutorial} e dalla metodologia di selezione dei noise model proposta in \cite{epjqt_noise2024}. Il livello \textit{NISQ-degradato} scala i tassi di errore di un fattore $5\times$ e dimezza i tempi di coerenza, simulando condizioni di hardware più antico o in stato di calibrazione peggiore.
+La Tabella~\ref{tab:use_case_params} riporta le due sole configurazioni rumorose. I simboli $\epsilon_{1q}$ e $\epsilon_{2q}$ indicano esattamente il parametro $\lambda$ passato da Aer a \texttt{depolarizing\_error}; non sono probabilità Pauli aggregate né dati di calibrazione hardware. Il modello è uniforme su tutti i qubit.
 
 \begin{table}[H]
 \centering
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{@{}lcccc@{}}
+\begin{tabular}{@{}lcc@{}}
 \toprule
-\textbf{Parametro} & \textbf{UC 1} & \textbf{UC 2} & \textbf{UC 3} & \textbf{UC 4} \\
+\textbf{Parametro} & \textbf{Riferimento} & \textbf{Stress} \\
 \midrule
-$N$                          & 15  & 15  & 21  & 35  \\
-$a$                          & 7   & 7   & 2   & 6   \\
-Periodo $r$ atteso           & 4   & 4   & 6   & 2   \\
-$n_{\text{count}}$ (qubit)   & 8   & 8   & 10  & 12  \\
-$M_{\text{shots}}$           & 1024 & 1024 & 1024 & 1024 \\
+$N$                          & 15  & 15  \\
+$a$                          & 7   & 7   \\
+Periodo $r$ atteso           & 4   & 4   \\
+$n_{\text{count}}$ (qubit)  & 8   & 8   \\
+$M_{\text{shots}}$          & 1024 & 1024 \\
 \midrule
-\textit{Livello rumore}      & NISQ-realistico & NISQ-degradato & NISQ-realistico & NISQ-realistico \\
-$\epsilon_{1q}$              & $1\times10^{-3}$ & $5\times10^{-3}$ & $1\times10^{-3}$ & $1\times10^{-3}$ \\
-$\epsilon_{2q}$              & $1\times10^{-2}$ & $5\times10^{-2}$ & $1\times10^{-2}$ & $1\times10^{-2}$ \\
-$T_1$ (ns)                   & 100\,000 & 50\,000 & 100\,000 & 100\,000 \\
-$T_2$ (ns)                   & 80\,000  & 30\,000 & 80\,000  & 80\,000  \\
-$p_{\text{ro}}$              & $2\times10^{-2}$ & $5\times10^{-2}$ & $2\times10^{-2}$ & $2\times10^{-2}$ \\
+$\epsilon_{1q}=\lambda_{1q}$ & $1\times10^{-3}$ & $5\times10^{-3}$ \\
+$\epsilon_{2q}=\lambda_{2q}$ & $1\times10^{-2}$ & $5\times10^{-2}$ \\
+$T_1$ (ns)                   & 100\,000 & 50\,000 \\
+$T_2$ (ns)                   & 80\,000  & 30\,000 \\
+$p_{\text{ro}}$              & $2\times10^{-2}$ & $5\times10^{-2}$ \\
 \bottomrule
 \end{tabular}%
 }
-\caption{Configurazione completa dei quattro use case. I parametri di rumore del livello NISQ-realistico sono derivati dalle specifiche di \texttt{ibm\_marrakesh} \cite{ibm_shor_tutorial, epjqt_noise2024}. Il livello NISQ-degradato scala i tassi di errore di $5\times$ e dimezza $T_1$ e $T_2$.}
+\caption{Preset uniformi illustrativi per le campagne rumorose N15. Non rappresentano la calibrazione di una QPU reale.}
 \label{tab:use_case_params}
 \end{table}
 
 \subsection{Razionale per la Scelta delle Istanze}
 \label{subsec:razionale_istanze}
 
-\textbf{Use Case 1 --- $N=15$, NISQ-realistico.}
-È il caso di riferimento consolidato in letteratura: la prima dimostrazione sperimentale di Shor è avvenuta su $N=15$ con NMR a 7 qubit \cite{vandersypen2001}, e il tutorial ufficiale IBM riporta i dati di esecuzione per la stessa istanza su \texttt{ibm\_marrakesh} \cite{ibm_shor_tutorial}. La base $a=7$ produce un periodo $r=4$, sufficiente per estrarre i fattori $3$ e $5$ tramite l'algoritmo delle frazioni continue. Questo use case funge da baseline quantitativa per entrambi i metodi.
+\textbf{N15 --- preset di riferimento e stress.}
+La base $a=7$ ha periodo $r=4$ e consente di estrarre i fattori 3 e 5. Il moltiplicatore controllato implementa realmente $y\mapsto 7y\bmod15$: l'operazione elementare viene ripetuta \texttt{power} volte, anziché selezionare erroneamente un ramo mediante \texttt{power \% 4}. Il circuito compilato con Qiskit~2.5, \texttt{optimization\_level=2}, seed di transpiler fissato e base \texttt{rz/sx/x/cx} ha profondità 412 e contiene 224 porte \texttt{cx}; questi dati, insieme all'hash SHA-256 della netlist, sono registrati nel manifest.
 
-\textbf{Use Case 2 --- $N=15$, NISQ-degradato.}
-Configurazione identica al Use Case 1 eccetto per il livello di rumore, aumentato di $5\times$ su tutti i parametri. Poiché il circuito è lo stesso, qualsiasi differenza nelle metriche $\bar{M}_1$ e $\bar{M}_2$ è attribuibile esclusivamente al rumore. Questo use case permette di valutare la \textbf{robustezza} del classificatore ML rispetto al degrado delle condizioni hardware, indipendentemente dalla complessità circuitale.
+Le rotazioni \texttt{rz} sono cambi di frame virtuali, con durata ed errore nulli; \texttt{sx} e \texttt{x} hanno durata 50\,ns e \texttt{cx} durata 300\,ns. Depolarizzazione e rilassamento termico sono composti soltanto su \texttt{sx/x} e \texttt{cx}; il readout è una matrice di confusione simmetrica.
 
-\textbf{Use Case 3 --- $N=21$, NISQ-realistico.}
-$N = 21 = 3 \times 7$ è la fattorizzazione più grande dimostrata su hardware superconduttore a uso generale \cite{skosana2021}. La base $a=2$ produce un periodo $r=6$, che implica una profondità circuitale sensibilmente maggiore rispetto a $N=15$. A parità di livello di rumore con il Use Case 1, questo use case isola l'effetto della scalabilità: ci si attende un aumento di $\bar{M}_1$ per via del circuito più profondo, e si valuta se il classificatore ML mantiene un'accuratezza sufficiente nonostante la maggiore complessità.
+\textbf{N21 e N35 --- validazione ideale.}
+Per $N=21$, $a=2$, e $N=35$, $a=6$, si usa l'aritmetica reversibile di Beauregard. La validazione ideale controlla l'azione sui vettori di base validi e il ripristino a zero dei registri ausiliari, oltre al comportamento QPE. Non si attribuiscono a queste istanze risultati rumorosi. Come audit di risorse, il circuito completo $N=21$, $n_{\text{count}}=8$, compilato globalmente nella stessa base a livello~2, conta 21\,036 \texttt{cx} e profondità 23\,081. Al valore illustrativo $\lambda=10^{-3}$, il proxy circuitale registrato è $7.2379\times10^{-10}$: è un indicatore di accumulo, non la probabilità di successo di Shor.
 
-\textbf{Use Case 4 --- $N=35$, NISQ-realistico.}
-$N = 35 = 5 \times 7$ con base $a=6$ produce il periodo minimo $r=2$ (poiché $6^2 = 36 \equiv 1 \pmod{35}$), il che consente di fattorizzare direttamente con $\gcd(6-1,\, 35) = \gcd(5, 35) = 5$ e $\gcd(6+1,\, 35) = \gcd(7, 35) = 7$. La scelta di $r=2$ con $N$ maggiore permette di separare l'effetto della dimensione del registro (più qubit) dall'effetto della profondità della modular exponentiation, fornendo un punto di confronto complementare rispetto al Use Case 3.
-
-\begin{samepage}
-\paragraph{Una precisazione sull'asse di scalabilità.} Le due letture appena date --- Use Case 4 come punto sull'asse $N$ crescente e Use Case 4 come sonda della sola larghezza del registro --- non sono equivalenti, e la verifica sperimentale (Capitolo~\ref{chap:risultati}) mostrerà che la seconda è quella corretta. La profondità del circuito non è governata da $N$ ma dal periodo $r$: ogni gate controllato $U^{2^j}$ con $2^j \equiv 0 \pmod r$ collassa nell'identità e viene eliminato in fase di traspilazione. Con $r=2$ sopravvive un solo gate su dodici, e il circuito di Use Case 4 risulta più corto di quello di Use Case 1 nonostante il modulo maggiore. Lungo la sequenza $N = 15 \to 21 \to 35$ i periodi sono $4 \to 6 \to 2$: la difficoltà non cresce in modo monotòno. L'\textbf{Ipotesi secondaria 2} va quindi intesa nella forma verificabile ``il vantaggio si mantiene al crescere della profondità del circuito'', per la quale l'unica istanza informativa fra quelle previste è Use Case 3.
-\end{samepage}
+L'esclusione dal rumore è una scelta di validità e costo: l'aritmetica è validata idealmente, mentre la simulazione rumorosa completa non è scientificamente informativa né sostenibile con le risorse disponibili.
 
 % -----------------------------------------------
 \section{Metriche di Valutazione}
@@ -159,9 +150,9 @@ $N = 35 = 5 \times 7$ con base $a=6$ produce il periodo minimo $r=2$ (poiché $6
 \subsection{Metriche del Metodo 1}
 
 \begin{itemize}
-    \item $\bar{M}_1$: numero medio di esecuzioni necessarie per ottenere il primo risultato corretto, calcolato su $K = 30$ ripetizioni indipendenti dello stesso esperimento.
+    \item $\bar{M}_1$: numero medio di esecuzioni necessarie per ottenere il primo risultato corretto, calcolato sulle repliche riuscite e accompagnato dal relativo tasso di successo.
     \item $\sigma_{M_1}$: deviazione standard del numero di esecuzioni, a indicare la variabilità del metodo.
-    \item $P_{\text{success},1}(M_{\text{max}})$: probabilità di successo entro un budget fisso di $M_{\text{max}}$ esecuzioni, dove $M_{\text{max}}$ verrà fissato in base ai primi risultati sperimentali.
+    \item $P_{\text{success},1}(M_{\text{max}})$: probabilità di successo entro il budget fisso preregistrato $M_{\text{max}}=50$.
 \end{itemize}
 
 \subsection{Metriche del Metodo 2}
@@ -181,7 +172,7 @@ La metrica principale per il confronto tra i due metodi è il \textbf{fattore di
     \rho = \frac{\bar{M}_1}{\bar{M}_2}
     \label{eq:fattore_riduzione}
 \end{equation}
-Un valore $\rho > 1$ indica che il Metodo 2 converge più rapidamente del Metodo 1. L'ipotesi sperimentale, motivata nel Capitolo~\ref{chap:strategie}, è $\rho \gg 1$, con $\bar{M}_2 \approx 3$. La significatività statistica del risultato viene valutata tramite il test di Mann-Whitney U (non parametrico, unilaterale $M_1 > M_2$) sulle distribuzioni di $M_1$ e $M_2$. Poiché il Metodo 2 combina due componenti distinte (il classificatore \ac{ML} e la ricerca multi-candidato TOP-K), il piano sperimentale prevede inoltre un'\textbf{analisi di ablazione}: la variante $M_{\text{TOP4}}$ (TOP-K senza classificatore) viene misurata nelle stesse condizioni, in modo da attribuire un eventuale guadagno all'una o all'altra componente e verificare se l'apprendimento automatico è effettivamente necessario.
+ Un valore $\rho > 1$ indica una media descrittiva inferiore per il metodo al denominatore. Per l'inferenza, ogni replica genera un unico calendario di istogrammi: M1, $M_{\text{TOP4}}$ e M2 analizzano gli stessi conteggi e lo stesso ordinamento. Un fallimento entro $M_{\max}$ viene codificato con la sentinella $M_{\max}+1$, così resta distinto da un successo all'ultima iterazione. Sui vettori appaiati completi si applica Wilcoxon con \texttt{zero\_method='pratt'}; i confronti direzionali M1$>$TOP-4 e M1$>$M2 sono unilaterali, mentre TOP-4--M2 è bilaterale. In caso di conteggi uguali, l'ordine dei candidati è determinato da una priorità SHA-256 dipendente dal seed della coppia (replica, iterazione), non dall'ordine del dizionario né dal valore numerico della bitstring.
 
 \subsection{Metriche della Parte QEC}
 \label{subsec:metriche_qec}
@@ -193,14 +184,14 @@ La fase sulla correzione d'errore adotta un insieme di metriche proprio, centrat
     \item \textbf{Pendenza di soppressione}: l'esponente $\gamma$ nella relazione $p_L \propto p^{\gamma}$ a $p$ piccolo; per un codice di distanza $d=3$ il valore atteso è $\gamma \approx 2$ (correzione di un errore, fallimento a peso due).
     \item \textbf{Break-even}: il regime in cui $p_L < p$, in cui cioè il qubit logico è più affidabile del qubit fisico non protetto.
     \item \textbf{Soglia} $p_{th}$: per il surface code, il valore di errore fisico a cui le curve $p_L(p)$ a distanze diverse si incrociano, separando il regime in cui aumentare $d$ conviene da quello in cui è controproducente.
-    \item $P_{\text{success}}(p_L)$ e $P(k)$: per lo Shor logico, la probabilità di successo per singola misura in funzione dell'errore logico per gate, e la probabilità cumulativa $P(k) = 1 - (1-P_s)^k$ dopo $k$ esecuzioni indipendenti.
+    \item $P_{\text{success}}(p_L)$ e $P(k)$: in M8, $p_L$ è la probabilità totale di un Pauli non identità dopo ciascun gate compilato incluso nel proxy, non il tasso per ciclo dei benchmark QEC; si misurano la probabilità per singola misura e la probabilità cumulativa $P(k) = 1 - (1-P_s)^k$ dopo $k$ esecuzioni indipendenti.
 \end{itemize}
 
 Ogni stima di $p_L$ è accompagnata dal numero di campioni, dal seed e dall'intervallo di confidenza (deviazione standard binomiale), secondo le stesse regole di riproducibilità della prima fase.
 
 \subsection{Parametri di Error Mitigation Applicati}
 
-Il noise model incorpora il readout error come matrice di confusione simmetrica (parametro $p_{\text{ro}}$) direttamente nel simulatore. Non viene applicata una correzione post-hoc tramite matrice di calibrazione: la robustezza dei metodi al readout error viene invece verificata sperimentalmente nella campagna parametrica (Sezione~\ref{subsec:sweep_secondari} della Sezione~\ref{app:parametrica}), che mostra invarianza di $M_{\text{TOP4}}$ fino a $p_{\text{ro}} = 20\%$.
+Il noise model incorpora il readout error come matrice di confusione simmetrica (parametro $p_{\text{ro}}$) direttamente nel simulatore. Non viene applicata una correzione post-hoc. La sensibilità rispetto a $p_{\text{ro}}$ è misurata nell'artefatto parametrico schema~2 corrente (Sezione~\ref{subsec:sweep_secondari}); gli artefatti precedenti alla correzione del circuito non vengono usati.
 
 Il Metodo 1 identifica il candidato per la fattorizzazione selezionando la sola misura più frequente dell'istogramma, senza alcuna sogliatura preliminare: la funzione \texttt{extract\_factors} è applicata direttamente alla moda della distribuzione. Le varianti multi-candidato ($M_{\text{TOP4}}$ e Metodo 2) estendono il tentativo ai $K$ esiti più frequenti in ordine decrescente, ed è precisamente questa differenza che l'analisi di ablazione isola.
 

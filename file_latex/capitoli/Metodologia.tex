@@ -1,29 +1,20 @@
 \begin{onehalfspace}
 
-Stabiliti gli strumenti, la domanda successiva riguarda il disegno: quali componenti compongono
-il sistema, come si raccordano, e perché. Le sezioni che seguono descrivono l'architettura della
-pipeline e la struttura dei due metodi messi a confronto. Non si entra ancora nella descrizione
-del codice --- quella è oggetto della Sezione~\ref{sec:setup} e seguenti --- né dei risultati:
-qui si stabilisce il \textit{perché} di ciascuna scelta progettuale e il \textit{come} i
-componenti si raccordano tra loro.
+Stabiliti gli strumenti, questo capitolo definisce il disegno sperimentale della prima fase. Il contratto separa la correttezza ideale dell'algoritmo, il modello illustrativo di rumore e le regole del confronto statistico. Gli esiti numerici non fanno parte della metodologia: le tabelle con $\bar M$, $\rho$ e p-value nel Capitolo~\ref{chap:risultati} sono estratte esclusivamente dagli artefatti schema~2 prodotti con il circuito N15 corretto.
 
 % -----------------------------------------------
 \section{Obiettivi della Parte Sperimentale}
 \label{sec:obiettivi_sperimentali}
 
-La parte sperimentale di questa tesi ha due obiettivi distinti ma complementari, che corrispondono ai due metodi sviluppati.
+Il primo obiettivo è costruire una \textbf{baseline riproducibile}. Il Metodo~1 esamina la misura più frequente dell'istogramma (TOP-1), applica frazioni continue e \ac{GCD} e ripete il campionamento fino al successo o al budget massimo. Il secondo obiettivo è confrontare, sullo stesso dato, due estensioni: TOP-4 senza apprendimento e il Metodo~2, nel quale un classificatore decide se attivare la ricerca TOP-4. Questa terna permette di distinguere il contributo della ricerca multi-candidato da quello del modello appreso.
 
-Il primo obiettivo è costruire una \textbf{baseline affidabile}: una misura quantitativa del numero di esecuzioni che l'approccio classico, privo di qualunque modello appreso, richiede per ricavare il risultato corretto dell'algoritmo di Shor in presenza di rumore. Questo primo metodo --- chiamato nel seguito \textbf{Metodo 1} --- opera su una singola esecuzione per volta: raccoglie l'istogramma degli output, ne prende la misura più frequente e tenta da quella l'estrazione dei fattori (strategia \textbf{TOP-1}); se il tentativo fallisce, l'iterazione viene ripetuta. Il Metodo 1 non introduce ipotesi sul profilo di errore del sistema: funziona su qualunque noise model e non richiede dati di addestramento. È il punto di partenza naturale e il termine di paragone contro cui misurare il miglioramento.
-
-Il secondo obiettivo è dimostrare che un \textbf{classificatore addestrato} può sostituire l'accumulazione statistica con una decisione informata basata su una singola esecuzione. Questo secondo metodo --- chiamato \textbf{Metodo 2} --- apprende la firma degli output corretti e di quelli distorti dal rumore, e decide dopo ogni esecuzione se il risultato è affidabile o meno. L'ipotesi, motivata teoricamente nel Capitolo~\ref{chap:strategie} e corroborata dalla letteratura recente sull'uso del \ac{ML} per la mitigazione degli errori quantistici \cite{ml_mitigation2023}, è che bastino poche iterazioni --- tipicamente dell'ordine di tre --- per convergere.
-
-Entrambi i metodi vengono valutati su \textbf{quattro use case} indipendenti, scelti per coprire diverse configurazioni di istanza e livello di rumore, secondo un requisito metodologico consolidato per la validazione accademica dei risultati sperimentali in questo dominio \cite{shor_hpec2023}. Come documentato nel Capitolo~\ref{chap:risultati}, il confronto quantitativo risulterà praticabile sui due use case per $N=15$: per $N=21$ e $N=35$ la profondità del circuito traspilato azzera la probabilità di successo di qualunque strategia, esito che il presente lavoro quantifica come barriera di scalabilità.
+La campagna rumorosa è limitata a $N=15$, $a=7$, con due preset uniformi illustrativi: riferimento e stress. I moltiplicatori di Beauregard per $N=21$ e $N=35$ sono invece validati idealmente e sottoposti ad audit di risorse, ma esclusi dalle simulazioni rumorose complete. La separazione evita di trasformare un limite computazionale del simulatore in un risultato sulla probabilità di successo dell'algoritmo.
 
 % -----------------------------------------------
 \section{Architettura del Pipeline Sperimentale}
 \label{sec:architettura}
 
-Il sistema è strutturato come un pipeline a tre stadi sequenziali, illustrato in Figura~\ref{fig:pipeline_architettura}.
+Il sistema è strutturato come una pipeline a tre stadi, illustrata in Figura~\ref{fig:pipeline_architettura}.
 
 \begin{figure}[H]
 \centering
@@ -35,135 +26,98 @@ Il sistema è strutturato come un pipeline a tre stadi sequenziali, illustrato i
     arrow/.style   = {->, thick, >=stealth},
     lbl/.style     = {font=\footnotesize\itshape, text=gray}
 ]
-% Nodi
-\node[box, fill=blue!12]   (shor)  at (0,    0)   {Algoritmo di Shor\\{\footnotesize circuito ideale}};
-\node[box, fill=orange!18] (noise) at (5.0,  0)   {Simulatore Rumoroso\\{\footnotesize Qiskit Aer}};
-\node[box, fill=green!15]  (m1)    at (10.0, 1.2) {Metodo 1\\{\footnotesize strategia TOP-1}};
-\node[box, fill=green!15]  (m2)    at (10.0,-1.2) {Metodo 2\\{\footnotesize classificatore ML}};
-\node[box, fill=gray!12]   (out)   at (14.2, 0)   {Risultati\\{\footnotesize fattori + metriche}};
-% Frecce
-\draw[arrow] (shor)  -- node[above, lbl]{circuito}          (noise);
-\draw[arrow] (noise) -- node[above left,  lbl]{output rumoroso} (m1);
-\draw[arrow] (noise) -- node[below left,  lbl]{output rumoroso} (m2);
-\draw[arrow] (m1)    -- (out);
-\draw[arrow] (m2)    -- (out);
+\node[box, fill=blue!12]   (shor)  at (0,    0)   {Circuito di Shor\\{\footnotesize N15 corretto}};
+\node[box, fill=orange!18] (noise) at (5.0,  0)   {AerSimulator\\{\footnotesize un istogramma per seed}};
+\node[box, fill=green!15]  (m1)    at (10.0, 1.4) {M1\\{\footnotesize TOP-1}};
+\node[box, fill=green!15]  (mt4)   at (10.0, 0)   {Ablazione\\{\footnotesize TOP-4}};
+\node[box, fill=green!15]  (m2)    at (10.0,-1.4) {M2\\{\footnotesize classificatore + TOP-4}};
+\node[box, fill=gray!12]   (out)   at (14.5, 0)   {Artefatto schema 2\\{\footnotesize metriche appaiate + manifest}};
+\draw[arrow] (shor)  -- node[above, lbl]{circuito compilato} (noise);
+\draw[arrow] (noise) -- (m1);
+\draw[arrow] (noise) -- (mt4);
+\draw[arrow] (noise) -- (m2);
+\draw[arrow] (m1)  -- (out);
+\draw[arrow] (mt4) -- (out);
+\draw[arrow] (m2)  -- (out);
 \end{tikzpicture}%
 }
-\caption[Pipeline sperimentale]{Pipeline sperimentale. Il circuito ideale dell'algoritmo di Shor viene eseguito sul simulatore rumoroso \texttt{AerSimulator} di Qiskit. L'output è elaborato in parallelo dal Metodo 1 (estrazione dalla sola misura più frequente, TOP-1) e dal Metodo 2 (classificatore ML seguito da ricerca multi-candidato TOP-K). Entrambi producono i fattori di $N$ e le metriche di confronto.}
+\caption[Pipeline sperimentale appaiata]{Pipeline versione~2. Per ogni coppia (replica, iterazione) Aer genera un solo istogramma, poi riusato dalle tre strategie. Il confronto non introduce quindi differenti realizzazioni Monte Carlo.}
 \label{fig:pipeline_architettura}
 \end{figure}
 
-\textbf{Stadio 1 — Il circuito di Shor.} Il circuito dell'algoritmo di Shor è tratto dall'implementazione open-source di riferimento disponibile su GitHub \cite{github_shor}. Si tratta di un'implementazione ideale, costruita per un simulatore privo di rumore: in assenza di errori produce sempre la fattorizzazione corretta. Questo punto di partenza è una scelta deliberata. L'obiettivo della tesi non è modificare l'algoritmo, bensì studiare il suo comportamento su un simulatore realistico e sviluppare strumenti per recuperare l'informazione corretta nonostante la degradazione introdotta dal rumore.
+\textbf{Stadio 1 --- circuito.} Per $N=15$ il moltiplicatore controllato implementa $y\mapsto 7y\bmod15$ ripetendo l'operazione elementare esattamente \texttt{power} volte. Il circuito viene compilato con Qiskit~2.5, \texttt{optimization\_level=2}, seed del transpiler fissato e base nativa esplicita \texttt{rz/sx/x/cx}. Il manifest della configurazione di riferimento registra profondità 412, 224 porte \texttt{cx}, conteggi completi delle istruzioni e hash SHA-256 della netlist. La simulazione ideale valida il periodo e l'estrazione dei fattori in termini probabilistici; non si assume che ogni singolo shot produca necessariamente un fattore.
 
-\textbf{Stadio 2 — La simulazione rumorosa.} Il circuito ideale viene eseguito tramite il simulatore \texttt{AerSimulator} di Qiskit con un modello di rumore che replica le caratteristiche fisiche di un processore superconduttore \ac{NISQ}. La scelta di un simulatore --- anziché di un processore reale --- consente di controllare con precisione i parametri di rumore, garantisce la riproducibilità degli esperimenti e permette di generare grandi dataset di addestramento per il classificatore del Metodo 2 senza i vincoli di accesso e costo tipici dell'hardware IBM Quantum. Il modello di rumore adottato è descritto in dettaglio nel Capitolo~\ref{chap:specifiche}; la sua configurazione segue la metodologia proposta in \cite{epjqt_noise2024} per la selezione e il calibrazione dei parametri di emulazione rispetto a backend reali.
+\textbf{Stadio 2 --- rumore.} Il circuito compilato viene eseguito con un noise model uniforme e controllabile. I due preset servono a studiare il comportamento del metodo, non a emulare o calibrare una specifica QPU. Ogni artefatto conserva sia i parametri sia il manifest del circuito, così risultati ottenuti con revisioni differenti non possono essere combinati inavvertitamente.
 
-\textbf{Stadio 3 — L'analisi.} L'output del simulatore viene elaborato indipendentemente dai due metodi. I risultati prodotti da entrambi vengono confrontati sulle stesse metriche e sugli stessi use case, garantendo la comparabilità del confronto.
+\textbf{Stadio 3 --- analisi.} M1, TOP-4 e M2 ricevono il medesimo istogramma. Un ordinamento deterministico risolve i pareggi di frequenza mediante una priorità SHA-256 costruita da seed e bitstring: l'ordine non dipende dall'inserimento nel dizionario e non favorisce sistematicamente bitstring alte o basse.
 
 % -----------------------------------------------
 \section{Tecniche di Mitigazione del Rumore: Analisi e Scelte Implementative}
 \label{sec:mitigazione_scelte}
 
-Prima di descrivere i due metodi, è necessario motivare una scelta di fondo: \textit{quali leve di mitigazione sono disponibili in questo contesto, e quali sono state adottate?} Il Capitolo~\ref{chap:strategie} ha classificato le macro-strategie; qui si scende al livello operativo, analizzando le tecniche concrete applicabili sul simulatore Qiskit e spiegando perché alcune sono state adottate, altre scartate e altre ancora mantenute come termine di confronto.
-
-Le tecniche disponibili si raggruppano in tre livelli di intervento: a livello di circuito (prima dell'esecuzione), a livello di misura (durante o subito dopo), e a livello di post-processing (sull'output classico).
-
-% -----------------------------------------------
-\subsection{Livello di Circuito: Transpilazione e Riduzione della Profondità}
+\subsection{Transpilazione e Riduzione della Profondità}
 \label{subsec:transpilazione}
 
-La sorgente di errore più diretta in un circuito quantistico rumoroso è la profondità del circuito stesso: ogni gate a due qubit (\ac{CX}) introduce una probabilità di errore non trascurabile, e l'effetto si accumula in modo approssimativamente moltiplicativo. L'intervento più efficace --- e con il minore overhead computazionale --- è quindi ridurre il numero di gate \ac{CX} prima dell'esecuzione.
+Il gate set è fissato a \texttt{rz/sx/x/cx} prima dell'esecuzione. Questa scelta rende esplicite le sole istruzioni a cui il noise model può essere associato ed evita che porte composite sopravvivano fuori dal contratto. Per $N=15$ la compilazione globale di riferimento produce 224 \texttt{cx} e profondità 412; questi valori sono proprietà della coppia (circuito, versione e opzioni del transpiler), perciò vengono verificati e registrati anziché assunti dal sorgente astratto.
 
-Nel contesto dell'algoritmo di Shor, il collo di bottiglia è la \textbf{modular exponentiation} $U_f: \ket{x}\ket{0} \mapsto \ket{x}\ket{a^x \bmod N}$, la parte del circuito che implementa la funzione periodica il cui periodo $r$ viene estratto dalla \ac{QPE}. Realizzarla come operatore unitario denso, sintetizzato dal transpiler a partire dalla sua matrice, costa $O(4^k)$ porte elementari su $k$ qubit~\cite{Barenco1995}: un andamento esponenziale che rende il circuito impraticabile non appena l'istanza cresce.
+Per $N=21$ e $N=35$ si usa la costruzione aritmetica reversibile di Beauregard. I test ideali coprono le truth table sui sottospazi validi, la pulizia di registro ausiliario e ancilla e il comportamento QPE. La compilazione completa $N=21$, $a=2$, $n_{\text{count}}=8$, livello~2, conta 21\,036 \texttt{cx} e ha profondità 23\,081. Il proxy registrato a $\lambda=10^{-3}$ è $7.2379\times10^{-10}$; è un indicatore circuitale di accumulo, non una stima di $P(\text{successo})$. Il costo giustifica l'esclusione di N21/N35 dalle campagne rumorose, pur lasciandone valida la verifica ideale.
 
-La \textbf{decomposizione di Beauregard} \cite{beauregard2002} evita la sintesi densa costruendo l'aritmetica modulare nel dominio della \ac{QFT} con addizionatori di Draper, e ottiene un circuito di $O(n^3)$ porte elementari su $2n+3$ qubit per un modulo di $n$ bit. Il guadagno è di ordini di grandezza: per $N=21$ il modulo \texttt{beauregard.py} sviluppato in questa tesi produce circa $2\,594$ porte \ac{CX}, contro le oltre $10\,000$ della sintesi densa.
+\subsection{Modello di Rumore Uniforme}
+\label{subsec:noise_uniforme}
 
-Va però dichiarato con precisione lo stato di questa ottimizzazione nel presente lavoro: \textbf{gli esperimenti riportati nei capitoli seguenti non la utilizzano}. I circuiti effettivamente eseguiti impiegano la decomposizione densa, ed è questa la ragione per cui i use case UC3 e UC4 risultano fuori portata (Capitolo~\ref{chap:risultati}, Tabella~\ref{tab:circuit_depth}). Il modulo Beauregard è stato implementato e verificato sul conteggio delle porte, ma la sua validazione sperimentale completa eccede le risorse di calcolo disponibili ed è discussa fra gli sviluppi futuri (Capitolo~\ref{chap:sviluppi}). Per $N=15$, l'istanza su cui il confronto è condotto, la decomposizione adottata resta comunque efficiente --- $166$ porte a due qubit in tutto --- perché sfrutta matrici di permutazione già quasi ottimali.
+Le rotazioni \texttt{rz} sono trattate come cambi di frame virtuali, con durata ed errore nulli. I gate \texttt{sx} e \texttt{x} hanno durata 50\,ns; \texttt{cx} ha durata 300\,ns. Su \texttt{sx/x} si compongono il canale depolarizzante a un qubit e il rilassamento termico della durata 1Q; su \texttt{cx} si compongono i corrispondenti canali a due qubit e il rilassamento per 300\,ns. Il readout è modellato da una matrice di confusione simmetrica. Non vengono associati errori a \texttt{rz}, né a istruzioni fuori dalla base.
 
-Un ulteriore livello di riduzione è offerto dalla \textbf{transpilazione} di Qiskit: il transpiler decompone le porte nel gate set nativo del backend target, cancella sequenze identità e riordina i gate commutanti. Tutti gli esperimenti adottano \texttt{optimization\_level=2}, per le ragioni discusse nella Sezione~\ref{subsec:sensitivity}.
+Nel costruttore Aer, il parametro passato a \texttt{depolarizing\_error} è $\lambda$ nella mappa
+\begin{equation}
+    \mathcal{E}(\rho)=(1-\lambda)\rho+\lambda\frac{I}{2^n}.
+\end{equation}
+Per un gate a due qubit, la probabilità aggregata della componente di Pauli non identità nella rappresentazione equivalente è $15\lambda/16$. Di conseguenza, per i 224 \texttt{cx} del circuito N15 si usa esclusivamente il proxy
+\begin{equation}
+    P_{\text{no-Pauli-2Q}}=\left(1-\frac{15\lambda}{16}\right)^{224}.
+    \label{eq:proxy_no_pauli_2q}
+\end{equation}
+Questa quantità non comprende rilassamento, errori 1Q o readout e, soprattutto, non è la probabilità di successo dell'algoritmo di Shor.
 
 \subsection{Livello di Misura: Mitigazione degli Errori di Readout}
 \label{subsec:readout_mitigation}
 
-Gli errori di \textit{readout} --- la probabilità che un qubit nello stato $\ket{0}$ venga letto come $1$ e viceversa --- sono una fonte di errore sistematica e in larga parte correggibile. La tecnica standard è la \textbf{calibrazione della matrice di assegnazione}: si preparano gli stati base $\ket{00\ldots0}$, $\ket{10\ldots0}$, \ldots e si misurano le distribuzioni degli output; la matrice $A_{ij} = P(\text{output}=i \mid \text{preparato}=j)$ viene poi invertita e applicata al vettore delle frequenze osservate.
+Il contratto base non applica un'inversione post-hoc della matrice di assegnazione. Il parametro $p_{\text{ro}}$ viene invece variato nella campagna parametrica, mantenendo il resto del preset costante. Le conclusioni quantitative sull'impatto del readout provengono dall'artefatto schema~2 corrente; le campagne antecedenti alla correzione del circuito non vengono riutilizzate.
 
-Nel contesto di questa tesi la readout mitigation non è stata adottata come tecnica principale per due ragioni. Prima, il modello di rumore del simulatore \texttt{AerSimulator} include già errori di readout calibrati su hardware IBM reale: la probabilità di errore è dell'ordine di $10^{-2}$ per qubit, un valore che il classificatore del Metodo 2 può compensare implicitamente senza richiedere la costruzione esplicita della matrice di calibrazione. Seconda, per i circuiti \ac{QPE} con 9--20 qubit, la matrice di calibrazione ha dimensione $2^n \times 2^n$: la sua costruzione richiederebbe $2^n$ preparazioni aggiuntive, un overhead incompatibile con l'obiettivo di minimizzare le esecuzioni. La readout mitigation è stata però inclusa nell'analisi a posteriori del Capitolo~\ref{chap:risultati} come tecnica di confronto.
-
-\subsection{Livello di Post-processing: Zero-Noise Extrapolation}
+\subsection{Zero-Noise Extrapolation}
 \label{subsec:zne}
 
-La \textbf{Zero-Noise Extrapolation} (\ac{ZNE}) \cite{temme2017} è una tecnica di mitigazione che opera interamente in post-processing: si esegue il circuito a più livelli di rumore artificialmente amplificato (tipicamente $\lambda = 1, 2, 3$ volte il rumore nominale, ottenuto per gate folding o pulse stretching), si misura il valor medio dell'osservabile di interesse per ciascun livello, e si estrapolano i valori verso $\lambda = 0$ tramite una regressione lineare o polinomiale.
+La \ac{ZNE} resta un termine di confronto metodologico. I fattori di scala moltiplicano i parametri del noise model, mentre il costo in shot e le trasformazioni dell'istogramma vengono registrati separatamente. Il suo effetto su $\bar M$ e la significatività del confronto sono valutati sotto lo stesso circuito e lo stesso schema statistico della baseline; l'esito è riportato nell'Appendice~\ref{app:parametrica}.
 
-Il pregio della \ac{ZNE} è che non richiede conoscenza del modello di rumore e produce una stima dell'output ideale direttamente dall'output rumoroso. Il limite, nel contesto di questa tesi, è duplice. Da un lato, richiede almeno $k \geq 2$ esecuzioni per ogni singola stima --- il che contrasta direttamente con l'obiettivo del Metodo 2 di convergere in circa tre iterazioni totali. Dall'altro, l'amplificazione del rumore degrada ulteriormente la fedeltà dei gate già ai livelli $\lambda = 2$ e $\lambda = 3$: per circuiti profondi come quello di Shor, il gate folding introduce errori aggiuntivi che non si distribuiscono linearmente e rendono l'estrapolazione inaffidabile.
-
-Per questi motivi la \ac{ZNE} non è stata adottata come tecnica principale. Essa compare però nel Capitolo~\ref{chap:risultati} come termine di confronto sperimentale: i risultati mostrano che ZNE-2 e ZNE-3 non migliorano in modo significativo il numero di iterazioni rispetto alla baseline, a fronte di un costo in shot da due a tre volte superiore.
-
-\subsection{Che Cosa Conta Davvero: l'Analisi di Sensibilità}
+\subsection{Analisi di Sensibilità}
 \label{subsec:sensitivity}
 
-Le tre tecniche appena discusse agiscono su parametri diversi, e sceglierne una richiede di sapere quale parametro incida realmente sull'esito. Prima di fissare l'architettura è stata quindi condotta una campagna a variazione singola sui sette parametri del modello di rumore e della strategia di ricerca, i cui risultati completi --- con il confronto fra previsione ed esito per ciascun parametro --- sono nella Sezione~\ref{app:parametrica} dell'Appendice~\ref{app:fase1}. Qui interessano le tre conseguenze che hanno orientato le scelte implementative.
+La campagna parametrica adotta una variazione singola rispetto al preset di riferimento e comprende $K$, $\lambda_{2q}$, shots, $T_1/T_2$, $\lambda_{1q}$ e $p_{\text{ro}}$, oltre alle griglie congiunte dichiarate nel manifest. La base circuitale resta invariata. Le tabelle correnti provengono dalla rigenerazione schema~2; gli artefatti storici precedenti alla correzione di \texttt{c\_amod15} non sostengono conclusioni scientifiche.
 
-\textbf{Nessun parametro del modello di rumore degrada la convergenza in modo apprezzabile.} Errori sui gate a singolo qubit, tempi di decoerenza e readout error risultano ininfluenti su tutti gli intervalli testati --- $p_{\text{ro}}$ fino al $20\%$ --- e producono $\bar{M} = 1.00$ con tasso di successo pieno. Il solo $\varepsilon_{2q}$ lascia una traccia, facendo oscillare $\bar{M}_1$ fra $1.3$ e $2.0$ senza andamento monotòno, ma senza mai far scendere il successo sotto il $100\%$. Ne discende che \textbf{readout mitigation e ottimizzazioni di $T_1$/$T_2$ sono inutili per $N=15$}: adottarle avrebbe aggiunto complessità senza impatto misurabile.
-
-\textbf{La \ac{ZNE} è inefficace su questo compito.} Il confronto sperimentale (Capitolo~\ref{chap:risultati}) mostra che né l'estrapolazione lineare né quella di Richardson riducono in modo statisticamente significativo il numero di iterazioni, pur richiedendo da due a tre volte più shot. Il motivo è coerente con quanto sopra: non c'è un bias sistematico da rimuovere, perché la distribuzione rumorosa conserva già il segnale che serve.
-
-\textbf{La leva dominante è la decomposizione del circuito, non il livello di ottimizzazione del transpiler.} Uno sweep su \texttt{optimization\_level} da 0 a 3 mostra un guadagno complessivo del $17\%$ sul numero di porte soggette a errore a due qubit, contro il fattore che separa una decomposizione densa da una efficiente. Si adotta il livello 2, che raggiunge il minimo senza il costo della ricerca esaustiva del livello 3.
-
-\begin{samepage}
-\paragraph{Come va contato $P_{\text{surv}}$.} Una precisazione necessaria, perché la stima ricorre in tutto il lavoro. Il modello di rumore applica l'errore depolarizzante a due qubit non alle sole porte \texttt{cx}, ma all'insieme \texttt{[cx, swap, cp]}: l'esponente di $P_{\text{surv}}$ è dunque il numero \emph{complessivo} di porte soggette a quell'errore. Per UC1 la composizione è $114$ \texttt{cx} $+\ 52$ \texttt{cp}, da cui $k = 166$ e $P_{\text{surv}} = (1-\varepsilon_{2q})^{166}$. Le \texttt{cp} provengono dalla \ac{QFT} inversa, che il transpiler conserva nel gate set nativo: trascurarle sottostima l'errore accumulato di un terzo, e per le istanze maggiori --- dove la decomposizione di Beauregard costruisce l'aritmetica interamente nel dominio della \ac{QFT} --- di decine di ordini di grandezza.
-\end{samepage}
-
-
-\subsection{Scelta Adottata: Classificatore ML come Filtro Adattivo}
+\subsection{Scelta Adottata: Classificatore come Filtro}
 \label{subsec:scelta_ml}
 
-L'analisi delle tecniche disponibili converge su una conclusione: le ottimizzazioni a livello di circuito (Beauregard, transpilazione) sono necessarie e già applicate; le tecniche di mitigazione tradizionali (readout, ZNE) presentano overhead o limitazioni che le rendono incompatibili con l'obiettivo di minimizzare le esecuzioni su hardware \ac{NISQ}.
-
-L'approccio adottato in questa tesi è diverso per natura: invece di modificare il circuito o correggere l'output stimando l'ideale, si \textbf{addestra un classificatore che apprende la firma degli output corretti} direttamente dalla distribuzione degli output rumorosi. Il classificatore non riduce il rumore, ma impara a distinguere i casi in cui il rumore non ha compromesso il risultato dai casi in cui l'ha reso inaffidabile. Questo lo rende:
-
-\begin{itemize}
-    \item \textbf{Adattivo}: si calibra sul profilo di errore specifico del simulatore o del backend, senza assumere un modello di rumore analitico.
-    \item \textbf{A basso overhead}: richiede una singola esecuzione per decisione, invece delle $k \geq 2$ esecuzioni della \ac{ZNE}.
-    \item \textbf{Complementare alle ottimizzazioni circuitali}: può essere impilato sopra la transpilazione ottimizzata senza conflitti.
-\end{itemize}
-
-Questa scelta è la premessa dei due metodi descritti nelle sezioni seguenti.
+Il classificatore riceve il vettore normalizzato delle $2^{n_{\text{count}}}$ frequenze. La generazione del dataset calcola nello stesso passaggio sia l'etichetta TOP-1 sia l'etichetta TOP-16, così l'effetto della definizione di target è auditabile senza cambiare i campioni. Il modello ammesso nella pipeline M2 è quello con \texttt{label\_top\_k=1} e manifest compatibile; TOP-16 resta un'analisi di sensibilità dell'etichetta. Dopo l'accettazione del classificatore, M2 tenta i primi quattro candidati dello stesso ordinamento usato dall'ablazione TOP-4.
 
 % -----------------------------------------------
-\section{Il Metodo 1: Approccio Statistico Classico}
+\section{Il Metodo 1: Baseline TOP-1}
 \label{sec:metodo1}
 
-Il Metodo 1 è l'approccio di riferimento: non richiede alcun addestramento, non assume nulla sul profilo specifico del rumore e si basa esclusivamente sulla struttura probabilistica degli output dell'algoritmo di Shor.
-
-In condizioni ideali, la distribuzione degli output del registro di controllo presenta picchi netti a multipli di $2^{n_{\text{count}}}/r$, dove $r$ è il periodo della funzione modulare. Il rumore appiattisce questi picchi, allarga la loro base e introduce un fondo uniforme di misure errate. Il metodo recupera il risultato attraverso i seguenti passi:
-
+Per ogni iterazione il Metodo~1:
 \begin{enumerate}
-    \item Eseguire il circuito per $M_{\text{shots}}$ shot, raccogliendo il conteggio di frequenza di ogni stringa di output del registro di controllo.
-    \item Selezionare la misura $y$ \textbf{più frequente} dell'istogramma. Non si applica alcuna sogliatura né alcun filtro preliminare: l'estrazione opera direttamente sulle misure ordinate per frequenza decrescente (Capitolo~\ref{chap:obiettivi}, Sezione~\ref{sec:metriche}).
-    \item Stimare $r$ tramite l'algoritmo delle frazioni continue applicato al rapporto $y / 2^{n_{\text{count}}}$.
-    \item Calcolare $p = \gcd(a^{r/2} - 1,\, N)$ e $q = \gcd(a^{r/2} + 1,\, N)$ e verificare che siano fattori non banali di $N$.
-    \item Se il tentativo fallisce, ripetere l'iterazione con un nuovo seed, fino a un massimo di $M_{\text{max}}$ iterazioni.
+    \item riceve l'istogramma comune della replica;
+    \item seleziona il primo candidato nell'ordinamento frequenza--SHA-256;
+    \item stima il periodo con frazioni continue e verifica i fattori non banali;
+    \item in caso di fallimento procede all'istogramma successivo, fino a $M_{\max}$.
 \end{enumerate}
 
-Il numero di iterazioni necessarie per ottenere il primo risultato corretto cresce al crescere del livello di rumore. Questa quantità --- $\bar{M}_1$, misurata sperimentalmente per ciascun use case --- costituisce la baseline del confronto.
+Il seed Aer è separato fra iterazioni di più del numero di shot, secondo la formula dichiarata nell'implementazione. Questo evita la sovrapposizione quasi completa dei flussi pseudo-casuali prodotta da semi consecutivi.
 
 % -----------------------------------------------
-\section{Il Metodo 2: Classificatore ML}
+\section{Il Metodo 2 e il Disegno Appaiato}
 \label{sec:metodo2}
 
-Il Metodo 2 adotta un approccio radicalmente diverso: invece di costruire una distribuzione statistica, addestra un modello che impara a distinguere gli output corretti da quelli compromessi dal rumore, e lo usa per decidere dopo \textit{ogni singola} esecuzione se il risultato è affidabile.
+TOP-4 prova, in ordine, fino a quattro candidati dello stesso istogramma. M2 applica prima il classificatore e, soltanto se il gate è positivo, esegue la medesima ricerca TOP-4. Per ciascuna replica si registra la prima iterazione di successo di ogni strategia. Un mancato successo entro $M_{\max}$ è codificato con la sentinella $M_{\max}+1$, mantenendolo distinto da un successo all'ultima iterazione.
 
-L'idea è coerente con la direzione più recente della letteratura sull'utilizzo del \ac{ML} per la mitigazione del rumore quantistico. Lavori come \cite{ml_mitigation2023} hanno mostrato che classificatori classici --- in particolare Random Forest e reti neurali multistrato --- possono apprendere la struttura degli errori su circuiti \ac{NISQ} con prestazioni superiori agli approcci tradizionali, e con un overhead computazionale significativamente minore rispetto a tecniche come la Zero-Noise Extrapolation. Nel dominio della correzione degli errori quantistici, decoder basati su reti neurali --- tra cui il recente AlphaQubit di Google DeepMind \cite{alphaqubit2024} --- hanno dimostrato che i modelli appresi possono superare i decoder analitici classici in presenza di rumore realistico e non omogeneo.
-
-Il classificatore sviluppato in questa tesi opera su un problema più semplice: non decodifica sindromi di un codice topologico, ma decide se l'output di una singola esecuzione dell'algoritmo di Shor è corretto. Questo lo rende addestrabile con risorse moderate, il che è compatibile con l'ambiente \ac{NISQ} in cui si lavora.
-
-\textbf{Input del classificatore.} Il vettore di feature è costruito a partire dalla misurazione del registro di controllo: i valori dei $n_{\text{count}}$ qubit e caratteristiche derivate, come la distanza dai picchi teorici attesi e l'entropia della distribuzione locale osservata nelle ultime esecuzioni.
-
-\textbf{Output del classificatore.} Un'etichetta binaria: $1$ se il risultato è corretto (ovvero se i fattori estratti tramite frazioni continue e \ac{GCD} sono fattori non banali di $N$), $0$ altrimenti.
-
-\textbf{Fase di addestramento.} Il dataset viene generato interamente dal simulatore rumoroso: si eseguono migliaia di istanze del circuito con parametri di rumore variabili nell'intorno dei valori dei use case, si calcolano le etichette di correttezza e si addestra il classificatore con una divisione standard training/validation/test. La libreria adottata per l'addestramento è scikit-learn \cite{scikit_learn}, che offre un'interfaccia unificata per confrontare diversi classificatori --- Random Forest, \ac{SVM}, \ac{MLP} --- sullo stesso dataset, facilitando la selezione del modello migliore.
-
-\textbf{Utilizzo in inferenza.} A regime, il classificatore viene invocato dopo ogni esecuzione. Non appena restituisce l'etichetta $1$, il risultato viene accettato e il processo si interrompe. Il numero di invocazioni prima del primo $1$ corretto è la quantità misurata e confrontata con $\bar{M}_1$.
-
-Le specifiche funzionali complete del sistema --- i parametri di input e output, la struttura dei quattro use case e le metriche di valutazione quantitativa --- sono formalizzate nel Capitolo~\ref{chap:obiettivi}, che definisce il contratto sperimentale che l'implementazione deve rispettare.
+Il calendario di seed e gli istogrammi sono comuni a tutte le strategie. I confronti M1$>$TOP-4 e M1$>$M2 usano il Wilcoxon appaiato unilaterale con gestione degli zeri secondo Pratt; il confronto TOP-4--M2 è bilaterale. Medie, deviazioni e tassi di successo sono statistiche descrittive; il vettore completo con le sentinelle è usato per l'inferenza. L'output JSON schema~2 include input, seed, vettori appaiati, test, versione del software e manifest/hash della compilazione.
 
 \end{onehalfspace}

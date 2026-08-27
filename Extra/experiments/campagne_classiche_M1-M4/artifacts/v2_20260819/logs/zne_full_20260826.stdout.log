@@ -1,0 +1,23 @@
+Rep 1/30Rep 2/30Rep 3/30Rep 4/30Rep 5/30Rep 6/30Rep 7/30Rep 8/30Rep 9/30Rep 10/30Rep 11/30Rep 12/30Rep 13/30Rep 14/30Rep 15/30Rep 16/30Rep 17/30Rep 18/30Rep 19/30Rep 20/30Rep 21/30Rep 22/30Rep 23/30Rep 24/30Rep 25/30Rep 26/30Rep 27/30Rep 28/30Rep 29/30Rep 30/30
+
+======================================================================
+CONFRONTO M1 vs ZNE-2 vs ZNE-3 vs M_TOP4
+======================================================================
+  M1         sr=100.0%  M_bar=1.37  shot/iter=1024  tot_shots=1399
+  ZNE-2      sr=100.0%  M_bar=1.50  shot/iter=2048  tot_shots=3072
+  ZNE-3      sr=100.0%  M_bar=1.57  shot/iter=3072  tot_shots=4813
+  TOP4       sr=100.0%  M_bar=1.00  shot/iter=1024  tot_shots=1024
+
+  Wilcoxon appaiato (M1 > strategia):
+    M1 > ZNE-2   : W=76  p_Holm=1.0000  (n.s.)
+    M1 > ZNE-3   : W=74  p_Holm=1.0000  (n.s.)
+    M1 > TOP4    : W=255  p_Holm=0.0024  (sign.)
+
+--- LaTeX rows (tabella confronto_zne) ---
+  M1 (baseline) & 100.0\% & 1.37 & 1024 & 1399 & --- & --- \\
+  ZNE-2 (lineare) & 100.0\% & 1.50 & 2048 & 3072 & 0.911 & $1.000$ (n.s.) \\
+  ZNE-3 (Richardson) & 100.0\% & 1.57 & 3072 & 4813 & 0.872 & $1.000$ (n.s.) \\
+  $M_{\text{TOP4}}$ & 100.0\% & 1.00 & 1024 & 1024 & 1.367 & $0.002$ (sign.) \\
+
+Risultati salvati in: artifacts/v2_20260819/results/results_zne_comparison_v2_20260826_114653.json
+Copia le righe LaTeX nella tabella confronto_zne in ConclusioniMetodo2.tex

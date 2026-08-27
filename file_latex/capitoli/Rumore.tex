@@ -4,7 +4,7 @@
 
 Il capitolo precedente ha presentato l'algoritmo di Shor nella sua forma ideale: un circuito che, eseguito su un calcolatore quantistico perfetto, fattorizza in tempo polinomiale. Quel calcolatore non esiste. Questo capitolo descrive la distanza fra il modello e la macchina --- da dove nasce l'errore, come lo si rappresenta formalmente, e quanto costa all'algoritmo.
 
-I computer quantistici reali operano in regime \ac{NISQ} \cite{preskill2018}: dispongono di decine o centinaia di qubit fisici, ma sono affetti da errori significativi che limitano la profondità dei circuiti eseguibili in modo affidabile.
+I computer quantistici non fault-tolerant operano nel regime \ac{NISQ} \cite{preskill2018}: il solo numero di qubit fisici non determina la capacità utile, perché errori, connettività e assenza di correzione scalabile limitano la profondità dei circuiti eseguibili in modo affidabile.
 
 Il rumore quantistico differisce fondamentalmente dal rumore nei sistemi classici: mentre un bit classico può essere protetto ridondando l'informazione, un qubit non può essere copiato (\textbf{teorema del no-cloning}) \cite{wootters1982}. Inoltre, gli errori quantistici non sono binari --- un qubit può subire rotazioni arbitrarie nello spazio di Hilbert --- rendendo la loro caratterizzazione intrinsecamente più ricca e più difficile di quella classica.
 
@@ -48,13 +48,13 @@ La \textbf{decoerenza} è il processo per cui un qubit perde le sue proprietà q
     dove $T_\phi$ è il tempo di \textit{pura} perdita di fase. Vale sempre $T_2 \leq 2T_1$; tipicamente $T_2 \sim 50$--$200\,\mu$s.
 \end{itemize}
 
-La condizione necessaria per eseguire correttamente un circuito è:
+Un criterio euristico per limitare la decoerenza non corretta lungo il cammino critico è:
 \begin{equation}
     \tau_{\text{circuito}} \ll \min(T_1,\, T_2)
 \end{equation}
-Poiché l'algoritmo di Shor per un intero a $n$ bit richiede una profondità $O(n^3)$ gate, e ogni gate a due qubit su hardware IBM dura $\sim 300$--$500\,$ns, questa condizione è violata già per $n \gtrsim 10$--$15$ bit sui processori NISQ attuali.
+La profondità dell'aritmetica modulare cresce polinomialmente con la dimensione dell'input, ma questa relazione asintotica non fissa da sola una soglia in bit: compilazione, parallelismo, tempi di idle, topologia e correzione d'errore determinano la durata fisica effettiva.
 
-\textbf{Connessione con l'entanglement.} $T_2$ ha un'interpretazione diretta in termini di entanglement: esso misura per quanto tempo i qubit del registro di controllo riescono a mantenere la coerenza di fase necessaria a sostenere lo stato entangled con il registro di lavoro. Nella phase estimation dell'algoritmo di Shor, ogni qubit di controllo $q_j$ viene preparato in sovrapposizione $\frac{1}{\sqrt{2}}(\ket{0}+\ket{1})$ e deve restare coerente per tutta la durata del blocco di modular exponentiation controllato da $q_j$. Se $T_2$ è inferiore a questo intervallo, la fase relativa si randomizza: l'entanglement con il registro di lavoro decade, le ampiezze di interferenza nella QFT si riducono, e il periodo $r$ non è più estraibile in modo affidabile. Su \texttt{ibm\_marrakesh}, con $T_2 \approx 80\,\mu$s e un tempo di gate a due qubit di circa $400\,$ns, il numero massimo di gate a due qubit eseguibili entro $T_2$ è dell'ordine di $T_2/\tau_{\text{gate}} \approx 200$: una soglia che il circuito di Shor per $N=15$ sfiora già in condizioni ideali di compilazione~\cite{ibm_shor_tutorial}.
+\textbf{Connessione con l'entanglement.} $T_2$ caratterizza la perdita di coerenza di fase necessaria a sostenere l'entanglement fra registro di controllo e registro di lavoro. Nella phase estimation, ciascun qubit di controllo deve conservare la fase relativa lungo il proprio cammino causale attraverso l'esponenziazione modulare. Confrontare semplicemente $T_2/\tau_{\text{gate}}$ con il numero totale di gate a due qubit sarebbe però scorretto: il conteggio non è una durata e ignora parallelismo e idle. Per questo la campagna usa durate esplicite nel noise model e riporta separatamente conteggi e profondità della netlist.
 
 % ---
 \subsection{Errori di Gate}
@@ -126,7 +126,7 @@ Crosstalk                        & Depolarizzante (multi-qubit) & Difficile da p
 \label{tab:mapping_rumore}
 \end{table}
 
-In pratica, il simulatore Qiskit Aer combina amplitude damping e phase flip in un unico \textbf{canale di thermal relaxation}, parametrizzato direttamente da $T_1$, $T_2$ e dal tempo di gate $\tau$, per riprodurre fedelmente il comportamento dell'hardware IBM.
+In pratica, Qiskit Aer combina rilassamento energetico e dephasing in un \textbf{canale di thermal relaxation}, parametrizzato da $T_1$, $T_2$ e dal tempo di gate $\tau$. È un modello Markoviano controllato di queste due componenti, non una riproduzione completa dell'hardware: non include automaticamente leakage, crosstalk, deriva o errori coerenti.
 
 \clearpage
 \section{I Quattro Canali Matematici del Rumore}
@@ -154,7 +154,7 @@ Usando l'identità $X\rho X + Y\rho Y + Z\rho Z = 2I - \rho$, valida per $\mathr
 \end{equation}
 che rende evidente il significato: il canale interpola fra lo stato $\rho$ e quello massimamente misto $I/2$, contraendo \emph{isotropicamente} il vettore di Bloch di un fattore $(1-4p/3)$. Per $p=3/4$ lo stato diventa completamente misto qualunque fosse quello iniziale.
 
-L'isotropia è la ragione per cui questo canale è il modello standard degli errori di gate: non privilegia alcuna direzione, e descrive quindi un'imprecisione di controllo di cui non si conosce la natura. È anche la ragione per cui, come mostrerà il Capitolo~\ref{chap:risultati}, il conteggio delle porte a due qubit soggette a questo canale determina la stima analitica $P_{\text{surv}} = (1-\varepsilon_{2q})^{k}$.
+L'isotropia è la ragione per cui questo canale è un modello standard degli errori di gate: non privilegia alcuna direzione e descrive un'imprecisione di controllo di cui non si specifica la natura microscopica. Nel parametro Aer $\lambda$, tuttavia, la probabilità aggregata di una componente Pauli non-identità è $3\lambda/4$ per un qubit e $15\lambda/16$ per due qubit. Come mostrerà il Capitolo~\ref{chap:risultati}, il proxy di nessun evento su $k$ gate a due qubit è quindi $(1-15\lambda_{2q}/16)^k$; non è una probabilità di successo dell'algoritmo.
 
 \subsection{Gli Altri Tre Canali}
 
@@ -162,7 +162,7 @@ Gli altri tre canali si enunciano compattamente; le derivazioni complete --- ope
 
 Il \textbf{bit flip} applica $X$ con probabilità $p$ e contrae le componenti $r_y, r_z$ del fattore $(1-2p)$, lasciando $r_x$ invariata. Il \textbf{phase flip} applica $Z$ con probabilità $p$: lascia intatte le popolazioni e sopprime le coerenze $\rho_{01}$ dello stesso fattore --- è il canale che descrive il decadimento $T_2$, poiché ponendo $p(t) = \frac{1}{2}(1-e^{-t/T_2})$ si ottiene esattamente $\rho_{01}(t) = \rho_{01}(0)\,e^{-t/T_2}$. L'\textbf{amplitude damping}, infine, modella il rilassamento energetico $T_1$: il qubit decade da $\ket{1}$ a $\ket{0}$ con probabilità $\gamma = 1-e^{-t/T_1}$, e a differenza degli altri è \emph{non simmetrico} --- contrae la sfera di Bloch verso il polo $\ket{0}$ anziché verso il centro, sicché per $t \to \infty$ ogni stato converge a $\ket{0}\bra{0}$.
 
-Questi ultimi due sono i canali che la funzione \texttt{thermal\_relaxation\_error} di Qiskit Aer combina per riprodurre la decoerenza: il modello di rumore adottato in questa tesi (Sezione~\ref{sec:noise_model}) li impiega entrambi, parametrizzati sui valori di $T_1$ e $T_2$ dell'hardware di riferimento.
+Questi ultimi due sono i canali che la funzione \texttt{thermal\_relaxation\_error} di Qiskit Aer combina per riprodurre la decoerenza. I preset uniformi della prima fase e della demo li impiegano con $T_1$, $T_2$ e durate dichiarate; M8 usa invece il solo proxy Pauli per gate, mentre M11 converte l'infedeltà media della snapshot senza aggiungere nuovamente $T_1/T_2$, per evitare un doppio conteggio.
 
 
 \begin{figure}[H]
@@ -236,28 +236,28 @@ Le tre componenti più sensibili sono:
 
 \subsection{Errori nella Quantum Fourier Transform}
 
-La \ac{QFT} richiede porte di rotazione di fase $R_k = \mathrm{diag}(1,\, e^{2\pi i/2^k})$ con angoli esponenzialmente piccoli all'aumentare di $k$. Per $k=10$, l'angolo è $2\pi/1024 \approx 6\times10^{-3}$ rad. Un canale depolarizzante di intensità $\epsilon$ su ciascuno degli $n$ gate di rotazione accumula un errore di fase $O(n\epsilon)$, degradando la struttura di interferenza da cui dipende la corretta estrazione del periodo.
+La \ac{QFT} richiede porte di rotazione di fase $R_k = \mathrm{diag}(1,\, e^{2\pi i/2^k})$ con angoli esponenzialmente piccoli all'aumentare di $k$. Per $k=10$, l'angolo è $2\pi/1024 \approx 6\times10^{-3}$ rad. Errori coerenti di calibrazione possono accumularsi in ampiezza, mentre un canale depolarizzante produce una degradazione stocastica diversa: non è corretto riassumere entrambi come un unico ``errore di fase'' lineare. La campagna li mantiene quindi come canali separati.
 
 \subsection{Errori nella Phase Estimation}
 
-La phase estimation richiede che i qubit del registro di controllo mantengano la coerenza per tutta la durata del circuito di modular exponentiation, che ha profondità $O(n^3)$. La condizione necessaria è:
+La phase estimation richiede che i qubit del registro di controllo mantengano la coerenza lungo il cammino critico della modular exponentiation. A livello di ordine di grandezza si può scrivere:
 \begin{equation}
     T_2 \gg \tau_{\text{gate}} \cdot O(n^3)
 \end{equation}
-Sui processori NISQ attuali, questa condizione è violata già per $n \gtrsim 10$--$15$ bit.
+Questa espressione evidenzia lo scaling, ma non determina una soglia universale in bit: la costante dipende dall'aritmetica e dalla compilazione, e un'architettura fault-tolerant sostituisce il confronto diretto con un budget di errore logico.
 
 \subsection{Errori nella Modular Exponentiation}
 
-La modular exponentiation è la componente con la maggiore profondità. Modellando ogni gate con un canale depolarizzante di intensità $\epsilon$, la probabilità di successo è:
+La modular exponentiation è la componente con la maggiore profondità. Sotto l'ipotesi puramente illustrativa di eventi indipendenti con probabilità $\epsilon$ su $L$ gate, la probabilità che non avvenga alcun evento è:
 \begin{equation}
-    P_{\text{success}} \approx P_{\text{ideal}} \cdot (1-\epsilon)^{L}, \qquad L \sim O(n^3)
+    P_{0\text{-eventi}}=(1-\epsilon)^{L}, \qquad L \sim O(n^3).
 \end{equation}
-Per $n=15$ bit e $\epsilon=10^{-3}$: $(1-10^{-3})^{3375} \approx 0.034$ --- la probabilità di risultato corretto crolla al $3.4\%$ già per istanze molto piccole. La Figura~\ref{fig:psuccess_vs_n} mostra come questo crollo si accentui drammaticamente all'aumentare di $n$ e di $\epsilon$.
+Ponendo soltanto per visualizzare lo scaling $L=n^3$, per $n=15$ ed $\epsilon=10^{-3}$ si ottiene $(1-10^{-3})^{3375}\approx0,034$. Questo è un \textbf{proxy di nessun evento}, non la probabilità di successo di Shor: alcuni errori possono non cambiare l'esito, mentre rilassamento, readout e struttura del circuito non sono descritti dalla formula. La Figura~\ref{fig:psuccess_vs_n} va letta esclusivamente in questo senso.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{15_psuccess_vs_n.pdf}
-\caption[Probabilità di successo di Shor in presenza di rumore]{Probabilità di successo dell'algoritmo di Shor $P_{\text{success}} \approx (1-\epsilon)^{n^3}$ in funzione della dimensione dell'input $n$ (in bit), per cinque valori di intensità di rumore depolarizzante $\epsilon$. Anche con $\epsilon = 10^{-3}$ (fedeltà gate $99.9\%$), già per $n = 15$ la probabilità di ottenere un risultato corretto scende al $3.4\%$. La linee tratteggiate orizzontali evidenziano le soglie del $50\%$ e del $5\%$.}
+\caption[Proxy di nessun evento al crescere del circuito]{Proxy illustrativo $(1-\epsilon)^{n^3}$ di nessun evento indipendente, per cinque valori di $\epsilon$. Non è una curva di successo di Shor e non deriva dai circuiti sperimentali: mostra soltanto quanto rapidamente un modello moltiplicativo ingenuo accumuli errori al crescere di un conteggio assunto pari a $n^3$.}
 \label{fig:psuccess_vs_n}
 \end{figure}
 
@@ -266,10 +266,10 @@ Per $n=15$ bit e $\epsilon=10^{-3}$: $(1-10^{-3})^{3375} \approx 0.034$ --- la p
 
 \begin{itemize}
     \item \textbf{Requisiti di qubit}: fattorizzare un intero a $n$ bit richiede almeno $2n$ qubit logici per la phase estimation, più ausiliari per la modular exponentiation.
-    \item \textbf{Profondità}: anche per $N=15$, il circuito compilato su \texttt{ibm\_marrakesh} supera i 187 gate a due qubit \cite{ibm_shor_tutorial}.
+    \item \textbf{Profondità}: il circuito canonico $N=15$ di questa tesi, compilato nella base astratta \texttt{rz/sx/x/cx}, contiene 224 \texttt{cx} e ha profondità 412; una mappatura hardware aggiungerebbe routing dipendente dalla topologia.
     \item \textbf{Soluzioni parziali}: gli esperimenti su IBM hanno dimostrato la fattorizzazione di $N=15$ e $N=21$ solo con circuiti appositamente semplificati, non generalizzabili a $N$ arbitrario \cite{skosana2021}.
 \end{itemize}
 
-Il problema non è di natura algoritmica ma fisica: l'algoritmo di Shor è teoricamente corretto, ma il substrato hardware introduce errori che ne compromettono l'output. Affrontare questo problema richiede strategie che operano a diversi livelli, dall'hardware al post-processing classico. Il capitolo seguente esamina queste strategie con particolare attenzione alla \ac{QEC} e al suo inquadramento come sottocategoria del \ac{QML}, che costituisce l'approccio adottato in questa tesi.
+Il problema non è di natura algoritmica ma fisica: l'algoritmo di Shor è teoricamente corretto, ma il substrato hardware introduce errori che ne compromettono l'output. Affrontarlo richiede strategie che operano a diversi livelli, dall'hardware al post-processing classico. Il capitolo seguente tratta separatamente la \ac{QEC} e i metodi appresi, mettendoli in relazione soltanto nella fase di decodifica della sindrome.
 
 \end{onehalfspace}

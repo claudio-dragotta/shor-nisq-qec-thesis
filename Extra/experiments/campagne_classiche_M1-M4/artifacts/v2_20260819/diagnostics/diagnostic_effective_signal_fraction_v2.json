@@ -1,0 +1,1455 @@
+{
+  "schema_version": "2.0",
+  "artifact_type": "phase1-effective-signal-fraction",
+  "created_at": "2026-08-26T09:51:27.034759+00:00",
+  "config": {
+    "N": 15,
+    "a": 7,
+    "n_count": 8,
+    "use_case_reference": "UC1",
+    "fixed_noise": {
+      "eps_1q": 0.001,
+      "t1_ns": 100000,
+      "t2_ns": 80000,
+      "p_ro": 0.02
+    },
+    "lambda_2q_values": [
+      0.001,
+      0.005,
+      0.01,
+      0.02,
+      0.05,
+      0.1,
+      0.2,
+      0.3
+    ],
+    "shots": 1024,
+    "reps": 20,
+    "seed": 11,
+    "seed_schedule": "seed*1000000 + rep*10000; rep starts at 1"
+  },
+  "manifest": {
+    "circuit_revision": "shor-qpe-v2-amod15-correct",
+    "noise_model_revision": "uniform-rz-virtual-v2",
+    "postprocess_revision": "seeded-sha256-tie-break-v1",
+    "circuit_sha256": "c7f4cf3bc1735dce9d5b56d8e09686ee4ab43cabead65e734ea23d5a50f4ba2c",
+    "basis_gates": [
+      "rz",
+      "sx",
+      "x",
+      "cx"
+    ],
+    "optimization_level": 2,
+    "seed_transpiler": 20260819,
+    "depth": 412,
+    "size": 604,
+    "gate_counts": {
+      "rz": 302,
+      "cx": 224,
+      "sx": 70,
+      "measure": 8,
+      "barrier": 1
+    },
+    "python": "3.12.3",
+    "packages": {
+      "numpy": "2.5.1",
+      "qiskit": "2.5.0",
+      "qiskit-aer": "0.17.2",
+      "scikit-learn": "1.9.0"
+    }
+  },
+  "methodology": {
+    "effective_fraction_model": "P_obs = f*P_ideal + (1-f)*P_uniform",
+    "effective_fraction_interpretation": "estimatore descrittivo della massa sui picchi; non misura fisica di coerenza",
+    "proxy_field": "p_no_nonidentity_2q_proxy",
+    "proxy_formula": "(1 - 15*lambda_2q/16)**n_cx",
+    "proxy_interpretation": "proxy indipendente di nessun evento Pauli 2Q non-identità",
+    "proxy_is_not": [
+      "probabilità di successo di Shor",
+      "fedeltà del circuito",
+      "sopravvivenza fisica del segnale"
+    ]
+  },
+  "circuit": {
+    "n_cx": 224,
+    "theoretical_peaks": [
+      0,
+      64,
+      128,
+      192
+    ]
+  },
+  "results": [
+    {
+      "lambda_2q": 0.001,
+      "mean_peak_mass": 0.806640625,
+      "peak_mass_std_population": 0.009563334509644602,
+      "effective_signal_fraction": 0.8035714285714286,
+      "p_no_nonidentity_2q_proxy": 0.8105044081104895,
+      "effective_fraction_to_proxy_ratio": 0.9914460927421436,
+      "mode_distribution": [
+        {
+          "value": 128,
+          "count": 9,
+          "rate": 0.45
+        },
+        {
+          "value": 0,
+          "count": 7,
+          "rate": 0.35
+        },
+        {
+          "value": 64,
+          "count": 3,
+          "rate": 0.15
+        },
+        {
+          "value": 192,
+          "count": 1,
+          "rate": 0.05
+        }
+      ],
+      "replicates": [
+        {
+          "seed_simulator": 11010000,
+          "peak_mass": 0.8056640625,
+          "top_value": 0,
+          "rep": 1
+        },
+        {
+          "seed_simulator": 11020000,
+          "peak_mass": 0.7919921875,
+          "top_value": 64,
+          "rep": 2
+        },
+        {
+          "seed_simulator": 11030000,
+          "peak_mass": 0.794921875,
+          "top_value": 128,
+          "rep": 3
+        },
+        {
+          "seed_simulator": 11040000,
+          "peak_mass": 0.818359375,
+          "top_value": 192,
+          "rep": 4
+        },
+        {
+          "seed_simulator": 11050000,
+          "peak_mass": 0.7958984375,
+          "top_value": 128,
+          "rep": 5
+        },
+        {
+          "seed_simulator": 11060000,
+          "peak_mass": 0.80078125,
+          "top_value": 128,
+          "rep": 6
+        },
+        {
+          "seed_simulator": 11070000,
+          "peak_mass": 0.8017578125,
+          "top_value": 0,
+          "rep": 7
+        },
+        {
+          "seed_simulator": 11080000,
+          "peak_mass": 0.8134765625,
+          "top_value": 0,
+          "rep": 8
+        },
+        {
+          "seed_simulator": 11090000,
+          "peak_mass": 0.8037109375,
+          "top_value": 0,
+          "rep": 9
+        },
+        {
+          "seed_simulator": 11100000,
+          "peak_mass": 0.802734375,
+          "top_value": 64,
+          "rep": 10
+        },
+        {
+          "seed_simulator": 11110000,
+          "peak_mass": 0.83203125,
+          "top_value": 64,
+          "rep": 11
+        },
+        {
+          "seed_simulator": 11120000,
+          "peak_mass": 0.7919921875,
+          "top_value": 128,
+          "rep": 12
+        },
+        {
+          "seed_simulator": 11130000,
+          "peak_mass": 0.8076171875,
+          "top_value": 128,
+          "rep": 13
+        },
+        {
+          "seed_simulator": 11140000,
+          "peak_mass": 0.8173828125,
+          "top_value": 0,
+          "rep": 14
+        },
+        {
+          "seed_simulator": 11150000,
+          "peak_mass": 0.8134765625,
+          "top_value": 0,
+          "rep": 15
+        },
+        {
+          "seed_simulator": 11160000,
+          "peak_mass": 0.8037109375,
+          "top_value": 128,
+          "rep": 16
+        },
+        {
+          "seed_simulator": 11170000,
+          "peak_mass": 0.8056640625,
+          "top_value": 128,
+          "rep": 17
+        },
+        {
+          "seed_simulator": 11180000,
+          "peak_mass": 0.8076171875,
+          "top_value": 128,
+          "rep": 18
+        },
+        {
+          "seed_simulator": 11190000,
+          "peak_mass": 0.8134765625,
+          "top_value": 128,
+          "rep": 19
+        },
+        {
+          "seed_simulator": 11200000,
+          "peak_mass": 0.810546875,
+          "top_value": 0,
+          "rep": 20
+        }
+      ]
+    },
+    {
+      "lambda_2q": 0.005,
+      "mean_peak_mass": 0.70849609375,
+      "peak_mass_std_population": 0.015246577144527339,
+      "effective_signal_fraction": 0.7038690476190477,
+      "p_no_nonidentity_2q_proxy": 0.34907493894181324,
+      "effective_fraction_to_proxy_ratio": 2.0163837878272166,
+      "mode_distribution": [
+        {
+          "value": 128,
+          "count": 10,
+          "rate": 0.5
+        },
+        {
+          "value": 64,
+          "count": 5,
+          "rate": 0.25
+        },
+        {
+          "value": 0,
+          "count": 4,
+          "rate": 0.2
+        },
+        {
+          "value": 192,
+          "count": 1,
+          "rate": 0.05
+        }
+      ],
+      "replicates": [
+        {
+          "seed_simulator": 11010000,
+          "peak_mass": 0.724609375,
+          "top_value": 128,
+          "rep": 1
+        },
+        {
+          "seed_simulator": 11020000,
+          "peak_mass": 0.69140625,
+          "top_value": 64,
+          "rep": 2
+        },
+        {
+          "seed_simulator": 11030000,
+          "peak_mass": 0.7197265625,
+          "top_value": 0,
+          "rep": 3
+        },
+        {
+          "seed_simulator": 11040000,
+          "peak_mass": 0.7138671875,
+          "top_value": 0,
+          "rep": 4
+        },
+        {
+          "seed_simulator": 11050000,
+          "peak_mass": 0.6904296875,
+          "top_value": 64,
+          "rep": 5
+        },
+        {
+          "seed_simulator": 11060000,
+          "peak_mass": 0.7001953125,
+          "top_value": 128,
+          "rep": 6
+        },
+        {
+          "seed_simulator": 11070000,
+          "peak_mass": 0.701171875,
+          "top_value": 0,
+          "rep": 7
+        },
+        {
+          "seed_simulator": 11080000,
+          "peak_mass": 0.7138671875,
+          "top_value": 128,
+          "rep": 8
+        },
+        {
+          "seed_simulator": 11090000,
+          "peak_mass": 0.68359375,
+          "top_value": 64,
+          "rep": 9
+        },
+        {
+          "seed_simulator": 11100000,
+          "peak_mass": 0.7177734375,
+          "top_value": 128,
+          "rep": 10
+        },
+        {
+          "seed_simulator": 11110000,
+          "peak_mass": 0.72265625,
+          "top_value": 128,
+          "rep": 11
+        },
+        {
+          "seed_simulator": 11120000,
+          "peak_mass": 0.6806640625,
+          "top_value": 128,
+          "rep": 12
+        },
+        {
+          "seed_simulator": 11130000,
+          "peak_mass": 0.7119140625,
+          "top_value": 128,
+          "rep": 13
+        },
+        {
+          "seed_simulator": 11140000,
+          "peak_mass": 0.6982421875,
+          "top_value": 0,
+          "rep": 14
+        },
+        {
+          "seed_simulator": 11150000,
+          "peak_mass": 0.7158203125,
+          "top_value": 128,
+          "rep": 15
+        },
+        {
+          "seed_simulator": 11160000,
+          "peak_mass": 0.703125,
+          "top_value": 64,
+          "rep": 16
+        },
+        {
+          "seed_simulator": 11170000,
+          "peak_mass": 0.7119140625,
+          "top_value": 192,
+          "rep": 17
+        },
+        {
+          "seed_simulator": 11180000,
+          "peak_mass": 0.7109375,
+          "top_value": 64,
+          "rep": 18
+        },
+        {
+          "seed_simulator": 11190000,
+          "peak_mass": 0.748046875,
+          "top_value": 128,
+          "rep": 19
+        },
+        {
+          "seed_simulator": 11200000,
+          "peak_mass": 0.7099609375,
+          "top_value": 128,
+          "rep": 20
+        }
+      ]
+    },
+    {
+      "lambda_2q": 0.01,
+      "mean_peak_mass": 0.60009765625,
+      "peak_mass_std_population": 0.014427037795599763,
+      "effective_signal_fraction": 0.59375,
+      "p_no_nonidentity_2q_proxy": 0.12124939858577964,
+      "effective_fraction_to_proxy_ratio": 4.896931505849433,
+      "mode_distribution": [
+        {
+          "value": 0,
+          "count": 7,
+          "rate": 0.35
+        },
+        {
+          "value": 128,
+          "count": 7,
+          "rate": 0.35
+        },
+        {
+          "value": 64,
+          "count": 3,
+          "rate": 0.15
+        },
+        {
+          "value": 192,
+          "count": 3,
+          "rate": 0.15
+        }
+      ],
+      "replicates": [
+        {
+          "seed_simulator": 11010000,
+          "peak_mass": 0.6005859375,
+          "top_value": 0,
+          "rep": 1
+        },
+        {
+          "seed_simulator": 11020000,
+          "peak_mass": 0.5927734375,
+          "top_value": 64,
+          "rep": 2
+        },
+        {
+          "seed_simulator": 11030000,
+          "peak_mass": 0.5947265625,
+          "top_value": 0,
+          "rep": 3
+        },
+        {
+          "seed_simulator": 11040000,
+          "peak_mass": 0.6240234375,
+          "top_value": 128,
+          "rep": 4
+        },
+        {
+          "seed_simulator": 11050000,
+          "peak_mass": 0.58203125,
+          "top_value": 0,
+          "rep": 5
+        },
+        {
+          "seed_simulator": 11060000,
+          "peak_mass": 0.5986328125,
+          "top_value": 128,
+          "rep": 6
+        },
+        {
+          "seed_simulator": 11070000,
+          "peak_mass": 0.6005859375,
+          "top_value": 0,
+          "rep": 7
+        },
+        {
+          "seed_simulator": 11080000,
+          "peak_mass": 0.6044921875,
+          "top_value": 64,
+          "rep": 8
+        },
+        {
+          "seed_simulator": 11090000,
+          "peak_mass": 0.5869140625,
+          "top_value": 64,
+          "rep": 9
+        },
+        {
+          "seed_simulator": 11100000,
+          "peak_mass": 0.6201171875,
+          "top_value": 128,
+          "rep": 10
+        },
+        {
+          "seed_simulator": 11110000,
+          "peak_mass": 0.611328125,
+          "top_value": 192,
+          "rep": 11
+        },
+        {
+          "seed_simulator": 11120000,
+          "peak_mass": 0.5791015625,
+          "top_value": 0,
+          "rep": 12
+        },
+        {
+          "seed_simulator": 11130000,
+          "peak_mass": 0.60546875,
+          "top_value": 128,
+          "rep": 13
+        },
+        {
+          "seed_simulator": 11140000,
+          "peak_mass": 0.5947265625,
+          "top_value": 0,
+          "rep": 14
+        },
+        {
+          "seed_simulator": 11150000,
+          "peak_mass": 0.6162109375,
+          "top_value": 192,
+          "rep": 15
+        },
+        {
+          "seed_simulator": 11160000,
+          "peak_mass": 0.59375,
+          "top_value": 128,
+          "rep": 16
+        },
+        {
+          "seed_simulator": 11170000,
+          "peak_mass": 0.5654296875,
+          "top_value": 128,
+          "rep": 17
+        },
+        {
+          "seed_simulator": 11180000,
+          "peak_mass": 0.6005859375,
+          "top_value": 0,
+          "rep": 18
+        },
+        {
+          "seed_simulator": 11190000,
+          "peak_mass": 0.615234375,
+          "top_value": 128,
+          "rep": 19
+        },
+        {
+          "seed_simulator": 11200000,
+          "peak_mass": 0.615234375,
+          "top_value": 192,
+          "rep": 20
+        }
+      ]
+    },
+    {
+      "lambda_2q": 0.02,
+      "mean_peak_mass": 0.437548828125,
+      "peak_mass_std_population": 0.01545770732643735,
+      "effective_signal_fraction": 0.4286210317460318,
+      "p_no_nonidentity_2q_proxy": 0.014409404225310873,
+      "effective_fraction_to_proxy_ratio": 29.745923220970962,
+      "mode_distribution": [
+        {
+          "value": 0,
+          "count": 8,
+          "rate": 0.4
+        },
+        {
+          "value": 128,
+          "count": 5,
+          "rate": 0.25
+        },
+        {
+          "value": 64,
+          "count": 4,
+          "rate": 0.2
+        },
+        {
+          "value": 192,
+          "count": 3,
+          "rate": 0.15
+        }
+      ],
+      "replicates": [
+        {
+          "seed_simulator": 11010000,
+          "peak_mass": 0.4228515625,
+          "top_value": 192,
+          "rep": 1
+        },
+        {
+          "seed_simulator": 11020000,
+          "peak_mass": 0.4404296875,
+          "top_value": 0,
+          "rep": 2
+        },
+        {
+          "seed_simulator": 11030000,
+          "peak_mass": 0.470703125,
+          "top_value": 128,
+          "rep": 3
+        },
+        {
+          "seed_simulator": 11040000,
+          "peak_mass": 0.43359375,
+          "top_value": 64,
+          "rep": 4
+        },
+        {
+          "seed_simulator": 11050000,
+          "peak_mass": 0.4189453125,
+          "top_value": 0,
+          "rep": 5
+        },
+        {
+          "seed_simulator": 11060000,
+          "peak_mass": 0.4736328125,
+          "top_value": 192,
+          "rep": 6
+        },
+        {
+          "seed_simulator": 11070000,
+          "peak_mass": 0.4130859375,
+          "top_value": 0,
+          "rep": 7
+        },
+        {
+          "seed_simulator": 11080000,
+          "peak_mass": 0.4599609375,
+          "top_value": 64,
+          "rep": 8
+        },
+        {
+          "seed_simulator": 11090000,
+          "peak_mass": 0.4306640625,
+          "top_value": 64,
+          "rep": 9
+        },
+        {
+          "seed_simulator": 11100000,
+          "peak_mass": 0.4375,
+          "top_value": 0,
+          "rep": 10
+        },
+        {
+          "seed_simulator": 11110000,
+          "peak_mass": 0.4375,
+          "top_value": 0,
+          "rep": 11
+        },
+        {
+          "seed_simulator": 11120000,
+          "peak_mass": 0.4326171875,
+          "top_value": 64,
+          "rep": 12
+        },
+        {
+          "seed_simulator": 11130000,
+          "peak_mass": 0.4404296875,
+          "top_value": 128,
+          "rep": 13
+        },
+        {
+          "seed_simulator": 11140000,
+          "peak_mass": 0.4189453125,
+          "top_value": 128,
+          "rep": 14
+        },
+        {
+          "seed_simulator": 11150000,
+          "peak_mass": 0.4365234375,
+          "top_value": 0,
+          "rep": 15
+        },
+        {
+          "seed_simulator": 11160000,
+          "peak_mass": 0.4501953125,
+          "top_value": 128,
+          "rep": 16
+        },
+        {
+          "seed_simulator": 11170000,
+          "peak_mass": 0.4365234375,
+          "top_value": 192,
+          "rep": 17
+        },
+        {
+          "seed_simulator": 11180000,
+          "peak_mass": 0.4345703125,
+          "top_value": 0,
+          "rep": 18
+        },
+        {
+          "seed_simulator": 11190000,
+          "peak_mass": 0.4287109375,
+          "top_value": 128,
+          "rep": 19
+        },
+        {
+          "seed_simulator": 11200000,
+          "peak_mass": 0.43359375,
+          "top_value": 0,
+          "rep": 20
+        }
+      ]
+    },
+    {
+      "lambda_2q": 0.05,
+      "mean_peak_mass": 0.181787109375,
+      "peak_mass_std_population": 0.010262157208645322,
+      "effective_signal_fraction": 0.16879960317460319,
+      "p_no_nonidentity_2q_proxy": 2.1358407588644437e-05,
+      "effective_fraction_to_proxy_ratio": 7903.192336508663,
+      "mode_distribution": [
+        {
+          "value": 0,
+          "count": 7,
+          "rate": 0.35
+        },
+        {
+          "value": 64,
+          "count": 5,
+          "rate": 0.25
+        },
+        {
+          "value": 192,
+          "count": 5,
+          "rate": 0.25
+        },
+        {
+          "value": 128,
+          "count": 3,
+          "rate": 0.15
+        }
+      ],
+      "replicates": [
+        {
+          "seed_simulator": 11010000,
+          "peak_mass": 0.1708984375,
+          "top_value": 0,
+          "rep": 1
+        },
+        {
+          "seed_simulator": 11020000,
+          "peak_mass": 0.18359375,
+          "top_value": 192,
+          "rep": 2
+        },
+        {
+          "seed_simulator": 11030000,
+          "peak_mass": 0.1728515625,
+          "top_value": 0,
+          "rep": 3
+        },
+        {
+          "seed_simulator": 11040000,
+          "peak_mass": 0.185546875,
+          "top_value": 0,
+          "rep": 4
+        },
+        {
+          "seed_simulator": 11050000,
+          "peak_mass": 0.19140625,
+          "top_value": 64,
+          "rep": 5
+        },
+        {
+          "seed_simulator": 11060000,
+          "peak_mass": 0.177734375,
+          "top_value": 192,
+          "rep": 6
+        },
+        {
+          "seed_simulator": 11070000,
+          "peak_mass": 0.1748046875,
+          "top_value": 64,
+          "rep": 7
+        },
+        {
+          "seed_simulator": 11080000,
+          "peak_mass": 0.1796875,
+          "top_value": 128,
+          "rep": 8
+        },
+        {
+          "seed_simulator": 11090000,
+          "peak_mass": 0.1630859375,
+          "top_value": 192,
+          "rep": 9
+        },
+        {
+          "seed_simulator": 11100000,
+          "peak_mass": 0.1728515625,
+          "top_value": 64,
+          "rep": 10
+        },
+        {
+          "seed_simulator": 11110000,
+          "peak_mass": 0.18359375,
+          "top_value": 0,
+          "rep": 11
+        },
+        {
+          "seed_simulator": 11120000,
+          "peak_mass": 0.1845703125,
+          "top_value": 192,
+          "rep": 12
+        },
+        {
+          "seed_simulator": 11130000,
+          "peak_mass": 0.1865234375,
+          "top_value": 64,
+          "rep": 13
+        },
+        {
+          "seed_simulator": 11140000,
+          "peak_mass": 0.1796875,
+          "top_value": 0,
+          "rep": 14
+        },
+        {
+          "seed_simulator": 11150000,
+          "peak_mass": 0.193359375,
+          "top_value": 0,
+          "rep": 15
+        },
+        {
+          "seed_simulator": 11160000,
+          "peak_mass": 0.17578125,
+          "top_value": 128,
+          "rep": 16
+        },
+        {
+          "seed_simulator": 11170000,
+          "peak_mass": 0.1962890625,
+          "top_value": 192,
+          "rep": 17
+        },
+        {
+          "seed_simulator": 11180000,
+          "peak_mass": 0.2041015625,
+          "top_value": 128,
+          "rep": 18
+        },
+        {
+          "seed_simulator": 11190000,
+          "peak_mass": 0.193359375,
+          "top_value": 64,
+          "rep": 19
+        },
+        {
+          "seed_simulator": 11200000,
+          "peak_mass": 0.166015625,
+          "top_value": 0,
+          "rep": 20
+        }
+      ]
+    },
+    {
+      "lambda_2q": 0.1,
+      "mean_peak_mass": 0.05703125,
+      "peak_mass_std_population": 0.006339387643405266,
+      "effective_signal_fraction": 0.04206349206349206,
+      "p_no_nonidentity_2q_proxy": 2.6518953738967256e-10,
+      "effective_fraction_to_proxy_ratio": 158616710.43863046,
+      "mode_distribution": [
+        {
+          "value": 0,
+          "count": 6,
+          "rate": 0.3
+        },
+        {
+          "value": 64,
+          "count": 6,
+          "rate": 0.3
+        },
+        {
+          "value": 128,
+          "count": 4,
+          "rate": 0.2
+        },
+        {
+          "value": 192,
+          "count": 4,
+          "rate": 0.2
+        }
+      ],
+      "replicates": [
+        {
+          "seed_simulator": 11010000,
+          "peak_mass": 0.0625,
+          "top_value": 192,
+          "rep": 1
+        },
+        {
+          "seed_simulator": 11020000,
+          "peak_mass": 0.05078125,
+          "top_value": 128,
+          "rep": 2
+        },
+        {
+          "seed_simulator": 11030000,
+          "peak_mass": 0.052734375,
+          "top_value": 192,
+          "rep": 3
+        },
+        {
+          "seed_simulator": 11040000,
+          "peak_mass": 0.05078125,
+          "top_value": 0,
+          "rep": 4
+        },
+        {
+          "seed_simulator": 11050000,
+          "peak_mass": 0.0546875,
+          "top_value": 64,
+          "rep": 5
+        },
+        {
+          "seed_simulator": 11060000,
+          "peak_mass": 0.0517578125,
+          "top_value": 64,
+          "rep": 6
+        },
+        {
+          "seed_simulator": 11070000,
+          "peak_mass": 0.0498046875,
+          "top_value": 0,
+          "rep": 7
+        },
+        {
+          "seed_simulator": 11080000,
+          "peak_mass": 0.0478515625,
+          "top_value": 64,
+          "rep": 8
+        },
+        {
+          "seed_simulator": 11090000,
+          "peak_mass": 0.0634765625,
+          "top_value": 0,
+          "rep": 9
+        },
+        {
+          "seed_simulator": 11100000,
+          "peak_mass": 0.0546875,
+          "top_value": 64,
+          "rep": 10
+        },
+        {
+          "seed_simulator": 11110000,
+          "peak_mass": 0.0673828125,
+          "top_value": 128,
+          "rep": 11
+        },
+        {
+          "seed_simulator": 11120000,
+          "peak_mass": 0.056640625,
+          "top_value": 128,
+          "rep": 12
+        },
+        {
+          "seed_simulator": 11130000,
+          "peak_mass": 0.0546875,
+          "top_value": 192,
+          "rep": 13
+        },
+        {
+          "seed_simulator": 11140000,
+          "peak_mass": 0.060546875,
+          "top_value": 128,
+          "rep": 14
+        },
+        {
+          "seed_simulator": 11150000,
+          "peak_mass": 0.06640625,
+          "top_value": 64,
+          "rep": 15
+        },
+        {
+          "seed_simulator": 11160000,
+          "peak_mass": 0.052734375,
+          "top_value": 0,
+          "rep": 16
+        },
+        {
+          "seed_simulator": 11170000,
+          "peak_mass": 0.0703125,
+          "top_value": 0,
+          "rep": 17
+        },
+        {
+          "seed_simulator": 11180000,
+          "peak_mass": 0.0517578125,
+          "top_value": 0,
+          "rep": 18
+        },
+        {
+          "seed_simulator": 11190000,
+          "peak_mass": 0.060546875,
+          "top_value": 192,
+          "rep": 19
+        },
+        {
+          "seed_simulator": 11200000,
+          "peak_mass": 0.060546875,
+          "top_value": 64,
+          "rep": 20
+        }
+      ]
+    },
+    {
+      "lambda_2q": 0.2,
+      "mean_peak_mass": 0.02021484375,
+      "peak_mass_std_population": 0.003870687730977815,
+      "effective_signal_fraction": 0.004662698412698412,
+      "p_no_nonidentity_2q_proxy": 6.315893552010719e-21,
+      "effective_fraction_to_proxy_ratio": 7.382484163644591e+17,
+      "mode_distribution": [
+        {
+          "value": 0,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 5,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 10,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 32,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 44,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 45,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 99,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 110,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 115,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 128,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 132,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 134,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 145,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 154,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 160,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 182,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 183,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 197,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 200,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 218,
+          "count": 1,
+          "rate": 0.05
+        }
+      ],
+      "replicates": [
+        {
+          "seed_simulator": 11010000,
+          "peak_mass": 0.0185546875,
+          "top_value": 32,
+          "rep": 1
+        },
+        {
+          "seed_simulator": 11020000,
+          "peak_mass": 0.0244140625,
+          "top_value": 197,
+          "rep": 2
+        },
+        {
+          "seed_simulator": 11030000,
+          "peak_mass": 0.0126953125,
+          "top_value": 99,
+          "rep": 3
+        },
+        {
+          "seed_simulator": 11040000,
+          "peak_mass": 0.021484375,
+          "top_value": 145,
+          "rep": 4
+        },
+        {
+          "seed_simulator": 11050000,
+          "peak_mass": 0.02734375,
+          "top_value": 134,
+          "rep": 5
+        },
+        {
+          "seed_simulator": 11060000,
+          "peak_mass": 0.01953125,
+          "top_value": 218,
+          "rep": 6
+        },
+        {
+          "seed_simulator": 11070000,
+          "peak_mass": 0.0244140625,
+          "top_value": 0,
+          "rep": 7
+        },
+        {
+          "seed_simulator": 11080000,
+          "peak_mass": 0.0205078125,
+          "top_value": 10,
+          "rep": 8
+        },
+        {
+          "seed_simulator": 11090000,
+          "peak_mass": 0.01953125,
+          "top_value": 44,
+          "rep": 9
+        },
+        {
+          "seed_simulator": 11100000,
+          "peak_mass": 0.0263671875,
+          "top_value": 183,
+          "rep": 10
+        },
+        {
+          "seed_simulator": 11110000,
+          "peak_mass": 0.0185546875,
+          "top_value": 200,
+          "rep": 11
+        },
+        {
+          "seed_simulator": 11120000,
+          "peak_mass": 0.0244140625,
+          "top_value": 45,
+          "rep": 12
+        },
+        {
+          "seed_simulator": 11130000,
+          "peak_mass": 0.0205078125,
+          "top_value": 128,
+          "rep": 13
+        },
+        {
+          "seed_simulator": 11140000,
+          "peak_mass": 0.0205078125,
+          "top_value": 5,
+          "rep": 14
+        },
+        {
+          "seed_simulator": 11150000,
+          "peak_mass": 0.0166015625,
+          "top_value": 132,
+          "rep": 15
+        },
+        {
+          "seed_simulator": 11160000,
+          "peak_mass": 0.01953125,
+          "top_value": 115,
+          "rep": 16
+        },
+        {
+          "seed_simulator": 11170000,
+          "peak_mass": 0.01953125,
+          "top_value": 154,
+          "rep": 17
+        },
+        {
+          "seed_simulator": 11180000,
+          "peak_mass": 0.0126953125,
+          "top_value": 110,
+          "rep": 18
+        },
+        {
+          "seed_simulator": 11190000,
+          "peak_mass": 0.015625,
+          "top_value": 160,
+          "rep": 19
+        },
+        {
+          "seed_simulator": 11200000,
+          "peak_mass": 0.021484375,
+          "top_value": 182,
+          "rep": 20
+        }
+      ]
+    },
+    {
+      "lambda_2q": 0.3,
+      "mean_peak_mass": 0.01708984375,
+      "peak_mass_std_population": 0.0026833264968816575,
+      "effective_signal_fraction": 0.001488095238095238,
+      "p_no_nonidentity_2q_proxy": 7.472056106470477e-33,
+      "effective_fraction_to_proxy_ratio": 1.99154719516441e+29,
+      "mode_distribution": [
+        {
+          "value": 52,
+          "count": 2,
+          "rate": 0.1
+        },
+        {
+          "value": 11,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 20,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 36,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 46,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 47,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 48,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 53,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 115,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 121,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 129,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 171,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 192,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 200,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 203,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 224,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 233,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 236,
+          "count": 1,
+          "rate": 0.05
+        },
+        {
+          "value": 249,
+          "count": 1,
+          "rate": 0.05
+        }
+      ],
+      "replicates": [
+        {
+          "seed_simulator": 11010000,
+          "peak_mass": 0.0185546875,
+          "top_value": 20,
+          "rep": 1
+        },
+        {
+          "seed_simulator": 11020000,
+          "peak_mass": 0.017578125,
+          "top_value": 48,
+          "rep": 2
+        },
+        {
+          "seed_simulator": 11030000,
+          "peak_mass": 0.0205078125,
+          "top_value": 192,
+          "rep": 3
+        },
+        {
+          "seed_simulator": 11040000,
+          "peak_mass": 0.0146484375,
+          "top_value": 129,
+          "rep": 4
+        },
+        {
+          "seed_simulator": 11050000,
+          "peak_mass": 0.0166015625,
+          "top_value": 11,
+          "rep": 5
+        },
+        {
+          "seed_simulator": 11060000,
+          "peak_mass": 0.017578125,
+          "top_value": 47,
+          "rep": 6
+        },
+        {
+          "seed_simulator": 11070000,
+          "peak_mass": 0.0146484375,
+          "top_value": 46,
+          "rep": 7
+        },
+        {
+          "seed_simulator": 11080000,
+          "peak_mass": 0.0185546875,
+          "top_value": 36,
+          "rep": 8
+        },
+        {
+          "seed_simulator": 11090000,
+          "peak_mass": 0.0205078125,
+          "top_value": 233,
+          "rep": 9
+        },
+        {
+          "seed_simulator": 11100000,
+          "peak_mass": 0.0244140625,
+          "top_value": 53,
+          "rep": 10
+        },
+        {
+          "seed_simulator": 11110000,
+          "peak_mass": 0.0166015625,
+          "top_value": 249,
+          "rep": 11
+        },
+        {
+          "seed_simulator": 11120000,
+          "peak_mass": 0.017578125,
+          "top_value": 115,
+          "rep": 12
+        },
+        {
+          "seed_simulator": 11130000,
+          "peak_mass": 0.0166015625,
+          "top_value": 200,
+          "rep": 13
+        },
+        {
+          "seed_simulator": 11140000,
+          "peak_mass": 0.0146484375,
+          "top_value": 52,
+          "rep": 14
+        },
+        {
+          "seed_simulator": 11150000,
+          "peak_mass": 0.013671875,
+          "top_value": 236,
+          "rep": 15
+        },
+        {
+          "seed_simulator": 11160000,
+          "peak_mass": 0.017578125,
+          "top_value": 121,
+          "rep": 16
+        },
+        {
+          "seed_simulator": 11170000,
+          "peak_mass": 0.017578125,
+          "top_value": 171,
+          "rep": 17
+        },
+        {
+          "seed_simulator": 11180000,
+          "peak_mass": 0.0166015625,
+          "top_value": 203,
+          "rep": 18
+        },
+        {
+          "seed_simulator": 11190000,
+          "peak_mass": 0.01171875,
+          "top_value": 52,
+          "rep": 19
+        },
+        {
+          "seed_simulator": 11200000,
+          "peak_mass": 0.015625,
+          "top_value": 224,
+          "rep": 20
+        }
+      ]
+    }
+  ]
+}
