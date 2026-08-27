@@ -1,0 +1,121 @@
+% =====================================================================
+%  Sommario del Lavoro di Tesi -- Laurea Magistrale in Ingegneria dei
+%  Sistemi Intelligenti, Universita' Campus Bio-Medico di Roma.
+%
+%  Conforme al template ufficiale
+%  "Extra/template_ABSTRACT LM ISI_rev1 (003).docx":
+%    - Times New Roman 12 pt, interlinea 1,15;
+%    - margini 3 cm sopra/sotto/destro, 3,5 cm sinistro;
+%    - sommario italiano entro 5 pagine;
+%    - sezioni Introduzione / Materiali e Metodi / Risultati /
+%      Discussione e Conclusioni / Bibliografia;
+%    - riferimenti numerati nell'ordine di apparizione nel testo.
+%
+%  Compilazione:  latexmk -pdf main.tex      (backend Biber)
+% =====================================================================
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,italian]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{newtxtext,newtxmath}          % Times New Roman (testo e matematica)
+
+\usepackage[a4paper,top=3cm,bottom=3cm,left=3.5cm,right=3cm,
+            head=1.35cm,headsep=0.45cm,foot=1.1cm]{geometry}
+
+\usepackage{graphicx}
+\graphicspath{{figure/}}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage[autostyle=true]{csquotes}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+\usepackage[backend=biber,citestyle=numeric,bibstyle=numeric,sorting=none,
+            maxbibnames=3,minbibnames=3,giveninits=true,
+            doi=false,isbn=false,url=false,eprint=false]{biblatex}
+\addbibresource{Bibliografia.bib}
+
+% --- interlinea 1,15 come da template -------------------------------
+\setstretch{1.15}
+
+% --- intestazione con logo, come da template ------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\raisebox{-0.28\height}{\includegraphics[height=1.02cm]{ucbm-logo.png}}}
+\fancyhead[R]{\parbox[c]{11.0cm}{\raggedleft\footnotesize\itshape
+  Sommario del Lavoro di Tesi, Laurea Magistrale in Ingegneria dei
+  Sistemi Intelligenti, Universit\`a Campus Bio-Medico di Roma}}
+\fancyfoot[C]{\footnotesize\thepage}
+
+% --- spaziature compatte: il template impone il limite di 5 pagine --
+\setlength{\abovedisplayskip}{4pt plus 2pt minus 2pt}
+\setlength{\belowdisplayskip}{4pt plus 2pt minus 2pt}
+\setlength{\abovedisplayshortskip}{2pt plus 1pt}
+\setlength{\belowdisplayshortskip}{3pt plus 1pt}
+\setlength{\parindent}{1em}
+\setlength{\parskip}{0pt plus 0.6pt}
+\setlist{nosep,leftmargin=*,topsep=2pt,itemsep=1pt}
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+  {-2.0ex \@plus -.8ex \@minus -.2ex}{0.8ex \@plus .2ex}%
+  {\normalfont\large\bfseries}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+  {-1.6ex \@plus -.6ex \@minus -.2ex}{0.4ex \@plus .2ex}%
+  {\normalfont\normalsize\bfseries}}
+\makeatother
+
+\setlength{\abovecaptionskip}{4pt}
+\setlength{\belowcaptionskip}{2pt}
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\renewcommand{\arraystretch}{0.98}
+
+% --- dati del frontespizio ------------------------------------------
+\newcommand{\titoloIT}{Implementazione e ottimizzazione dell'algoritmo di Shor
+  in ambienti quantistici rumorosi mediante modelli di intelligenza artificiale}
+\newcommand{\titoloEN}{Implementation and Optimization of Shor's Algorithm
+  in Noisy Quantum Environments through Artificial Intelligence Models}
+\newcommand{\laureando}{Claudio Dragotta}
+\newcommand{\relatore}{Prof. Paolo Soda}
+\newcommand{\correlatore}{Ing. Floriano Caprio}
+\newcommand{\sessione}{[\,inserire sessione\,] --- A.A. 2025/2026}
+
+% --- blocco identificativo, ripetuto in testa alle due versioni -----
+\newcommand{\bloccoTitolo}[6]{%
+  \begin{center}
+    {\large\bfseries #1}\\[3pt]
+    {\small\itshape #2}
+  \end{center}
+  \vspace{-4pt}
+  {\small\setlength{\tabcolsep}{0pt}%
+  \begin{tabular}{p{0.46\textwidth}p{0.53\textwidth}}
+    \textbf{#3:} \laureando & \textbf{#4:} \relatore\\[1pt]
+    \textbf{#5:} \correlatore & \textbf{#6:} \sessione
+  \end{tabular}}
+  \vspace{3pt}
+  \hrule
+  \vspace{-2pt}
+}
+
+\begin{document}
+
+% =====================================================================
+%  SOMMARIO IN ITALIANO (entro 5 pagine)
+% =====================================================================
+\bloccoTitolo{\titoloIT}{\titoloEN}{Laureando}{Relatore}{Correlatore}{Sessione di Laurea}
+
+\input{sezioni/01_introduzione}
+\input{sezioni/02_materiali_metodi}
+\input{sezioni/03_risultati}
+\input{sezioni/04_discussione}
+\input{sezioni/05_bibliografia}
+
+\end{document}

@@ -1,0 +1,277 @@
+% =====================================================================
+%  Abstract della tesi.
+%
+%  Il testo e' quello del Sommario del Lavoro di Tesi
+%  (file_latex_sommario/sezioni/*.tex), adattato all'inserimento qui:
+%
+%    - titolazioni non numerate: prima del Capitolo 1 una \section
+%      numerata uscirebbe come "0.1" e finirebbe nell'indice;
+%    - equazioni e tabella in numerazione araba semplice, ripristinata
+%      subito dopo, cosi' il Capitolo 1 riparte da 1.1;
+%    - etichette prefissate "abs-", per non collidere con i capitoli;
+%    - tabella con [H] (pacchetto float): un float differito verrebbe
+%      composto dopo il ripristino dei contatori e si rinumererebbe;
+%    - nessuna voce in elenco figure/tabelle;
+%    - bibliografia propria rimossa: le dieci citazioni confluiscono
+%      nella bibliografia unica in fondo alla tesi (le chiavi sono gia'
+%      tutte in Bibliografia.bib).
+%
+%  ATTENZIONE: questo file e' una COPIA del sommario, non un include.
+%  Overleaf riceve solo file_latex/, quindi non si poteva puntare alla
+%  cartella del sommario. Una correzione al testo va fatta due volte.
+% =====================================================================
+
+% --- pagina divisoria ------------------------------------------------
+\clearpage
+\thispagestyle{empty}
+\phantomsection
+\addcontentsline{toc}{chapter}{Abstract}
+\vspace*{\fill}
+\begin{center}
+    {\Huge\bfseries Abstract}
+\end{center}
+\vspace*{\fill}
+\clearpage
+
+% --- numerazione locale ----------------------------------------------
+\renewcommand{\theequation}{\arabic{equation}}
+\renewcommand{\thetable}{\arabic{table}}
+\let\abstractACL\addcontentsline
+\renewcommand{\addcontentsline}[3]{}
+
+\section*{Introduzione}
+
+L'algoritmo di Shor~\cite{shor1994} fattorizza un intero composto in tempo polinomiale,
+$O\!\left((\log N)^{3}\right)$, contro il tempo sub-esponenziale del miglior algoritmo classico
+noto.
+È questo divario a minacciare RSA~\cite{rsa1978}, ma è asintotico e i dispositivi \emph{Noisy
+Intermediate-Scale Quantum}~\cite{preskill2018} non lo realizzano: il rumore distrugge la struttura
+periodica su cui l'algoritmo si fonda, le dimostrazioni restano confinate a moduli
+didattici~\cite{skosana2021} e RSA-2048 richiederebbe venti milioni di qubit
+fisici~\cite{gidney2021}. Fra i due estremi restano due rimedi, la
+mitigazione a valle e la correzione d'errore durante il calcolo, ai quali un numero crescente di
+lavori applica modelli appresi dai dati, spesso senza un termine di confronto che isoli il
+contributo del modello da quello della regola decisionale.
+
+Il lavoro riprende un'attività già avviata nello stesso progetto --- implementazione di riferimento
+di Shor in Qiskit e prima campagna rumorosa su $N=15$ --- rigenerandola integralmente dopo che un
+audit per truth table ne ha invalidato il moltiplicatore modulare. L'obiettivo è perciò formulato
+come domanda di localizzazione, non di promozione: \emph{in quale punto della pipeline di esecuzione
+un modello appreso migliora effettivamente la resa dell'algoritmo di Shor in ambiente rumoroso?} Due
+impieghi sono confrontati con la stessa tecnologia e sotto lo stesso impianto statistico: un
+classificatore che giudica l'istogramma di output e un decoder addestrato sulle sindromi di un
+codice correttore. Il contributo è metodologico prima che numerico: un disegno appaiato con
+ablazione, che separa il modello dalla ricerca multi-candidato sugli stessi istogrammi; un contratto
+interpretativo che vieta la conversione diretta fra metriche della correzione d'errore e successo di
+Shor; artefatti riproducibili --- seed, manifest e hash del circuito --- per ogni numero riportato.
+
+
+\section*{Materiali e Metodi}
+
+\subsection*{Formalizzazione matematica del problema}
+
+Sia $N$ composto, dispari e non potenza di un primo. Scelto $a$ con $1<a<N$ e $\gcd(a,N)=1$, la
+fattorizzazione si riduce alla ricerca dell'\emph{ordine}
+\begin{equation}
+  r=\operatorname{ord}_N(a)=\min\{k\in\mathbb{N}^{+}:a^{k}\equiv1 \!\!\pmod N\}:
+  \label{eq:abs-ordine}
+\end{equation}
+se $r$ è pari e $a^{r/2}\not\equiv-1\pmod N$, allora $\gcd\!\left(a^{r/2}\pm1,N\right)$ è un fattore
+non banale, condizione soddisfatta con probabilità almeno $1/2$ su $a$ casuale~\cite{nielsenChuang2000}. La
+parte quantistica stima $r$ per \emph{phase estimation} dell'unitario
+$U_a\lvert y\rangle=\lvert ay\bmod N\rangle$: con $n$ qubit di conteggio e $M=2^{n}$, dopo la
+trasformata di Fourier quantistica inversa la misura ha distribuzione
+\begin{equation}
+  P(y)=\frac{1}{r}\sum_{s=0}^{r-1}F_M\!\left(\frac{y}{M}-\frac{s}{r}\right),
+  \qquad
+  F_M(\delta)=\frac{1}{M^{2}}\left|\frac{\sin(\pi M\delta)}{\sin(\pi\delta)}\right|^{2}
+  \ \ \text{(nucleo di Fej\'er)} .
+  \label{eq:abs-qpe}
+\end{equation}
+Il post-processing $\Phi$ è deterministico: frazioni continue di $y/M$, che restituiscono $s/r$
+quando $|y/M-s/r|\le1/(2r^{2})$ --- garantito da $M\ge N^{2}$ --- seguite dai controlli di parità e
+dal massimo comun divisore. Detto $\mathcal{U}=\{y:\Phi(y)\ \text{d\`a un fattore non banale}\}$,
+ogni esecuzione è delimitata da due costanti in forma chiusa,
+\begin{equation}
+  P_{\mathrm{id}}=\!\!\sum_{y\in\mathcal{U}}\!P(y)=\frac{3}{4},
+  \qquad
+  P_{\mathrm{unif}}=\frac{|\mathcal{U}|}{M}=\frac{63}{256}\simeq0{,}2461 ,
+  \label{eq:abs-limiti}
+\end{equation}
+per l'istanza canonica $N=15$, $a=7$, $n=8$, dove $r=4$ divide $M$ e $P$ è supportata su
+$\{0,64,128,192\}$. Le due costanti sono gli estremi entro cui leggere ogni campagna rumorosa:
+$P_{\mathrm{id}}$ è il \emph{soffitto}, la resa per shot del circuito ideale; $P_{\mathrm{unif}}$
+è il \emph{pavimento}, quella che sopravvive quando il rumore ha appiattito la distribuzione su
+tutte le $M$ celle. Non è nullo perché il post-processing è permissivo: $63$ celle su $256$ danno
+comunque un fattore, sicché anche indovinare a caso riesce nel $24{,}6\%$ dei casi. Assestarsi sul
+pavimento significa non fattorizzare più.
+
+\subsection*{Modello di rumore e osservabile misurata}
+
+Il circuito è compilato deterministicamente nella base $\{r_z,\sqrt{X},X,\mathrm{CX}\}$ (livello di
+ottimizzazione 2, seed del transpiler registrato): sono le porte elementari con cui l'hardware
+superconduttivo esegue fisicamente ogni circuito --- la rotazione $r_z(\theta)$ attorno a $z$, la
+sua radice $\sqrt{X}$ (mezza rotazione attorno a $x$), la negazione $X$ e l'unica porta a due
+qubit, la CX (\emph{controlled-NOT}), che nega il bersaglio se il controllo vale $1$. Ogni altra
+porta vi si decompone, ed è su queste che il rumore va iniettato. Dopo ogni gate $g$ su $q$ qubit si compone il
+canale depolarizzante $\mathcal{E}_{\lambda}(\rho)=(1-\lambda)\rho+\lambda I/2^{q}$ con il
+rilassamento termico, applicato \emph{per la durata} di $g$: il depolarizzante è un difetto della
+porta, il rilassamento è invece un processo nel tempo --- il qubit perde energia con costante $T_1$
+e coerenza di fase con costante $T_2$ anche da fermo --- e il danno cresce perciò con quanto a
+lungo la porta occupa il qubit. Da qui le durate: $r_z$ virtuali (nulla, quindi nessun
+rilassamento), $\sqrt{X}/X$ a 50\,ns, CX a 300\,ns, sei volte una porta a un qubit; la lettura è una matrice di confusione simmetrica $R$ di parametro $p_{\mathrm{ro}}$, e
+l'osservabile è l'istogramma empirico $\hat h\sim\mathrm{Multinomiale}(S,R\,p_{\mathrm{rum}})$ su
+$S$ shot. Lo accompagnano la frazione efficace $f=(m-4/M)/(1-4/M)$, con $m$ massa sui picchi
+teorici, e il proxy $P_0=(1-\tfrac{15}{16}\lambda_{2q})^{n_{\mathrm{CX}}}$: indicatori dichiarati,
+non fedeltà né probabilità di fattorizzazione. I preset sono scenari uniformi illustrativi, non la
+calibrazione di una QPU.
+
+\subsection*{Politiche decisionali e stimando statistico}
+
+Su $\hat h$ si definisce l'ordinamento totale $\prec$ per conteggio decrescente, con pareggi risolti
+dalla priorità deterministica $\tau(y)=\mathrm{SHA}\text{-}256(\text{seed}\,\Vert\,y)$; la politica
+$\pi_K$ prova i primi $K$ candidati secondo $\prec$. Il Metodo~1 è $\pi_1$, l'ablazione è $\pi_4$, il
+Metodo~2 applica un classificatore $g_\theta(\hat h)\in\{0,1\}$ ed esegue $\pi_4$ solo se il gate è
+positivo. Per ogni replica si osserva
+\begin{equation}
+  M^{(\pi)}=\min\{m\ge1:\pi\ \text{riesce all'iterazione}\ m\},
+  \quad M^{(\pi)}:=M_{\max}+1\ \text{se non riesce},
+  \label{eq:abs-iterazioni}
+\end{equation}
+con $M_{\max}=50$: la sentinella è la codifica esplicita della censura. Lo stimando dichiarato a
+priori è $\rho=\bar M_1/\bar M_2$, ma l'inferenza usa le differenze appaiate
+$D_i=M_i^{(A)}-M_i^{(B)}$ con il test dei ranghi con segno di Wilcoxon (zeri \texttt{pratt}),
+$H_0$ di simmetria attorno a zero, $\alpha=0{,}05$ e correzione di Holm entro famiglia. Poiché per
+ogni coppia (replica, iterazione) le tre strategie ricevono \emph{lo stesso} istogramma, le
+differenze sono attribuibili alla sola regola decisionale. La simulazione è campionaria, di tipo
+\emph{Monte Carlo}: $P$ non si osserva mai, la si stima estraendo $S$ shot, e due esecuzioni
+identiche danno istogrammi diversi per solo effetto del caso. Con istogrammi separati una parte
+della differenza misurata sarebbe questa fluttuazione anziché merito della strategia;
+condividendoli, si elide nella differenza appaiata $D_i$. Il classificatore riceve le $M$ frequenze normalizzate, etichettate con
+$\mathbf{1}[\pi_1\ \text{ha successo}]$. La variante etichettata con $\pi_{16}$ resta un audit
+perché un conto in forma chiusa la mostra degenere: appiattita la distribuzione, i sedici candidati
+equivalgono a sedici estrazioni senza reimmissione dalle $256$ celle, $63$ delle quali danno un
+fattore, e la probabilità che \emph{nessuna} sia utile vale
+$\binom{193}{16}\big/\binom{256}{16}=0{,}93\%$. Dunque $\pi_{16}$ riesce nel $99{,}07\%$ dei casi e
+l'etichetta vale $1$ quasi sempre: priva di variabilità non è apprendibile, ed è questa --- non un
+difetto del modello --- la ragione dei $2000/2000$ positivi.
+
+\subsection*{Correzione d'errore: formalismo, metriche e decodifica appresa}
+
+Un codice stabilizzatore è un sottogruppo abeliano $\mathcal{S}\subset\mathcal{P}_n$ con
+$-I\notin\mathcal{S}$; la sindrome di $E\in\mathcal{P}_n$ è $\sigma(E)_j=0$ se $[E,s_j]=0$ e $1$
+altrimenti, un decoder è una mappa $\mathcal{D}:\mathbb{F}_2^{\,n-k}\!\to\mathcal{P}_n$ e il
+fallimento logico è l'evento
+$\mathcal{D}(\sigma(E))\,E\in\mathcal{N}(\mathcal{S})\setminus\mathcal{S}$, la cui probabilità
+definisce il \emph{logical error rate} $p_L(p,d)$. Si simulano il codice a ripetizione, la cui forma
+chiusa $p_L=3p^{2}-2p^{3}$ serve da test di correttezza; il codice di
+Steane~\cite{steane1996}, con verifica della corrispondenza sindrome$\rightarrow$errore sui 21 casi
+e stima di $\gamma$ in $p_L\propto p^{\gamma}$; il surface code ruotato~\cite{fowler2012} sotto
+rumore \emph{circuit-level}, decodificato per matching di peso minimo e descritto dalla legge di
+scala
+\begin{equation}
+  p_L(p,d)=A\left(p/p_{\mathrm{th}}\right)^{\lfloor(d+1)/2\rfloor},
+  \label{eq:abs-scaling}
+\end{equation}
+adattata ai punti sotto soglia per $d=3,5,7,9$ così da stimare $p_{\mathrm{th}}$ indipendentemente
+dall'incrocio delle curve. Il decoder appreso è un percettrone multistrato $f_\theta$ sugli stessi
+\emph{detection events}, confrontato con il matching sia come sostituto sia nella forma ibrida
+$\mathcal{D}_{\mathrm{hyb}}(\sigma)=\mathcal{D}_{\mathrm{MWPM}}(\sigma)\oplus\mathbf{1}[f_\theta(\sigma)>t]$,
+con soglia $t$ scelta in validazione fra candidate che includono l'astensione totale e
+significatività valutata con il test esatto di McNemar.
+
+\subsection*{Proxy fenomenologico per la sensibilità di Shor}
+
+Dopo ogni gate compilato su $q$ qubit si applica il canale di Pauli
+$\mathcal{E}_{p_L}(\rho)=(1-p_L)\rho+\frac{p_L}{4^{q}-1}\sum_{P\neq I}P\rho P^{\dagger}$, ossia
+$\lambda_1=\tfrac{4}{3}p_L$ e $\lambda_2=\tfrac{16}{15}p_L$, e si misura il successo per singola
+misura su una griglia preregistrata di $p_L$, con probabilità cumulativa $P(k)=1-(1-P_s)^{k}$ dopo
+$k$ tentativi indipendenti. Non è una compilazione fault-tolerant: $p_L$ è la probabilità di un
+Pauli non identità \emph{per gate compilato}, non il tasso per ciclo di sindrome, e la conversione
+fra le due unità richiederebbe un modello architetturale esplicito.
+
+\subsection*{Strumenti, verifica e validazione}
+
+\emph{Strumenti di comunità}: Qiskit/Aer per i circuiti generali, Stim e PyMatching per quelli
+stabilizzatori, scikit-learn per classificatore e decoder appreso; versioni esatte e ambiente di
+esecuzione sono registrati in ogni artefatto. \emph{Strumenti ad hoc}:
+i moduli sperimentali delle due fasi,
+un formato di artefatto JSON versionato (input, seed, vettori
+appaiati, versioni, manifest e hash SHA-256 della netlist), l'aritmetica reversibile di Beauregard
+per $N=21/35$ e una demo web che separa esecuzione ideale e rumorosa; codice e artefatti sono
+pubblici e riutilizzabili. La verifica è su tre livelli: \emph{funzionale} (truth table esaustive
+dei moltiplicatori, ripristino a zero delle ancille, confronto con la legge teorica di phase
+estimation: distanza di variazione totale $1{,}38\times10^{-9}$ per $N=21$); \emph{di identità}
+(profondità, conteggi e hash del circuito in ogni artefatto); \emph{statistico} (ipotesi e griglie
+preregistrate, seed separati, intervalli di Wilson al 95\%, Bonferroni per la monotonia, Holm entro
+famiglia, censura esplicita). Il controllo causale resta l'ablazione: la stessa ricerca con e senza
+il modello appreso, sugli stessi dati.
+
+
+\section*{Risultati}
+
+\textbf{Fase 1.} Sul circuito verificato ($N=15$, $a=7$, profondità 412, 224 porte CX, hash
+registrato) i classificatori raggiungono le prestazioni ipotizzate a priori (F1 $=0{,}919$ e
+$0{,}923$; AUC $=0{,}965$ e $0{,}958$), ma l'ablazione appaiata mostra che il guadagno non è loro.
+Su 30 repliche per scenario, con successo $30/30$ in ogni braccio, la sola ricerca $\pi_4$ porta le
+iterazioni al minimo ($\bar M=1{,}00$ contro $1{,}37$ in UC1 e $1{,}50$ in UC2;
+$p_{\mathrm{Holm}}=0{,}0024$ e $0{,}0015$), mentre il Metodo~2 non migliora la baseline ($1{,}50$ e
+$1{,}37$; $p=0{,}7314$ e $0{,}0874$) e peggiora la propria ablazione
+($p_{\mathrm{Holm}}=0{,}0033$ e $0{,}0096$). Nemmeno la zero-noise extrapolation migliora la baseline, e triplica il costo di
+campionamento; l'etichetta a sedici candidati produce infine $2000/2000$ positivi, come previsto
+dal conto riportato in \emph{Politiche decisionali e stimando statistico}.
+
+
+\textbf{Fase 2.} La progressione dei codici riproduce le previsioni formulate a priori, con la stima
+di $p_{\mathrm{th}}$ dall'Eq.~\eqref{eq:abs-scaling} concorde con l'incrocio delle curve: il codice a
+ripetizione a $d=3$ accorda con $p_L=3p^{2}-2p^{3}$ entro l'errore statistico; Steane $[[7,1,3]]$
+dà $\gamma=1{,}94$ e pseudo-soglia $p\simeq0{,}08$; il surface code per $d=3$--$9$ dà
+$p_{\mathrm{th}}=0{,}86\%$ ($Z$) e $0{,}81\%$ ($X$), $A=3{,}5\times10^{-2}$ e RMS $0{,}08$ in
+$\ln p_L$; la decodifica appresa non vince mai come sostituto del matching e, come correttore
+ibrido, riduce $p_L$ del $18$--$21\%$ a $d=3$, dell'$1$--$3\%$ a $d=5$, per nulla a $d=7$; il proxy
+per gate su Shor dà $P_{\mathrm{succ}}=0{,}7489$ [$0{,}7459$; $0{,}7518$] a $p_L=0$, con plateau
+$0{,}2459$.
+
+\textbf{Chiusura quantitativa.} Gli estremi della curva di sensibilità coincidono con le costanti
+dell'Eq.~\eqref{eq:abs-limiti}: il punto senza rumore, $0{,}7489$, stima $P_{\mathrm{id}}=3/4$; il
+plateau, $0{,}2459$, coincide con il pavimento uniforme $P_{\mathrm{unif}}=63/256=0{,}2461$. La
+curva non descrive un algoritmo che fallisce, ma uno che degrada verso l'estrazione casuale, con
+entrambi gli asintoti fissati in anticipo dalla teoria.
+
+
+\section*{Discussione e Conclusioni}
+
+La domanda di localizzazione ha una risposta a due facce. A valle dell'esecuzione l'ipotesi
+principale, $\rho\gg1$, è \emph{smentita} dai suoi stessi dati: il classificatore raggiunge le
+soglie di F1 e AUC fissate a priori e resta inutile, perché scarta istogrammi che $\pi_4$ avrebbe
+risolto. Sulla sindrome, dove il dato conserva una struttura locale più ricca del solo istogramma finale, la stessa
+tecnologia guadagna, ma solo nella forma residuale e finché il rumore contiene correlazioni che il
+decoder analitico non rappresenta. Il criterio unificante è quindi verificabile: un modello appreso
+aggiunge valore quando sfrutta informazione che il metodo di riferimento lascia inutilizzata, non
+quando ne replica la regola decisionale.
+
+L'autovalutazione riguarda il metodo: senza il braccio $\pi_4$ la riduzione da $1{,}37$ a $1{,}00$
+sarebbe stata attribuita al classificatore, un falso positivo del tutto presentabile; l'audit
+dell'etichetta e la verifica per truth table del moltiplicatore --- che ha imposto la rigenerazione
+di un'intera campagna --- sono stati più informativi delle metriche di accuratezza.
+
+I limiti delimitano ogni conclusione: rumore uniforme, indipendente e stazionario, senza topologia,
+crosstalk, leakage o deriva; $N=15$ è un'istanza didattica con post-processing permissivo; le stime
+QEC valgono entro il modello Clifford--Pauli, indicato come potenzialmente
+ottimistico~\cite{plaquette2026}; l'analisi di sensibilità è un proxy per gate, non una simulazione
+fault-tolerant. Rispetto al piano, $N=21$ e $N=35$ restano validati solo idealmente ed esclusi per
+costo dalle campagne rumorose, e l'accelerazione GPU prevista non è stata impiegata.
+
+Gli sviluppi futuri discendono dai limiti --- mappatura per operazione logica, rumore
+\emph{channel-first}, decoder ricorrenti o a grafo~\cite{alphaqubit2024} --- ma la ricaduta più
+immediata è metodologica: ablazione appaiata, contratto interpretativo fra
+unità diverse e artefatti versionati formano un protocollo riutilizzabile per valutare qualunque
+mitigazione del rumore quantistico basata su apprendimento automatico.
+
+% --- ripristino della numerazione della tesi -------------------------
+\let\addcontentsline\abstractACL
+\renewcommand{\theequation}{\thechapter.\arabic{equation}}
+\renewcommand{\thetable}{\thechapter.\arabic{table}}
+\setcounter{equation}{0}
+\setcounter{table}{0}
+\clearpage
