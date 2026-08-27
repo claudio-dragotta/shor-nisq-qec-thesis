@@ -2,8 +2,8 @@
 
 Indice dei blocchi sperimentali. Ogni blocco (milestone **M**) ha una cartella dedicata con
 il codice, i risultati (JSON) e un README che spiega **cosa fa, cosa aspettarsi e come leggere
-i risultati**. Le milestone seguono il documento di indirizzo del relatore (`M0`–`M9`); lo stato
-e i criteri di validazione (flag 🟢/🔴) sono in `../../piano_azione_qec.md` (Parte V).
+i risultati**. Le milestone seguono il documento di indirizzo del relatore (`M0`–`M9`); lo stato e i
+criteri di validazione di ciascuna sono riportati nel README del blocco corrispondente.
 
 ## Ambiente
 
