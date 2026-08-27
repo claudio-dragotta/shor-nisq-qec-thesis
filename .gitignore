@@ -22,3 +22,19 @@ file_latex/*.synctex.gz
 file_latex/*.fdb_latexmk
 file_latex/*.fls
 file_latex/main.pdf
+
+# Artefatti build LaTeX -- sommario (stesse regole di file_latex/)
+file_latex_sommario/*.aux
+file_latex_sommario/*.log
+file_latex_sommario/*.bbl
+file_latex_sommario/*.bcf
+file_latex_sommario/*.blg
+file_latex_sommario/*.lof
+file_latex_sommario/*.lot
+file_latex_sommario/*.out
+file_latex_sommario/*.run.xml
+file_latex_sommario/*.toc
+file_latex_sommario/*.synctex.gz
+file_latex_sommario/*.fdb_latexmk
+file_latex_sommario/*.fls
+file_latex_sommario/main.pdf
