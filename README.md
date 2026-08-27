@@ -197,7 +197,6 @@ file_latex/          thesis sources and included figures
 figure_src/          deterministic figure generators
 Extra/experiments/   code and versioned artifacts, grouped by milestone
 Extra/shor-demo/     interactive demo, maintained as a separate nested repository
-_archivio/           superseded material retained as an audit trail
 ```
 
 | Block | Directory |
