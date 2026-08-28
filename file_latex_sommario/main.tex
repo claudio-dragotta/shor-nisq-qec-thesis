@@ -36,6 +36,9 @@
 \usepackage[autostyle=true]{csquotes}
 \usepackage[expansion=alltext,stretch=25,shrink=25,tracking=true]{microtype}
 \usepackage[hidelinks]{hyperref}
+% Gli URL possono andare a capo: altrimenti una riga resta mezza vuota.
+\Urlmuskip=0mu plus 1mu\relax
+\def\UrlBreaks{\do\/\do\-\do\.\do\_\do\?\do\=\do\&}
 
 \usepackage[backend=biber,citestyle=numeric,bibstyle=numeric,sorting=none,
             maxbibnames=1,minbibnames=1,giveninits=true,
