@@ -12,14 +12,11 @@ mitigazione a valle e la correzione d'errore durante il calcolo, ai quali un num
 lavori applica modelli appresi dai dati, spesso senza un termine di confronto che isoli il
 contributo del modello da quello della regola decisionale.
 
-Il lavoro riprende un'attività già avviata nello stesso progetto --- implementazione di riferimento
-di Shor in Qiskit e prima campagna rumorosa su $N=15$ --- rigenerandola integralmente dopo che un
-audit per truth table ne ha invalidato il moltiplicatore modulare. L'obiettivo è perciò formulato
-come domanda di localizzazione, non di promozione: \emph{in quale punto della pipeline di esecuzione
-un modello appreso migliora effettivamente la resa dell'algoritmo di Shor in ambiente rumoroso?} Due
-impieghi sono confrontati con la stessa tecnologia e sotto lo stesso impianto statistico: un
-classificatore che giudica l'istogramma di output e un decoder addestrato sulle sindromi di un
-codice correttore. Il contributo è metodologico prima che numerico: un disegno appaiato con
-ablazione, che separa il modello dalla ricerca multi-candidato sugli stessi istogrammi; un contratto
-interpretativo che vieta la conversione diretta fra metriche della correzione d'errore e successo di
-Shor; artefatti riproducibili --- seed, manifest e hash del circuito --- per ogni numero riportato.
+Il lavoro riprende un progetto preesistente --- implementazione di Shor in Qiskit e prima campagna
+rumorosa su $N=15$ --- rigenerato dopo che un audit per truth table ne ha invalidato il
+moltiplicatore modulare. Chiede quindi \emph{in quale punto della pipeline un modello appreso
+migliori davvero la resa di Shor in ambiente rumoroso}. Con la stessa tecnologia e lo stesso
+impianto statistico confronta un classificatore dell'istogramma di output e un decoder addestrato
+sulle sindromi di un codice correttore. Il contributo è metodologico: disegno appaiato con
+ablazione, separazione fra metriche QEC e successo di Shor e artefatti riproducibili (seed, manifest
+e hash del circuito).
