@@ -31,32 +31,34 @@ ogni esecuzione è delimitata da due costanti in forma chiusa,
   \label{eq:limiti}
 \end{equation}
 per l'istanza canonica $N=15$, $a=7$, $n=8$, dove $r=4$ divide $M$ e $P$ è supportata su
-$\{0,64,128,192\}$. Le due costanti sono gli estremi entro cui leggere ogni campagna rumorosa:
-$P_{\mathrm{id}}$ è il \emph{soffitto}, la resa per shot del circuito ideale; $P_{\mathrm{unif}}$
-è il \emph{pavimento}, quella che sopravvive quando il rumore ha appiattito la distribuzione su
-tutte le $M$ celle. Non è nullo perché il post-processing è permissivo: $63$ celle su $256$ danno
-comunque un fattore, sicché anche indovinare a caso riesce nel $24{,}6\%$ dei casi. Assestarsi sul
-pavimento significa non fattorizzare più.
+$\{0,64,128,192\}$. Le due costanti fissano in anticipo la scala di lettura della campagna:
+$P_{\mathrm{id}}$ è la resa per shot della distribuzione ideale; $P_{\mathrm{unif}}$ è il
+\emph{pavimento uniforme}, cioè la resa attesa quando il rumore cancella la struttura dei picchi e
+rende equiprobabili tutte le $M$ celle. Non è nullo: il post-processing accetta $63$ esiti su
+$256$, quindi anche un'estrazione casuale trova un fattore nel $24{,}6\%$ dei casi. I due valori non
+sono limiti universali per un rumore arbitrario, ma riferimenti per le distribuzioni ideale e
+uniforme; raggiungere il pavimento indica la perdita del segnale quantistico utile, non
+l'impossibilità di fattorizzare.
 
 \subsection{Modello di rumore e osservabile misurata}
 
-Il circuito è compilato deterministicamente nella base $\{r_z,\sqrt{X},X,\mathrm{CX}\}$ (livello di
-ottimizzazione 2, seed del transpiler registrato): sono le porte elementari con cui l'hardware
-superconduttivo esegue fisicamente ogni circuito --- la rotazione $r_z(\theta)$ attorno a $z$, la
-sua radice $\sqrt{X}$ (mezza rotazione attorno a $x$), la negazione $X$ e l'unica porta a due
-qubit, la CX (\emph{controlled-NOT}), che nega il bersaglio se il controllo vale $1$. Ogni altra
-porta vi si decompone, ed è su queste che il rumore va iniettato. Dopo ogni gate $g$ su $q$ qubit si compone il
-canale depolarizzante $\mathcal{E}_{\lambda}(\rho)=(1-\lambda)\rho+\lambda I/2^{q}$ con il
-rilassamento termico, applicato \emph{per la durata} di $g$: il depolarizzante è un difetto della
-porta, il rilassamento è invece un processo nel tempo --- il qubit perde energia con costante $T_1$
-e coerenza di fase con costante $T_2$ anche da fermo --- e il danno cresce perciò con quanto a
-lungo la porta occupa il qubit. Da qui le durate: $r_z$ virtuali (nulla, quindi nessun
-rilassamento), $\sqrt{X}/X$ a 50\,ns, CX a 300\,ns, sei volte una porta a un qubit; la lettura è una matrice di confusione simmetrica $R$ di parametro $p_{\mathrm{ro}}$, e
-l'osservabile è l'istogramma empirico $\hat h\sim\mathrm{Multinomiale}(S,R\,p_{\mathrm{rum}})$ su
-$S$ shot. Lo accompagnano la frazione efficace $f=(m-4/M)/(1-4/M)$, con $m$ massa sui picchi
-teorici, e il proxy $P_0=(1-\tfrac{15}{16}\lambda_{2q})^{n_{\mathrm{CX}}}$: indicatori dichiarati,
-non fedeltà né probabilità di fattorizzazione. I preset sono scenari uniformi illustrativi, non la
-calibrazione di una QPU.
+Il circuito è compilato deterministicamente (ottimizzazione 2 e seed registrato) nella base
+hardware $\{r_z,\sqrt{X},X,\mathrm{CX}\}$: $r_z(\theta)$ è una rotazione virtuale attorno a $z$,
+$\sqrt{X}$ (SX) è una rotazione di $\pi/2$ attorno a $x$, $X$ la NOT quantistica che scambia
+$\lvert0\rangle$ e $\lvert1\rangle$, e CX (CNOT) applica $X$ al bersaglio quando il controllo vale
+$1$. Ogni altra operazione è decomposta in queste porte, sulle quali si modella il rumore. Dopo ogni
+gate $g$ su $q$ qubit si compone il canale depolarizzante
+$\mathcal{E}_{\lambda}(\rho)=(1-\lambda)\rho+\lambda I/2^{q}$ con il rilassamento termico: $T_1$ è
+il tempo di rilassamento energetico $\lvert1\rangle\!\to\!\lvert0\rangle$ e $T_2$ il tempo di
+perdita della coerenza di fase. Poiché tali effetti si accumulano nel tempo, il canale usa la durata
+di $g$: $r_z$ è virtuale (durata nulla nel modello), $\sqrt{X}/X$ dura 50\,ns e CX 300\,ns. La
+lettura è una matrice di confusione simmetrica $R$ di parametro $p_{\mathrm{ro}}$; su $S$ shot i
+conteggi sono $\mathbf{c}\sim\mathrm{Multinomiale}(S,R\,p_{\mathrm{rum}})$ e l'istogramma
+normalizzato è $\hat h=\mathbf{c}/S$. Lo accompagnano la frazione
+efficace $f=(m-4/M)/(1-4/M)$, con $m$ massa sui picchi teorici, e il proxy
+$P_0=(1-\tfrac{15}{16}\lambda_{2q})^{n_{\mathrm{CX}}}$: indicatori dichiarati, non fedeltà né
+probabilità di fattorizzazione. I preset sono scenari uniformi illustrativi, non calibrazioni di una
+QPU.
 
 \subsection{Politiche decisionali e stimando statistico}
 
@@ -70,23 +72,24 @@ positivo. Per ogni replica si osserva
   \quad M^{(\pi)}:=M_{\max}+1\ \text{se non riesce},
   \label{eq:iterazioni}
 \end{equation}
-con $M_{\max}=50$: la sentinella è la codifica esplicita della censura. Lo stimando dichiarato a
-priori è $\rho=\bar M_1/\bar M_2$, ma l'inferenza usa le differenze appaiate
-$D_i=M_i^{(A)}-M_i^{(B)}$ con il test dei ranghi con segno di Wilcoxon (zeri \texttt{pratt}),
-$H_0$ di simmetria attorno a zero, $\alpha=0{,}05$ e correzione di Holm entro famiglia. Poiché per
-ogni coppia (replica, iterazione) le tre strategie ricevono \emph{lo stesso} istogramma, le
-differenze sono attribuibili alla sola regola decisionale. La simulazione è campionaria, di tipo
-\emph{Monte Carlo}: $P$ non si osserva mai, la si stima estraendo $S$ shot, e due esecuzioni
-identiche danno istogrammi diversi per solo effetto del caso. Con istogrammi separati una parte
-della differenza misurata sarebbe questa fluttuazione anziché merito della strategia;
-condividendoli, si elide nella differenza appaiata $D_i$. Il classificatore riceve le $M$ frequenze normalizzate, etichettate con
-$\mathbf{1}[\pi_1\ \text{ha successo}]$. La variante etichettata con $\pi_{16}$ resta un audit
-perché un conto in forma chiusa la mostra degenere: appiattita la distribuzione, i sedici candidati
-equivalgono a sedici estrazioni senza reimmissione dalle $256$ celle, $63$ delle quali danno un
-fattore, e la probabilità che \emph{nessuna} sia utile vale
-$\binom{193}{16}\big/\binom{256}{16}=0{,}93\%$. Dunque $\pi_{16}$ riesce nel $99{,}07\%$ dei casi e
-l'etichetta vale $1$ quasi sempre: priva di variabilità non è apprendibile, ed è questa --- non un
-difetto del modello --- la ragione dei $2000/2000$ positivi.
+con $M_{\max}=50$, sentinella che codifica esplicitamente la censura. Lo stimando dichiarato a
+priori è $\rho=\bar M_1/\bar M_2$; l'inferenza usa invece le differenze appaiate
+$D_i=M_i^{(A)}-M_i^{(B)}$, il test dei ranghi con segno di Wilcoxon (zeri \texttt{pratt}), $H_0$ di
+simmetria attorno a zero, $\alpha=0{,}05$ e correzione di Holm entro famiglia. Poiché in una
+simulazione Monte Carlo la distribuzione è stimata estraendo pseudocasualmente $S$ shot, anche
+esecuzioni nominalmente identiche producono istogrammi diversi. A ogni coppia (replica, iterazione)
+le tre strategie ricevono perciò lo stesso istogramma: $D_i$ confronta le regole decisionali sulla
+medesima realizzazione e non contiene la componente spuria dovuta a campioni indipendenti, pur
+restando variabile fra repliche. Il classificatore riceve il vettore di frequenze relative
+$\hat h=(c_0/S,\ldots,c_{M-1}/S)$, con somma uno, e l'etichetta binaria
+$Y_1=\mathbf{1}[\pi_1\ \text{ha successo}]$, pari a $1$ se $\pi_1$ trova un fattore non banale e a
+$0$ altrimenti. La variante $Y_{16}$ resta un audit: nel riferimento esattamente uniforme i primi
+sedici candidati equivalgono a estrazioni senza reimmissione dalle $256$ celle, di cui $63$ utili,
+e la probabilità che nessuno dia un fattore è
+$\binom{193}{16}\big/\binom{256}{16}=0{,}93\%$. Il riferimento uniforme prevede quindi il $99{,}07\%$ di
+etichette positive e dimostra il forte sbilanciamento, non l'esito esatto del campione. Nei dati
+effettivi $Y_{16}$ è risultato positivo in $2000/2000$ casi per entrambi gli scenari: questa
+osservazione empirica ne stabilisce la degenerazione a classe unica.
 
 \subsection{Correzione d'errore: formalismo, metriche e decodifica appresa}
 
@@ -124,17 +127,13 @@ fra le due unità richiederebbe un modello architetturale esplicito.
 
 \subsection{Strumenti, verifica e validazione}
 
-\emph{Strumenti di comunità}: Qiskit/Aer per i circuiti generali, Stim e PyMatching per quelli
-stabilizzatori, scikit-learn per classificatore e decoder appreso; versioni esatte e ambiente di
-esecuzione sono registrati in ogni artefatto. \emph{Strumenti ad hoc}:
-i moduli sperimentali delle due fasi,
-un formato di artefatto JSON versionato (input, seed, vettori
-appaiati, versioni, manifest e hash SHA-256 della netlist), l'aritmetica reversibile di Beauregard
-per $N=21/35$ e una demo web che separa esecuzione ideale e rumorosa; codice e artefatti sono
-pubblici e riutilizzabili. La verifica è su tre livelli: \emph{funzionale} (truth table esaustive
-dei moltiplicatori, ripristino a zero delle ancille, confronto con la legge teorica di phase
-estimation: distanza di variazione totale $1{,}38\times10^{-9}$ per $N=21$); \emph{di identità}
-(profondità, conteggi e hash del circuito in ogni artefatto); \emph{statistico} (ipotesi e griglie
-preregistrate, seed separati, intervalli di Wilson al 95\%, Bonferroni per la monotonia, Holm entro
-famiglia, censura esplicita). Il controllo causale resta l'ablazione: la stessa ricerca con e senza
-il modello appreso, sugli stessi dati.
+Qiskit/Aer gestisce i circuiti generali, Stim e PyMatching quelli stabilizzatori e scikit-learn i
+modelli appresi; versioni e ambiente sono registrati negli artefatti. Gli strumenti ad hoc
+comprendono i moduli sperimentali, un formato JSON versionato (input, seed, vettori appaiati,
+manifest e hash SHA-256 della netlist), l'aritmetica reversibile di Beauregard per $N=21/35$ e una
+demo web che separa esecuzione ideale e rumorosa; codice e artefatti sono pubblici e riutilizzabili. La verifica è
+\emph{funzionale} (truth table, azzeramento delle ancille e confronto con la phase estimation
+teorica: distanza di variazione totale $1{,}38\times10^{-9}$ per $N=21$), \emph{di identità}
+(profondità, conteggi e hash) e \emph{statistica} (ipotesi e griglie preregistrate, seed separati,
+intervalli di Wilson al 95\%, Bonferroni per la monotonia, Holm entro famiglia e censura esplicita). L'ablazione sugli stessi dati
+resta il controllo causale.

@@ -53,17 +53,14 @@ mitigazione a valle e la correzione d'errore durante il calcolo, ai quali un num
 lavori applica modelli appresi dai dati, spesso senza un termine di confronto che isoli il
 contributo del modello da quello della regola decisionale.
 
-Il lavoro riprende un'attività già avviata nello stesso progetto --- implementazione di riferimento
-di Shor in Qiskit e prima campagna rumorosa su $N=15$ --- rigenerandola integralmente dopo che un
-audit per truth table ne ha invalidato il moltiplicatore modulare. L'obiettivo è perciò formulato
-come domanda di localizzazione, non di promozione: \emph{in quale punto della pipeline di esecuzione
-un modello appreso migliora effettivamente la resa dell'algoritmo di Shor in ambiente rumoroso?} Due
-impieghi sono confrontati con la stessa tecnologia e sotto lo stesso impianto statistico: un
-classificatore che giudica l'istogramma di output e un decoder addestrato sulle sindromi di un
-codice correttore. Il contributo è metodologico prima che numerico: un disegno appaiato con
-ablazione, che separa il modello dalla ricerca multi-candidato sugli stessi istogrammi; un contratto
-interpretativo che vieta la conversione diretta fra metriche della correzione d'errore e successo di
-Shor; artefatti riproducibili --- seed, manifest e hash del circuito --- per ogni numero riportato.
+Il lavoro riprende un progetto preesistente --- implementazione di Shor in Qiskit e prima campagna
+rumorosa su $N=15$ --- rigenerato dopo che un audit per truth table ne ha invalidato il
+moltiplicatore modulare. Chiede quindi \emph{in quale punto della pipeline un modello appreso
+migliori davvero la resa di Shor in ambiente rumoroso}. Con la stessa tecnologia e lo stesso
+impianto statistico confronta un classificatore dell'istogramma di output e un decoder addestrato
+sulle sindromi di un codice correttore. Il contributo è metodologico: disegno appaiato con
+ablazione, separazione fra metriche QEC e successo di Shor e artefatti riproducibili (seed, manifest
+e hash del circuito).
 
 
 \section*{Materiali e Metodi}
@@ -99,32 +96,34 @@ ogni esecuzione è delimitata da due costanti in forma chiusa,
   \label{eq:abs-limiti}
 \end{equation}
 per l'istanza canonica $N=15$, $a=7$, $n=8$, dove $r=4$ divide $M$ e $P$ è supportata su
-$\{0,64,128,192\}$. Le due costanti sono gli estremi entro cui leggere ogni campagna rumorosa:
-$P_{\mathrm{id}}$ è il \emph{soffitto}, la resa per shot del circuito ideale; $P_{\mathrm{unif}}$
-è il \emph{pavimento}, quella che sopravvive quando il rumore ha appiattito la distribuzione su
-tutte le $M$ celle. Non è nullo perché il post-processing è permissivo: $63$ celle su $256$ danno
-comunque un fattore, sicché anche indovinare a caso riesce nel $24{,}6\%$ dei casi. Assestarsi sul
-pavimento significa non fattorizzare più.
+$\{0,64,128,192\}$. Le due costanti fissano in anticipo la scala di lettura della campagna:
+$P_{\mathrm{id}}$ è la resa per shot della distribuzione ideale; $P_{\mathrm{unif}}$ è il
+\emph{pavimento uniforme}, cioè la resa attesa quando il rumore cancella la struttura dei picchi e
+rende equiprobabili tutte le $M$ celle. Non è nullo: il post-processing accetta $63$ esiti su
+$256$, quindi anche un'estrazione casuale trova un fattore nel $24{,}6\%$ dei casi. I due valori non
+sono limiti universali per un rumore arbitrario, ma riferimenti per le distribuzioni ideale e
+uniforme; raggiungere il pavimento indica la perdita del segnale quantistico utile, non
+l'impossibilità di fattorizzare.
 
 \subsection*{Modello di rumore e osservabile misurata}
 
-Il circuito è compilato deterministicamente nella base $\{r_z,\sqrt{X},X,\mathrm{CX}\}$ (livello di
-ottimizzazione 2, seed del transpiler registrato): sono le porte elementari con cui l'hardware
-superconduttivo esegue fisicamente ogni circuito --- la rotazione $r_z(\theta)$ attorno a $z$, la
-sua radice $\sqrt{X}$ (mezza rotazione attorno a $x$), la negazione $X$ e l'unica porta a due
-qubit, la CX (\emph{controlled-NOT}), che nega il bersaglio se il controllo vale $1$. Ogni altra
-porta vi si decompone, ed è su queste che il rumore va iniettato. Dopo ogni gate $g$ su $q$ qubit si compone il
-canale depolarizzante $\mathcal{E}_{\lambda}(\rho)=(1-\lambda)\rho+\lambda I/2^{q}$ con il
-rilassamento termico, applicato \emph{per la durata} di $g$: il depolarizzante è un difetto della
-porta, il rilassamento è invece un processo nel tempo --- il qubit perde energia con costante $T_1$
-e coerenza di fase con costante $T_2$ anche da fermo --- e il danno cresce perciò con quanto a
-lungo la porta occupa il qubit. Da qui le durate: $r_z$ virtuali (nulla, quindi nessun
-rilassamento), $\sqrt{X}/X$ a 50\,ns, CX a 300\,ns, sei volte una porta a un qubit; la lettura è una matrice di confusione simmetrica $R$ di parametro $p_{\mathrm{ro}}$, e
-l'osservabile è l'istogramma empirico $\hat h\sim\mathrm{Multinomiale}(S,R\,p_{\mathrm{rum}})$ su
-$S$ shot. Lo accompagnano la frazione efficace $f=(m-4/M)/(1-4/M)$, con $m$ massa sui picchi
-teorici, e il proxy $P_0=(1-\tfrac{15}{16}\lambda_{2q})^{n_{\mathrm{CX}}}$: indicatori dichiarati,
-non fedeltà né probabilità di fattorizzazione. I preset sono scenari uniformi illustrativi, non la
-calibrazione di una QPU.
+Il circuito è compilato deterministicamente (ottimizzazione 2 e seed registrato) nella base
+hardware $\{r_z,\sqrt{X},X,\mathrm{CX}\}$: $r_z(\theta)$ è una rotazione virtuale attorno a $z$,
+$\sqrt{X}$ (SX) è una rotazione di $\pi/2$ attorno a $x$, $X$ la NOT quantistica che scambia
+$\lvert0\rangle$ e $\lvert1\rangle$, e CX (CNOT) applica $X$ al bersaglio quando il controllo vale
+$1$. Ogni altra operazione è decomposta in queste porte, sulle quali si modella il rumore. Dopo ogni
+gate $g$ su $q$ qubit si compone il canale depolarizzante
+$\mathcal{E}_{\lambda}(\rho)=(1-\lambda)\rho+\lambda I/2^{q}$ con il rilassamento termico: $T_1$ è
+il tempo di rilassamento energetico $\lvert1\rangle\!\to\!\lvert0\rangle$ e $T_2$ il tempo di
+perdita della coerenza di fase. Poiché tali effetti si accumulano nel tempo, il canale usa la durata
+di $g$: $r_z$ è virtuale (durata nulla nel modello), $\sqrt{X}/X$ dura 50\,ns e CX 300\,ns. La
+lettura è una matrice di confusione simmetrica $R$ di parametro $p_{\mathrm{ro}}$; su $S$ shot i
+conteggi sono $\mathbf{c}\sim\mathrm{Multinomiale}(S,R\,p_{\mathrm{rum}})$ e l'istogramma
+normalizzato è $\hat h=\mathbf{c}/S$. Lo accompagnano la frazione
+efficace $f=(m-4/M)/(1-4/M)$, con $m$ massa sui picchi teorici, e il proxy
+$P_0=(1-\tfrac{15}{16}\lambda_{2q})^{n_{\mathrm{CX}}}$: indicatori dichiarati, non fedeltà né
+probabilità di fattorizzazione. I preset sono scenari uniformi illustrativi, non calibrazioni di una
+QPU.
 
 \subsection*{Politiche decisionali e stimando statistico}
 
@@ -138,23 +137,24 @@ positivo. Per ogni replica si osserva
   \quad M^{(\pi)}:=M_{\max}+1\ \text{se non riesce},
   \label{eq:abs-iterazioni}
 \end{equation}
-con $M_{\max}=50$: la sentinella è la codifica esplicita della censura. Lo stimando dichiarato a
-priori è $\rho=\bar M_1/\bar M_2$, ma l'inferenza usa le differenze appaiate
-$D_i=M_i^{(A)}-M_i^{(B)}$ con il test dei ranghi con segno di Wilcoxon (zeri \texttt{pratt}),
-$H_0$ di simmetria attorno a zero, $\alpha=0{,}05$ e correzione di Holm entro famiglia. Poiché per
-ogni coppia (replica, iterazione) le tre strategie ricevono \emph{lo stesso} istogramma, le
-differenze sono attribuibili alla sola regola decisionale. La simulazione è campionaria, di tipo
-\emph{Monte Carlo}: $P$ non si osserva mai, la si stima estraendo $S$ shot, e due esecuzioni
-identiche danno istogrammi diversi per solo effetto del caso. Con istogrammi separati una parte
-della differenza misurata sarebbe questa fluttuazione anziché merito della strategia;
-condividendoli, si elide nella differenza appaiata $D_i$. Il classificatore riceve le $M$ frequenze normalizzate, etichettate con
-$\mathbf{1}[\pi_1\ \text{ha successo}]$. La variante etichettata con $\pi_{16}$ resta un audit
-perché un conto in forma chiusa la mostra degenere: appiattita la distribuzione, i sedici candidati
-equivalgono a sedici estrazioni senza reimmissione dalle $256$ celle, $63$ delle quali danno un
-fattore, e la probabilità che \emph{nessuna} sia utile vale
-$\binom{193}{16}\big/\binom{256}{16}=0{,}93\%$. Dunque $\pi_{16}$ riesce nel $99{,}07\%$ dei casi e
-l'etichetta vale $1$ quasi sempre: priva di variabilità non è apprendibile, ed è questa --- non un
-difetto del modello --- la ragione dei $2000/2000$ positivi.
+con $M_{\max}=50$, sentinella che codifica esplicitamente la censura. Lo stimando dichiarato a
+priori è $\rho=\bar M_1/\bar M_2$; l'inferenza usa invece le differenze appaiate
+$D_i=M_i^{(A)}-M_i^{(B)}$, il test dei ranghi con segno di Wilcoxon (zeri \texttt{pratt}), $H_0$ di
+simmetria attorno a zero, $\alpha=0{,}05$ e correzione di Holm entro famiglia. Poiché in una
+simulazione Monte Carlo la distribuzione è stimata estraendo pseudocasualmente $S$ shot, anche
+esecuzioni nominalmente identiche producono istogrammi diversi. A ogni coppia (replica, iterazione)
+le tre strategie ricevono perciò lo stesso istogramma: $D_i$ confronta le regole decisionali sulla
+medesima realizzazione e non contiene la componente spuria dovuta a campioni indipendenti, pur
+restando variabile fra repliche. Il classificatore riceve il vettore di frequenze relative
+$\hat h=(c_0/S,\ldots,c_{M-1}/S)$, con somma uno, e l'etichetta binaria
+$Y_1=\mathbf{1}[\pi_1\ \text{ha successo}]$, pari a $1$ se $\pi_1$ trova un fattore non banale e a
+$0$ altrimenti. La variante $Y_{16}$ resta un audit: nel riferimento esattamente uniforme i primi
+sedici candidati equivalgono a estrazioni senza reimmissione dalle $256$ celle, di cui $63$ utili,
+e la probabilità che nessuno dia un fattore è
+$\binom{193}{16}\big/\binom{256}{16}=0{,}93\%$. Il riferimento uniforme prevede quindi il $99{,}07\%$ di
+etichette positive e dimostra il forte sbilanciamento, non l'esito esatto del campione. Nei dati
+effettivi $Y_{16}$ è risultato positivo in $2000/2000$ casi per entrambi gli scenari: questa
+osservazione empirica ne stabilisce la degenerazione a classe unica.
 
 \subsection*{Correzione d'errore: formalismo, metriche e decodifica appresa}
 
@@ -192,20 +192,16 @@ fra le due unità richiederebbe un modello architetturale esplicito.
 
 \subsection*{Strumenti, verifica e validazione}
 
-\emph{Strumenti di comunità}: Qiskit/Aer per i circuiti generali, Stim e PyMatching per quelli
-stabilizzatori, scikit-learn per classificatore e decoder appreso; versioni esatte e ambiente di
-esecuzione sono registrati in ogni artefatto. \emph{Strumenti ad hoc}:
-i moduli sperimentali delle due fasi,
-un formato di artefatto JSON versionato (input, seed, vettori
-appaiati, versioni, manifest e hash SHA-256 della netlist), l'aritmetica reversibile di Beauregard
-per $N=21/35$ e una demo web che separa esecuzione ideale e rumorosa; codice e artefatti sono
-pubblici e riutilizzabili. La verifica è su tre livelli: \emph{funzionale} (truth table esaustive
-dei moltiplicatori, ripristino a zero delle ancille, confronto con la legge teorica di phase
-estimation: distanza di variazione totale $1{,}38\times10^{-9}$ per $N=21$); \emph{di identità}
-(profondità, conteggi e hash del circuito in ogni artefatto); \emph{statistico} (ipotesi e griglie
-preregistrate, seed separati, intervalli di Wilson al 95\%, Bonferroni per la monotonia, Holm entro
-famiglia, censura esplicita). Il controllo causale resta l'ablazione: la stessa ricerca con e senza
-il modello appreso, sugli stessi dati.
+Qiskit/Aer gestisce i circuiti generali, Stim e PyMatching quelli stabilizzatori e scikit-learn i
+modelli appresi; versioni e ambiente sono registrati negli artefatti. Gli strumenti ad hoc
+comprendono i moduli sperimentali, un formato JSON versionato (input, seed, vettori appaiati,
+manifest e hash SHA-256 della netlist), l'aritmetica reversibile di Beauregard per $N=21/35$ e una
+demo web che separa esecuzione ideale e rumorosa; codice e artefatti sono pubblici e riutilizzabili. La verifica è
+\emph{funzionale} (truth table, azzeramento delle ancille e confronto con la phase estimation
+teorica: distanza di variazione totale $1{,}38\times10^{-9}$ per $N=21$), \emph{di identità}
+(profondità, conteggi e hash) e \emph{statistica} (ipotesi e griglie preregistrate, seed separati,
+intervalli di Wilson al 95\%, Bonferroni per la monotonia, Holm entro famiglia e censura esplicita). L'ablazione sugli stessi dati
+resta il controllo causale.
 
 
 \section*{Risultati}
@@ -218,8 +214,8 @@ iterazioni al minimo ($\bar M=1{,}00$ contro $1{,}37$ in UC1 e $1{,}50$ in UC2;
 $p_{\mathrm{Holm}}=0{,}0024$ e $0{,}0015$), mentre il Metodo~2 non migliora la baseline ($1{,}50$ e
 $1{,}37$; $p=0{,}7314$ e $0{,}0874$) e peggiora la propria ablazione
 ($p_{\mathrm{Holm}}=0{,}0033$ e $0{,}0096$). Nemmeno la zero-noise extrapolation migliora la baseline, e triplica il costo di
-campionamento; l'etichetta a sedici candidati produce infine $2000/2000$ positivi, come previsto
-dal conto riportato in \emph{Politiche decisionali e stimando statistico}.
+campionamento; l'etichetta a sedici candidati produce infine $2000/2000$ positivi, confermando
+empiricamente la degenerazione discussa in \emph{Politiche decisionali e stimando statistico}.
 
 
 \textbf{Fase 2.} La progressione dei codici riproduce le previsioni formulate a priori, con la stima
@@ -228,12 +224,11 @@ ripetizione a $d=3$ accorda con $p_L=3p^{2}-2p^{3}$ entro l'errore statistico; S
 dà $\gamma=1{,}94$ e pseudo-soglia $p\simeq0{,}08$; il surface code per $d=3$--$9$ dà
 $p_{\mathrm{th}}=0{,}86\%$ ($Z$) e $0{,}81\%$ ($X$), $A=3{,}5\times10^{-2}$ e RMS $0{,}08$ in
 $\ln p_L$; la decodifica appresa non vince mai come sostituto del matching e, come correttore
-ibrido, riduce $p_L$ del $18$--$21\%$ a $d=3$, dell'$1$--$3\%$ a $d=5$, per nulla a $d=7$; il proxy
-per gate su Shor dà $P_{\mathrm{succ}}=0{,}7489$ [$0{,}7459$; $0{,}7518$] a $p_L=0$, con plateau
-$0{,}2459$.
+ibrido, riduce $p_L$ del $18$--$21\%$ a $d=3$, dell'$1$--$3\%$ a $d=5$ e per nulla a $d=7$.
 
 \textbf{Chiusura quantitativa.} Gli estremi della curva di sensibilità coincidono con le costanti
-dell'Eq.~\eqref{eq:abs-limiti}: il punto senza rumore, $0{,}7489$, stima $P_{\mathrm{id}}=3/4$; il
+dell'Eq.~\eqref{eq:abs-limiti}: il punto senza rumore, $0{,}7489$ [$0{,}7459$; $0{,}7518$], stima
+$P_{\mathrm{id}}=3/4$; il
 plateau, $0{,}2459$, coincide con il pavimento uniforme $P_{\mathrm{unif}}=63/256=0{,}2461$. La
 curva non descrive un algoritmo che fallisce, ma uno che degrada verso l'estrazione casuale, con
 entrambi gli asintoti fissati in anticipo dalla teoria.
