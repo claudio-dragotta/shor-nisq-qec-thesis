@@ -1,123 +1,137 @@
 \begin{onehalfspace}
 
-Stabiliti gli strumenti, questo capitolo definisce il disegno sperimentale della prima fase. Il contratto separa la correttezza ideale dell'algoritmo, il modello illustrativo di rumore e le regole del confronto statistico. Gli esiti numerici non fanno parte della metodologia: le tabelle con $\bar M$, $\rho$ e p-value nel Capitolo~\ref{chap:risultati} sono estratte esclusivamente dagli artefatti schema~2 prodotti con il circuito N15 corretto.
+Il disegno sperimentale separa tre livelli che non devono essere confusi:
+correttezza ideale dell'aritmetica, comportamento sotto un modello di rumore
+controllato e capacità delle regole di post-processing di utilizzare
+l'istogramma ottenuto. Gli esiti numerici sono presentati nel
+Capitolo~\ref{chap:risultati}; qui vengono fissati perimetro, variabili e
+criteri di confronto.
 
-% -----------------------------------------------
-\section{Obiettivi della Parte Sperimentale}
+\section{Disegno e perimetro sperimentale}
 \label{sec:obiettivi_sperimentali}
 
-Il primo obiettivo è costruire una \textbf{baseline riproducibile}. Il Metodo~1 esamina la misura più frequente dell'istogramma (TOP-1), applica frazioni continue e \ac{GCD} e ripete il campionamento fino al successo o al budget massimo. Il secondo obiettivo è confrontare, sullo stesso dato, due estensioni: TOP-4 senza apprendimento e il Metodo~2, nel quale un classificatore decide se attivare la ricerca TOP-4. Questa terna permette di distinguere il contributo della ricerca multi-candidato da quello del modello appreso.
+La prima fase confronta tre strategie sullo \emph{stesso} istogramma:
+\textbf{M1}, che verifica il solo candidato più frequente (TOP-1);
+\textbf{TOP-4}, che verifica i primi quattro candidati; e \textbf{M2}, in
+cui un classificatore decide se attivare la medesima ricerca TOP-4. TOP-4 è
+l'ablazione necessaria per distinguere il contributo del modello appreso da
+quello della semplice ricerca multi-candidato.
 
-La campagna rumorosa è limitata a $N=15$, $a=7$, con due preset uniformi illustrativi: riferimento e stress. I moltiplicatori di Beauregard per $N=21$ e $N=35$ sono invece validati idealmente e sottoposti ad audit di risorse, ma esclusi dalle simulazioni rumorose complete. La separazione evita di trasformare un limite computazionale del simulatore in un risultato sulla probabilità di successo dell'algoritmo.
+Le campagne rumorose sono limitate a $N=15$, $a=7$, con due preset uniformi
+e illustrativi. Essi non rappresentano la calibrazione di una QPU. Le
+istanze $N=21$, $a=2$, e $N=35$, $a=6$, sono validate idealmente mediante
+truth table, pulizia delle ancille e distribuzione QPE, ma sono escluse dal
+campionamento rumoroso per il costo della simulazione.
 
-% -----------------------------------------------
-\section{Architettura del Pipeline Sperimentale}
+\begin{table}[!htbp]
+\centering
+\small
+\caption{Contratto essenziale delle campagne rumorose su $N=15$.}
+\label{tab:contratto_n15}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Parametro} & \textbf{Riferimento} & \textbf{Stress} \\
+\midrule
+$a$ / periodo atteso & $7/4$ & $7/4$ \\
+qubit di controllo / shot & $8/1024$ & $8/1024$ \\
+$\lambda_{1q}$ / $\lambda_{2q}$ & $10^{-3}/10^{-2}$ & $5\!\times\!10^{-3}/5\!\times\!10^{-2}$ \\
+$T_1/T_2$ (ns) & $100\,000/80\,000$ & $50\,000/30\,000$ \\
+$p_{\mathrm{ro}}$ & $0.02$ & $0.05$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Pipeline appaiata}
 \label{sec:architettura}
 
-Il sistema è strutturato come una pipeline a tre stadi, illustrata in Figura~\ref{fig:pipeline_architettura}.
-
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
-    box/.style     = {rectangle, draw, rounded corners=4pt,
-                      minimum width=3.0cm, minimum height=0.95cm,
-                      align=center, font=\small},
-    arrow/.style   = {->, thick, >=stealth},
-    lbl/.style     = {font=\footnotesize\itshape, text=gray}
+    box/.style={rectangle,draw,rounded corners=4pt,minimum width=3.0cm,
+                minimum height=0.95cm,align=center,font=\small},
+    arrow/.style={->,thick,>=stealth}
 ]
-\node[box, fill=blue!12]   (shor)  at (0,    0)   {Circuito di Shor\\{\footnotesize N15 corretto}};
-\node[box, fill=orange!18] (noise) at (5.0,  0)   {AerSimulator\\{\footnotesize un istogramma per seed}};
-\node[box, fill=green!15]  (m1)    at (10.0, 1.4) {M1\\{\footnotesize TOP-1}};
-\node[box, fill=green!15]  (mt4)   at (10.0, 0)   {Ablazione\\{\footnotesize TOP-4}};
-\node[box, fill=green!15]  (m2)    at (10.0,-1.4) {M2\\{\footnotesize classificatore + TOP-4}};
-\node[box, fill=gray!12]   (out)   at (14.5, 0)   {Artefatto schema 2\\{\footnotesize metriche appaiate + manifest}};
-\draw[arrow] (shor)  -- node[above, lbl]{circuito compilato} (noise);
-\draw[arrow] (noise) -- (m1);
-\draw[arrow] (noise) -- (mt4);
-\draw[arrow] (noise) -- (m2);
-\draw[arrow] (m1)  -- (out);
-\draw[arrow] (mt4) -- (out);
-\draw[arrow] (m2)  -- (out);
-\end{tikzpicture}%
-}
-\caption[Pipeline sperimentale appaiata]{Pipeline versione~2. Per ogni coppia (replica, iterazione) Aer genera un solo istogramma, poi riusato dalle tre strategie. Il confronto non introduce quindi differenti realizzazioni Monte Carlo.}
+\node[box,fill=blue!12]   (shor)  at (0,0)    {Circuito di Shor\\{\footnotesize $N=15$}};
+\node[box,fill=orange!18] (noise) at (5.0,0)  {AerSimulator\\{\footnotesize un istogramma per seed}};
+\node[box,fill=green!15]  (m1)    at (10,1.4) {M1\\{\footnotesize TOP-1}};
+\node[box,fill=green!15]  (mt4)   at (10,0)   {Ablazione\\{\footnotesize TOP-4}};
+\node[box,fill=green!15]  (m2)    at (10,-1.4){M2\\{\footnotesize classificatore + TOP-4}};
+\node[box,fill=gray!12]   (out)   at (14.5,0) {Metriche appaiate\\e manifest};
+\draw[arrow] (shor)--(noise);
+\draw[arrow] (noise)--(m1);
+\draw[arrow] (noise)--(mt4);
+\draw[arrow] (noise)--(m2);
+\draw[arrow] (m1)--(out);
+\draw[arrow] (mt4)--(out);
+\draw[arrow] (m2)--(out);
+\end{tikzpicture}}
+\caption{Ogni istogramma è riutilizzato dalle tre strategie, eliminando
+differenze dovute a realizzazioni Monte Carlo diverse.}
 \label{fig:pipeline_architettura}
 \end{figure}
 
-\textbf{Stadio 1 --- circuito.} Per $N=15$ il moltiplicatore controllato implementa $y\mapsto 7y\bmod15$ ripetendo l'operazione elementare esattamente \texttt{power} volte. Il circuito viene compilato con Qiskit~2.5, \texttt{optimization\_level=2}, seed del transpiler fissato e base nativa esplicita \texttt{rz/sx/x/cx}. Il manifest della configurazione di riferimento registra profondità 412, 224 porte \texttt{cx}, conteggi completi delle istruzioni e hash SHA-256 della netlist. La simulazione ideale valida il periodo e l'estrazione dei fattori in termini probabilistici; non si assume che ogni singolo shot produca necessariamente un fattore.
+Il circuito viene compilato una sola volta nella base
+\texttt{rz/sx/x/cx}, con \texttt{optimization\_level=2} e seed del
+transpiler fissato. La configurazione di riferimento contiene 224 porte
+\texttt{cx} e ha profondità 412; hash e conteggi completi della netlist sono
+registrati nel manifest. Per ogni coppia (replica, iterazione) Aer produce
+un solo istogramma, poi consegnato a M1, TOP-4 e M2. I pareggi di frequenza
+sono risolti mediante una priorità SHA-256 dipendente dal seed e dalla
+bitstring, così l'ordine non dipende dal dizionario o dal valore numerico
+dell'esito.
 
-\textbf{Stadio 2 --- rumore.} Il circuito compilato viene eseguito con un noise model uniforme e controllabile. I due preset servono a studiare il comportamento del metodo, non a emulare o calibrare una specifica QPU. Ogni artefatto conserva sia i parametri sia il manifest del circuito, così risultati ottenuti con revisioni differenti non possono essere combinati inavvertitamente.
-
-\textbf{Stadio 3 --- analisi.} M1, TOP-4 e M2 ricevono il medesimo istogramma. Un ordinamento deterministico risolve i pareggi di frequenza mediante una priorità SHA-256 costruita da seed e bitstring: l'ordine non dipende dall'inserimento nel dizionario e non favorisce sistematicamente bitstring alte o basse.
-
-% -----------------------------------------------
-\section{Tecniche di Mitigazione del Rumore: Analisi e Scelte Implementative}
+\section{Modello di rumore e controlli}
 \label{sec:mitigazione_scelte}
-
-\subsection{Transpilazione e Riduzione della Profondità}
 \label{subsec:transpilazione}
-
-Il gate set è fissato a \texttt{rz/sx/x/cx} prima dell'esecuzione. Questa scelta rende esplicite le sole istruzioni a cui il noise model può essere associato ed evita che porte composite sopravvivano fuori dal contratto. Per $N=15$ la compilazione globale di riferimento produce 224 \texttt{cx} e profondità 412; questi valori sono proprietà della coppia (circuito, versione e opzioni del transpiler), perciò vengono verificati e registrati anziché assunti dal sorgente astratto.
-
-Per $N=21$ e $N=35$ si usa la costruzione aritmetica reversibile di Beauregard. I test ideali coprono le truth table sui sottospazi validi, la pulizia di registro ausiliario e ancilla e il comportamento QPE. La compilazione completa $N=21$, $a=2$, $n_{\text{count}}=8$, livello~2, conta 21\,036 \texttt{cx} e ha profondità 23\,081. Il proxy registrato a $\lambda=10^{-3}$ è $7.2379\times10^{-10}$; è un indicatore circuitale di accumulo, non una stima di $P(\text{successo})$. Il costo giustifica l'esclusione di N21/N35 dalle campagne rumorose, pur lasciandone valida la verifica ideale.
-
-\subsection{Modello di Rumore Uniforme}
 \label{subsec:noise_uniforme}
 
-Le rotazioni \texttt{rz} sono trattate come cambi di frame virtuali, con durata ed errore nulli. I gate \texttt{sx} e \texttt{x} hanno durata 50\,ns; \texttt{cx} ha durata 300\,ns. Su \texttt{sx/x} si compongono il canale depolarizzante a un qubit e il rilassamento termico della durata 1Q; su \texttt{cx} si compongono i corrispondenti canali a due qubit e il rilassamento per 300\,ns. Il readout è modellato da una matrice di confusione simmetrica. Non vengono associati errori a \texttt{rz}, né a istruzioni fuori dalla base.
-
-Nel costruttore Aer, il parametro passato a \texttt{depolarizing\_error} è $\lambda$ nella mappa
+Le rotazioni \texttt{rz} sono trattate come cambi di frame virtuali. Su
+\texttt{sx/x} e \texttt{cx} vengono composti il canale depolarizzante e il
+rilassamento termico, con durate rispettivamente di 50 e 300\,ns; il
+readout è una matrice di confusione simmetrica. Nel costruttore Aer il
+parametro $\lambda$ definisce
+\[
+  \mathcal{E}(\rho)=(1-\lambda)\rho+\lambda I/2^n.
+\]
+Per i gate a due qubit la probabilità aggregata della componente Pauli non
+identità è $15\lambda/16$. Il corrispondente indicatore circuitale è
 \begin{equation}
-    \mathcal{E}(\rho)=(1-\lambda)\rho+\lambda\frac{I}{2^n}.
+  P_{\mathrm{no\text{-}Pauli\text{-}2Q}}
+  =\left(1-\frac{15\lambda}{16}\right)^{224}.
+  \label{eq:proxy_no_pauli_2q}
 \end{equation}
-Per un gate a due qubit, la probabilità aggregata della componente di Pauli non identità nella rappresentazione equivalente è $15\lambda/16$. Di conseguenza, per i 224 \texttt{cx} del circuito N15 si usa esclusivamente il proxy
-\begin{equation}
-    P_{\text{no-Pauli-2Q}}=\left(1-\frac{15\lambda}{16}\right)^{224}.
-    \label{eq:proxy_no_pauli_2q}
-\end{equation}
-Questa quantità non comprende rilassamento, errori 1Q o readout e, soprattutto, non è la probabilità di successo dell'algoritmo di Shor.
+È un proxy di nessun evento sulle CX, non una probabilità di successo di
+Shor, e non comprende errori 1Q, rilassamento o readout.
 
-\subsection{Livello di Misura: Mitigazione degli Errori di Readout}
 \label{subsec:readout_mitigation}
-
-Il contratto base non applica un'inversione post-hoc della matrice di assegnazione. Il parametro $p_{\text{ro}}$ viene invece variato nella campagna parametrica, mantenendo il resto del preset costante. Le conclusioni quantitative sull'impatto del readout provengono dall'artefatto schema~2 corrente; le campagne antecedenti alla correzione del circuito non vengono riutilizzate.
-
-\subsection{Zero-Noise Extrapolation}
+Il contratto base non inverte a posteriori la matrice di readout. Readout,
+$T_1/T_2$, errori 1Q/2Q, numero di shot, valore di $K$ e livello di
+ottimizzazione sono variati in campagne di sensibilità. La griglia completa
+e il confronto con la \ac{ZNE} sono riportati nella
+Sezione~\ref{app:parametrica}; nel corpo resta soltanto il loro bilancio.
 \label{subsec:zne}
-
-La \ac{ZNE} resta un termine di confronto metodologico. I fattori di scala moltiplicano i parametri del noise model, mentre il costo in shot e le trasformazioni dell'istogramma vengono registrati separatamente. Il suo effetto su $\bar M$ e la significatività del confronto sono valutati sotto lo stesso circuito e lo stesso schema statistico della baseline; l'esito è riportato nell'Appendice~\ref{app:parametrica}.
-
-\subsection{Analisi di Sensibilità}
 \label{subsec:sensitivity}
 
-La campagna parametrica adotta una variazione singola rispetto al preset di riferimento e comprende $K$, $\lambda_{2q}$, shots, $T_1/T_2$, $\lambda_{1q}$ e $p_{\text{ro}}$, oltre alle griglie congiunte dichiarate nel manifest. La base circuitale resta invariata. Le tabelle correnti provengono dalla rigenerazione schema~2; gli artefatti storici precedenti alla correzione di \texttt{c\_amod15} non sostengono conclusioni scientifiche.
-
-\subsection{Scelta Adottata: Classificatore come Filtro}
+\section{Regole decisionali e analisi statistica}
 \label{subsec:scelta_ml}
-
-Il classificatore riceve il vettore normalizzato delle $2^{n_{\text{count}}}$ frequenze. La generazione del dataset calcola nello stesso passaggio sia l'etichetta TOP-1 sia l'etichetta TOP-16, così l'effetto della definizione di target è auditabile senza cambiare i campioni. Il modello ammesso nella pipeline M2 è quello con \texttt{label\_top\_k=1} e manifest compatibile; TOP-16 resta un'analisi di sensibilità dell'etichetta. Dopo l'accettazione del classificatore, M2 tenta i primi quattro candidati dello stesso ordinamento usato dall'ablazione TOP-4.
-
-% -----------------------------------------------
-\section{Il Metodo 1: Baseline TOP-1}
 \label{sec:metodo1}
-
-Per ogni iterazione il Metodo~1:
-\begin{enumerate}
-    \item riceve l'istogramma comune della replica;
-    \item seleziona il primo candidato nell'ordinamento frequenza--SHA-256;
-    \item stima il periodo con frazioni continue e verifica i fattori non banali;
-    \item in caso di fallimento procede all'istogramma successivo, fino a $M_{\max}$.
-\end{enumerate}
-
-Il seed Aer è separato fra iterazioni di più del numero di shot, secondo la formula dichiarata nell'implementazione. Questo evita la sovrapposizione quasi completa dei flussi pseudo-casuali prodotta da semi consecutivi.
-
-% -----------------------------------------------
-\section{Il Metodo 2 e il Disegno Appaiato}
 \label{sec:metodo2}
 
-TOP-4 prova, in ordine, fino a quattro candidati dello stesso istogramma. M2 applica prima il classificatore e, soltanto se il gate è positivo, esegue la medesima ricerca TOP-4. Per ciascuna replica si registra la prima iterazione di successo di ogni strategia. Un mancato successo entro $M_{\max}$ è codificato con la sentinella $M_{\max}+1$, mantenendolo distinto da un successo all'ultima iterazione.
+Per ogni istogramma M1 prova il primo candidato ordinato; TOP-4 ne prova
+fino a quattro; M2 tenta gli stessi quattro candidati soltanto quando il
+classificatore accetta l'istogramma. Il dataset conserva sia l'etichetta
+TOP-1 sia l'audit TOP-16, ma la pipeline usa esclusivamente il modello
+TOP-1 compatibile con il manifest. Architetture, addestramento e metriche
+del classificatore sono documentati nella Sezione~\ref{app:classificatore}.
 
-Il calendario di seed e gli istogrammi sono comuni a tutte le strategie. I confronti M1$>$TOP-4 e M1$>$M2 usano il Wilcoxon appaiato unilaterale con gestione degli zeri secondo Pratt; il confronto TOP-4--M2 è bilaterale. Medie, deviazioni e tassi di successo sono statistiche descrittive; il vettore completo con le sentinelle è usato per l'inferenza. L'output JSON schema~2 include input, seed, vettori appaiati, test, versione del software e manifest/hash della compilazione.
+Ogni scenario comprende 30 repliche e un budget massimo di 50 iterazioni.
+La prima iterazione di successo è registrata separatamente per le tre
+strategie; un fallimento al budget assume la sentinella 51. I confronti
+M1$>$TOP-4 e M1$>$M2 usano il test dei ranghi con segno di Wilcoxon
+appaiato, unilaterale, con \texttt{zero\_method='pratt'}; TOP-4--M2 è
+bilaterale. Le correzioni per confronti multipli sono applicate entro la
+famiglia dichiarata. Medie e tassi di successo sono descrittivi, mentre
+l'inferenza usa i vettori appaiati completi.
 
 \end{onehalfspace}

@@ -2,27 +2,17 @@
 
 \subsection{Formalizzazione matematica del problema}
 
-Sia $N$ composto, dispari e non potenza di un primo. Scelto $a$ con $1<a<N$ e $\gcd(a,N)=1$, la
-fattorizzazione si riduce alla ricerca dell'\emph{ordine}
-\begin{equation}
-  r=\operatorname{ord}_N(a)=\min\{k\in\mathbb{N}^{+}:a^{k}\equiv1 \!\!\pmod N\}:
-  \label{eq:ordine}
-\end{equation}
+Per $N$ composto, dispari e non potenza di un primo, e $a$ coprimo con $N$, la fattorizzazione si
+riduce alla ricerca dell'\emph{ordine}
+$r=\operatorname{ord}_N(a)=\min\{k\in\mathbb{N}^{+}:a^{k}\equiv1\pmod N\}$:
 se $r$ è pari e $a^{r/2}\not\equiv-1\pmod N$, allora $\gcd\!\left(a^{r/2}\pm1,N\right)$ è un fattore
-non banale, condizione soddisfatta con probabilità almeno $1/2$ su $a$ casuale~\cite{nielsenChuang2000}. La
+non banale, con probabilità almeno $1/2$ su $a$ casuale~\cite{nielsenChuang2000}. La
 parte quantistica stima $r$ per \emph{phase estimation} dell'unitario
 $U_a\lvert y\rangle=\lvert ay\bmod N\rangle$: con $n$ qubit di conteggio e $M=2^{n}$, dopo la
-trasformata di Fourier quantistica inversa la misura ha distribuzione
-\begin{equation}
-  P(y)=\frac{1}{r}\sum_{s=0}^{r-1}F_M\!\left(\frac{y}{M}-\frac{s}{r}\right),
-  \qquad
-  F_M(\delta)=\frac{1}{M^{2}}\left|\frac{\sin(\pi M\delta)}{\sin(\pi\delta)}\right|^{2}
-  \ \ \text{(nucleo di Fej\'er)} .
-  \label{eq:qpe}
-\end{equation}
-Il post-processing $\Phi$ è deterministico: frazioni continue di $y/M$, che restituiscono $s/r$
-quando $|y/M-s/r|\le1/(2r^{2})$ --- garantito da $M\ge N^{2}$ --- seguite dai controlli di parità e
-dal massimo comun divisore. Detto $\mathcal{U}=\{y:\Phi(y)\ \text{d\`a un fattore non banale}\}$,
+trasformata di Fourier quantistica inversa la misura si concentra sui multipli di $M/r$, con
+dispersione descritta dal nucleo di Fejér. Il post-processing $\Phi$ è deterministico: frazioni
+continue di $y/M$, esatte quando $M\ge N^{2}$, poi parità e massimo comun divisore. Detto
+$\mathcal{U}$ l'insieme degli $y$ da cui $\Phi$ ricava un fattore non banale,
 ogni esecuzione è delimitata da due costanti in forma chiusa,
 \begin{equation}
   P_{\mathrm{id}}=\!\!\sum_{y\in\mathcal{U}}\!P(y)=\frac{3}{4},
@@ -30,110 +20,111 @@ ogni esecuzione è delimitata da due costanti in forma chiusa,
   P_{\mathrm{unif}}=\frac{|\mathcal{U}|}{M}=\frac{63}{256}\simeq0{,}2461 ,
   \label{eq:limiti}
 \end{equation}
-per l'istanza canonica $N=15$, $a=7$, $n=8$, dove $r=4$ divide $M$ e $P$ è supportata su
-$\{0,64,128,192\}$. Le due costanti fissano in anticipo la scala di lettura della campagna:
-$P_{\mathrm{id}}$ è la resa per shot della distribuzione ideale; $P_{\mathrm{unif}}$ è il
-\emph{pavimento uniforme}, cioè la resa attesa quando il rumore cancella la struttura dei picchi e
-rende equiprobabili tutte le $M$ celle. Non è nullo: il post-processing accetta $63$ esiti su
-$256$, quindi anche un'estrazione casuale trova un fattore nel $24{,}6\%$ dei casi. I due valori non
-sono limiti universali per un rumore arbitrario, ma riferimenti per le distribuzioni ideale e
-uniforme; raggiungere il pavimento indica la perdita del segnale quantistico utile, non
-l'impossibilità di fattorizzare.
+per l'istanza canonica $N=15$, $a=7$, $n=8$, dove $r=4$ divide $M$ e $P$ è supportata sui quattro
+picchi $\{0,64,128,192\}$: di questi solo $y=0$ non porta informazione sull'ordine, da cui i tre
+quarti. Le due costanti fissano in anticipo la scala di lettura: $P_{\mathrm{id}}$ è la resa per
+shot della distribuzione ideale; $P_{\mathrm{unif}}$ è il \emph{pavimento uniforme}, la resa attesa
+quando il rumore rende equiprobabili tutte le $M$ celle, non nulla perché il post-processing accetta
+$63$ esiti su $256$. Non sono limiti
+universali: sono i riferimenti ideale e uniforme, e toccare il pavimento segnala la perdita del
+segnale utile, non l'impossibilità di fattorizzare.
 
-\subsection{Modello di rumore e osservabile misurata}
+\subsection{Modello di rumore, scenari e mitigazione a valle}
 
 Il circuito è compilato deterministicamente (ottimizzazione 2 e seed registrato) nella base
-hardware $\{r_z,\sqrt{X},X,\mathrm{CX}\}$: $r_z(\theta)$ è una rotazione virtuale attorno a $z$,
-$\sqrt{X}$ (SX) è una rotazione di $\pi/2$ attorno a $x$, $X$ la NOT quantistica che scambia
-$\lvert0\rangle$ e $\lvert1\rangle$, e CX (CNOT) applica $X$ al bersaglio quando il controllo vale
-$1$. Ogni altra operazione è decomposta in queste porte, sulle quali si modella il rumore. Dopo ogni
-gate $g$ su $q$ qubit si compone il canale depolarizzante
-$\mathcal{E}_{\lambda}(\rho)=(1-\lambda)\rho+\lambda I/2^{q}$ con il rilassamento termico: $T_1$ è
-il tempo di rilassamento energetico $\lvert1\rangle\!\to\!\lvert0\rangle$ e $T_2$ il tempo di
-perdita della coerenza di fase. Poiché tali effetti si accumulano nel tempo, il canale usa la durata
-di $g$: $r_z$ è virtuale (durata nulla nel modello), $\sqrt{X}/X$ dura 50\,ns e CX 300\,ns. La
-lettura è una matrice di confusione simmetrica $R$ di parametro $p_{\mathrm{ro}}$; su $S$ shot i
-conteggi sono $\mathbf{c}\sim\mathrm{Multinomiale}(S,R\,p_{\mathrm{rum}})$ e l'istogramma
-normalizzato è $\hat h=\mathbf{c}/S$. Lo accompagnano la frazione
-efficace $f=(m-4/M)/(1-4/M)$, con $m$ massa sui picchi teorici, e il proxy
-$P_0=(1-\tfrac{15}{16}\lambda_{2q})^{n_{\mathrm{CX}}}$: indicatori dichiarati, non fedeltà né
-probabilità di fattorizzazione. I preset sono scenari uniformi illustrativi, non calibrazioni di una
-QPU.
+hardware $\{r_z,\sqrt{X},X,\mathrm{CX}\}$, in cui $r_z$ è una rotazione virtuale attorno a $z$, e
+il rumore è modellato su quelle porte. Dopo ogni
+gate $g$ si compone un canale depolarizzante di parametro $\lambda$ con il rilassamento termico,
+descritto dai tempi $T_1$ (rilassamento energetico) e $T_2$ (perdita di coerenza di fase) e
+applicato in proporzione alla durata di $g$: $r_z$ ha durata nulla nel modello,
+$\sqrt{X}/X$ dura 50\,ns e CX 300\,ns. La lettura è una matrice di confusione simmetrica di
+parametro $p_{\mathrm{ro}}$; su $S$ shot l'istogramma normalizzato $\hat h$ è la frequenza
+campionaria multinomiale della distribuzione così letta. Due preset definiscono gli scenari
+confrontati: \textbf{UC1} (riferimento) con $\lambda_{1q}=10^{-3}$, $\lambda_{2q}=10^{-2}$,
+$T_1=100\,\mu\mathrm{s}$, $T_2=80\,\mu\mathrm{s}$, $p_{\mathrm{ro}}=0{,}02$; \textbf{UC2} (stress)
+con $\lambda_{1q}=5\times10^{-3}$, $\lambda_{2q}=5\times10^{-2}$, $T_1=50\,\mu\mathrm{s}$,
+$T_2=30\,\mu\mathrm{s}$, $p_{\mathrm{ro}}=0{,}05$: errori di gate cinque volte più intensi e tempi
+di coerenza dimezzati. Sono scenari uniformi illustrativi, non calibrazioni di una QPU. Come
+termine di paragone a valle si valuta la \emph{zero-noise extrapolation}~\cite{temme2017}: il
+circuito gira con il rumore scalato di $\lambda=1,2,3$ e l'istogramma è estrapolato a
+$\lambda\to0$ (lineare su due livelli, Richardson su tre), al prezzo di altrettante repliche.
 
-\subsection{Politiche decisionali e stimando statistico}
+\subsection{Politiche decisionali, modello appreso e stimando statistico}
 
 Su $\hat h$ si definisce l'ordinamento totale $\prec$ per conteggio decrescente, con pareggi risolti
-dalla priorità deterministica $\tau(y)=\mathrm{SHA}\text{-}256(\text{seed}\,\Vert\,y)$; la politica
+da una priorità deterministica seeded (SHA-256); la politica
 $\pi_K$ prova i primi $K$ candidati secondo $\prec$. Il Metodo~1 è $\pi_1$, l'ablazione è $\pi_4$, il
-Metodo~2 applica un classificatore $g_\theta(\hat h)\in\{0,1\}$ ed esegue $\pi_4$ solo se il gate è
-positivo. Per ogni replica si osserva
-\begin{equation}
-  M^{(\pi)}=\min\{m\ge1:\pi\ \text{riesce all'iterazione}\ m\},
-  \quad M^{(\pi)}:=M_{\max}+1\ \text{se non riesce},
-  \label{eq:iterazioni}
-\end{equation}
-con $M_{\max}=50$, sentinella che codifica esplicitamente la censura. Lo stimando dichiarato a
-priori è $\rho=\bar M_1/\bar M_2$; l'inferenza usa invece le differenze appaiate
-$D_i=M_i^{(A)}-M_i^{(B)}$, il test dei ranghi con segno di Wilcoxon (zeri \texttt{pratt}), $H_0$ di
-simmetria attorno a zero, $\alpha=0{,}05$ e correzione di Holm entro famiglia. Poiché in una
-simulazione Monte Carlo la distribuzione è stimata estraendo pseudocasualmente $S$ shot, anche
-esecuzioni nominalmente identiche producono istogrammi diversi. A ogni coppia (replica, iterazione)
-le tre strategie ricevono perciò lo stesso istogramma: $D_i$ confronta le regole decisionali sulla
-medesima realizzazione e non contiene la componente spuria dovuta a campioni indipendenti, pur
-restando variabile fra repliche. Il classificatore riceve il vettore di frequenze relative
-$\hat h=(c_0/S,\ldots,c_{M-1}/S)$, con somma uno, e l'etichetta binaria
-$Y_1=\mathbf{1}[\pi_1\ \text{ha successo}]$, pari a $1$ se $\pi_1$ trova un fattore non banale e a
-$0$ altrimenti. La variante $Y_{16}$ resta un audit: nel riferimento esattamente uniforme i primi
-sedici candidati equivalgono a estrazioni senza reimmissione dalle $256$ celle, di cui $63$ utili,
-e la probabilità che nessuno dia un fattore è
-$\binom{193}{16}\big/\binom{256}{16}=0{,}93\%$. Il riferimento uniforme prevede quindi il $99{,}07\%$ di
-etichette positive e dimostra il forte sbilanciamento, non l'esito esatto del campione. Nei dati
-effettivi $Y_{16}$ è risultato positivo in $2000/2000$ casi per entrambi gli scenari: questa
-osservazione empirica ne stabilisce la degenerazione a classe unica.
+Metodo~2 applica un classificatore $g_\theta(\hat h)\in\{0,1\}$ ed esegue $\pi_4$ solo se il filtro
+è positivo. Il classificatore riceve $\hat h$ e l'etichetta binaria
+$Y_1=\mathbf{1}[\pi_1\ \text{ha successo}]$; è addestrato su $2\,000$ istogrammi per scenario,
+campionati entro il $\pm50\%$ attorno al preset, con partizione stratificata $60/20/20$. Fra random
+forest,
+\emph{support vector machine} a kernel RBF calibrata e percettrone multistrato, la selezione per F1
+sulla validation sceglie in entrambi gli scenari la \emph{support vector machine}, valutata una
+sola volta sul test. Per ogni replica si osserva il numero di iterazioni
+$\mathcal{M}^{(\pi)}=\min\{m\ge1:\pi\ \text{riesce all'iterazione}\ m\}$, posto uguale a
+$\mathcal{M}_{\max}+1$ in caso di fallimento, con $\mathcal{M}_{\max}=50$: una sentinella che
+codifica esplicitamente la censura. Il carattere calligrafico tiene il conteggio delle iterazioni
+distinto dalla dimensione $M=2^{n}$ del registro.
+Lo stimando dichiarato a priori, $\rho=\bar{\mathcal{M}}_1/\bar{\mathcal{M}}_2$, resta la misura di
+effetto; l'inferenza è però affidata alle differenze appaiate
+$D_i=\mathcal{M}_i^{(A)}-\mathcal{M}_i^{(B)}$, perché un rapporto di medie su una variabile
+discreta e censurata non ammette test esatto: test dei ranghi con segno di Wilcoxon (zeri
+trattati con il metodo di Pratt), $H_0$ di simmetria attorno a zero, $\alpha=0{,}05$ e correzione di
+Holm entro famiglia. Poiché ogni esecuzione Monte Carlo dà un istogramma diverso anche a parametri
+identici, le tre strategie ne ricevono uno identico a ogni coppia (replica, iterazione): $D_i$
+confronta le regole sulla stessa realizzazione, senza variabilità spuria. Un audit separato scarta
+la variante $Y_{16}$ dell'etichetta --- successo entro i primi sedici candidati --- perché
+degenerata a classe unica.
 
 \subsection{Correzione d'errore: formalismo, metriche e decodifica appresa}
 
-Un codice stabilizzatore è un sottogruppo abeliano $\mathcal{S}\subset\mathcal{P}_n$ con
-$-I\notin\mathcal{S}$; la sindrome di $E\in\mathcal{P}_n$ è $\sigma(E)_j=0$ se $[E,s_j]=0$ e $1$
-altrimenti, un decoder è una mappa $\mathcal{D}:\mathbb{F}_2^{\,n-k}\!\to\mathcal{P}_n$ e il
-fallimento logico è l'evento
-$\mathcal{D}(\sigma(E))\,E\in\mathcal{N}(\mathcal{S})\setminus\mathcal{S}$, la cui probabilità
-definisce il \emph{logical error rate} $p_L(p,d)$. Si simulano il codice a ripetizione, la cui forma
-chiusa $p_L=3p^{2}-2p^{3}$ serve da test di correttezza; il codice di
-Steane~\cite{steane1996}, con verifica della corrispondenza sindrome$\rightarrow$errore sui 21 casi
-e stima di $\gamma$ in $p_L\propto p^{\gamma}$; il surface code ruotato~\cite{fowler2012} sotto
-rumore \emph{circuit-level}, decodificato per matching di peso minimo e descritto dalla legge di
-scala
+Un codice stabilizzatore protegge l'informazione misurando ripetutamente osservabili che lasciano
+invariati gli stati codificati (il sottogruppo abeliano $\mathcal{S}\subset\mathcal{P}_n$ del gruppo
+di Pauli): l'esito di quelle misure è la \emph{sindrome}
+$\sigma(E)$ dell'errore $E$, e un decoder $\mathcal{D}$ è la regola che dalla sindrome inferisce la
+correzione. Il decoder fallisce quando la correzione riporta lo stato nel codice applicandovi però
+un operatore logico non banale, cioè un errore che nessuna sindrome poteva rivelare; la probabilità
+di quell'evento è il \emph{logical error rate} $p_L(p,d)$, dove $d$ è la distanza del codice, il
+peso minimo di un errore non rivelabile. Si simulano il codice a ripetizione, con la forma chiusa
+$p_L=3p^{2}-2p^{3}$ come test di correttezza; il
+codice di Steane~\cite{steane1996}, con verifica della corrispondenza sindrome$\rightarrow$errore
+sui 21 casi e stima di $\gamma$ in $p_L\propto p^{\gamma}$; il surface code
+ruotato~\cite{fowler2012} sotto rumore \emph{circuit-level}, decodificato per matching di peso
+minimo (MWPM) e descritto dalla legge di scala
 \begin{equation}
   p_L(p,d)=A\left(p/p_{\mathrm{th}}\right)^{\lfloor(d+1)/2\rfloor},
   \label{eq:scaling}
 \end{equation}
-adattata ai punti sotto soglia per $d=3,5,7,9$ così da stimare $p_{\mathrm{th}}$ indipendentemente
-dall'incrocio delle curve. Il decoder appreso è un percettrone multistrato $f_\theta$ sugli stessi
-\emph{detection events}, confrontato con il matching sia come sostituto sia nella forma ibrida
+con $A$ e $p_{\mathrm{th}}$ adattati ai punti sotto soglia per $d=3,5,7,9$, così da stimare la
+soglia indipendentemente dall'incrocio delle curve. Il
+decoder appreso è un percettrone multistrato $f_\theta$ sugli stessi \emph{detection events}, le
+variazioni di sindrome fra cicli consecutivi, confrontato con il matching sia come sostituto sia
+nella forma ibrida
 $\mathcal{D}_{\mathrm{hyb}}(\sigma)=\mathcal{D}_{\mathrm{MWPM}}(\sigma)\oplus\mathbf{1}[f_\theta(\sigma)>t]$,
-con soglia $t$ scelta in validazione fra candidate che includono l'astensione totale e
-significatività valutata con il test esatto di McNemar.
+in cui la rete, quando segnala che il matching sta sbagliando, ne ribalta la decisione applicando
+l'operatore logico; la soglia $t$ è scelta in validazione e la significatività dal test di McNemar.
 
 \subsection{Proxy fenomenologico per la sensibilità di Shor}
 
-Dopo ogni gate compilato su $q$ qubit si applica il canale di Pauli
-$\mathcal{E}_{p_L}(\rho)=(1-p_L)\rho+\frac{p_L}{4^{q}-1}\sum_{P\neq I}P\rho P^{\dagger}$, ossia
-$\lambda_1=\tfrac{4}{3}p_L$ e $\lambda_2=\tfrac{16}{15}p_L$, e si misura il successo per singola
-misura su una griglia preregistrata di $p_L$, con probabilità cumulativa $P(k)=1-(1-P_s)^{k}$ dopo
-$k$ tentativi indipendenti. Non è una compilazione fault-tolerant: $p_L$ è la probabilità di un
-Pauli non identità \emph{per gate compilato}, non il tasso per ciclo di sindrome, e la conversione
-fra le due unità richiederebbe un modello architetturale esplicito.
+Dopo ogni gate compilato si applica un canale di Pauli isotropo, che con probabilità $p_g$
+sostituisce l'identità con un errore di Pauli non banale scelto uniformemente, ossia
+$\lambda_1=\tfrac{4}{3}p_g$ e $\lambda_2=\tfrac{16}{15}p_g$ in forma depolarizzante. È indicato
+$p_g$, non $p_L$: è la probabilità di un Pauli non identità \emph{per gate compilato}, non il tasso
+logico per ciclo di sindrome della Sez.~2.4, e le due unità non sono convertibili senza un modello
+architetturale esplicito. Su una griglia preregistrata di $p_g$ si
+misura il successo per singola misura. Non è una compilazione fault-tolerant: ne risulta
+un'analisi di sensibilità, non una previsione di prestazione.
 
 \subsection{Strumenti, verifica e validazione}
 
-Qiskit/Aer gestisce i circuiti generali, Stim e PyMatching quelli stabilizzatori e scikit-learn i
-modelli appresi; versioni e ambiente sono registrati negli artefatti. Gli strumenti ad hoc
-comprendono i moduli sperimentali, un formato JSON versionato (input, seed, vettori appaiati,
-manifest e hash SHA-256 della netlist), l'aritmetica reversibile di Beauregard per $N=21/35$ e una
-demo web che separa esecuzione ideale e rumorosa; codice e artefatti sono pubblici e riutilizzabili. La verifica è
-\emph{funzionale} (truth table, azzeramento delle ancille e confronto con la phase estimation
-teorica: distanza di variazione totale $1{,}38\times10^{-9}$ per $N=21$), \emph{di identità}
-(profondità, conteggi e hash) e \emph{statistica} (ipotesi e griglie preregistrate, seed separati,
-intervalli di Wilson al 95\%, Bonferroni per la monotonia, Holm entro famiglia e censura esplicita). L'ablazione sugli stessi dati
-resta il controllo causale.
+Qiskit/Aer~\cite{qiskit2023} gestisce i circuiti generali, Stim~\cite{stim2021} e
+PyMatching~\cite{pymatching2021} quelli stabilizzatori e scikit-learn~\cite{scikit_learn} i modelli
+appresi; ambiente e versioni sono registrati in un formato JSON versionato (input, seed, manifest e
+hash della netlist). Una demo web separa esecuzione ideale e rumorosa; codice, seed e
+artefatti sono pubblici (\url{https://github.com/claudio-dragotta/shor-nisq-qec-thesis}).
+L'aritmetica di Beauregard~\cite{beauregard2002}, realizzata anche per $N=21$ e $N=35$, è validata
+solo idealmente: $N=15$ resta l'unica istanza rumorosa. La verifica è \emph{funzionale} (truth table, ancille azzerate, confronto con la
+phase estimation teorica: distanza di variazione totale $1{,}38\times10^{-9}$ per $N=21$), \emph{di identità} (profondità, conteggi e hash) e
+\emph{statistica} (ipotesi e griglie preregistrate, seed separati, intervalli di Wilson,
+Bonferroni sulla monotonia, Holm entro famiglia e censura esplicita). L'ablazione sugli stessi dati resta il controllo causale.

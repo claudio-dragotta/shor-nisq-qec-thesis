@@ -209,6 +209,61 @@ livello & CX & profondità & $\bar M_1$ & $\bar M_{\mathrm{TOP4}}$ & $\rho$ \\
 \end{table}
 
 % -----------------------------------------------
+\subsection{Diagnostiche della struttura QPE}
+\label{subsec:diagnostiche_qpe}
+
+La sola iterazione di successo non descrive quanta struttura periodica
+resti nell'istogramma. La Figura~\ref{fig:istogrammi_qpe} mostra, fra le
+30 repliche nominali UC1, i casi con massa massima e minima sui quattro
+picchi teorici $\{0,64,128,192\}$.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.88\textwidth]{fig_istogrammi_qpe.pdf}
+    \caption{Repliche UC1 con massa massima e minima sui quattro picchi
+    QPE teorici.}
+    \label{fig:istogrammi_qpe}
+\end{figure}
+
+La massa media $m$ sui picchi è convertita nell'indice descrittivo
+\begin{equation}
+    f=\frac{m-4/256}{1-4/256},
+    \label{eq:miscela_coerente}
+\end{equation}
+che vale zero per il fondo uniforme e uno per una distribuzione
+concentrata sui picchi. Non è una fedeltà. La Tabella
+\ref{tab:frazione_coerente} la confronta con il proxy
+$P_0=(1-15\lambda_{2q}/16)^{224}$.
+
+\begin{table}[!htbp]
+\centering
+\caption{Massa efficace sui picchi e proxy di nessun evento 2Q.}
+\label{tab:frazione_coerente}
+\begin{tabular}{ccc}
+\toprule
+$\lambda_{2q}$ & $f$ efficace & $P_0$ proxy \\
+\midrule
+$10^{-3}$ & 0.8036 & $8.11\times10^{-1}$ \\
+$5\times10^{-3}$ & 0.7039 & $3.49\times10^{-1}$ \\
+$10^{-2}$ & 0.5938 & $1.21\times10^{-1}$ \\
+$2\times10^{-2}$ & 0.4286 & $1.44\times10^{-2}$ \\
+$5\times10^{-2}$ & 0.1688 & $2.14\times10^{-5}$ \\
+$10^{-1}$ & 0.0421 & $2.65\times10^{-10}$ \\
+$2\times10^{-1}$ & 0.0047 & $6.32\times10^{-21}$ \\
+$3\times10^{-1}$ & 0.0015 & $7.47\times10^{-33}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.76\textwidth]{frazione_coerente.pdf}
+    \caption{Il proxy di nessun evento decade più rapidamente della massa
+    strutturata osservata sui picchi.}
+    \label{fig:frazione_coerente}
+\end{figure}
+
+% -----------------------------------------------
 \subsection{Confronto con Zero-Noise Extrapolation}
 \label{sec:app_zne}
 

@@ -1,6 +1,12 @@
-\renewcommand*{\bibfont}{\scriptsize}
+% L'interlinea 1,15 del template vale per il corpo del testo; i riferimenti,
+% gia' in corpo minore, tornano a interlinea singola per rientrare nelle 5 pagine.
+\renewcommand*{\bibfont}{\scriptsize\setstretch{1}}
 \setlength{\bibitemsep}{0pt}
+\setlength{\bibhang}{1em}
 \section{Bibliografia}
+\setlength{\premulticols}{0pt}
+\setlength{\multicolsep}{0pt}
+\setlength{\columnsep}{10pt}
 \begin{multicols}{2}
 \raggedcolumns
 \printbibliography[heading=none]
