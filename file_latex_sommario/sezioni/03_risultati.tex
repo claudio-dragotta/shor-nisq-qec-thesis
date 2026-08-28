@@ -1,28 +1,31 @@
 \section{Risultati}
 
-\textbf{Fase 1.} Sul circuito verificato ($N=15$, $a=7$, profondità 412, 224 porte CX, hash
-registrato) i classificatori raggiungono le prestazioni ipotizzate a priori (F1 $=0{,}919$ e
+\textbf{Fase 1.} Sul circuito verificato ($N=15$, $a=7$, profondità 412, 224 CX, hash registrato)
+i classificatori raggiungono le prestazioni ipotizzate a priori (F1 $=0{,}919$ e
 $0{,}923$; AUC $=0{,}965$ e $0{,}958$), ma l'ablazione appaiata mostra che il guadagno non è loro.
 Su 30 repliche per scenario, con successo $30/30$ in ogni braccio, la sola ricerca $\pi_4$ porta le
-iterazioni al minimo ($\bar M=1{,}00$ contro $1{,}37$ in UC1 e $1{,}50$ in UC2;
+iterazioni al minimo ($\bar{\mathcal{M}}=1{,}00$ contro $1{,}37$ in UC1 e $1{,}50$ in UC2;
 $p_{\mathrm{Holm}}=0{,}0024$ e $0{,}0015$), mentre il Metodo~2 non migliora la baseline ($1{,}50$ e
-$1{,}37$; $p=0{,}7314$ e $0{,}0874$) e peggiora la propria ablazione
-($p_{\mathrm{Holm}}=0{,}0033$ e $0{,}0096$). Nemmeno la zero-noise extrapolation migliora la baseline, e triplica il costo di
-campionamento; l'etichetta a sedici candidati produce infine $2000/2000$ positivi, confermando
-empiricamente la degenerazione discussa nella Sez.~2.3.
+$1{,}37$; $p_{\mathrm{Holm}}=0{,}7314$ e $0{,}0874$) e peggiora la propria ablazione
+($p_{\mathrm{Holm}}=0{,}0033$ e $0{,}0096$). Nemmeno la zero-noise extrapolation migliora la
+baseline, e triplica il costo di campionamento.
 
+\textbf{Fase 2.} I codici riproducono le previsioni a priori, con la stima
+di $p_{\mathrm{th}}$ dall'Eq.~\eqref{eq:scaling} concorde con l'incrocio delle curve: la ripetizione a
+$d=3$ accorda con $p_L=3p^{2}-2p^{3}$ entro l'errore statistico; Steane $[[7,1,3]]$
+dà $\gamma=1{,}94$ e pseudo-soglia (il rumore oltre il quale, a distanza fissata, codificare non
+conviene) $p\simeq0{,}08$; il surface code per $d=3$--$9$ dà
+$p_{\mathrm{th}}=0{,}86\%$ ($Z$) e $0{,}81\%$ ($X$), prefattore $A=3{,}5\times10^{-2}$ e residui di
+RMS $0{,}08$ in $\ln p_L$; la decodifica appresa non vince mai come sostituto del matching e, come
+correttore ibrido, riduce $p_L$ del $18$--$21\%$ a $d=3$ \emph{soltanto in presenza di errori
+correlati} --- crosstalk fra qubit dati adiacenti, non rappresentabile nel grafo di matching ---,
+dell'$1$--$3\%$ a $d=5$ e per nulla a $d=7$.
 
-\textbf{Fase 2.} La progressione dei codici riproduce le previsioni formulate a priori, con la stima
-di $p_{\mathrm{th}}$ dall'Eq.~\eqref{eq:scaling} concorde con l'incrocio delle curve: il codice a
-ripetizione a $d=3$ accorda con $p_L=3p^{2}-2p^{3}$ entro l'errore statistico; Steane $[[7,1,3]]$
-dà $\gamma=1{,}94$ e pseudo-soglia $p\simeq0{,}08$; il surface code per $d=3$--$9$ dà
-$p_{\mathrm{th}}=0{,}86\%$ ($Z$) e $0{,}81\%$ ($X$), $A=3{,}5\times10^{-2}$ e RMS $0{,}08$ in
-$\ln p_L$; la decodifica appresa non vince mai come sostituto del matching e, come correttore
-ibrido, riduce $p_L$ del $18$--$21\%$ a $d=3$, dell'$1$--$3\%$ a $d=5$ e per nulla a $d=7$.
-
-\textbf{Chiusura quantitativa.} Gli estremi della curva di sensibilità coincidono con le costanti
-dell'Eq.~\eqref{eq:limiti}: il punto senza rumore, $0{,}7489$ [$0{,}7459$; $0{,}7518$], stima
-$P_{\mathrm{id}}=3/4$; il
-plateau, $0{,}2459$, coincide con il pavimento uniforme $P_{\mathrm{unif}}=63/256=0{,}2461$. La
+\textbf{Chiusura quantitativa.} Nel proxy della Sez.~2.5 --- in unità di $p_g$, non del $p_L$
+appena riportato --- gli estremi della curva di sensibilità coincidono con le costanti
+dell'Eq.~\eqref{eq:limiti}: il punto senza rumore ($p_g=0$) vale $0{,}7489$ [$0{,}7459$;
+$0{,}7518$] e stima $P_{\mathrm{id}}=3/4$; il plateau è già raggiunto a $p_g\simeq0{,}1$ e vale
+$0{,}2459$ a $p_g=0{,}5$, cioè il pavimento uniforme
+$P_{\mathrm{unif}}=63/256=0{,}2461$. La
 curva non descrive un algoritmo che fallisce, ma uno che degrada verso l'estrazione casuale, con
 entrambi gli asintoti fissati in anticipo dalla teoria.

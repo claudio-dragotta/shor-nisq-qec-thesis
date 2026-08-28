@@ -1,22 +1,24 @@
 \section{Introduzione}
 
 L'algoritmo di Shor~\cite{shor1994} fattorizza un intero composto in tempo polinomiale,
-$O\!\left((\log N)^{3}\right)$, contro il tempo sub-esponenziale del miglior algoritmo classico
-noto.
+$O\!\left((\log N)^{3}\right)$, contro il tempo sub-esponenziale del \emph{general number field
+sieve}~\cite{lenstra1993gnfs}, il miglior algoritmo classico noto.
 È questo divario a minacciare RSA~\cite{rsa1978}, ma è asintotico e i dispositivi \emph{Noisy
 Intermediate-Scale Quantum}~\cite{preskill2018} non lo realizzano: il rumore distrugge la struttura
 periodica su cui l'algoritmo si fonda, le dimostrazioni restano confinate a moduli
 didattici~\cite{skosana2021} e RSA-2048 richiederebbe venti milioni di qubit
-fisici~\cite{gidney2021}. Fra i due estremi restano due rimedi, la
-mitigazione a valle e la correzione d'errore durante il calcolo, ai quali un numero crescente di
-lavori applica modelli appresi dai dati, spesso senza un termine di confronto che isoli il
-contributo del modello da quello della regola decisionale.
+fisici~\cite{gidney2021}. Restano due rimedi, la mitigazione a valle e la
+correzione d'errore durante il calcolo, ai quali un numero crescente di lavori applica modelli
+appresi, spesso senza un termine di confronto che isoli il contributo del modello da quello della
+regola decisionale.
 
-Il lavoro riprende un progetto preesistente --- implementazione di Shor in Qiskit e prima campagna
-rumorosa su $N=15$ --- rigenerato dopo che un audit per truth table ne ha invalidato il
-moltiplicatore modulare. Chiede quindi \emph{in quale punto della pipeline un modello appreso
-migliori davvero la resa di Shor in ambiente rumoroso}. Con la stessa tecnologia e lo stesso
-impianto statistico confronta un classificatore dell'istogramma di output e un decoder addestrato
-sulle sindromi di un codice correttore. Il contributo è metodologico: disegno appaiato con
-ablazione, separazione fra metriche QEC e successo di Shor e artefatti riproducibili (seed, manifest
-e hash del circuito).
+Il lavoro riprende un progetto preesistente --- Shor in Qiskit e una prima campagna rumorosa su
+$N=15$ --- e lo rigenera dopo che una verifica per truth table ne ha invalidato il moltiplicatore
+modulare controllato, il blocco che realizza $\lvert y\rangle\mapsto\lvert ay\bmod N\rangle$. Chiede quindi \emph{in quale punto della pipeline
+un modello appreso migliori davvero la resa di Shor in ambiente rumoroso}, e con la stessa
+tecnologia e lo stesso impianto statistico ne confronta due: un classificatore dell'istogramma di
+output e un decoder addestrato sulle sindromi di un codice correttore. La risposta ha due facce, negativa a valle e positiva ma solo residuale sulla
+sindrome. Il contributo è metodologico: disegno appaiato con \emph{ablazione} --- un braccio di
+controllo che esegue la sola regola decisionale, senza il modello ---, separazione fra metriche
+di correzione d'errore e successo di Shor, artefatti riproducibili (seed, manifest e hash del
+circuito).

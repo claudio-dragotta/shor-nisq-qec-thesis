@@ -34,13 +34,17 @@
 \usepackage{enumitem}
 \usepackage{multicol}
 \usepackage[autostyle=true]{csquotes}
-\usepackage{microtype}
+\usepackage[expansion=alltext,stretch=25,shrink=25,tracking=true]{microtype}
 \usepackage[hidelinks]{hyperref}
 
 \usepackage[backend=biber,citestyle=numeric,bibstyle=numeric,sorting=none,
-            maxbibnames=3,minbibnames=3,giveninits=true,
+            maxbibnames=1,minbibnames=1,giveninits=true,
             doi=false,isbn=false,url=false,eprint=false]{biblatex}
 \addbibresource{Bibliografia.bib}
+% Riferimenti compatti: il limite di 5 pagine del template include la bibliografia.
+% Si omette il titolo dove la voce resta identificabile da autore + rivista/atti/DOI/arXiv + anno;
+% i libri lo conservano, perche' e' il loro unico identificativo.
+\AtEveryBibitem{\ifentrytype{book}{}{\clearfield{title}}}
 
 % --- interlinea 1,15 come da template -------------------------------
 \setstretch{1.15}

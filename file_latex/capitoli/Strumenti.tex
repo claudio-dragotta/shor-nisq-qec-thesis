@@ -1,38 +1,36 @@
 \begin{onehalfspace}
 
-Il capitolo precedente ha concluso la parte teorica della tesi con un'ipotesi precisa da
-mettere alla prova: che un classificatore di \ac{ML} classico addestrato per
-la rilevazione degli errori, riduca in misura significativa il numero medio di esecuzioni
-necessarie ($\rho = \bar{M}_1/\bar{M}_2 \gg 1$), portandolo a circa tre. Questo capitolo
-definisce il sistema sperimentale costruito per verificarla, e risponde in sequenza a tre
-domande: con quali strumenti si lavora, con quale disegno, e come quel disegno è stato
-realizzato in codice.
-
-Si tratta dell'architettura della \emph{prima fase} del lavoro: l'esito della verifica ---
-che il guadagno osservato è reale ma attribuibile alla ricerca multi-candidato e non al
-classificatore (Capitolo~\ref{chap:risultati}) --- motiva la seconda fase, che adotta
-un'architettura diversa perché diversa ne è la natura. Il protocollo sperimentale di ciascun
-codice correttore, essendo specifico del codice, è descritto nel capitolo che lo introduce
-(Capitoli~\ref{chap:qec}--\ref{chap:integrazione}); l'infrastruttura comune --- organizzazione
-del codice, divisione degli strumenti fra Qiskit, Stim e PyMatching, e disciplina di
-riproducibilità --- è nella Sezione~\ref{sec:impl_qec}.
+Questo capitolo definisce il metodo con cui vengono verificate le due domande
+sperimentali della tesi: se un filtro appreso migliori il post-processing di
+Shor e se un modello appreso possa assistere la decodifica di una sindrome
+quantistica. Gli strumenti sono scelti in funzione del circuito da simulare e
+della metrica da stimare.
 
 \section{Strumenti e Ambiente di Simulazione}
 \label{chap:strumenti}
 
-Questa sezione riassume gli strumenti software e l'ambiente usati nella parte sperimentale.
-La motivazione estesa di ciascuna scelta --- il confronto tra i framework, i metodi di
-simulazione di Aer, le specifiche GPU e la configurazione WSL --- è riportata nella
-Sezione~\ref{app:strumenti}.
+\textbf{Shor e prima fase.}
+Il circuito generale di Shor, il modello di rumore e il campionamento degli
+istogrammi sono implementati con Qiskit e Qiskit Aer~\cite{qiskit2023}. La
+campagna rumorosa usa lo statevector soltanto per l'istanza didattica
+$N=15$; le istanze $N=21$ e $N=35$ sono riservate alla validazione ideale
+dell'aritmetica e all'audit del costo circuitale.
 
-\textbf{Framework: Qiskit + Qiskit Aer.} L'intera pipeline usa \textbf{Qiskit} \cite{qiskit2023}, l'SDK di IBM Quantum, e il simulatore \textbf{Qiskit Aer}. La scelta è motivata dal supporto esplicito ai canali depolarizzanti, termici e di readout, dalla compilazione controllabile in un gate set dichiarato e dall'allineamento con l'implementazione di riferimento dell'algoritmo di Shor \cite{skosana2021, github_shor}. Il noise model della prima fase è uniforme e illustrativo: non è una calibrazione di hardware IBM.
+\textbf{Correzione d'errore.}
+I laboratori su repetition e Steane usano Qiskit Aer. Per il surface code,
+che richiede molti campioni di circuiti stabilizer, si adottano
+Stim~\cite{stim2021} e PyMatching~\cite{pymatching2021}: il primo genera i
+\emph{detection events}, il secondo applica la decodifica
+\ac{MWPM}. Questa divisione evita di simulare con uno statevector circuiti
+per i quali esiste una rappresentazione classica efficiente.
 
-\textbf{Metodo di simulazione e limite di scala.} La campagna rumorosa principale usa \texttt{AerSimulator(method='statevector')} sul circuito didattico a 12 qubit per $N=15$. Il costo dello stato cresce come $2^n$ e quello delle traiettorie rumorose cresce anche con gli shot; le istanze $N=21/35$ sono quindi riservate ai controlli ideali di correttezza e costo circuitale. La simulazione di uno Shor interamente codificato resta impraticabile e impone l'uso di Stim per i soli circuiti \emph{stabilizer} della QEC (Capitoli~\ref{chap:surface} e~\ref{chap:integrazione}).
-
-\textbf{Strumenti della parte QEC.} La stima del \textit{logical error rate} del surface code richiede milioni di esecuzioni di circuiti stabilizer, fuori portata per un simulatore statevector. Si adottano quindi due strumenti specializzati: \textbf{Stim} \cite{stim2021} (versione 1.16.0), che campiona \textit{detection events} di circuiti Clifford sfruttando il teorema di Gottesman--Knill, e \textbf{PyMatching} \cite{pymatching2021} (versione 2.4.0), che implementa la decodifica \ac{MWPM} a partire dal modello di errore del circuito. La divisione dei compiti --- Qiskit Aer per i circuiti generali di piccola taglia, Stim e PyMatching per la \ac{QEC} stabilizer --- è discussa nel Capitolo~\ref{chap:integrazione}.
-
-\textbf{Modello di rumore.} Il modulo \texttt{qiskit\_aer.noise} compone errore \textbf{depolarizzante}, \textbf{rilassamento termico} $T_1/T_2$ e \textbf{readout error} (matrice di confusione). I due preset sono uniformi e illustrativi, non calibrati su una macchina nominata. Il circuito è compilato in \texttt{rz/sx/x/cx} con \texttt{optimization\_level=2}: le \texttt{rz} sono virtuali, mentre i canali fisici agiscono su \texttt{sx/x} e \texttt{cx} con durate dichiarate.
-
-\textbf{Machine learning e ambiente.} Il classificatore del Metodo 2 è addestrato con \textbf{scikit-learn} \cite{scikit_learn}, scelto per l'interfaccia unificata \texttt{fit}/\texttt{predict} che consente di confrontare più modelli sullo stesso dataset. Le simulazioni canoniche girano in \textbf{WSL2}, distro \texttt{Ubuntu} 24.04, Python~3.12, su \ac{CPU}; interprete e dipendenze sono fissati nel manifest e nel file \texttt{requirements.txt}. L'accelerazione \ac{GPU} prevista dal piano iniziale non viene usata.
+\textbf{Modelli appresi e riproducibilità.}
+I classificatori sono realizzati con scikit-learn~\cite{scikit_learn}. Le
+campagne canoniche vengono eseguite su CPU in un ambiente Python versionato;
+seed, dipendenze, parametri e manifest del circuito sono registrati con i
+risultati. Le motivazioni estese delle scelte tecnologiche, il confronto tra
+framework e il dettaglio dell'ambiente WSL/GPU sono riportati nella
+Sezione~\ref{app:strumenti}; i listati sono raccolti nella
+Sezione~\ref{app:codice}.
 
 \end{onehalfspace}
