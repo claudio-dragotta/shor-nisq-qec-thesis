@@ -81,18 +81,18 @@
 % --- dati del frontespizio ------------------------------------------
 \newcommand{\titoloIT}{Implementazione e ottimizzazione dell'algoritmo di Shor
   in ambienti quantistici rumorosi mediante modelli di intelligenza artificiale}
-\newcommand{\titoloEN}{Implementation and Optimization of Shor's Algorithm
-  in Noisy Quantum Environments through Artificial Intelligence Models}
 \newcommand{\laureando}{Claudio Dragotta}
 \newcommand{\relatore}{Prof. Paolo Soda}
 \newcommand{\correlatore}{Ing. Floriano Caprio}
-\newcommand{\sessione}{[\,inserire sessione\,] --- A.A. 2025/2026}
+\newcommand{\sessione}{Ottobre --- A.A. 2025/2026}
 
-% --- blocco identificativo, ripetuto in testa alle due versioni -----
+% --- blocco identificativo, riutilizzabile per le due versioni ------
 \newcommand{\bloccoTitolo}[6]{%
   \begin{center}
-    {\large\bfseries #1}\\[3pt]
-    {\small\itshape #2}
+    {\large\bfseries #1}%
+    \if\relax\detokenize{#2}\relax\else
+      \\[3pt]{\small\itshape #2}%
+    \fi
   \end{center}
   \vspace{-4pt}
   {\small\setlength{\tabcolsep}{0pt}%
@@ -110,7 +110,7 @@
 % =====================================================================
 %  SOMMARIO IN ITALIANO (entro 5 pagine)
 % =====================================================================
-\bloccoTitolo{\titoloIT}{\titoloEN}{Laureando}{Relatore}{Correlatore}{Sessione di Laurea}
+\bloccoTitolo{\titoloIT}{}{Laureando}{Relatore}{Correlatore}{Sessione di Laurea}
 
 \input{sezioni/01_introduzione}
 \input{sezioni/02_materiali_metodi}
