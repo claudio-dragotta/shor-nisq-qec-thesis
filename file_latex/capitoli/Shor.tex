@@ -1,298 +1,132 @@
 \begin{onehalfspace}
 
-\bigskip
-\section{Il Problema della Fattorizzazione Intera}
+\section{Fattorizzazione e ricerca del periodo}
 
-La \textbf{fattorizzazione intera} consiste nel trovare i fattori primi di un numero intero $N$. Per numeri piccoli il problema è banale, ma la sua difficoltà cresce in modo impressionante all'aumentare di $N$: i migliori algoritmi classici noti, come il \ac{GNFS}, richiedono un tempo sub-esponenziale ma comunque super-polinomiale:\footnote{Il \ac{GNFS} detiene il record mondiale per la fattorizzazione classica: nel 2020, un consorzio internazionale ha fattorizzato RSA-250 (829 bit, 250 cifre decimali) \cite{rsa250_2020}, impiegando l'equivalente di circa 2700 anni-core. In precedenza, nel 2009, era stato fattorizzato RSA-768 (768 bit). I numeri RSA usati in produzione sono di 2048 o 4096 bit, rendendo la fattorizzazione classica del tutto impraticabile con qualunque tecnologia convenzionale prevedibile.}
+Dato un intero composto $N$, la \textbf{fattorizzazione} richiede di determinarne fattori non banali. I migliori algoritmi classici generali noti, fra cui il \ac{GNFS}, hanno complessità sub-esponenziale ma super-polinomiale nella lunghezza dell'input:
 \begin{equation}
-    T_{\text{classico}}(N) = O\!\left(\exp\!\left((c+o(1))(\log N)^{1/3}(\log\log N)^{2/3}\right)\right)
+    T_{\mathrm{classico}}(N)
+    =O\!\left(\exp\!\left((c+o(1))(\log N)^{1/3}
+    (\log\log N)^{2/3}\right)\right).
     \label{eq:gnfs_complexity}
 \end{equation}
+L'algoritmo di Shor~\cite{shor1994} riconduce invece il problema alla stima di un periodo e la risolve in tempo polinomiale. La conseguenza crittografica è diretta: una macchina quantistica sufficientemente grande e fault-tolerant invaliderebbe l'assunzione di sicurezza di \ac{RSA}. Il contesto crittografico e la transizione post-quantum sono approfonditi nella Sezione~\ref{app:obiettivi} dell'Appendice~\ref{app:contesto}.
 
-Nella sua formulazione decisionale il problema appartiene a NP, e più precisamente a $\text{NP} \cap \text{co-NP}$: sia l'esistenza sia l'assenza di un fattore in un dato intervallo ammettono un certificato verificabile in tempo polinomiale. È questa collocazione a rendere improbabile che la fattorizzazione sia NP-completa --- lo fosse, ne seguirebbe $\text{NP} = \text{co-NP}$, contro l'opinione prevalente. Non è però noto se appartenga a P: nessun algoritmo classico polinomiale è \emph{conosciuto}, e si congettura che non esista, ma una dimostrazione di questa impossibilità manca.
-
-\subsection{Perché la Fattorizzazione Conta}
-
-La difficoltà di fattorizzare interi non è una curiosità matematica: è il fondamento su cui poggia \ac{RSA}, e con esso buona parte della sicurezza delle comunicazioni odierne. Un algoritmo polinomiale per la fattorizzazione compromette \ac{RSA} in modo irrecuperabile, e non per una debolezza implementativa ma perché ne viola l'assunzione di sicurezza. La trattazione estesa --- il confronto fra la complessità sub-esponenziale del \ac{GNFS} e quella polinomiale di Shor, la risposta della crittografia post-quantistica con gli standard \ac{NIST} del 2024, e lo scenario \emph{harvest now, decrypt later} --- è nella Sezione~\ref{app:obiettivi} dell'Appendice~\ref{app:contesto}. Fra l'algoritmo teorico e un'applicazione crittografica restano scala, compilazione fault-tolerant, overhead QEC e qualità dell'hardware; questa tesi isola soprattutto il ruolo del rumore.
-
-\section{Riduzione alla Ricerca del Periodo}
-
-L'intuizione geniale di Shor consiste nel ricondurre la fattorizzazione a un problema di \textbf{period finding}, trattabile quantisticamente in modo efficiente.
-
-\begin{description}
-    \item[Osservazione chiave:] Dato $N$ e un intero $a$ con $\gcd(a, N) = 1$ (coprimo con $N$), la funzione
-    \begin{equation}
-        f(x) = a^x \bmod N
-    \end{equation}
-    è \textbf{periodica} con periodo $r$ (detto \textit{ordine} di $a$ modulo $N$): $f(x+r) = f(x)$ per ogni $x$.
-\end{description}
-
-Una volta trovato il periodo $r$, se $r$ è pari si può calcolare:
+Si scelga $a\in\{2,\ldots,N-1\}$. Se $\gcd(a,N)>1$, il massimo comune divisore è già un fattore; altrimenti si considera
 \begin{equation}
-    \gcd\!\left(a^{r/2} - 1, N\right) \quad \text{e} \quad \gcd\!\left(a^{r/2} + 1, N\right)
+    f(x)=a^{x}\bmod N.
 \end{equation}
+Poiché $a$ è invertibile modulo $N$, la funzione è periodica. Il minimo intero positivo $r$ tale che $a^{r}\equiv1\pmod N$ è l'\textbf{ordine} di $a$ modulo $N$. Se $r$ è pari e $a^{r/2}\not\equiv-1\pmod N$, allora
+\[
+    (a^{r/2}-1)(a^{r/2}+1)\equiv0\pmod N
+\]
+e almeno uno fra
+\begin{equation}
+    \gcd(a^{r/2}-1,N),\qquad \gcd(a^{r/2}+1,N)
+\end{equation}
+fornisce un fattore non banale. Quando le condizioni non sono soddisfatte si ripete la procedura con una nuova base $a$.
 
-Con alta probabilità, almeno uno di questi due valori è un fattore non banale di $N$. La prova utilizza proprietà della teoria dei numeri: in particolare, vale $(a^{r/2}-1)(a^{r/2}+1) = a^r - 1 \equiv 0 \pmod{N}$.
-
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    width=0.82\textwidth, height=5.5cm,
-    xlabel={$x$}, ylabel={$f(x) = 7^x \bmod 15$},
+    width=0.78\textwidth, height=5.0cm,
+    xlabel={$x$}, ylabel={$7^x\bmod 15$},
     xtick={0,1,2,3,4,5,6,7,8,9,10,11},
-    ytick={0,1,4,7,13},
-    ymin=0, ymax=15,
-    xmin=-0.5, xmax=11.5,
-    ymajorgrids=true, grid style={dashed, gray!30},
-    axis lines=left,
-    mark size=3pt,
+    ytick={1,4,7,13},
+    ymin=0, ymax=15, xmin=-0.5, xmax=11.5,
+    ymajorgrids=true, grid style={dashed,gray!30},
+    axis lines=left, mark size=2.7pt
 ]
-\addplot[only marks, mark=*, mark options={fill=blue!70, draw=blue!90}, thick]
+\addplot[only marks,mark=*,mark options={fill=blue!70,draw=blue!90}]
     coordinates {(0,1)(1,7)(2,4)(3,13)(4,1)(5,7)(6,4)(7,13)(8,1)(9,7)(10,4)(11,13)};
-\addplot[dashed, thick, red!70, domain=-0.5:11.5] {1};
-\draw[<->, thick, blue!80] (axis cs:0,14.5) -- (axis cs:4,14.5)
-    node[midway, above, font=\small] {$r = 4$};
+\draw[<->,thick,blue!80] (axis cs:0,14.2) -- (axis cs:4,14.2)
+    node[midway,above,font=\small] {$r=4$};
 \end{axis}
 \end{tikzpicture}
-\caption[Periodicità di $f(x)=7^x \bmod 15$]{La funzione $f(x) = 7^x \bmod 15$ è periodica con periodo $r = 4$. La periodicità è evidente dai valori che si ripetono: $1, 7, 4, 13, 1, 7, 4, 13, \ldots$ Trovare $r$ permette di calcolare $\gcd(7^2 - 1, 15) = \gcd(48, 15) = 3$ e $\gcd(7^2 + 1, 15) = \gcd(50, 15) = 5$, ottenendo la fattorizzazione $15 = 3 \times 5$.}
+\caption[Periodicità di $7^x\bmod15$]{Per $N=15$ e $a=7$ la sequenza $1,7,4,13$ si ripete con periodo $r=4$; i due MCD restituiscono $3$ e $5$.}
 \label{fig:period_finding}
 \end{figure}
 
-\section{La Quantum Fourier Transform}
+\section{QFT e stima quantistica del periodo}
 
-Il componente quantistico fondamentale dell'algoritmo di Shor è la \textbf{Quantum Fourier Transform} (\ac{QFT}), l'analogo quantistico della Trasformata Discreta di Fourier (\ac{DFT}).
+\subsection{Quantum Fourier Transform}
 
-\subsection{Definizione}
-
-La QFT su $\mathbb{Z}_{2^n}$ agisce su uno stato base come:
+Su un registro di $t$ qubit, con $Q=2^{t}$, la \ac{QFT} è definita da
 \begin{equation}
-    \text{QFT}\ket{j} = \frac{1}{\sqrt{2^n}} \sum_{k=0}^{2^n-1} e^{2\pi i jk / 2^n} \ket{k}
+    \operatorname{QFT}\ket{j}
+    =\frac{1}{\sqrt Q}\sum_{k=0}^{Q-1}
+      e^{2\pi i jk/Q}\ket{k}.
 \end{equation}
+Per linearità trasforma le ampiezze di uno stato secondo la \ac{DFT}. Il circuito usa porte di Hadamard e rotazioni di fase controllate e richiede $O(t^{2})$ porte, contro le $O(Q\log Q)$ operazioni della \ac{FFT} su $Q$ dati espliciti. Il confronto non significa che la QFT restituisca più rapidamente l'intero spettro: i coefficienti restano codificati nelle ampiezze e una misura produce un solo esito. In Shor ciò è sufficiente perché interessano le posizioni dei picchi, non tutti i coefficienti.
 
-L'azione su uno stato generico $\ket{\psi} = \sum_j \alpha_j \ket{j}$ produce:
-\begin{equation}
-    \text{QFT}\ket{\psi} = \sum_k \hat{\alpha}_k \ket{k}
-\end{equation}
-
-dove $\hat{\alpha}_k = \frac{1}{\sqrt{2^n}}\sum_j \alpha_j e^{2\pi i jk/2^n}$ sono i coefficienti della DFT.
-
-\clearpage
-
-\subsection{Implementazione Efficiente}
-
-La DFT classica su $N = 2^n$ elementi richiede $O(N \log N)$ operazioni (con il Fast Fourier Transform), mentre la QFT si realizza con $O(n^2) = O((\log N)^2)$ porte quantistiche: un conteggio esponenzialmente inferiore.
-
-Questo confronto va però interpretato correttamente, perché la formulazione ingenua --- ``la QFT calcola la trasformata di Fourier esponenzialmente più in fretta'' --- è fuorviante. La QFT non restituisce i coefficienti $\hat{\alpha}_k$: li lascia \emph{codificati nelle ampiezze} di uno stato quantistico, e la misura ne estrae un solo valore per esecuzione, con probabilità $|\hat{\alpha}_k|^2$. Non esiste quindi alcun modo di leggere lo spettro completo, e la QFT non sostituisce la FFT come strumento di calcolo generale. Il vantaggio è utilizzabile soltanto quando l'informazione cercata è una \emph{proprietà globale} dello spettro che una singola misura è sufficiente a rivelare --- ed è esattamente il caso della periodicità nell'algoritmo di Shor, dove i picchi della distribuzione trasformata cadono sui multipli di $2^n/r$ e una manciata di misure basta a ricostruire $r$.
-
-Il circuito della QFT è costruito ricorsivamente tramite porte di Hadamard e porte di fase controllate $CR_k$ dove:
-\begin{equation}
-    CR_k = \begin{pmatrix} 1&0&0&0\\0&1&0&0\\0&0&1&0\\0&0&0&e^{2\pi i/2^k} \end{pmatrix}
-\end{equation}
-
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \begin{quantikz}
-\lstick{$\ket{j_1}$} & \gate{H} & \gate{R_2} & \gate{R_3} & \qw        & \qw        & \qw      & \swap{2}  & \qw & \rstick{$\ket{\tilde{j}_3}$} \\
-\lstick{$\ket{j_2}$} & \qw      & \ctrl{-1}  & \qw        & \gate{H}   & \gate{R_2} & \qw      & \qw       & \qw & \rstick{$\ket{\tilde{j}_2}$} \\
-\lstick{$\ket{j_3}$} & \qw      & \qw        & \ctrl{-2}  & \qw        & \ctrl{-1}  & \gate{H} & \targX{}  & \qw & \rstick{$\ket{\tilde{j}_1}$}
+\lstick{$\ket{j_1}$} & \gate{H} & \gate{R_2} & \gate{R_3} & \qw        & \qw        & \qw      & \swap{2} & \qw \\
+\lstick{$\ket{j_2}$} & \qw      & \ctrl{-1}  & \qw        & \gate{H}   & \gate{R_2} & \qw      & \qw      & \qw \\
+\lstick{$\ket{j_3}$} & \qw      & \qw        & \ctrl{-2}  & \qw        & \ctrl{-1}  & \gate{H} & \targX{} & \qw
 \end{quantikz}
-\caption[Circuito della QFT su 3 qubit]{Circuito della QFT su $n = 3$ qubit. Ogni qubit riceve una porta di Hadamard $H$ seguita da porte di fase controllate $R_k = \mathrm{diag}(1, e^{2\pi i/2^k})$: la rotazione applicata al qubit $j$ dipende dai qubit successivi. Lo SWAP finale riordina i qubit nell'ordine corretto. La struttura si generalizza a $n$ qubit richiedendo $O(n^2)$ porte.}
+\caption[Circuito QFT su tre qubit]{QFT su tre qubit: $H$, rotazioni controllate $R_k=\operatorname{diag}(1,e^{2\pi i/2^k})$ e riordinamento finale.}
 \label{fig:qft_circuit}
 \end{figure}
 
-\subsection{Phase Estimation}
+\subsection{Phase estimation e periodicità}
 
-La QFT è impiegata, all'interno dell'algoritmo di Shor, attraverso la subroutine di \textbf{Phase Estimation} (\ac{QPE}). Data una porta $U$ con autovettore $\ket{u}$ e autovalore $e^{2\pi i \theta}$, la QPE stima $\theta$ con precisione arbitraria in tempo $O(n^2)$. Nell'algoritmo di Shor, $U$ è l'operatore di moltiplicazione modulare $U\ket{x} = \ket{ax \bmod N}$, e il suo spettro di fase contiene l'informazione sul periodo $r$.
+La \ac{QPE} stima la fase $\theta$ di un autovalore $e^{2\pi i\theta}$ di un'unitaria $U$. Nel period finding si usa
+\[
+    U_a\ket{y}=\ket{ay\bmod N}.
+\]
+Sul sottospazio generato dall'orbita di $1$, gli autovalori di $U_a$ hanno fasi $s/r$, con $s\in\{0,\ldots,r-1\}$. Un registro di controllo in sovrapposizione comanda le potenze $U_a^{2^j}$; la QFT inversa converte la fase in un intero misurabile $y$ tale che $y/Q$ approssima $s/r$. Scegliendo $Q$ dell'ordine di $N^{2}$, l'algoritmo delle frazioni continue ricostruisce $r$ con probabilità sufficiente; esiti non informativi vengono gestiti ripetendo l'esecuzione.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.6\textwidth]{09_QPE_circuit_N15.pdf}
-\caption[Circuito QPE per $N=15$, $a=2$]{Circuito di Quantum Phase Estimation per $N=15$, $a=2$, implementato con Qiskit. Il registro di controllo ($C$, 8 qubit) viene posto in sovrapposizione uniforme, entanglato tramite gli operatori $M_2$ e $M_4$ controllati, e trasformato con la QFT$^{-1}$. La misura del registro $C$ produce una stima della fase $\theta = k/r$, da cui si ricava il periodo $r$ tramite frazioni continue.}
+\includegraphics[width=0.62\textwidth]{09_QPE_circuit_N15.pdf}
+\caption[Circuito QPE per $N=15$, $a=2$]{Struttura della QPE per $N=15$: il registro di controllo comanda le potenze della moltiplicazione modulare e la QFT$^{-1}$ rende misurabili le fasi $s/r$.}
 \label{fig:qpe_circuit_N15_qiskit}
 \end{figure}
 
-\begin{figure}[H]
-\centering
-\begin{minipage}{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{01_M2_circuit.pdf}
-    \caption*{(a) $U_{2}$ non controllato}
-\end{minipage}
-\hfill
-\begin{minipage}{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{02_controlled_M2.pdf}
-    \caption*{(b) $CU_{2}$ controllato}
-\end{minipage}
-
-\vspace{0.5em}
-\centering
-\includegraphics[width=0.85\textwidth]{03_controlled_M2_decomposed.pdf}
-\caption*{(c) $CU_{2}$ decomposto in gate elementari (post-traspilazione)}
-
-\caption[Blocco di moltiplicazione modulare $U_2$ per $N=15$]{Gate di moltiplicazione modulare $U_2\ket{x} = \ket{2x \bmod 15}$ per $N=15$, $a=2$. (a)~Versione non controllata su 4 qubit: implementata come sequenza di SWAP. (b)~Versione controllata $CU_2$ su 5 qubit utilizzata nel circuito QPE. (c)~Decomposizione in gate elementari dopo la traspilazione: le porte SWAP si espandono in triple di CNOT, rivelando il costo effettivo in gate a due qubit del blocco.}
-\label{fig:M2_circuit}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\begin{minipage}{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{04_M4_circuit.pdf}
-    \caption*{(a) $U_{4}$ non controllato}
-\end{minipage}
-\hfill
-\begin{minipage}{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{05_controlled_M4.pdf}
-    \caption*{(b) $CU_{4}$ controllato}
-\end{minipage}
-
-\vspace{0.5em}
-\centering
-\includegraphics[width=0.85\textwidth]{06_controlled_M4_decomposed.pdf}
-\caption*{(c) $CU_{4}$ decomposto in gate elementari (post-traspilazione)}
-
-\caption[Blocco di moltiplicazione modulare $U_4$ per $N=15$]{Gate di moltiplicazione modulare $U_4\ket{x} = \ket{4x \bmod 15}$ per $N=15$, $a=4=2^2$. (a)~Versione non controllata: il pattern di SWAP differisce da $U_2$ poiché la permutazione modulare per $a=4$ è diversa. (b)~Versione controllata $CU_4$ su 5 qubit, secondo blocco del circuito QPE. (c)~Decomposizione in gate elementari: il costo aggiuntivo rispetto a $CU_2$ riflette la maggiore complessità della permutazione per $a=4$.}
-\label{fig:M4_circuit}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.7\textwidth]{10_histogram_simulator_N15.pdf}
-\caption[Istogramma QPE ideale per $N=15$]{Distribuzione ideale campionata del registro di controllo per $N=15$, $a=7$ (1024 shot). I quattro stati attesi --- $\{0,64,128,192\}$ --- sono i multipli di $2^8/r=64$ per $r=4$; le oscillazioni dei conteggi fra i picchi sono fluttuazioni di campionamento.}
-\label{fig:histogram_ideal_N15}
-\end{figure}
-
-\section{L'Algoritmo di Shor: Schema Completo}
-
-L'algoritmo si articola in tre fasi: un preprocessing classico, l'esecuzione del circuito quantistico per il \textit{period finding}, e una post-elaborazione classica per estrarre i fattori.
-
-\medskip
-\textbf{Fase 1 — Preprocessing classico}
-\begin{enumerate}
-    \item Scegliere $a \in \{2,\ldots,N-1\}$ uniformemente a caso.
-    \item Calcolare $g = \gcd(a,N)$: se $g > 1$, restituire $g$ (fattore trovato direttamente).
-\end{enumerate}
-
-\medskip
-\textbf{Fase 2 — Circuito quantistico (period finding)}
-\begin{enumerate}\setcounter{enumi}{2}
-    \item Inizializzare $n = 2\lceil\log_2 N\rceil$ qubit nel registro di controllo: $\ket{0}^{\otimes n}\ket{1}$.
-    \item Applicare $H^{\otimes n}$ al registro di controllo, creando la sovrapposizione uniforme $\frac{1}{\sqrt{2^n}}\sum_{x=0}^{2^n-1}\ket{x}$.
-    \item Applicare la moltiplicazione modulare controllata: $\ket{x}\ket{1} \mapsto \ket{x}\ket{a^x \bmod N}$.
-    \item Misurare il registro di lavoro: il registro di controllo collassa in una sovrapposizione periodica di passo $r$. Il passo è \emph{concettuale} --- serve a rendere evidente l'origine della periodicità --- e nell'implementazione viene omesso, come chiarito nella Sezione~\ref{sec:entanglement_shor}.
-    \item Applicare la QFT$^{-1}$ al registro di controllo.
-    \item Misurare il registro di controllo: ottenere un intero proporzionale a $s/r$, con $s \in \{0,\ldots,r-1\}$.
-\end{enumerate}
-
-\medskip
-\textbf{Fase 3 — Post-elaborazione classica}
-\begin{enumerate}\setcounter{enumi}{8}
-    \item Applicare l'algoritmo delle frazioni continue al risultato della misura per stimare il periodo $r$.
-    \item Se $r$ è dispari o $a^{r/2} \equiv -1 \pmod{N}$: tornare al passo 1 con un nuovo valore di $a$.
-    \item Calcolare $p = \gcd(a^{r/2}-1,N)$ e $q = \gcd(a^{r/2}+1,N)$.
-    \item Se $p$ o $q$ è un fattore non banale di $N$: restituirlo. \\Altrimenti: tornare al passo 1.
-\end{enumerate}
-
-\begin{figure}[H]
-\centering
-\resizebox{0.95\textwidth}{!}{%
-\begin{tikzpicture}[
-    box/.style={rectangle, draw, rounded corners=3pt, minimum width=1.9cm, minimum height=0.72cm, align=center, font=\small},
-    arrow/.style={->, thick, >=stealth},
-    lbl/.style={font=\small\itshape}
-]
-
-% ---- Registro 1 (y = 0) ----
-\node[lbl]                                   (in1)   at (0.2,  0.0) {$\ket{0}^{\otimes n}$};
-\node[box, fill=blue!15]                     (h1)    at (2.0,  0.0) {$H^{\otimes n}$};
-\node[box, fill=orange!20, minimum width=2.2cm] (umod) at (4.4,  0.0) {$U_{a,N}$\\[-2pt]{\scriptsize mod.\,exp.}};
-\node[box, fill=blue!15]                     (qft)   at (6.8,  0.0) {QFT$^{-1}$};
-\node[box, fill=green!20]                    (meas1) at (8.8,  0.0) {Misura};
-\node[lbl, above=0.22cm of h1]                       {\textbf{Registro 1} ($n$ qubit)};
-
-% ---- Registro 2 (y = -2.0) ----
-\node[lbl]                                   (in2)   at (0.2, -2.0) {$\ket{1}$};
-\node[box, fill=gray!10]                     (ket1)  at (2.0, -2.0) {$\ket{1}$};
-\node[box, fill=gray!10, minimum width=2.2cm] (umod2) at (4.4, -2.0) {$U_{a,N}$};
-\node[box, fill=gray!15]                     (meas2) at (6.8, -2.0) {(scarta)};
-\node[lbl, below=0.22cm of ket1]                     {\textbf{Registro 2} ($n$ qubit)};
-
-% ---- Post-elaborazione classica (y = -3.8) ----
-\node[box, fill=green!20, minimum width=2.4cm] (cf)  at (8.8, -3.8) {Fr. Continue};
-\node[box, fill=orange!15]                   (gcd)   at (11.4,-3.8) {$\gcd(\cdot,N)$};
-\node[lbl]                                   (out)   at (13.2,-3.8) {$\Rightarrow p,\,q$};
-
-% ---- Frecce Registro 1 ----
-\draw[arrow] (in1)   -- (h1);
-\draw[arrow] (h1)    -- (umod);
-\draw[arrow] (umod)  -- (qft);
-\draw[arrow] (qft)   -- (meas1);
-
-% ---- Frecce Registro 2 ----
-\draw[arrow] (in2)   -- (ket1);
-\draw[arrow] (ket1)  -- (umod2);
-\draw[arrow] (umod2) -- (meas2);
-
-% ---- Accoppiamento quantistico ----
-\draw[arrow, dashed] (umod) -- (umod2);
-
-% ---- Frecce post-elaborazione ----
-\draw[arrow] (meas1) -- node[right, font=\scriptsize]{$s/r$} (cf);
-\draw[arrow] (cf)    -- node[above, font=\scriptsize]{$r$}   (gcd);
-\draw[arrow] (gcd)   -- (out);
-
-\end{tikzpicture}%
-}
-\caption[Schema a due registri dell'algoritmo di Shor]{Schema a due registri dell'algoritmo di Shor. Il \textbf{Registro 1} (di controllo) viene posto in sovrapposizione uniforme con $H^{\otimes n}$, entanglato con il Registro 2 tramite la moltiplicazione modulare $U_{a,N}$, quindi trasformato con la QFT$^{-1}$. La misura produce un valore $s/r$ elaborato classicamente: le frazioni continue stimano il periodo $r$, e il calcolo del MCD restituisce i fattori $p$ e $q$ di $N$.}
-\label{fig:shor_schema}
-\end{figure}
-\subsection{Il Ruolo dell'Entanglement nel Period Finding}
+\subsection{Ruolo dell'entanglement}
 \label{sec:entanglement_shor}
 
-Il collasso descritto al passo~6 dello schema non è un effetto arbitrario: è la conseguenza diretta dell'\textbf{entanglement} creato al passo~5. Vale la pena rendere esplicito questo meccanismo, che è il cuore quantistico dell'intero algoritmo.
-
-Dopo l'applicazione della moltiplicazione modulare controllata, i due registri si trovano nello stato entangled:
+Dopo l'esponenziazione modulare controllata, i registri sono nello stato
 \begin{equation}
-    |\Psi\rangle = \frac{1}{\sqrt{2^n}} \sum_{x=0}^{2^n-1} |x\rangle \otimes |a^x \bmod N\rangle
+    \ket{\Psi}
+    =\frac{1}{\sqrt Q}\sum_{x=0}^{Q-1}
+      \ket{x}\ket{a^x\bmod N}.
     \label{eq:stato_entangled_shor}
 \end{equation}
-Questo stato \textbf{non è separabile}: il valore del registro di lavoro è correlato in modo univoco al valore del registro di controllo. I due registri formano un unico sistema entangled, esattamente come accade in uno stato di Bell --- dove misurare un qubit determina istantaneamente l'esito dell'altro.
-
-Se a questo punto si misurasse il registro di lavoro e si ottenesse un valore $v = a^{x_0} \bmod N$, il registro di controllo collasserebbe \textit{istantaneamente} nell'unica sovrapposizione compatibile con $v$: quella di tutti i valori $x$ per cui $a^x \equiv v \pmod{N}$, ovvero
+I valori del secondo registro correlano classi di indici distanziate di $r$. Se lo si misurasse, il primo registro verrebbe proiettato su una sovrapposizione del tipo
 \begin{equation}
-    |x_0\rangle + |x_0 + r\rangle + |x_0 + 2r\rangle + \cdots
+    \ket{x_0}+\ket{x_0+r}+\ket{x_0+2r}+\cdots,
     \label{eq:collasso_periodico}
 \end{equation}
-La correlazione tra i due registri è \textbf{bidirezionale}: conoscere il valore del registro di lavoro vincola il registro di controllo a una sovrapposizione periodica di passo esattamente $r$. Questa è la ``versione inversa'' propria dell'entanglement: misurare uno dei due sottosistemi determina (o in questo caso, restringe) lo stato dell'altro.
+a meno della normalizzazione e del troncamento a $Q$. La misura intermedia non è necessaria: ignorare il registro di lavoro produce sul controllo la miscela delle stesse classi periodiche, e la QFT$^{-1}$ conserva i picchi utili. Questo passaggio spiega sia il ruolo dell'entanglement sia la vulnerabilità dell'algoritmo alla perdita di coerenza.
 
-In pratica il circuito di Shor non misura esplicitamente il registro di lavoro: la sola creazione dell'entanglement è sufficiente. Applicando la QFT$^{-1}$ al registro di controllo prima della misura, si trasforma la periodicità nascosta dell'equazione~\eqref{eq:collasso_periodico} in picchi netti alle frequenze $k/r$, con $k \in \{0,\ldots,r-1\}$. La misura finale del registro di controllo restituisce allora, con alta probabilità, un valore da cui le frazioni continue estraggono $r$.
+\section{Algoritmo completo}
 
-In sintesi: l'entanglement tra i due registri è il meccanismo che \textit{trasferisce} la periodicità della funzione $f(x) = a^x \bmod N$ --- che esiste nel registro di lavoro --- verso il registro di controllo, dove la QFT la rende misurabile. Senza entanglement, questa trasmissione di informazione tra i due registri sarebbe impossibile, e l'intero speedup esponenziale di Shor verrebbe meno.
+Posto $\ell=\lceil\log_2N\rceil$, l'esecuzione può essere riassunta come segue:
+\begin{enumerate}
+    \item scegliere $a$ e calcolare $\gcd(a,N)$; terminare se il MCD è non banale;
+    \item preparare circa $2\ell$ qubit di controllo in sovrapposizione e il registro di lavoro in $\ket{1}$;
+    \item applicare le moltiplicazioni modulari controllate $U_a^{2^j}$;
+    \item applicare la QFT$^{-1}$ e misurare il registro di controllo;
+    \item usare le frazioni continue per ricavare un candidato $r$;
+    \item verificare il periodo e, se è valido, calcolare i due MCD; altrimenti ripetere con un nuovo campione o una nuova base.
+\end{enumerate}
+Il controllo classico finale è indispensabile: la misura produce una stima da verificare, non direttamente i fattori. Per l'istanza $N=15$ usata negli esperimenti, la costruzione dei blocchi di moltiplicazione modulare e del circuito completo è documentata nei Listati~\ref{lst:modular_exponentiation_per_n15} e~\ref{lst:circuito_completo_di_shor} dell'Appendice~\ref{app:codice}. I diagrammi delle singole permutazioni controllate non sono necessari per comprendere l'algoritmo; ciò che conta sperimentalmente è la loro decomposizione nella base nativa, trattata nel Capitolo~\ref{chap:metodologia}.
 
-\clearpage
-\section{Analisi della Complessità}
+\section{Complessità e limiti implementativi}
 
-La complessità dell'algoritmo di Shor è \textbf{polinomiale} nel numero di bit di $N$:
-\begin{itemize}
-    \item Il circuito quantistico richiede $O(n^3)$ porte elementari con aritmetica modulare elementare, dove $n = \log N$; ricorrendo alla moltiplicazione veloce il conteggio scende a $O(n^2 \log n \log\log n)$;
-    \item Il numero di qubit necessari è $O(\log N)$; l'implementazione ottimizzata di Beauregard \cite{beauregard2002} lo riduce a $2n+3$ tramite addizione modulare in-place;
-    \item Il numero atteso di iterazioni (con basi $a$ diverse) prima del successo è $O(1)$.
-\end{itemize}
+Con aritmetica modulare elementare, l'esponenziazione controllata domina il costo e richiede $O(\ell^{3})$ porte; la QFT aggiunge $O(\ell^{2})$ porte e il post-processing classico resta polinomiale. Pertanto
+\begin{equation}
+    T_{\mathrm{Shor}}(N)=O\!\left((\log N)^{3}\right),
+    \label{eq:shor_complexity}
+\end{equation}
+mentre lo spazio quantistico è $O(\log N)$. Costruzioni in-place possono usare $2\ell+3$ qubit~\cite{beauregard2002}, al prezzo di circuiti profondi. Rispetto alla complessità dell'Eq.~\eqref{eq:gnfs_complexity}, il vantaggio è super-polinomiale nella lunghezza dell'input; la praticabilità dipende però dal costo fault-tolerant delle operazioni logiche, non dal solo conteggio asintotico.
 
-Complessivamente, nella versione con aritmetica elementare,
-\[
-T_{\text{Shor}}(N) = O\!\left((\log N)^3\right),
-\]
-a fronte della complessità sub-esponenziale dell'Equazione~\eqref{eq:gnfs_complexity} del miglior algoritmo classico generale noto. In funzione della lunghezza dell'input $n=\log N$, il divario è \textbf{superpolinomiale}; chiamarlo semplicemente ``esponenziale'' nasconderebbe il fatto che GNFS è già sub-esponenziale in $n$.
-
-\section{Stato dell'Arte e Confronto con Altri Algoritmi}
+\section{Perimetro sperimentale}
 \label{sec:shor_stato_arte}
 
-Le realizzazioni sperimentali di Shor su hardware reale, i miglioramenti algoritmici più recenti --- fra cui la variante di Regev del 2023 --- e la roadmap dei costruttori verso il calcolo fault-tolerant sono discussi nella Sezione~\ref{app:shor_esteso} dell'Appendice~\ref{app:teoria}, insieme al confronto con l'algoritmo di Grover. Due elementi di quel quadro vanno però anticipati qui, perché delimitano il perimetro della parte sperimentale.
-
-Il primo è che \textbf{nessuna implementazione ha finora fattorizzato un numero non banale senza semplificazioni}: le dimostrazioni note sfruttano la conoscenza preventiva del risultato per ridurre il circuito, e questo colloca il presente lavoro --- che esegue il circuito completo su simulatore rumoroso --- in un regime diverso da quello delle dimostrazioni su hardware. Il secondo è che il divario fra Shor dimostrativo e Shor crittograficamente rilevante non è di scala ma di natura: le stime di risorse per moduli a 2048 bit derivano da analisi architetturali complete, non da estrapolazioni di istanze piccole, e il Capitolo~\ref{chap:integrazione} riprende esplicitamente questo punto.
+Le dimostrazioni su hardware hanno finora usato istanze piccole e circuiti compilati o semplificati~\cite{skosana2021}. Non consentono di estrapolare direttamente le risorse necessarie per moduli crittografici. Implementazioni sperimentali, sviluppi algoritmici e confronto con Grover sono discussi nella Sezione~\ref{app:shor_esteso} dell'Appendice~\ref{app:teoria}. Nel seguito l'algoritmo resta quindi il carico di lavoro di riferimento, mentre l'oggetto misurato è la sua sensibilità al rumore entro modelli e circuiti dichiarati.
 
 \end{onehalfspace}

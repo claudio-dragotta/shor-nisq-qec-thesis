@@ -3,19 +3,21 @@
 La domanda di localizzazione ha una risposta a due facce. A valle dell'esecuzione l'ipotesi
 principale, $\rho\gg1$, è \emph{smentita} dai suoi stessi dati: il classificatore raggiunge le
 soglie di F1 e AUC fissate a priori e resta inutile, perché scarta istogrammi che $\pi_4$ avrebbe
-risolto. Sulla sindrome, dove il dato conserva una struttura locale più ricca del solo istogramma finale, la stessa
-tecnologia guadagna, ma solo nella forma residuale e finché il rumore contiene correlazioni che il
-decoder analitico non rappresenta. Il criterio unificante è quindi verificabile: un modello appreso
+risolto. Sulla sindrome, dove il dato conserva una struttura locale più ricca del solo istogramma
+finale, la stessa tecnologia guadagna, ma solo nella forma ibrida --- la rete affianca il matching
+invece di sostituirlo --- e solo finché il rumore contiene correlazioni che il decoder analitico non
+rappresenta. Il criterio unificante è quindi verificabile: un modello appreso
 aggiunge valore quando sfrutta informazione che il metodo di riferimento lascia inutilizzata, non
 quando ne replica la regola decisionale.
 
 L'autovalutazione riguarda il metodo: senza il braccio $\pi_4$ la riduzione da $1{,}37$ a $1{,}00$
 sarebbe stata attribuita al classificatore, un falso positivo del tutto presentabile; l'audit
-dell'etichetta e la verifica per truth table del moltiplicatore --- che ha imposto la rigenerazione
-di un'intera campagna --- sono stati più informativi delle metriche di accuratezza.
+dell'etichetta e la verifica per truth table del moltiplicatore, che ha imposto la rigenerazione
+dell'intera campagna, sono stati più informativi delle metriche di accuratezza.
 
-I limiti delimitano ogni conclusione: rumore uniforme, indipendente e stazionario, senza topologia,
-crosstalk, leakage o deriva; $N=15$ è un'istanza didattica con post-processing permissivo; le stime
+I limiti delimitano ogni conclusione: il rumore della campagna su Shor è uniforme, indipendente e
+stazionario, senza topologia, crosstalk, leakage o deriva; $N=15$ è un'istanza didattica con
+post-processing permissivo; le stime
 QEC valgono entro il modello Clifford--Pauli, indicato come potenzialmente
 ottimistico~\cite{plaquette2026}; l'analisi di sensibilità è un proxy per gate, non una simulazione
 fault-tolerant. Rispetto al piano, $N=21$ e $N=35$ restano validati solo idealmente ed esclusi per
@@ -25,4 +27,4 @@ Gli sviluppi futuri discendono dai limiti --- mappatura per operazione logica, r
 \emph{channel-first}, decoder ricorrenti o a grafo~\cite{alphaqubit2024} --- ma la ricaduta più
 immediata è metodologica: ablazione appaiata, contratto interpretativo fra
 unità diverse e artefatti versionati formano un protocollo riutilizzabile per valutare qualunque
-mitigazione del rumore quantistico basata su apprendimento automatico.
+mitigazione appresa del rumore quantistico.

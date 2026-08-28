@@ -1,186 +1,70 @@
 \begin{onehalfspace}
 
-Questo lavoro è partito da una domanda operativa: quanto dell'output
-rumoroso di Shor può essere recuperato a valle, e quando diventa invece
-necessario correggere l'errore durante il calcolo? La risposta è una
-delimitazione, non una promessa generale. Su $N=15$ una semplice ricerca
-multi-candidato usa meglio l'informazione già presente; un classificatore
-sullo stesso output non aggiunge valore. Per andare oltre occorre
-spostarsi sulla sindrome e sulla correzione d'errore.
+Questo lavoro ha chiesto quanta informazione di Shor possa essere recuperata dall'output rumoroso e quando sia necessario intervenire durante il calcolo. La risposta è un confine operativo: TOP-K valorizza candidati ancora presenti nell'istogramma, mentre gli errori che ne distruggono la struttura richiedono sindromi, decodifica e operazioni logiche protette.
 
-% -----------------------------------------------
 \section{Le Domande di Ricerca}
 \label{sec:risposte_dr}
 
-\paragraph{DR1 --- Come cambia Shor al variare dei canali di rumore?}
-Nel modello uniforme N=15 la struttura QPE si attenua all'aumentare di
-$\lambda_{2q}$: la frazione efficace sui quattro picchi passa da 0.804 a
-$\lambda_{2q}=10^{-3}$ a 0.042 a $10^{-1}$. Il proxy di nessun evento
-Pauli sulle 224 CX decade molto più rapidamente, da 0.811 a
-$2.65\times10^{-10}$, e non predice il successo dell'algoritmo. Gli
-sweep di $\lambda_{1q}$, $T_1/T_2$, readout e shot non mostrano un
-andamento monotono di M1 con 30 repliche; non è quindi lecito ordinarne
-causalmente l'importanza da questi soli dati. TOP-4 resta a una
-iterazione in tutti i punti salvo $\lambda_{2q}=0.1$, dove sale a 1.07.
+\paragraph{DR1 --- Effetto dei canali di rumore.}
+Nel modello uniforme per $N=15$, l'aumento dell'errore a due qubit attenua la struttura utile della QPE; il proxy di nessun evento decade più rapidamente e non coincide con la probabilità di successo. Gli altri sweep, con 30 repliche, non sostengono un ordinamento causale fra le fonti di rumore. TOP-4 resta più robusto perché verifica più candidati dello stesso istogramma.
 
-\paragraph{DR2 --- Come si estrae una sindrome senza misurare lo stato
-logico?}
-Il codice a ripetizione misura parità, non i singoli qubit. Gli
-stabilizzatori $Z_1Z_2$ e $Z_2Z_3$ rivelano quale bit è stato alterato
-senza rivelare l'ampiezza logica. La curva Monte Carlo coincide con
-$p_L=3p^2-2p^3$ entro l'incertezza; il limite resta la protezione di un
-solo tipo di errore per volta.
+\paragraph{DR2 --- Estrazione della sindrome.}
+Il codice a ripetizione misura parità tramite gli stabilizzatori $Z_1Z_2$ e $Z_2Z_3$, senza misurare direttamente lo stato logico. La simulazione riproduce $p_L=3p^2-2p^3$ entro l'incertezza, ma protegge un solo tipo di errore per volta.
 
-\paragraph{DR3 --- Quali vantaggi e limiti offre Steane $[[7,1,3]]$?}
-La struttura CSS corregge un errore Pauli arbitrario su un singolo qubit
-e la corrispondenza sindrome--errore è stata verificata sui 21 casi. La
-pendenza log--log misurata, 1.94, è compatibile con la soppressione
-quadratica attesa da un codice di distanza 3. La distanza fissa e
-l'estrazione di sindrome non fault-tolerant impediscono però di
-interpretarlo come soluzione scalabile.
+\paragraph{DR3 --- Codice di Steane.}
+Steane $[[7,1,3]]$ corregge un errore Pauli arbitrario su un singolo qubit e la corrispondenza sindrome--errore è verificata sui 21 casi. La pendenza log--log misurata, $1.94$, è coerente con la soppressione quadratica; distanza fissa ed estrazione non fault-tolerant ne limitano la scalabilità.
 
-\paragraph{DR4 --- Il surface code mostra un comportamento di soglia?}
-Sì, nel memory experiment e nel modello circuit-level adottati. Le curve
-per $d=3,5,7,9$ si incrociano attorno allo $0.9\%$ in base Z e allo
-$0.7\%$ in base X; sotto la regione di incrocio aumentare la distanza
-sopprime il logical error rate, sopra la amplifica. Il parametro fisico
-$p$ di questa simulazione non coincide con $\lambda_{2q}$ della campagna
-Shor, quindi il confronto fra i due resta qualitativo.
+\paragraph{DR4 --- Soglia del surface code.}
+Nel memory experiment circuit-level, le curve per $d=3,5,7,9$ mostrano incroci attorno allo $0.9\%$ in base Z e allo $0.7\%$ in base X. Sotto tale regione aumentare $d$ riduce $p_L$; il parametro fisico della simulazione non è però direttamente confrontabile con quello della campagna Shor.
 
-\paragraph{DR5 --- Quale errore logico è compatibile con Shor?}
-Il modello fenomenologico mostra come la probabilità per singola misura
-decada al crescere della probabilità di Pauli non-identità per gate
-logico. A $p_L=0$ il limite dell'istanza è circa 0.75, perché una parte
-degli esiti QPE è intrinsecamente non utile; ripetere l'algoritmo aumenta
-la probabilità cumulativa. La curva è un'analisi di sensibilità, non una
-previsione end-to-end: il logical error rate di un memory experiment non
-può essere assegnato direttamente a ogni gate di Shor senza specificare
-le operazioni fault-tolerant e i rispettivi canali residui.
+\paragraph{DR5 --- Sensibilità di Shor all'errore logico.}
+Il successo per singola esecuzione diminuisce al crescere del proxy Pauli per gate, mentre le ripetizioni indipendenti aumentano la probabilità cumulativa. La curva è una sensibilità fenomenologica: un tasso di memory experiment non può essere assegnato a ogni gate di Shor senza una compilazione fault-tolerant.
 
-\paragraph{DR6 --- Quando un decoder appreso può superare quello
-analitico?}
-Nei dati della tesi il vantaggio compare quando il rumore contiene
-correlazioni assenti dal grafo del matching. Il decoder ibrido riduce
-l'errore rispetto a \ac{MWPM} a distanza 3, ma il beneficio si restringe
-con la distanza e scompare a distanza 7 per la rete densa adottata. Il
-risultato non sostiene la sostituzione generalizzata dei decoder
-analitici: indica una nicchia in cui un modello residuale può sfruttare
-informazione strutturale non rappresentata dal metodo base.
+\paragraph{DR6 --- Decodifica appresa.}
+Il vantaggio emerge quando il rumore contiene correlazioni non rappresentate dal grafo di matching. Il decoder residuale può allora correggere una parte degli errori lasciati da \ac{MWPM}; con la rete densa adottata il beneficio si riduce all'aumentare della distanza, quindi il risultato identifica un regime utile e non una sostituzione generale del decoder analitico.
 
-% -----------------------------------------------
 \section{Verifica delle Ipotesi}
 \label{sec:verifica_ipotesi}
 
-\begin{table}[H]
+\begin{table}[!htbp]
 \centering
 \small
-\caption[Esito delle ipotesi]{Esito dopo la rigenerazione schema~2.}
+\caption{Esito delle ipotesi nel perimetro sperimentale della tesi.}
 \label{tab:esito_ipotesi}
-\begin{tabular}{p{4.2cm}p{2.5cm}p{6.6cm}}
+\begin{tabular}{p{4.4cm}p{2.5cm}p{6.2cm}}
 \toprule
-\textbf{Ipotesi} & \textbf{Esito} & \textbf{Evidenza} \\
+\textbf{Ipotesi} & \textbf{Esito} & \textbf{Evidenza essenziale} \\
 \midrule
-Il classificatore riduce le iterazioni
-& smentita
-& M2 non migliora M1; TOP-4 è migliore di M2 in UC1 e UC2
-($p_{\mathrm{Holm}}=0.0033/0.0096$). \\
+Il classificatore riduce le iterazioni & smentita & M2 non migliora M1 e TOP-4 migliora M2 nei due preset. \\
 \addlinespace
-F1 $>0.85$ e AUC $>0.90$
-& confermata, ma insufficiente
-& SVM: F1 $0.919/0.923$, AUC $0.965/0.958$ sul test; la metrica
-misura TOP-1, non l'utilità operativa. \\
+F1 $>0.85$ e AUC $>0.90$ & confermata, non sufficiente & Le soglie sono superate, ma misurano la predizione TOP-1 e non il guadagno operativo. \\
 \addlinespace
-Il vantaggio si mantiene crescendo $N$
-& non verificata
-& $N=21/35$ sono validati idealmente, ma esclusi dal rumore per costo;
-l'ordine $r$ deve essere controllato insieme a $N$. \\
+Il vantaggio è robusto oltre il preset di riferimento & non supportata & Il vantaggio ML non compare nei due preset; $N=21/35$ non sono testati sotto rumore. \\
 \addlinespace
-Soppressione quadratica nei codici di distanza 3
-& confermata nel modello
-& ripetizione coerente con $3p^2-2p^3$; Steane con pendenza 1.94. \\
+Soppressione quadratica a distanza 3 & confermata nel modello & Ripetizione segue la curva teorica e Steane ha pendenza $1.94$. \\
 \addlinespace
-Comportamento di soglia del surface code
-& confermato nel modello
-& incrocio delle curve $d=3,5,7,9$ e inversione sopra soglia. \\
+Comportamento di soglia del surface code & confermato nel modello & Le curve a distanza crescente si incrociano e invertono l'ordinamento. \\
 \addlinespace
-Trasferimento diretto di $p_L$ a Shor
-& non dimostrato
-& la curva logica è fenomenologica; manca la mappatura per operazione
-fault-tolerant. \\
+Trasferimento diretto di $p_L$ a Shor & non dimostrato & Il proxy per gate e i tassi dei memory experiment hanno granularità differenti. \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-L'audit del classificatore è metodologicamente centrale. TOP-1 produce
-classi addestrabili, ma chiede soltanto se il candidato dominante porta
-ai fattori. TOP-16 produce invece $2\,000/2\,000$ positivi in entrambi
-gli scenari. Il conto combinatorio spiega il fenomeno: 63 dei 256 esiti
-sono utili e la probabilità di non includerne alcuno scegliendo sedici
-celle uniformi è appena
-$\binom{193}{16}/\binom{256}{16}=0.9275\%$. Una metrica elevata non
-garantisce dunque che l'etichetta rappresenti un problema utile.
+Il risultato della prima ipotesi chiarisce perché le sole metriche del classificatore non bastino: un'etichetta può essere prevedibile senza corrispondere a una decisione utile. L'ablazione TOP-4 è quindi parte necessaria della verifica, non una baseline accessoria.
 
-% -----------------------------------------------
 \section{Contributi del Lavoro}
 
-\textbf{Una demo scientificamente separata in ideale e rumoroso.}
-Il percorso ideale espone circuito, stato e QPE senza rumore; il percorso
-rumoroso rende attivabili separatamente depolarizzazione 1Q/2Q,
-$T_1/T_2$, readout e perturbazione coerente. N=21/35 sono validati
-idealmente, mentre l'esperimento pubblico rumoroso è limitato a N=15.
+La tesi fornisce una demo che separa esecuzione ideale e rumorosa; una validazione funzionale dell'aritmetica per le istanze considerate; un confronto appaiato M1--TOP-4--M2 che attribuisce il guadagno alla corretta regola decisionale; e una progressione QEC da ripetizione a surface code con limiti e unità di misura dichiarati. Il contributo trasversale è il confronto dell'apprendimento in due sedi diverse, output e sindrome, usando controfattuali semplici e decoder analitici come riferimenti.
 
-\textbf{Un'ablazione causalmente interpretabile.}
-M1, TOP-4 e M2 ricevono lo stesso istogramma. TOP-4 riduce $\bar M$ da
-1.37 a 1.00 nello scenario moderato e da 1.50 a 1.00 nello stress; il
-classificatore peggiora la propria ablazione. Seed, tie-break,
-sentinelle, revisioni e manifest sono salvati negli artefatti.
-
-\textbf{Una validazione funzionale dell'aritmetica.}
-Il moltiplicatore $\times7\bmod15$ è coperto da truth table e il percorso
-Beauregard da proprietà esaustive e confronti QPE per N=21/35. Questo
-controllo ha mostrato perché i soli picchi o il solo ordine non bastano a
-validare l'operatore implementato.
-
-\textbf{Una progressione QEC con limiti dichiarati.}
-Ripetizione, Steane, surface code e decodifica appresa sono collegati da
-metriche esplicite, ma i rispettivi modelli di rumore non vengono
-presentati come direttamente commensurabili. Lo Shor logico chiude la
-progressione come analisi fenomenologica di sensibilità.
-
-% -----------------------------------------------
 \section{Limiti}
 \label{sec:limiti_finali}
 
-La campagna Shor usa un simulatore e un rumore uniforme, indipendente e
-stazionario; non include topologia, routing, crosstalk, leakage o deriva
-di calibrazione. N=15 è un'istanza didattica e TOP-K beneficia di una
-post-elaborazione particolarmente permissiva. Gli sweep hanno 30
-repliche e i test non sono corretti globalmente fra le otto famiglie.
-N=21/35 non sono simulati sotto rumore.
+La campagna Shor usa un simulatore, preset uniformi e l'istanza didattica $N=15$; non comprende topologia, routing, crosstalk, leakage o deriva di calibrazione. TOP-K beneficia di una verifica classica economica e gli sweep, limitati a 30 repliche, non permettono una gerarchia causale completa dei canali. Le istanze $N=21/35$ sono validate soltanto in ideale. Nella parte QEC, Steane non impiega un'estrazione fault-tolerant, il decoder appreso è una rete densa e i memory experiment non condividono la definizione di $p_L$ del proxy per gate. Ne segue che le curve ottenute non sono una stima delle risorse crittografiche di uno Shor fault-tolerant.
 
-Nella parte QEC, Steane non usa un'estrazione fault-tolerant; i memory
-experiment e il modello per-gate di Shor non condividono la stessa
-definizione di $p_L$; il decoder appreso è una rete densa e il vantaggio
-non persiste alle distanze maggiori testate. Le stime di risorse
-crittografiche devono quindi provenire da architetture fault-tolerant
-complete, non da un'estrapolazione delle curve N=15.
-
-% -----------------------------------------------
 \section{Il Criterio che Unifica il Lavoro}
 
-In entrambe le fasi, il complemento semplice è utile quando sfrutta
-informazione che il metodo base lascia inutilizzata senza modificare il
-processo che la genera. TOP-4 prova altri candidati già presenti
-nell'istogramma; il decoder residuale interviene soltanto sui casi in cui
-il matching ha una debolezza rappresentazionale. Un modello più
-complesso non produce valore se replica una regola semplice, se le
-etichette sono degeneri o se il costo introdotto compensa il beneficio.
+Un metodo aggiuntivo produce valore quando usa informazione che il riferimento non sfrutta e il beneficio supera il costo introdotto. TOP-4 verifica candidati già osservati; il decoder residuale interviene sulle correlazioni che il matching non rappresenta. Un modello più complesso non è invece utile se replica una regola semplice, apprende un'etichetta degenere o opera dopo che l'informazione è stata distrutta.
 
-Applicato a Shor, questo criterio separa nettamente post-processing e
-correzione: TOP-K può recuperare un picco utile già misurato, ma non può
-ricostruire informazione fisicamente distrutta. Rendere Shor scalabile
-richiede operazioni logiche fault-tolerant; l'apprendimento può contribuire
-alla decodifica solo dove dispone di una struttura che il decoder
-analitico non rappresenta.
+Applicato a Shor, il criterio separa nettamente post-processing e correzione. Il primo recupera informazione presente; la seconda protegge il processo che la genera. La scalabilità richiede quindi operazioni logiche fault-tolerant, mentre l'apprendimento può contribuire dove dispone di struttura diagnostica ulteriore e viene verificato contro una baseline forte.
 
 \end{onehalfspace}

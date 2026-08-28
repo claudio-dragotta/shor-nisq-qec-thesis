@@ -1,122 +1,69 @@
 \begin{onehalfspace}
 
-Il capitolo precedente ha mostrato che il rumore quantistico non è un fastidio marginale: circuiti profondi come Shor accumulano errori anche su istanze didattiche. Il problema richiede strategie che agiscano a livelli diversi e che vengano confrontate con metriche esplicite.
+Il rumore può essere affrontato in momenti diversi della pipeline. Distinguere questi livelli evita due equivoci: una stima a posteriori dell'output ideale non corregge lo stato durante il calcolo, e un modello appreso non coincide con la correzione d'errore quantistica.
 
-In letteratura si distinguono più livelli di intervento: soppressione fisica, mitigazione, correzione/tolleranza ai guasti e metodi appresi. Questi ultimi sono trasversali: possono operare sul post-processing o assistere un decoder, ma non comprendono la \textbf{Correzione degli Errori Quantistici} (\ac{QEC}), che è una disciplina autonoma.
+\section{Panoramica e criteri di scelta}
 
-% -----------------------------------------------
-\section{Le Quattro Strategie: Panoramica e Scelta}
-
-Le quattro macro-strategie per fronteggiare il rumore nei sistemi quantistici sono:
-
-\begin{enumerate}
-    \item \textbf{Soppressione del rumore} (\textit{Noise Suppression}): agisce \textit{prima} che gli errori si manifestino, cercando di ridurre fisicamente l'accoppiamento tra il qubit e l'ambiente. Le tecniche principali sono il \textit{Dynamical Decoupling} --- sequenze di pulse che mediano a zero l'interazione con l'ambiente --- l'ottimizzazione della durata dei gate, e l'isolamento fisico criogenico ed elettromagnetico dell'hardware. Riduce il rumore ma non lo elimina, ed è vincolata alle possibilità dell'hardware disponibile.
-
-    \item \textbf{Mitigazione degli errori} (\textit{Error Mitigation}): opera \textit{a posteriori}, senza correggere i qubit durante il calcolo. Si eseguono più istanze del circuito con diversi livelli di rumore o con randomizzazioni, e si combinano i risultati classicamente per stimare l'output ideale. Le tecniche più diffuse sono la \textit{Zero-Noise Extrapolation} (ZNE), il \textit{Probabilistic Error Cancellation} (PEC) e il \textit{Gate Twirling}. Il limite è l'overhead di campionamento, la cui legge dipende dalla tecnica e può diventare esponenziale nell'errore totale del circuito, in particolare per la PEC.
-
-    \item \textbf{Tolleranza ai guasti} (\textit{Fault-Tolerant Quantum Computing}): è il paradigma architetturale a lungo termine. Codifica ogni qubit \textit{logico} in molti qubit \textit{fisici} e garantisce che, sotto le ipotesi del \textit{threshold theorem} e al di sotto della relativa soglia \cite{aharonov1997fault}, l'errore logico possa essere ridotto aumentando la distanza e l'overhead. Il costo per qubit logico dipende da codice, qualità fisica, algoritmo e obiettivo di errore e può arrivare a centinaia o migliaia di qubit fisici nelle stime di risorse per algoritmi di grande scala.
-
-    \item \textbf{Metodi appresi}: usano modelli di \ac{ML} classico per classificare output, stimare qualità o assistere la decodifica. Non sono \ac{QML} in senso stretto, perché l'addestramento e l'inferenza non usano un modello quantistico; non sostituiscono per definizione né la mitigazione né la QEC.
-\end{enumerate}
-
-\begin{table}[H]
+\begin{table}[!htbp]
 \centering
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{@{}lllll@{}}
+\small
+\begin{tabular}{@{}p{2.8cm}p{2.8cm}p{3.6cm}p{3.6cm}@{}}
 \toprule
-\textbf{Strategia}    & \textbf{Quando agisce} & \textbf{Overhead}       & \textbf{Era}       & \textbf{Adottata} \\
+\textbf{Strategia} & \textbf{Livello} & \textbf{Principio} & \textbf{Vincolo principale} \\
 \midrule
-Noise Suppression     & Prima del calcolo      & Basso (hardware)        & NISQ / FT          & No \\
-Error Mitigation      & Dopo il calcolo        & Esponenziale            & NISQ               & No$^*$ \\
-Fault-Tolerant QC     & Architetturale         & Molto alto (qubit)      & Futuro             & No \\
-ML classico / metodi appresi & Post-processing o decoder & Classico, dipendente dai dati & NISQ / FT & \textbf{Valutato} \\
+Soppressione del rumore
+& hardware e controllo
+& ridurre l'errore prima o durante l'esecuzione
+& richiede accesso a pulse, calibrazione o dispositivo \\[2pt]
+Mitigazione
+& esecuzioni e post-processing
+& stimare l'osservabile ideale da circuiti rumorosi
+& aumenta il numero di campioni e dipende dal modello \\[2pt]
+\ac{QEC} e fault tolerance
+& stato logico e architettura
+& rilevare errori tramite sindromi e limitarne la propagazione
+& richiede qubit, cicli di sindrome e operazioni logiche aggiuntive \\[2pt]
+Metodi appresi classici
+& output o decoder
+& apprendere una decisione da istogrammi o sindromi
+& necessita dati, validazione e un riferimento non appreso \\
 \bottomrule
-\end{tabular}%
-}
-\caption{Confronto delle quattro strategie anti-rumore per il contesto di questa tesi.}
+\end{tabular}
+\caption{Livelli di intervento contro il rumore e relativi vincoli.}
 \label{tab:strategie_confronto}
-
-\smallskip
-{\footnotesize $^*$La ZNE non è adottata come strategia principale, ma viene confrontata \textit{a posteriori} con $M_{\text{TOP4}}$ nel Capitolo~\ref{chap:risultati}: ZNE-2 e ZNE-3 non riducono significativamente le iterazioni rispetto alla baseline, a fronte di un costo da due a tre volte superiore in shot.}
 \end{table}
 
-\textbf{Motivazione per l'approccio appreso.} Le prime tre strategie presentano limitazioni nel contesto di questa tesi. La soppressione del rumore è vincolata all'hardware disponibile; la mitigazione richiede esecuzioni aggiuntive; la tolleranza ai guasti richiede molte più risorse fisiche. Un modello appreso può invece essere applicato a valle senza modificare il circuito. Che ciò riduca davvero il numero di esecuzioni è però un'\emph{ipotesi sperimentale}, non un vantaggio assunto: il confronto con TOP-1 e con l'ablazione TOP-4 è necessario proprio per misurarne il contributo marginale.
+La \textbf{soppressione} comprende isolamento, calibrazione, pulse shaping e dynamical decoupling. Riduce l'errore fisico ma non lo annulla ed è in larga parte vincolata all'hardware. La \textbf{mitigazione}, fra cui la \ac{ZNE}, combina più esecuzioni rumorose senza codificare qubit logici; è utilizzabile nel regime NISQ, ma il suo costo di campionamento cresce con il rumore totale e con la tecnica adottata.
 
-% -----------------------------------------------
-\section{Machine Learning Classico per la Robustezza al Rumore}
+La \textbf{\ac{QEC}} codifica l'informazione in un sottospazio logico e ricava una sindrome senza misurare direttamente lo stato protetto. La fault tolerance estende questo principio all'intero calcolo, imponendo che un singolo guasto non si propaghi in modo incontrollato. Sotto le ipotesi del threshold theorem e al di sotto della soglia pertinente, aumentare la distanza del codice può sopprimere l'errore logico~\cite{aharonov1997fault}; soglia e overhead dipendono però da circuito, modello di rumore e decoder.
+
+I \textbf{metodi appresi} sono trasversali. Possono filtrare un output già campionato oppure assistere il decoder di un codice, ma non rimuovono il costo di generare quei dati e non sostituiscono automaticamente una regola analitica. La loro utilità deve essere valutata sullo stesso input e con la stessa metrica dell'alternativa di confronto.
+
+\section{Machine learning classico su dati quantistici}
 \label{sec:qml_overview}
 
-In questa tesi il termine corretto è \textbf{machine learning classico applicato a dati quantistici}: Random Forest, \ac{SVM} e \ac{MLP} sono modelli eseguiti interamente su hardware classico. Il \ac{QML}, in senso stretto, usa invece circuiti o modelli quantistici nell'apprendimento e non viene implementato qui. L'idea sperimentata è lasciare che un modello classico apprenda dai conteggi rumorosi o dalle sindromi, mantenendo esplicita la natura classica della pipeline.
-
-Tre possibili impieghi di metodi appresi nella robustezza quantistica sono:
-
+In questa tesi Random Forest, \ac{SVM} e \ac{MLP} sono modelli eseguiti su hardware classico; il termine corretto è quindi \textbf{machine learning classico applicato a dati quantistici}, non \ac{QML}. Vengono considerati due contratti distinti:
 \begin{itemize}
-    \item \textbf{Caratterizzazione del rumore}: un modello di regressione (Random Forest, rete neurale) apprende la relazione tra i parametri hardware ($T_1$, $T_2$, profondità del circuito) e la fedeltà dell'output, permettendo di predire la qualità del risultato prima di eseguire il circuito.
-
-    \item \textbf{Ottimizzazione variazionale}: i parametri del circuito (decomposizione della modular exponentiation, routing dei qubit) vengono ottimizzati tramite agenti di Reinforcement Learning che massimizzano la probabilità di successo sul simulatore rumoroso, adattando il circuito al profilo di errore specifico del dispositivo.
-
-    \item \textbf{Decodifica appresa per la QEC}: una rete neurale o un classificatore usa le sindromi per proporre una correzione o per intervenire residualmente sulla decisione di un decoder analitico. È un'applicazione del machine learning \emph{dentro una fase} della pipeline QEC, non una ridefinizione della QEC come sottocategoria del machine learning.
+    \item nel \textbf{post-processing di Shor}, il modello riceve feature dell'istogramma e decide se ampliare la ricerca dal candidato dominante ai primi $K$ candidati;
+    \item nella \textbf{decodifica QEC}, il modello riceve sindromi o detection event e propone una correzione, oppure modifica residualmente l'uscita di un decoder analitico.
 \end{itemize}
+Nel primo caso il riferimento naturale è una regola TOP-$K$ priva di addestramento; nel secondo è un decoder analitico adatto al codice e al noise model. Separare i due contratti impedisce di attribuire al modello informazione già contenuta nella regola di selezione o nel decoder di base.
 
-% -----------------------------------------------
-\section[Correzione degli Errori Quantistici e Ruolo del Machine Learning]{Correzione degli Errori Quantistici e \\ Ruolo del Machine Learning}
+\section{Correzione quantistica e decodifica}
 \label{sec:qec_overview}
 
-\subsection{Il Problema Fondamentale}
+La \ac{QEC} distribuisce un qubit logico su più qubit fisici. Gli stabilizzatori rivelano la classe dell'errore attraverso una sindrome, mentre il decoder sceglie un recupero compatibile. Questo è sufficiente per motivare gli esperimenti successivi; formalismo, circuiti e curve dei codici a ripetizione e di Steane sono sviluppati nel Capitolo~\ref{chap:qec}, mentre geometria, soglia e distanza del surface code sono trattate nel Capitolo~\ref{chap:surface}. I riferimenti storici dei codici impiegati sono Shor~\cite{shorcorrection1995}, Steane~\cite{steane1996} e il surface code~\cite{fowler2012}.
 
-Come si è visto nel capitolo precedente, il teorema del no-cloning impedisce di proteggere un qubit semplicemente duplicandolo, come si farebbe con un bit classico. Eppure la correzione degli errori quantistici è possibile --- e questa fu una delle scoperte più sorprendenti degli anni Novanta. Il principio è che si può \textit{distribuire} l'informazione di un qubit logico su più qubit fisici in modo tale che, misurando opportune quantità collettive (le \textbf{sindromi}), sia possibile rilevare e correggere gli errori senza misurare direttamente --- e quindi distruggere --- lo stato logico.
-
-\subsection{Il Paradigma in Tre Fasi}
-
-Qualunque codice di correzione degli errori quantistici funziona secondo lo stesso schema:
-
-\begin{enumerate}
-    \item \textbf{Codifica}: lo stato logico $\ket{\psi_L}$ viene distribuito su $n$ qubit fisici tramite un circuito di codifica. L'informazione è ridondante: nessun singolo qubit fisico contiene da solo l'informazione logica.
-
-    \item \textbf{Misura di sindrome}: si misurano operatori stabilizzatori --- operatori che commutano con tutti i codeword ma anticommutano con gli operatori di errore. Questi operatori forniscono informazione sull'errore avvenuto senza rivelare il valore del qubit logico. Il risultato della misura è la \textbf{sindrome}, un vettore binario che identifica quale errore (o classe di errori) si è verificato.
-
-    \item \textbf{Decodifica e correzione}: dato il vettore di sindrome, un algoritmo di decodifica determina l'operazione di recupero. Un modello appreso può sostituire o affiancare il decoder analitico, ma un vantaggio non è automatico: va misurato sullo stesso insieme di sindromi e dipende dalla struttura del rumore rappresentabile dai due metodi.
-\end{enumerate}
-\clearpage
-
-\subsection{I Principali Codici Quantistici}
-
-Nel corso degli anni sono stati sviluppati numerosi codici di correzione. I tre più rilevanti per questa tesi sono:
-
-\textbf{Codice di Shor (1995).}
-Il primo codice di correzione degli errori quantistici \cite{shorcorrection1995}, proposto dallo stesso Peter Shor dell'algoritmo di fattorizzazione, codifica 1 qubit logico in 9 qubit fisici ed è in grado di correggere qualsiasi errore singolo (bit flip, phase flip o entrambi). Lo stato logico è:
-\begin{equation}
-    \ket{0_L} = \frac{1}{2\sqrt{2}}\bigl(\ket{000}+\ket{111}\bigr)^{\otimes 3}, \qquad
-    \ket{1_L} = \frac{1}{2\sqrt{2}}\bigl(\ket{000}-\ket{111}\bigr)^{\otimes 3}
-\end{equation}
-La struttura è a due livelli: tre copie del qubit (ciascuna nella forma $\ket{000}\pm\ket{111}$) proteggono da phase flip tramite interferenza; la ripetizione delle tre copie protegge da bit flip tramite ridondanza. Questo risultato dimostrò per la prima volta che il teorema del no-cloning non impedisce la correzione degli errori quantistici.
-
-\textbf{Codice di Steane (1996).}
-Il codice di Steane \cite{steane1996} riduce l'overhead a 7 qubit fisici per 1 qubit logico, sfruttando la struttura del codice classico di Hamming $[7,4,3]$. Corregge qualsiasi errore singolo ed è il primo esempio di codice CSS (Calderbank--Shor--Steane)~\cite{calderbankShor1996}, una famiglia sistematica di costruzioni che collegano codici classici lineari a codici quantistici.
-
-\textbf{Surface Code.}
-Il \textbf{surface code} \cite{fowler2012} organizza i qubit fisici in una griglia 2D con interazioni locali, una struttura compatibile con varie architetture a qubit superconduttori. La sua proprietà chiave è il \textbf{threshold}: sotto una soglia che dipende dal circuito, dal modello di rumore e dal decoder, aumentare la distanza $d$ sopprime l'errore logico; sopra soglia lo amplifica. La campagna di questa tesi stima tale comportamento nel proprio modello invece di importare una soglia universale.
-
-
-\subsection{Machine Learning come Possibile Componente del Decoder QEC}
+\subsection{Il modello appreso come componente del decoder}
 \label{sec:qec_ml}
 
-La QEC e il machine learning sono discipline distinte. Il loro punto di contatto è la decodifica: un modello appreso può ricavare dai campioni di sindrome una decisione di recupero o correggere residualmente un decoder analitico \cite{torlaiMelko2017, alphaqubit2024}. La sindrome è un punto strutturalmente favorevole perché conserva informazione sull'errore; resta comunque necessario confrontare il modello appreso con un decoder analitico adeguato, a parità di dati e di calendario sperimentale.
+Il punto di contatto fra \ac{QEC} e machine learning è la mappa classica dalla sindrome alla decisione. Un modello può apprendere correlazioni non rappresentate dal decoder analitico oppure operare come correzione residua~\cite{torlaiMelko2017,alphaqubit2024}. Ciò non garantisce un vantaggio: la qualità dipende dalla distribuzione di addestramento, dalla stabilità del rumore e dal costo d'inferenza. Per questo il Capitolo~\ref{chap:surface} confronta decoder appreso e analitico sugli stessi campioni e mantiene separati addestramento, selezione e valutazione.
 
-Questa affermazione non resta, in questo lavoro, un richiamo alla letteratura: è verificata sperimentalmente nella Sezione~\ref{sec:decodifica_appresa}, che confronta un decoder appreso con il decoder analitico standard sugli stessi campioni di sindrome. L'esito va formulato con precisione: \emph{sostituire} il decoder analitico con una rete non conviene nel protocollo studiato, mentre \emph{affiancarglielo} produce un guadagno misurabile nel modello simulato con correlazioni assenti dal grafo del matching. La QEC non diventa per questo una specializzazione del machine learning: il modello appreso è soltanto una possibile componente classica del decoder, la cui utilità va confrontata con riferimenti analitici adeguati.
-
-% -----------------------------------------------
-\section{Motivazione Pratica: il Contributo di questa Tesi}
+\section{Strategia sperimentale della tesi}
 \label{sec:motivazione_ml}
 
-Chiarito il quadro teorico, è importante spiegare concretamente cosa porta il modello appreso rispetto all'alternativa più semplice.
+Il lavoro adotta una progressione in due fasi. La prima studia ciò che si può recuperare \emph{dopo} la misura di Shor: TOP-1, TOP-$K$ e filtro appreso sono confrontati sugli stessi istogrammi, mentre la \ac{ZNE} costituisce un confronto di mitigazione separato. Metodo e verifica sono descritti nei Capitoli~\ref{chap:metodologia} e~\ref{chap:risultati}.
 
-\textbf{Senza ML --- approccio statistico classico.} Ogni iterazione sperimentale esegue il circuito per un numero fissato di shot, costruisce un istogramma e applica il post-processing ai candidati ordinati per frequenza. TOP-1 prova la sola moda; TOP-4 prova i primi quattro esiti. Il numero di \emph{iterazioni} della campagna non va confuso con gli shot contenuti in ciascun istogramma: nei risultati correnti la media è compresa fra 1 e 1.5 iterazioni, non decine o centinaia.
-
-\textbf{Con ML --- l'ipotesi che questa tesi mette alla prova.} Il classificatore riceve le feature di un istogramma già campionato e decide se attivare la ricerca TOP-4; non classifica un singolo shot e non elimina il costo necessario a costruire la distribuzione. L'ipotesi preregistrata era che questo filtro riducesse il numero di iterazioni rispetto a TOP-1. L'ablazione separata TOP-4 verifica se l'eventuale beneficio provenga dal modello o dalla sola ricerca multi-candidato.
-
-La prima fase sperimentale verifica questa ipotesi con un confronto appaiato. La riduzione delle iterazioni si ottiene davvero (da $\bar{M}_1=1.37$ a $\bar{M}=1.00$ nello scenario moderato), ma l'ablazione attribuisce il beneficio alla ricerca multi-candidato TOP-K: aggiungere il classificatore aumenta il costo rispetto a TOP-4 in entrambi gli scenari. Il risultato negativo delimita il solo filtro \ac{ML} applicato a questo output e a queste etichette; non è una conclusione generale sull'apprendimento per la mitigazione o la decodifica.
-
-È questo esito a determinare la struttura del resto dell'elaborato. Il Capitolo~\ref{chap:metodologia} descrive gli strumenti, l'architettura e l'implementazione del sistema sperimentale, e il Capitolo~\ref{chap:risultati} riporta la verifica con la relativa ablazione. L'esperimento mostra che l'istogramma contiene candidati utili, sfruttati da TOP-4, ma non che un classificatore su quelle etichette aggiunga informazione alla regola semplice. Per intervenire sugli errori che il post-processing non può recuperare, il \textbf{nucleo del lavoro} si sposta durante il calcolo e occupa i tre capitoli successivi: la costruzione e la caratterizzazione dei codici correttori, dal codice a ripetizione al codice di Steane (Capitolo~\ref{chap:qec}); il surface code, la stima sperimentale dell'errore logico e il confronto fra decodifica analitica e appresa (Capitolo~\ref{chap:surface}); infine, una sensibilità fenomenologica di Shor mantenuta esplicitamente distinta dai tassi QEC per ciclo (Capitolo~\ref{chap:integrazione}). In questa seconda parte i metodi appresi e la \ac{QEC} vengono confrontati entro i rispettivi contratti, senza identificarli come un'unica disciplina.
+La seconda fase interviene \emph{durante} la protezione dell'informazione: caratterizza codici di complessità crescente, stima l'errore logico e valuta il ruolo di un decoder appreso. Il Capitolo~\ref{chap:integrazione} mantiene infine distinta la sensibilità di Shor a un proxy per gate dai tassi logici per ciclo dei codici. Questa separazione fra livelli --- output, sindrome e circuito logico --- è il criterio che rende confrontabili le strategie senza confonderne obiettivi e metriche.
 
 \end{onehalfspace}
