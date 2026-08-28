@@ -31,6 +31,15 @@
 \usepackage{setspace}
 \usepackage[bottom]{footmisc}
 \usepackage{float}
+% Lasciare a LaTeX margine per comporre figure e tabelle senza creare
+% pagine semivuote. I singoli float usano normalmente [!htbp].
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+\renewcommand{\topfraction}{0.90}
+\renewcommand{\bottomfraction}{0.80}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.75}
 \usepackage[backend=biber, citestyle=numeric, sorting=none]{biblatex}
 \usepackage[acronym, nopostdot, nogroupskip, toc]{glossaries}
 \makenoidxglossaries
