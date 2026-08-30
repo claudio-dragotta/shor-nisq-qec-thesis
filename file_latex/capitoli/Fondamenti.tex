@@ -1,59 +1,86 @@
 \begin{onehalfspace}
 
+Questo capitolo introduce l'algoritmo che dà a questa tesi il proprio oggetto. Si apre con i richiami di calcolo quantistico indispensabili a seguirlo --- il qubit, la sovrapposizione, le porte unitarie e il meccanismo di interferenza --- di cui l'algoritmo costituisce l'applicazione più celebre.
+
+L'\textbf{algoritmo di Shor}, proposto da Peter Shor nel 1994 \cite{shor1994}, è un algoritmo quantistico che risolve il problema della \textbf{fattorizzazione intera} di un numero $N$ in tempo \textbf{polinomiale} nel numero di bit di $N$:
+\begin{equation}
+    T_{\text{Shor}}(N) = O\!\left((\log N)^3\right)
+    \label{eq:shor_complexity}
+\end{equation}
+
+Questo risultato costituisce uno \textbf{speedup esponenziale} rispetto al miglior algoritmo classico noto -- il \ac{GNFS} -- che richiede tempo sub-esponenziale (si veda l'equazione~\eqref{eq:gnfs_complexity}), del tutto impraticabile per i numeri di grandi dimensioni usati in crittografia. È considerato il risultato algoritmico più dirompente dell'informatica quantistica, poiché la fattorizzazione è il fondamento matematico del sistema crittografico RSA, che protegge la quasi totalità delle comunicazioni digitali moderne.
+
+L'algoritmo si articola in tre fasi: un \textit{preprocessing} classico che riconduce il problema a trovare il periodo di una funzione modulare; un nucleo quantistico basato sulla \ac{QFT} e sulla \ac{QPE}, che trova quel periodo in modo esponenzialmente più efficiente di qualunque strategia classica; e una \textit{post-elaborazione} classica che estrae i fattori di $N$ tramite il calcolo del massimo comune divisore. Dopo i richiami si introduce il problema che l'algoritmo risolve e la sua rilevanza crittografica, per poi svilupparne nel dettaglio la struttura.
+
 \section{Richiami di Calcolo Quantistico}
 \label{chap:fondamenti}
 
-Questa sezione introduce soltanto il formalismo necessario a seguire l'algoritmo di Shor, i modelli di rumore e i codici correttori. I postulati, l'insieme esteso delle porte e il modello di complessità sono raccolti nella Sezione~\ref{app:fondamenti}.
+Questa sezione richiama i concetti di meccanica quantistica e di calcolo quantistico necessari a seguire il resto della tesi, riportando per esteso quelli su cui i capitoli successivi si appoggiano operativamente --- la sfera di Bloch, le matrici di Pauli e la loro algebra. La trattazione completa, con i quattro postulati, l'insieme esteso delle porte e il modello di complessità, è nella Sezione~\ref{app:fondamenti}.
 
-\subsection{Qubit, misura ed entanglement}
+\subsection{Qubit, Sovrapposizione e Sfera di Bloch}
 
-Un \textbf{qubit} è un vettore unitario di $\mathbb{C}^{2}$,
+L'unità fondamentale del calcolo quantistico è il \textbf{qubit}, descritto da un vettore unitario nello spazio di Hilbert $\mathcal{H} = \mathbb{C}^2$. In notazione di Dirac, lo stato generico è la \textbf{sovrapposizione}
 \begin{equation}
-    \ket{\psi}=\alpha\ket{0}+\beta\ket{1},
-    \qquad |\alpha|^{2}+|\beta|^{2}=1.
+    \ket{\psi} = \alpha\ket{0} + \beta\ket{1}, \qquad \alpha, \beta \in \mathbb{C}, \quad |\alpha|^2 + |\beta|^2 = 1,
 \end{equation}
-La fase globale non è osservabile; ogni stato puro può quindi essere parametrizzato come
+dove $|\alpha|^2$ e $|\beta|^2$ sono le probabilità di misurare rispettivamente $0$ e $1$ (\textbf{regola di Born}).
+
+Riparametrizzando le due ampiezze complesse tramite angoli reali --- il che è lecito perché la normalizzazione toglie un grado di libertà e la fase globale è inosservabile --- ogni stato puro si scrive
 \begin{equation}
-    \ket{\psi}
-    =\cos\!\left(\frac{\theta}{2}\right)\ket{0}
-    +e^{i\phi}\sin\!\left(\frac{\theta}{2}\right)\ket{1},
-    \qquad \theta\in[0,\pi],\quad \phi\in[0,2\pi),
+    \ket{\psi} = \cos\!\left(\frac{\theta}{2}\right)\ket{0} + e^{i\phi}\sin\!\left(\frac{\theta}{2}\right)\ket{1},
+    \qquad \theta \in [0,\pi],\ \phi \in [0,2\pi),
     \label{eq:bloch_param}
 \end{equation}
-e rappresentato sulla sfera di Bloch. Questa rappresentazione rende intuitiva l'azione del rumore: un'evoluzione ideale ruota il vettore, mentre un canale rumoroso può contrarlo o spostarlo.
+e si visualizza come un punto sulla superficie della \textbf{sfera di Bloch}.\footnote{La sfera deve il nome al fisico svizzero-americano Felix Bloch (1905--1983), Premio Nobel per la Fisica nel 1952 per lo sviluppo della spettroscopia a risonanza magnetica nucleare (\ac{NMR}). La stessa notazione $T_1$ e $T_2$ per i tempi di decoerenza proviene dal formalismo NMR di Bloch.} I poli sono $\ket{0}$ e $\ket{1}$, l'equatore le sovrapposizioni equiprobabili con fasi diverse.
 
-\begin{figure}[!htbp]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.34\textwidth]{bloch_sphere.png}
-    \caption[La sfera di Bloch]{Rappresentazione di uno stato puro secondo la parametrizzazione dell'Eq.~\eqref{eq:bloch_param}; i poli corrispondono a $\ket{0}$ e $\ket{1}$.}
+    \includegraphics[width=0.42\textwidth]{bloch_sphere.png}
+    \caption[La sfera di Bloch]{La sfera di Bloch: ogni stato puro di un qubit corrisponde a un punto sulla superficie della sfera unitaria, parametrizzato dagli angoli $\theta$ e $\varphi$ della~\eqref{eq:bloch_param}. I poli nord e sud rappresentano gli stati base $\ket{0}$ e $\ket{1}$; i punti sull'equatore corrispondono a sovrapposizioni equiprobabili. È la rappresentazione a cui si farà riferimento nel Capitolo~\ref{chap:rumore} per descrivere l'azione dei canali di rumore, che deformano la sfera anziché spostare punti su di essa.}
     \label{fig:bloch}
 \end{figure}
 
-La misura in base computazionale restituisce $0$ o $1$ con probabilità rispettivamente $|\alpha|^{2}$ e $|\beta|^{2}$ (\textbf{regola di Born}) e proietta lo stato sull'esito osservato. Per un registro di $n$ qubit lo spazio degli stati è il prodotto tensoriale $(\mathbb{C}^{2})^{\otimes n}$, di dimensione $2^{n}$. Uno stato è \textbf{entangled} quando non può essere scritto come prodotto degli stati dei sottosistemi; per esempio
-\[
-    \ket{\Phi^{+}}=\frac{\ket{00}+\ket{11}}{\sqrt{2}}.
-\]
-In Shor l'entanglement correla il registro di controllo con i valori della funzione modulare; la successiva interferenza rende osservabile il periodo. L'accoppiamento con l'ambiente degrada tali coerenze, collegando direttamente questo richiamo al Capitolo~\ref{chap:rumore}.
+\subsection{Sistemi Multi-Qubit ed Entanglement}
 
-\subsection{Operazioni essenziali e matrici di Pauli}
+Un registro di $n$ qubit vive nello spazio $\mathbb{C}^{2^n}$, ottenuto per \textbf{prodotto tensoriale}. La dimensione esponenziale rende possibile rappresentare ampiezze e correlazioni non disponibili a un registro classico di $n$ bit, ma non implica da sola un vantaggio computazionale: alcune famiglie di stati e circuiti quantistici ammettono infatti descrizioni classiche efficienti. Due qubit sono \textbf{entangled} quando il loro stato congiunto non è fattorizzabile nel prodotto degli stati individuali; l'esempio canonico è lo stato di Bell $\ket{\Phi^+} = \tfrac{1}{\sqrt{2}}(\ket{00} + \ket{11})$, per il quale misure nella stessa base producono esiti perfettamente correlati, senza consentire comunicazione istantanea.
 
-L'evoluzione di un sistema isolato è descritta da una matrice unitaria $U$, con $U^{\dagger}U=I$. Le porte necessarie nel seguito sono: Hadamard $H$, che crea sovrapposizione; le rotazioni di fase $R_{\phi}$, usate nella \ac{QFT}; e la \ac{CNOT}, che correla due qubit ed è anche la principale porta a due qubit nel conteggio delle risorse.
+\subsubsection{L'Entanglement come Risorsa Fisica Fragile}
 
-Le matrici di Pauli
-\[
-    X=\begin{pmatrix}0&1\\1&0\end{pmatrix},\qquad
-    Y=\begin{pmatrix}0&-i\\i&0\end{pmatrix},\qquad
-    Z=\begin{pmatrix}1&0\\0&-1\end{pmatrix}
-\]
-descrivono rispettivamente un bit flip, una combinazione di bit e phase flip e un phase flip. Insieme a $I$ formano una base degli operatori su un qubit: è perciò sufficiente caratterizzare gli errori di Pauli per trattare, per linearità, un errore arbitrario. Le relazioni essenziali sono
+L'entanglement è una risorsa importante per Shor: durante l'esponenziazione modulare il registro di controllo si correla con quello di lavoro, permettendo alla successiva Quantum Fourier Transform di rendere osservabile la periodicità. Un qubit reale, però, non è perfettamente isolato: l'accoppiamento con l'ambiente riduce le coerenze dello stato --- la \textbf{decoerenza}~\cite{zurek2003}. Il tempo caratteristico della perdita di fase è $T_2$ (\textit{dephasing time}); nei dispositivi superconduttori è spesso dello stesso ordine di poche centinaia di durate di una porta a due qubit. Questo confronto segnala un budget di profondità severo, ma non determina una soglia universale nella dimensione di $N$: compilazione, parallelismo, tempi di idle, qualità dei gate e architettura fault-tolerant concorrono tutti al limite discusso nel Capitolo~\ref{chap:rumore}.
+
+\subsection{Porte, Misura e Interferenza}
+
+Le operazioni sui qubit sono \textbf{matrici unitarie} ($U^\dagger U = I$), quindi reversibili. La Tabella~\ref{tab:porte_essenziali} raccoglie quelle su cui il resto della tesi si appoggia; l'insieme completo, con le derivazioni, è nella Sezione~\ref{app:fondamenti}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llc l}
+\toprule
+\textbf{Porta} & \textbf{Matrice} & \textbf{Qubit} & \textbf{Effetto} \\
+\midrule
+$X$ & $\begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}$ & 1 & \textit{bit flip}: scambia $\ket{0}$ e $\ket{1}$ \\[10pt]
+$Y$ & $\begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix}$ & 1 & bit flip e phase flip insieme ($\propto XZ$) \\[10pt]
+$Z$ & $\begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}$ & 1 & \textit{phase flip}: $\ket{1} \mapsto -\ket{1}$ \\[10pt]
+$H$ & $\tfrac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}$ & 1 & genera la sovrapposizione uniforme \\[10pt]
+$R_\phi$ & $\begin{pmatrix} 1 & 0 \\ 0 & e^{i\phi} \end{pmatrix}$ & 1 & rotazione di fase; $T = R_{\pi/4}$, $S = R_{\pi/2}$ \\[10pt]
+CNOT & $\begin{pmatrix} 1&0&0&0 \\ 0&1&0&0 \\ 0&0&0&1 \\ 0&0&1&0 \end{pmatrix}$ & 2 & nega il \textit{target} se il \textit{control} è $\ket{1}$ \\
+\bottomrule
+\end{tabular}
+\caption[Le porte quantistiche essenziali]{Le porte su cui poggia il resto dell'elaborato. Le tre matrici di Pauli descrivono i canali di rumore del Capitolo~\ref{chap:rumore} e gli errori che i codici correttori dei Capitoli~\ref{chap:qec}--\ref{chap:surface} devono diagnosticare; $H$ e $R_\phi$ costruiscono la \ac{QFT}; la \ac{CNOT} è la porta a due qubit dominante nel conteggio delle risorse, ed è quella a cui è associato l'errore più severo.}
+\label{tab:porte_essenziali}
+\end{table}
+
+L'identità e le tre matrici di Pauli formano una base dello spazio degli operatori lineari $2\times2$: ogni operatore d'errore su un singolo qubit si può quindi decomporre in tale base. Poiché $Y=iXZ$, un codice che soddisfa le condizioni di correzione per gli errori di Pauli singoli corregge, per linearità, anche le loro combinazioni --- proprietà su cui si fonda l'intera parte \ac{QEC}. Valgono inoltre le relazioni
 \begin{equation}
-    X^{2}=Y^{2}=Z^{2}=I,\qquad
-    XY=iZ,\quad YZ=iX,\quad ZX=iY,\qquad
-    \{X,Y\}=\{Y,Z\}=\{Z,X\}=0,
+\begin{aligned}
+    X^2 = Y^2 = Z^2 &= I, \\
+    XY = iZ, \quad YZ = iX, \quad ZX &= iY, \\
+    \{X,Y\} = \{Y,Z\} = \{X,Z\} &= 0,
+\end{aligned}
     \label{eq:algebra_pauli}
 \end{equation}
-dove $\{A,B\}=AB+BA$. L'anticommutazione permette ai codici stabilizzatori di rilevare un errore senza misurare direttamente l'informazione logica, come discusso nel Capitolo~\ref{chap:qec}.
+dove $\{A,B\} = AB+BA$ è l'anticommutatore. Nella teoria degli stabilizzatori, un errore è rilevato quando anticommuta con almeno uno dei generatori misurati; è il vettore completo di questi esiti di commutazione a costituire la sindrome. Nei codici \ac{CSS}, le famiglie di stabilizzatori $X$ e $Z$ permettono di diagnosticare separatamente le due componenti di Pauli, come discusso nel Capitolo~\ref{chap:qec}.
 
-Infine, il vantaggio algoritmico non deriva dalla sola dimensione $2^{n}$ dello spazio degli stati. Occorre costruire il circuito affinché le ampiezze associate agli esiti incompatibili si cancellino e quelle utili si sommino. Questa \textbf{interferenza} è il principio sfruttato dalla \ac{QFT} nel period finding.
+Insieme alle porte a singolo qubit, la \ac{CNOT} forma un insieme universale: ogni operazione unitaria su $n$ qubit si approssima a piacere componendo elementi di questo insieme. La \textbf{misura} in base computazionale collassa lo stato $\ket{\psi}=\sum_x\alpha_x\ket{x}$ sull'esito $x$ con probabilità $|\alpha_x|^2$: è un'operazione non unitaria e irreversibile. Il meccanismo che rende utile tutto ciò è l'\textbf{interferenza}: un algoritmo efficiente è costruito perché le ampiezze degli esiti sbagliati si cancellino (interferenza distruttiva) e quelle degli esiti corretti si sommino (costruttiva). È esattamente ciò che la QFT realizza nell'algoritmo di Shor (Capitolo~\ref{chap:shor}) per far emergere il periodo.
 
 \end{onehalfspace}

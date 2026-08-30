@@ -1,30 +1,134 @@
 \begin{onehalfspace}
 
-I risultati della tesi valgono entro un perimetro preciso: le campagne rumorose riguardano $N=15$, mentre $N=21$ e $N=35$ sono validati idealmente. Le estensioni più utili devono quindi ridurre la distanza fra circuito dimostrativo, correzione logica e dispositivo reale, senza estrapolare i dati oltre il modello che li ha generati.
+I risultati delimitano con chiarezza ciò che la demo e la campagna
+dimostrano: l'esecuzione ideale è verificata anche per $N=21/35$, mentre
+il confronto controllato fra canali di rumore è sostenibile su $N=15$.
+Le estensioni seguenti mirano a colmare questa distanza senza
+estrapolare i risultati oltre il loro perimetro.
 
-\section{Scalabilità e Validazione su Hardware Reale}
+% -----------------------------------------------
+\section{Scalabilità a Istanze di Maggiore Dimensione}
 \label{sec:scalabilita_futura}
+
+La priorità è ridurre il costo dell'aritmetica modulare. La costruzione
+Beauregard implementata nella tesi è stata validata idealmente mediante
+truth table e distribuzione QPE, ma per $N=21$, $a=2$ e otto controlli il
+circuito esecutivo compilato nella base \texttt{rz/sx/x/cx} contiene
+21\,036 CX e ha profondità 23\,081. Questi sono conteggi della
+compilazione congiunta, non somme di blocchi né stime su un gate set più
+astratto.
+
+Le direzioni immediate sono l'approximate QFT con soglia d'angolo
+esplicita, addizionatori alternativi, sintesi mirata al gate set del
+backend e riduzione delle operazioni controllate prima della
+traspilazione. Ogni variante dovrebbe superare gli stessi controlli già
+usati qui: verità funzionale della moltiplicazione, ancille pulite,
+coerenza di fase e distanza della QPE ideale dalla legge teorica. Il
+numero di gate, da solo, non è una prova di correttezza.
+
+Anche la scelta delle istanze deve essere governata dall'ordine
+moltiplicativo $r$, non soltanto dal modulo $N$. L'istanza $N=35$, $a=6$
+ha ordine 2 e non costituisce una progressione monotona rispetto a
+$N=21$, $a=2$, che ha ordine 6. Una campagna di scalabilità dovrebbe
+quindi stratificare sia la larghezza sia l'ordine e dichiarare a priori
+quale delle due variabili intende studiare.
+
+% -----------------------------------------------
+\section{Validazione su Hardware Quantistico Reale}
 \label{sec:hw_reale}
 
-La prima priorità è ridurre il costo dell'aritmetica modulare. Approximate QFT con soglia esplicita, addizionatori alternativi, sintesi orientata al gate set e riduzione delle operazioni controllate sono direzioni concrete; ciascuna variante deve però conservare la verità funzionale della moltiplicazione, il ripristino delle ancille, la coerenza di fase e la distribuzione QPE ideale. Il solo conteggio delle porte non dimostra la correttezza.
+Il modello rumoroso della tesi è uniforme e illustrativo: non include
+coupling map, routing, crosstalk, leakage o deriva della calibrazione. Il
+passo successivo è ripetere il protocollo $N=15$ su una QPU, registrando
+backend, timestamp, proprietà dei qubit, layout iniziale e finale,
+conteggi post-routing e job identifier. Il confronto deve usare lo stesso
+budget di shot e una politica di seed dichiarata, senza presentare il
+preset uniforme come replica della macchina.
 
-Una campagna di scalabilità dovrebbe variare separatamente larghezza dell'istanza e ordine moltiplicativo $r$: moduli più grandi possono avere ordini più semplici e non costituiscono automaticamente test più difficili. Solo dopo la riduzione del circuito diventerebbe informativa una campagna rumorosa su $N=21/35$.
+La demo è già predisposta per questo confronto metodologico: distingue
+rumore disattivato, scenario moderato, scenario di stress e canali
+singoli. Un'estensione hardware dovrebbe affiancare una quinta modalità
+``calibrazione acquisita'', costruita dallo snapshot reale e marcata con
+la sua data di validità. In questo modo diventerebbe misurabile il
+\emph{simulation gap} fra il modello controllato e il dispositivo.
 
-In parallelo, il protocollo $N=15$ può essere ripetuto su una QPU registrando backend, timestamp, calibrazione, layout, routing e job identifier. Un modello costruito da uno snapshot reale permetterebbe di misurare il \emph{simulation gap} rispetto ai preset uniformi; non eliminerebbe però profondità e connettività del circuito. Il confronto deve mantenere budget di shot e regole di analisi comuni.
+Per $N=21/35$ l'hardware non elimina il problema della profondità: evita
+il costo esponenziale dello statevector classico, ma non le migliaia di
+operazioni rumorose e i vincoli di connettività. Prima di eseguire queste
+istanze servono quindi una sintesi più corta e un budget d'errore basato
+sul circuito effettivamente instradato.
 
-\section{Dalla QEC a uno Shor Fault-Tolerant}
+% -----------------------------------------------
+\section{Generalizzazione ad Altri Algoritmi Quantistici}
+\label{sec:altri_algoritmi}
+
+TOP-K è utile soltanto quando più candidati possono essere verificati
+classicamente a costo contenuto. Questa proprietà vale per Shor, perché
+ogni candidato al periodo produce o meno divisori verificabili, e può
+valere per problemi di ricerca con un oracolo di verifica. Non segue
+automaticamente che la stessa strategia migliori VQE o QAOA, dove
+l'output centrale è una stima di valore atteso e non una lista di
+soluzioni equivalenti.
+
+Una generalizzazione corretta dovrebbe quindi definire prima:
+\begin{enumerate}
+    \item una funzione classica di validazione del candidato;
+    \item il costo aggiuntivo delle $K$ verifiche;
+    \item una baseline TOP-1 appaiata sugli stessi campioni;
+    \item un criterio che impedisca a $K$ di rendere il successo quasi
+    certo per puro effetto combinatorio.
+\end{enumerate}
+Grover su problemi con verifica economica è un primo banco di prova;
+per gli algoritmi variazionali è invece più naturale studiare
+allocazione adattiva degli shot o mitigazione del bias dell'osservabile.
+
+% -----------------------------------------------
+\section{Integrazione con la Quantum Error Correction}
 \label{sec:qec_integrazione}
 
-L'analisi di sensibilità usa un parametro fenomenologico per gate, mentre i benchmark surface-code misurano un memory experiment. Il passo necessario per collegarli è una compilazione fault-tolerant che specifichi, per ogni operazione logica, canale residuo e costo: operazioni Clifford e non-Clifford, magic-state distillation, cicli di correzione, latenza del decoder e feed-forward. Solo questa mappatura consentirebbe una previsione end-to-end e una stima credibile delle risorse.
+La campagna di Shor logico usa $p_L$ come probabilità fenomenologica di
+Pauli non-identità per gate compilato incluso nel proxy. Non identifica questo parametro con
+il logical error rate di un memory experiment surface-code: le due
+grandezze hanno circuiti, osservabili e granularità differenti. Il passo
+successivo scientificamente significativo è una mappatura esplicita fra
+un set di operazioni logiche fault-tolerant e i canali residui stimati per
+ciascuna operazione.
 
-Anche la decodifica appresa può essere estesa, privilegiando modelli che incorporino la località del reticolo, la storia temporale delle sindromi e l'informazione analogica di misura. Il confronto deve restare appaiato con \ac{MWPM} e includere distanze maggiori, deriva del rumore e costo di inferenza: un guadagno sul logical error rate è utile solo se compatibile con la latenza del ciclo QEC.
+Solo dopo tale mappatura sarebbe lecito combinare surface code e Shor in
+una previsione end-to-end. Servirebbero almeno: conteggio delle operazioni
+logiche per tipo, costo di magic-state distillation per le non-Clifford,
+decoder e latenza di feed-forward, errori correlati e intervalli di
+confidenza propagati. Il modello fenomenologico della tesi resta utile
+come analisi di sensibilità, non come stima di risorse hardware.
 
-\section{Trasferibilità del Post-processing e dell'Apprendimento}
-\label{sec:altri_algoritmi}
+Per la decodifica appresa, le direzioni più promettenti restano modelli a
+grafo o convoluzionali che rispettino la località del reticolo, uso della
+storia temporale dei cicli e soft information analogica della misura.
+Queste estensioni aggiungono informazione o struttura; non si limitano a
+ingrandire una rete densa sullo stesso vettore di sindrome.
+
+% -----------------------------------------------
+\section{Evoluzione del Classificatore ML}
 \label{sec:evoluzione_ml}
 
-TOP-K è trasferibile quando ogni candidato dispone di una verifica classica economica e il costo delle $K$ prove è esplicito. Grover e altri problemi di ricerca possono offrire casi adatti; VQE e QAOA richiedono invece strategie rivolte alla stima degli osservabili, non una semplice lista di candidati. Ogni estensione deve confrontarsi con una baseline TOP-1 sugli stessi campioni e controllare che l'aumento di $K$ non renda il successo quasi certo per puro effetto combinatorio.
+La campagna aggiornata mostra che TOP-1 è addestrabile ma operativo solo
+come predittore della riuscita del candidato dominante; TOP-16 produce
+invece $2\,000/2\,000$ positivi in entrambi gli scenari. Inoltre M2 è
+peggiore della propria ablazione TOP-4 nei due confronti appaiati. Non è
+quindi giustificato migliorare soltanto l'architettura mantenendo la
+stessa etichetta.
 
-Per il classificatore sull'output non basta cambiare architettura: occorre una variabile obiettivo legata al costo operativo, separazione del test anche per backend o periodo di calibrazione e confronto con regole semplici basate su massa dei picchi ed entropia. La direzione più promettente resta l'uso dell'apprendimento sulla sindrome, dove il modello può sfruttare correlazioni non rappresentate dal decoder analitico prima che l'informazione venga persa nella misura finale.
+Un nuovo problema supervisionato dovrebbe prevedere un obiettivo legato
+al costo, ad esempio il valore atteso degli shot risparmiati dopo aver
+considerato il costo di uno scarto errato. Training e test dovrebbero
+essere separati anche per giorno di calibrazione o backend, non solo per
+seed, e la soglia decisionale scelta su validation. Prima di addestrare
+si deve infine verificare il bilanciamento della classe e confrontare il
+modello con regole semplici come massa sui picchi, entropia e TOP-K.
+
+Il contributo più credibile dell'apprendimento resta comunque a monte
+della misura finale: sulla sindrome, dove può sfruttare correlazioni che
+un decoder analitico non modella, anziché tentare di recuperare
+informazione già persa nell'output.
 
 \end{onehalfspace}
