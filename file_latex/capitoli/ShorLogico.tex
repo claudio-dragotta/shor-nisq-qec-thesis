@@ -6,7 +6,26 @@ I Capitoli~\ref{chap:qec} e~\ref{chap:surface} studiano la correzione d'errore s
 \section{L'architettura a quattro livelli}
 \label{sec:quattro_livelli}
 
-La parte sperimentale separa quattro oggetti: Shor ideale, Shor sotto rumore fisico, benchmark QEC isolati e proxy Pauli per gate compilato. La separazione è necessaria perché Stim/PyMatching caratterizza efficientemente circuiti stabilizer, mentre Shor contiene aritmetica e rotazioni non-Clifford; sostituire i suoi dodici qubit con blocchi codificati, ancille e cicli di sindrome richiederebbe una simulazione fault-tolerant completa. Il quarto livello risponde quindi a una domanda di sensibilità e non riceve automaticamente i tassi aggregati del terzo.
+La separazione adottata evita di attribuire a una simulazione ridotta pi\`u informazione di quella che contiene.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{clll}
+\toprule
+\textbf{Livello} & \textbf{Oggetto} & \textbf{Strumento} & \textbf{Domanda} \\
+\midrule
+1 & Shor ideale & Qiskit Aer & limite senza rumore \\
+2 & Shor rumoroso & Aer + noise model & sensibilit\`a agli errori fisici \\
+3 & QEC isolata & Qiskit; Stim/PyMatching & soppressione dell'errore \\
+4 & proxy per gate & Aer + canale Pauli & sensibilit\`a a un residuo uniforme \\
+\bottomrule
+\end{tabular}
+\caption[Architettura a quattro livelli della parte sperimentale]{I quattro livelli isolano domande diverse. Il quarto non \`e una simulazione fault-tolerant e non riceve automaticamente come input i tassi aggregati misurati al terzo livello.}
+\label{tab:quattro_livelli}
+\end{table}
+
+Una simulazione esplicita incontra due barriere. La prima \`e dimensionale: sostituire ciascuno dei 12 qubit dell'istanza $N=15$ con un blocco di codice e includere ancilla e cicli di sindrome porta rapidamente a centinaia di qubit. La seconda \`e strutturale: Stim rimane efficiente per circuiti stabilizer, mentre l'aritmetica modulare e le rotazioni della \ac{QFT} rendono Shor non-Clifford. Aer pu\`o simulare il circuito generale piccolo; Stim/PyMatching pu\`o caratterizzare circuiti QEC stabilizer. Nessuno dei due risultati, da solo, equivale all'esecuzione fault-tolerant completa.
 
 % -----------------------------------------------
 \section{Definizione operativa del proxy}
@@ -20,7 +39,7 @@ In M8, $p_L$ \`e definito come la \textbf{probabilit\`a totale di applicare un P
 \end{equation}
 Il rumore \`e applicato a \texttt{sx}/\texttt{x} e \texttt{cx}; le rotazioni \texttt{rz} sono considerate virtuali. Si tratta quindi di un proxy uniforme \emph{per gate nella base compilata}, non di una probabilit\`a per ciclo di correzione, per round di sindrome o per intero blocco logico.
 
-Il circuito è quello canonico $N=15$, $a=7$, con otto qubit di conteggio e quattro di lavoro, compilato deterministicamente nella base \texttt{rz/sx/x/cx}. Ogni punto M8 aggrega 20 repliche da 4096 shot; il successo vale uno quando frazioni continue e massimo comun divisore restituiscono fattori non banali. Manifest e hash della netlist fissano l'identità del circuito.
+Il circuito \`e quello canonico $N=15$, $a=7$, con 8 qubit di conteggio e 4 di lavoro. La transpilazione deterministica usa la base \texttt{rz/sx/x/cx}, livello di ottimizzazione 2 e seed 20260819; il manifest registra 224 \texttt{cx}, 302 \texttt{rz}, 70 \texttt{sx}, 8 misure e lo SHA-256 \texttt{c7f4cf3b\ldots a50f4ba2c}. Ogni punto M8 aggrega 20 repliche indipendenti da 4096 shot, per un totale di $81\,920$ misure. Il successo per misura vale uno se le frazioni continue e i controlli con il massimo comun divisore restituiscono una coppia di fattori non banali.
 
 Questa definizione rende riproducibile la domanda sperimentale:
 \begin{quote}
@@ -32,7 +51,7 @@ Non consente invece di rispondere, senza un ulteriore modello architetturale, a 
 \section{Il contesto delle stime fault-tolerant}
 \label{sec:resource_estimates}
 
-Le stime crittografiche includono routing, cicli di sindrome, operazioni logiche e fabbriche di stati magici; non si ricavano estrapolando $N=15$~\cite{gidney2021}. La curva seguente è quindi locale al circuito e al canale dichiarati, non una previsione di risorse hardware.
+Le stime per istanze crittografiche comprendono routing, cicli di sindrome, fabbriche di stati magici e schedulazione. Per esempio, Gidney ed Eker\aa{} stimano circa 20 milioni di qubit fisici rumorosi e otto ore per RSA-2048 sotto un insieme esplicito di assunzioni architetturali~\cite{gidney2021}. Questi numeri non si ricavano estrapolando $N=15$: il circuito didattico e una stima di risorse fault-tolerant descrivono oggetti differenti. La curva seguente va dunque letta come analisi locale di sensibilit\`a, non come previsione di risorse hardware.
 
 % -----------------------------------------------
 \section{Risultati M8 e M13}
@@ -40,36 +59,94 @@ Le stime crittografiche includono routing, cicli di sindrome, operazioni logiche
 
 \subsection*{M8: successo per singola misura}
 
-La griglia preregistrata copre $p_L=0$--$0.5$. Gli intervalli sono Wilson al 95\%; la monotonia è controllata con copertura simultanea di Bonferroni sui confronti adiacenti.
+La Tabella seguente riporta l'intera griglia preregistrata. Gli intervalli sono Wilson al 95\% sui conteggi aggregati; il controllo di monotonia usa inoltre il massimo tra l'errore standard binomiale e quello tra repliche e applica una copertura simultanea di Bonferroni ai confronti adiacenti.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{rcc@{\hspace{1.2cm}}rcc}
+\toprule
+$p_L$ & $P_{\mathrm{success}}$ & IC 95\% & $p_L$ & $P_{\mathrm{success}}$ & IC 95\% \\
+\midrule
+$0$      & 0,7489 & [0,7459; 0,7518] & $0,005$ & 0,6450 & [0,6417; 0,6483] \\
+$0,0001$ & 0,7469 & [0,7439; 0,7498] & $0,01$  & 0,5651 & [0,5617; 0,5685] \\
+$0,0005$ & 0,7373 & [0,7343; 0,7403] & $0,02$  & 0,4518 & [0,4484; 0,4552] \\
+$0,001$  & 0,7250 & [0,7219; 0,7280] & $0,05$  & 0,2953 & [0,2921; 0,2984] \\
+$0,0017$ & 0,7083 & [0,7051; 0,7114] & $0,1$   & 0,2503 & [0,2474; 0,2533] \\
+$0,002$  & 0,6992 & [0,6961; 0,7024] & $0,2$   & 0,2441 & [0,2412; 0,2471] \\
+          &        &                   & $0,5$   & 0,2459 & [0,2430; 0,2489] \\
+\bottomrule
+\end{tabular}
+\caption{M8: probabilit\`a di ricavare i fattori per singola misura, 20 repliche da 4096 shot per punto.}
+\end{table}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.82\textwidth]{qec_shor_logico_curve.pdf}
-\caption[Shor sotto un proxy fenomenologico per gate]{Successo per singola misura in funzione dell'errore Pauli per gate compilato. Le metriche aggregate dei benchmark QEC non sono proiettate sulla curva perché non hanno la stessa unità.}
+\caption[Shor sotto un proxy fenomenologico per gate]{Probabilit\`a di successo di Shor ($N=15$, $a=7$) in funzione di $p_L$. I punti positivi sono mostrati in scala logaritmica con IC Wilson al 95\%; la linea orizzontale riporta la stima separata a $p_L=0$. Non sono sovrapposti marcatori Steane o surface code, perch\'e le rispettive metriche aggregate non sono direttamente convertibili nel proxy per gate M8. Figura rigenerata dal JSON schema 2 con \texttt{figure\_src/gen\_shor\_logico.py}.}
 \label{fig:qec_shor_logico}
 \end{figure}
 
-La curva è compatibile con una funzione non crescente, ma non ogni passo adiacente è significativo. Il successo scende da $0.7489$ a $p_L=0$ a $0.4518$ per $p_L=0.02$ e raggiunge, oltre $0.1$, un plateau vicino a $0.245$. Quest'ultimo dipende dagli esiti che il post-processing di $N=15$ accetta e non è universale.
+La curva \`e compatibile con una funzione non crescente al livello simultaneo prefissato. Non tutte le diminuzioni adiacenti sono per\`o individualmente confermate: la differenza tra $p_L=0$ e $10^{-4}$ \`e piccola e, sul plateau, le stime a 0,2 e 0,5 si sovrappongono. L'affermazione supportata \`e quindi ``nessun aumento significativo'', non ``ogni passo produce una diminuzione significativa''. Tra $p_L=0$ e $0,02$ il successo passa da 0,7489 a 0,4518; oltre $p_L=0,1$ raggiunge un plateau empirico vicino a 0,245. Tale valore nasce dalla struttura degli esiti che il post-processing di $N=15$ riconosce come utili e non va assunto a priori come universale.
 
 \subsection*{Ripetizioni indipendenti}
 
-Il successo per misura non è il successo dopo più tentativi indipendenti. Se ciascun tentativo ha probabilità $P_s$,
+Il valore 0,7489 a $p_L=0$ \`e una probabilit\`a per singola misura, non un limite alla probabilit\`a di concludere la fattorizzazione. Se ogni tentativo \`e indipendente e ha probabilit\`a $P_s$, dopo $k$ tentativi vale
 \begin{equation}
     P(k)=1-(1-P_s)^k.
     \label{eq:cumulativa}
 \end{equation}
-Due tentativi portano così la stima a $0.937$ nel caso ideale e a circa $0.811$ per $p_L=0.01$. Una soglia dell'80\% è pertanto cumulativa, non un requisito sul singolo run.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\textwidth]{qec_shor_pk.pdf}
+\caption[Probabilit\`a cumulativa dai punti M8]{Probabilit\`a cumulativa ottenuta esclusivamente dai punti M8 simulati $p_L\in\{0;0,01;0,05;0,2\}$. La soglia dell'80\% richiede rispettivamente 2, 2, 5 e 6 tentativi indipendenti. Le bande propagano gli estremi degli IC Wilson.}
+\label{fig:qec_shor_pk}
+\end{figure}
+
+In particolare, due tentativi portano la stima a $1-(1-0,7489)^2\simeq0,937$ nel caso ideale e a circa 0,811 per $p_L=0,01$. La soglia dell'80\% non pu\`o essere usata come requisito sul singolo run di questa istanza, poich\'e nemmeno il punto senza rumore la raggiunge; ha invece un significato operativo come soglia cumulativa.
 
 \subsection*{M13: TOP-4 con pareggi espliciti}
 
-M13 separa successo per misura, TOP-1 e TOP-4 sullo stesso istogramma. TOP-4 resta $1.000$ fino a $p_L=0.05$, ma scende a $0.915$ per $p_L=0.1$ e a $0.670$ per $p_L=0.2$: recupera candidati su questa piccola istanza, senza certificare la conservazione dello stato. Protocollo, tabella completa e analisi dei pareggi sono nella Sezione~\ref{app:compilazione} dell'Appendice~\ref{app:fase2}.
+% M13_RESULTS_BEGIN
+M13 completa la lettura di M8 separando tre quantit\`a sullo stesso istogramma: successo per misura, TOP-1 e TOP-4. Per ogni valore di $p_L$ sono state eseguite 200 repliche indipendenti da 1024 shot. Il TOP-4 rimane pari a 1,000 dal caso ideale fino a $p_L=0,05$, mentre la probabilit\`a per singola misura scende nello stesso intervallo da 0,7512 a 0,2979. Questo conferma che, sull'istanza piccola $N=15$, selezionare quattro candidati pu\`o recuperare un fattore anche quando la massa utile per singolo shot \`e gi\`a molto degradata.
+
+La saturazione non si estende per\`o all'intera griglia. A $p_L=0,1$ il TOP-4 seeded scende a 0,915, con intervallo identificato $[0,855;0,940]$ dovuto ai pareggi; a $p_L=0,2$ scende a 0,670, con intervallo $[0,535;0,860]$. Il contrasto primario preregistrato fra $p_L=0$ e $p_L=0,2$ produce una diminuzione stimata di 0,330 con IC Newcombe 95\% $[0,266;0,398]$. Poich\'e il limite inferiore supera il margine assoluto 0,10, l'esito primario \`e una diminuzione discriminante, non equivalenza. L'inviluppo simultaneo robusto ai pareggi $[0,059;0,553]$ conferma inoltre che non si pu\`o sostenere equivalenza per tutte le risoluzioni ammissibili dei pareggi.
+% M13_RESULTS_END
+
+\subsection*{Barriera di scalabilit\`a}
+
+M8 e M13 sono limitati a $N=15$. La variante Beauregard validata produce per $N=21$ un circuito ideale corretto, ma la compilazione nella stessa base raggiunge 21\,036 gate \texttt{cx} e profondit\`a 23\,081 su 22 qubit. L'esecuzione rumorosa generale non \`e quindi commensurabile con la campagna M8 su hardware classico disponibile. Il risultato non dimostra un limite dell'algoritmo quantistico: documenta il limite della simulazione classica adottata.
+
+\subsection*{Perch\'e le metriche QEC non sono proiettate sulla curva}
+
+La precedente versione del capitolo interpolava sulla curva M8 valori provenienti da Steane, surface code e decoder appreso. Quell'operazione confonde unit\`a statistiche diverse. La Tabella~\ref{tab:decoder_su_shor} rende esplicito il contratto corretto.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{0.22\textwidth}p{0.38\textwidth}p{0.26\textwidth}}
+\toprule
+\textbf{Grandezza} & \textbf{Unit\`a/contesto} & \textbf{Inseribile direttamente in M8?} \\
+\midrule
+$p_L$ di M8 & Pauli non identit\`a dopo ogni \texttt{sx}/\texttt{x}/\texttt{cx} compilato & s\`i, per definizione \\
+errore Steane & fallimento del protocollo protetto sotto il modello dedicato & no \\
+errore surface code & fallimento logico per memoria/ciclo e distanza & no \\
+guadagno del decoder & differenza osservata sotto rumore correlato del benchmark & no \\
+\bottomrule
+\end{tabular}
+\caption[Contratto tra risultati QEC e curva M8]{Le metriche QEC richiedono un modello di conversione che specifichi circuito logico, numero e durata dei cicli, operazioni fault-tolerant e correlazioni residue. In sua assenza, sovrapporre i valori sulla curva produrrebbe una precisione non giustificata.}
+\label{tab:decoder_su_shor}
+\end{table}
 
 % -----------------------------------------------
 \subsection{Discussione}
 \label{subsec:discussione_logico}
 
-M8 mostra che ridurre l'errore Pauli per gate riporta il successo verso il limite ideale dell'istanza. Non stabilisce quale codice produca quel parametro: errore Steane, errore del memory experiment surface-code e guadagno del decoder sono grandezze aggregate diverse e non possono essere inserite direttamente sulla curva. Il passaggio richiederebbe gate logici, numero di cicli per operazione, decoder e canali residui espliciti, comprese le operazioni non-Clifford.
+M8 stabilisce una relazione quantitativa robusta all'interno del proprio modello: ridurre la probabilit\`a Pauli per gate riporta il successo verso il limite ideale dell'istanza. Non stabilisce quale codice raggiunga uno specifico $p_L$ per gate, n\'e confronta Steane e surface code a parit\`a di hardware. Per compiere quel passo servirebbe almeno una compilazione in un gate set logico, il conteggio dei cicli di correzione associati a ciascuna operazione, un decoder con latenze e correlazioni esplicite e un modello delle operazioni non-Clifford.
 
-$N=15$ resta inoltre un'istanza didattica, nella quale TOP-K beneficia di pochi picchi verificabili classicamente. Il capitolo caratterizza quindi la sensibilità del circuito controllato; non dimostra la fattibilità fault-tolerant di Shor su scala crittografica.
+Il risultato chiarisce anche il ruolo del post-processing. Il successo per misura degrada in modo netto lungo la curva; una strategia TOP-K pu\`o invece saturare su questa piccola istanza perch\'e quattro candidati coprono rapidamente almeno un esito utile. Una percentuale TOP-4 elevata non prova dunque che l'informazione quantistica sia rimasta intatta: deve essere letta insieme alla massa utile per misura e ai limiti dovuti ai pareggi.
+
+Infine, $N=15$ resta un'istanza didattica. Le conclusioni supportate riguardano la sensibilit\`a del circuito corretto e riproducibile a canali d'errore controllati. La fattibilit\`a di Shor su scala crittografica rimane una domanda architetturale distinta, dominata dall'overhead fault-tolerant e non risolta da questa simulazione.
 
 \end{onehalfspace}
