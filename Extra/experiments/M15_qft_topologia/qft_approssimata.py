@@ -293,6 +293,57 @@ def newcombe_diff_ci(s1, n1, s2, n2, z=1.959963985):
 # Griglia e main
 # --------------------------------------------------------------------------------------
 
+def griglia_esplicita(spec_testo, n_b, ha_qft_aritmetica):
+    """Griglia da una specifica ``k_qpe:k_arith`` separata da virgole.
+
+    Il braccio ``elimina_swap`` non viene generato: e' dimostrato che produce numeri
+    identici cifra per cifra, perche' il transpiler assorbe gia' la permutazione nel
+    layout. Includerlo raddoppierebbe il tempo di calcolo per zero informazione.
+    """
+    config = []
+    for pezzo in spec_testo.split(','):
+        pezzo = pezzo.strip()
+        if not pezzo:
+            continue
+        if ':' in pezzo:
+            a_txt, b_txt = pezzo.split(':', 1)
+            k_qpe, k_arith = int(a_txt), int(b_txt)
+        else:
+            k_qpe, k_arith = int(pezzo), None
+        if not ha_qft_aritmetica:
+            k_arith = None
+        config.append({'k_qpe': k_qpe, 'k_arith': k_arith, 'elimina_swap': False})
+    if not config:
+        raise ValueError('--configurazioni non contiene alcuna coppia valida')
+    return config
+
+
+def carica_checkpoint(path, identita):
+    """Riprende solo se l'identita' dell'esperimento coincide esattamente."""
+    if not path.exists():
+        return []
+    dati = json.loads(path.read_text(encoding='utf-8'))
+    if dati.get('identita') != identita:
+        raise RuntimeError(
+            f'Checkpoint {path} appartiene a un altro esperimento.\n'
+            '  atteso   ' + json.dumps(identita, sort_keys=True) + '\n'
+            '  trovato  ' + json.dumps(dati.get('identita'), sort_keys=True) + '\n'
+            'Rimuoverlo esplicitamente se si vuole ricominciare.')
+    return dati.get('points', [])
+
+
+def salva_checkpoint(path, identita, punti):
+    """Scrittura atomica: file temporaneo, fsync, replace. Come in M13."""
+    tmp = path.with_suffix('.tmp')
+    payload = {'identita': identita, 'points': punti,
+               'aggiornato': datetime.now().astimezone().isoformat()}
+    with open(tmp, 'w', encoding='utf-8') as fh:
+        json.dump(payload, fh, indent=2, ensure_ascii=False)
+        fh.flush()
+        os.fsync(fh.fileno())
+    os.replace(tmp, path)
+
+
 def griglia(n_count, ha_qft_aritmetica, n_b, k_arith_max):
     """Configurazioni da valutare. La QFT piena e' sempre inclusa come riferimento."""
     k_pieno = n_count - 1
@@ -344,6 +395,11 @@ def main():
     ap.add_argument('--seed', type=int, default=42)
     ap.add_argument('--k-arith-max', type=int, default=4,
                     help='grado massimo esplorato per le QFT aritmetiche (solo N=21)')
+    ap.add_argument('--configurazioni', default=None,
+                    help='coppie k_qpe:k_arith separate da virgole, es. "7:6,7:1,1:1". '
+                         'Esclude il braccio elimina_swap, dimostrato identico.')
+    ap.add_argument('--checkpoint', default=None,
+                    help='file di ripresa; scritto dopo ogni configurazione')
     ap.add_argument('--candidati-layout', type=int, default=20,
                     help='sottografi da campionare per trovarne uno con AGI nel dominio')
     ap.add_argument('--solo-struttura', action='store_true',
@@ -404,14 +460,33 @@ def main():
     if n_train < 1:
         raise ValueError('La frazione holdout non lascia batch di train')
 
-    config = griglia(n_count, spec['ha_qft_aritmetica'], n_b, args.k_arith_max)
+    if args.configurazioni:
+        config = griglia_esplicita(args.configurazioni, n_b,
+                                   spec['ha_qft_aritmetica'])
+    else:
+        config = griglia(n_count, spec['ha_qft_aritmetica'], n_b, args.k_arith_max)
+
+    identita = {'milestone': MILESTONE, 'revision': REVISION, 'N': args.N, 'a': a,
+                'n_count': n_count, 'shots': args.shots, 'batches': args.batches,
+                'holdout_fraction': args.holdout_fraction, 'seed': args.seed,
+                'layout': [int(q) for q in layout],
+                'config': [[c['k_qpe'], c['k_arith'], c['elimina_swap']]
+                           for c in config]}
+    ckpt = Path(args.checkpoint) if args.checkpoint else None
+    fatti = carica_checkpoint(ckpt, identita) if ckpt else []
+    if fatti:
+        print(f"Checkpoint: {len(fatti)} configurazioni gia' eseguite, si riprende")
+
     print(f'{len(config)} configurazioni, {args.batches} batch '
           f'({n_train} train / {n_holdout} holdout)\n')
     print('  k_qpe  k_arith  swap  ecr   depth   P_train   P_holdout')
     print('  ' + '-' * 60)
 
-    punti = []
+    punti = list(fatti)
+    gia_viste = {(p['k_qpe'], p['k_arith'], p['elimina_swap']) for p in punti}
     for c in config:
+        if (c['k_qpe'], c['k_arith'], c['elimina_swap']) in gia_viste:
+            continue
         # shor_circuit_approx apre da se' il contesto sulle QFT aritmetiche: non va
         # avvolto una seconda volta.
         qc = shor_circuit_approx(args.N, a, n_count, c['k_qpe'],
@@ -438,6 +513,8 @@ def main():
             punto['holdout'] = riassumi(righe, 'holdout')
             punto['P_success'] = riassumi(righe)['P_success']
         punti.append(punto)
+        if ckpt:
+            salva_checkpoint(ckpt, identita, punti)
         ka = '-' if c['k_arith'] is None else c['k_arith']
         sw = 'no' if c['elimina_swap'] else 'si'
         if args.solo_struttura:
