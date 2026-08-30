@@ -1,6 +1,9 @@
 % Migrata dal Cap. 5 per il vincolo di lunghezza del corpo.
 % Nel capitolo resta il paragrafo di raccordo con i tre fatti usati nel seguito.
 
+Il Capitolo~ef{chap:rumore} isola di questa materia i soli tre fatti che ricorrono nel
+seguito; questa sezione ne d\`a la trattazione completa.
+
 \subsection{L'Anatomia Fisica di una QPU}
 
 Per capire dove nascono gli errori bisogna prima capire com'è fatta la macchina. Una \ac{QPU} superconduttiva è un chip criogenico che contiene \emph{esclusivamente} i qubit e le linee fisiche che li collegano: contrariamente all'intuizione, \textbf{le porte logiche non risiedono nel chip}. Aprendo una CPU classica si trovano registri e porte logiche incise nel silicio; aprendo una QPU si trovano solo i qubit. Le operazioni sono realizzate dall'\textbf{elettronica di controllo esterna}, che invia impulsi a microonde convogliati ai qubit tramite guide d'onda: ``far passare un qubit in un gate'' significa in realtà inviargli un'onda sagomata che ne ruota lo spin dell'angolo desiderato (90°, 30°, 10°, \ldots). La Figura~\ref{fig:qpu_anatomia} schematizza questa architettura per una QPU a 5 qubit con topologia a catena lineare.
