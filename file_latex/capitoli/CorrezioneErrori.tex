@@ -1,6 +1,6 @@
 \begin{onehalfspace}
 
-Il post-processing del Capitolo~\ref{chap:risultati} recupera candidati ancora presenti nell'istogramma, ma non ripristina informazione distrutta durante l'evoluzione. La \ac{QEC} interviene invece durante il calcolo. Questo capitolo ne introduce gli elementi operativi --- stabilizzatori, sindrome e decoder --- e li verifica sul codice a ripetizione e sul codice di Steane $[[7,1,3]]$; il Capitolo~\ref{chap:surface} passa poi al surface code scalabile.
+Il Capitolo~\ref{chap:risultati} ha chiuso la verifica dell'ipotesi iniziale con un esito netto e una lezione precisa: il filtro appreso sull'output rumoroso non aggiunge nulla che la ricerca multi-candidato ottenga già con una regola deterministica più semplice. TOP-4 può sfruttare picchi utili ancora presenti nell'istogramma, ma il post-processing non può ripristinare la coerenza o la struttura periodica persa durante l'evoluzione. Per prevenire questa seconda classe di danno occorre intervenire \emph{durante} il calcolo: è la prospettiva della \ac{QEC}, introdotta nel quadro teorico del Capitolo~\ref{chap:strategie} e resa operativa qui. Questo capitolo costruisce gli strumenti concettuali e sperimentali della correzione d'errore --- stabilizzatori, sindrome, decodifica --- e li applica in due laboratori a complessità crescente: il codice a ripetizione a 3 qubit, che introduce il meccanismo della sindrome nel caso più semplice, e il codice di Steane $[[7,1,3]]$, il primo codice pienamente quantistico della tesi, capace di correggere un errore arbitrario su un singolo qubit. Il capitolo successivo estende il percorso al surface code e alla stima quantitativa dell'errore logico.
 
 % -----------------------------------------------
 \section{Dalla Ridondanza Ingenua alla Codifica}
@@ -39,7 +39,26 @@ errori arbitrari. Lo Steane code ($d=3$) corregge un errore; un surface code di 
 \section{Il Panorama dei Codici e la Scelta Metodologica}
 \label{sec:confronto_codici}
 
-La progressione adottata è funzionale all'esperimento: il \emph{repetition code} rende leggibile l'estrazione di sindrome; lo Steane $[[7,1,3]]$ corregge un errore arbitrario; il surface code introduce distanza variabile, cicli rumorosi e un decoder scalabile. Le implementazioni dei primi due codici sono riportate nei Listati~\ref{lst:qec_repetition} e~\ref{lst:qec_steane} dell'Appendice~\ref{app:strumentiecodice}.
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabularx}{\textwidth}{@{}p{2.0cm}p{1.6cm}XXX@{}}
+\toprule
+\textbf{Codice} & \textbf{Parametri} & \textbf{Corregge} & \textbf{Pro / Contro} & \textbf{Uso in questa tesi} \\
+\midrule
+Repetition (bit-flip) & $[[3,1,1]]$ su X & solo bit-flip & semplice / non corregge phase-flip & primo laboratorio (sindrome) \\
+Repetition (phase-flip) & 3 qubit, base H & solo phase-flip & mostra dualità X/Z / parziale & secondo laboratorio \\
+Shor code & $[[9,1,3]]$ & errore arbitrario singolo & storico, intuitivo / più pesante dello Steane & approfondimento didattico~\cite{shorcorrection1995} \\
+Steane code & $[[7,1,3]]$ & errore arbitrario singolo & \ac{CSS}, compatto / distanza bassa & \textbf{codice centrale}~\cite{steane1996} \\
+Five-qubit & $[[5,1,3]]$ & errore arbitrario singolo & minimo possibile / non \ac{CSS} & confronto teorico \\
+Surface code & $d^2$ dati $+\,O(d^2)$ ancille & errori locali su griglia 2D & prospettiva scalabile / overhead elevato & Capitolo~\ref{chap:surface}~\cite{fowler2012} \\
+\bottomrule
+\end{tabularx}
+\caption[Confronto tra codici correttori quantistici]{Confronto tra i principali codici correttori e loro ruolo nella tesi. La progressione metodologica --- repetition per introdurre la sindrome, Steane per la correzione di errori arbitrari, surface code per la prospettiva scalabile --- segue il documento di indirizzo del lavoro.}
+\label{tab:confronto_codici}
+\end{table}
+
+La scelta metodologica è dunque una progressione a tre stadi: il \emph{repetition code} introduce l'estrazione di sindrome nel caso più leggibile; lo \emph{Steane code} è il codice centrale, primo capace di correggere un errore arbitrario; il \emph{surface code} porta il discorso sul terreno scalabile e permette la stima del \textbf{logical error rate} $p_L$ con un decoder reale.
 
 % -----------------------------------------------
 \section{Laboratorio I: il Codice a Ripetizione}
@@ -54,11 +73,23 @@ Il limite è strutturale: il codice non rileva gli errori Z (phase-flip), che co
 \subsection{Risultati del laboratorio repetition}
 \label{subsec:risultati_repetition}
 
-Il primo controllo inietta deterministicamente un errore su ciascun qubit e verifica la lookup table
-\[
-00\!\to\! I,\qquad 10\!\to\! X_0,\qquad 11\!\to\! X_1,\qquad 01\!\to\! X_2.
-\]
-Le quattro sindromi osservate coincidono con la previsione; per coniugazione di Hadamard vale la stessa mappatura per gli errori $Z$ del codice duale. Il test completo e il circuito di estrazione sono documentati nel Listato~\ref{lst:qec_repetition}.
+Il laboratorio è stato implementato in Qiskit con estrazione di sindrome tramite due qubit ancilla, secondo il ciclo della Sezione~\ref{sec:ciclo_qec}. Il primo test verifica che la sindrome identifichi correttamente il qubit colpito: si inietta un errore deterministico su ciascuno dei tre qubit dati (un $X$ per il codice bit-flip, un $Z$ per il duale phase-flip) e si legge la sindrome. La Tabella~\ref{tab:sindrome_repetition} riporta l'esito: in tutti i casi la sindrome osservata coincide con la previsione della lookup table, e la posizione dell'errore è ricostruita senza ambiguità.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Errore iniettato} & \textbf{Sindrome $(a_0, a_1)$} & \textbf{Qubit dedotto} & \textbf{Esito} \\
+\midrule
+nessuno   & $(0,0)$ & --- & \checkmark \\
+su $q_0$  & $(1,0)$ & $q_0$ & \checkmark \\
+su $q_1$  & $(1,1)$ & $q_1$ & \checkmark \\
+su $q_2$  & $(0,1)$ & $q_2$ & \checkmark \\
+\bottomrule
+\end{tabular}
+\caption[Verifica della sindrome del codice a ripetizione]{Verifica della sindrome: iniezione deterministica di un errore su ciascun qubit e sindrome osservata (senza rumore). Vale identicamente per il codice bit-flip (errore $X$, stabilizzatori $Z_0Z_1$, $Z_1Z_2$) e per il duale phase-flip (errore $Z$, stabilizzatori $X_0X_1$, $X_1X_2$): il duale si ottiene dal primo per coniugazione di Hadamard, e a parità di seed le due simulazioni producono esiti identici cifra per cifra. La coincidenza non è quindi una conferma indipendente della dualità --- che è un fatto algebrico --- ma la verifica che l'implementazione la rispetti. L'ancilla $a_0$ misura la parità dei qubit $\{0,1\}$, l'ancilla $a_1$ quella di $\{1,2\}$.}
+\label{tab:sindrome_repetition}
+\end{table}
 
 Il secondo test misura il beneficio della correzione. Si prepara lo stato logico, si applica a ciascun qubit dato un errore indipendente con probabilità $p$ (canale $X$ per il bit-flip, $Z$ per il phase-flip), si estrae la sindrome, si applica la correzione e si decodifica: la frazione di esiti logici errati su $20\,000$ ripetizioni (seed $=42$) stima l'errore logico $p_L$. La Figura~\ref{fig:qec_repetition} confronta i punti Monte Carlo con la previsione analitica del voto di maggioranza: il codice sbaglia quando almeno due dei tre qubit subiscono un errore, cioè
 \begin{equation}
@@ -69,11 +100,11 @@ Il secondo test misura il beneficio della correzione. Si prepara lo stato logico
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.75\textwidth]{qec_repetition_curve.pdf}
-\caption[Errore logico del codice a ripetizione]{I punti Monte Carlo ($20\,000$ campioni per valore) seguono $p_L=3p^2-2p^3$; sotto $p=0.5$ la codifica riduce l'errore.}
+\caption[Errore logico del codice a ripetizione a 3 qubit]{Errore logico $p_L$ in funzione dell'errore fisico $p$ per il codice a ripetizione a 3 qubit. I punti Monte Carlo del codice bit-flip e del duale phase-flip ($20\,000$ ripetizioni per punto) coincidono con la previsione analitica $3p^2 - 2p^3$ (Eq.~\ref{eq:pL_repetition}) entro l'errore statistico. Nella regione $p < 0.5$ la curva giace sotto la bisettrice $p_L = p$: la codifica rende il qubit logico più affidabile del qubit fisico non protetto. Il punto di \emph{break-even} è a $p = 0.5$, dove correzione e assenza di correzione si equivalgono; oltre, la ridondanza amplifica gli errori anziché sopprimerli.}
 \label{fig:qec_repetition}
 \end{figure}
 
-L'accordo è quantitativo: a $p=0.10$ si osserva $p_L=0.0288\pm0.0012$ contro $0.0280$ teorico. La soppressione è quadratica, ma il codice protegge un solo tipo di errore per volta; serve quindi un codice capace di correggere tutte le componenti di Pauli.
+L'accordo con l'Eq.~\ref{eq:pL_repetition} è quantitativo su tutto l'intervallo: ad esempio, per $p = 0.10$ si osserva $p_L = 0.0288 \pm 0.0012$ contro il valore teorico $0.0280$, e per $p = 0.20$ si ha $p_L = 0.1026 \pm 0.0021$ contro $0.1040$. Il messaggio operativo è quello che l'intera parte \ac{QEC} svilupperà su codici più potenti: sotto una soglia di errore fisico, la codifica \emph{sopprime} l'errore --- qui da $p$ a $\mathcal{O}(p^2)$ --- mentre sopra la soglia lo \emph{amplifica}. Il codice a ripetizione paga però un limite strutturale già discusso: protegge da un solo tipo di errore per volta. Un errore $Z$ sul codice bit-flip commuta con entrambi gli stabilizzatori, non produce sindrome e resta invisibile --- ragione per cui il passo successivo richiede un codice, come quello di Steane, capace di correggere \emph{qualunque} errore su un qubit.
 
 % -----------------------------------------------
 \section{Laboratorio II: il Codice di Steane $[[7,1,3]]$}
@@ -82,6 +113,23 @@ L'accordo è quantitativo: a $p=0.10$ si osserva $p_L=0.0288\pm0.0012$ contro $0
 \subsection{Struttura del codice}
 
 Lo Steane code~\cite{steane1996} codifica un qubit logico in sette qubit fisici, ha distanza 3 e corregge un errore arbitrario (X, Z o Y) su un singolo qubit. È un codice \ac{CSS}, costruito a partire dal codice classico di Hamming $[7,4,3]$: la stessa matrice di parità classica genera sia gli stabilizzatori di tipo X sia quelli di tipo Z, il che permette di trattare separatamente le due famiglie di errori.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lcl}
+\toprule
+\textbf{Parametro} & \textbf{Valore} & \textbf{Significato} \\
+\midrule
+$n$ & 7 & qubit fisici \\
+$k$ & 1 & qubit logici \\
+$d$ & 3 & distanza del codice \\
+$t$ & 1 & errori arbitrari correggibili (Eq.~\ref{eq:distanza_t}) \\
+Tipo & \ac{CSS} & sindromi X e Z separate \\
+\bottomrule
+\end{tabular}
+\caption[Parametri del codice di Steane]{Parametri del codice di Steane $[[7,1,3]]$.}
+\label{tab:steane_parametri}
+\end{table}
 
 I generatori degli stabilizzatori, nella convenzione adottata, sono:
 \begin{equation}
@@ -96,26 +144,50 @@ Gli stabilizzatori di tipo Z rilevano gli errori X; quelli di tipo X rilevano gl
 
 \subsection{Protocollo di laboratorio}
 
-Il protocollo prepara $\ket{0_L}$, verifica la sindrome nulla, inietta $X$, $Z$ e $Y$ sui sette qubit e costruisce la lookup table; infine stima $p_L(p)$. L'estrazione di sindrome implementata non è fault-tolerant: il modello Monte Carlo applica gli errori ai qubit dati e assume la sindrome ideale. I risultati caratterizzano quindi il codice entro questo contratto, non un dispositivo protetto completo.
+Il laboratorio segue il protocollo del documento di indirizzo: (i) preparazione di uno stato logico $\ket{0_L}$ o $\ket{+_L}$ secondo una costruzione documentata; (ii) iniezione manuale di un errore X su ciascuno dei sette qubit e misura della sindrome; (iii) ripetizione con errori Z e Y; (iv) costruzione della lookup table; (v) valutazione della probabilità di correzione riuscita al crescere dell'errore fisico $p$; (vi) distinzione tra errori sui qubit dati ed errori sulle ancilla durante l'estrazione della sindrome.
+
+Su quest'ultimo punto va dichiarata fin d'ora un'assunzione metodologica: lo Steane code corregge un errore arbitrario \emph{solo se} il modello assume al più un errore rilevante nel blocco, o se il protocollo fault-tolerant impedisce che un singolo guasto si propaghi in più errori non correggibili. La versione implementata in questa tesi usa un'estrazione di sindrome non fault-tolerant, e i risultati vanno letti entro questa assunzione --- distinguere ciò che il codice garantisce da ciò che l'implementazione didattica mostra è parte del rigore richiesto al lavoro.
 
 \subsection{Risultati del laboratorio Steane}
 \label{subsec:risultati_steane}
 
-Lo stato $\ket{0_L}$ è preparato con una rete di Hadamard e \ac{CNOT}; i sei stabilizzatori restituiscono sindrome nulla sui $2\,000$ campioni, verificando l'appartenenza al \textit{code space}. Il circuito completo è nel Listato~\ref{lst:qec_steane}.
+Il laboratorio è stato implementato in Qiskit. Lo stato logico $\ket{0_L}$ si prepara come sovrapposizione uniforme degli otto \textit{codeword} del codice: partendo da tre qubit ``seme'' (quelli che compaiono in un solo stabilizzatore di tipo X) posti in sovrapposizione con una porta di Hadamard, una rete di \ac{CNOT} propaga la struttura degli stabilizzatori sugli altri quattro qubit. La correttezza della codifica è il primo controllo: misurando i sei stabilizzatori sullo stato preparato si ottiene sindrome nulla $000000$ su tutti i $2\,000$ campioni --- lo stato è effettivamente nel \textit{code space}.
 
 \paragraph{La syndrome table è biiettiva.}
-Il secondo controllo verifica i $21$ errori singoli $X$, $Z$ e $Y$. Le sette sindromi non nulle $001,\ldots,111$ identificano in modo biiettivo i sette qubit: gli stabilizzatori $Z$ diagnosticano $X$, quelli $X$ diagnosticano $Z$, mentre $Y$ attiva entrambe le famiglie. La tabella completa è quindi la rappresentazione binaria della posizione e non richiede un float dedicato.
+Il secondo controllo è il cuore del codice: iniettando un errore su ciascuno dei sette qubit e leggendo la sindrome, la posizione del qubit colpito dev'essere ricostruita senza ambiguità. La Tabella~\ref{tab:steane_sindrome} riporta l'esito per gli errori X (letti dagli stabilizzatori Z): le sette sindromi sono tutte distinte e non nulle, e coincidono con la rappresentazione binaria della posizione, esattamente come prescrive la struttura di Hamming. Per dualità \ac{CSS}, gli errori Z producono la stessa tabella sugli stabilizzatori X (sindrome Z nulla), e un errore Y accende \emph{entrambe} le famiglie con la medesima sindrome --- confermando che il codice gestisce l'errore arbitrario, non solo bit-flip o phase-flip. La biiettività è verificata per tutti e $21$ i casi ($X$, $Z$, $Y$ su $7$ qubit).
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccc}
+\toprule
+\textbf{Qubit} & \textbf{Sindrome} & \textbf{Valore} & \textbf{Correzione} \\
+\midrule
+$q_0$ & $001$ & 1 & applica $X$ (o $Z$) su $q_0$ \\
+$q_1$ & $010$ & 2 & \ldots su $q_1$ \\
+$q_2$ & $011$ & 3 & \ldots su $q_2$ \\
+$q_3$ & $100$ & 4 & \ldots su $q_3$ \\
+$q_4$ & $101$ & 5 & \ldots su $q_4$ \\
+$q_5$ & $110$ & 6 & \ldots su $q_5$ \\
+$q_6$ & $111$ & 7 & \ldots su $q_6$ \\
+\bottomrule
+\end{tabular}
+\caption[Syndrome table del codice di Steane]{Tabella sindrome$\rightarrow$qubit$\rightarrow$correzione, verificata sperimentalmente. La sindrome (tre bit) letta come numero binario indica direttamente la posizione del qubit colpito. Vale per gli errori $X$ (via stabilizzatori $Z$) e, per dualità, per gli errori $Z$ (via stabilizzatori $X$); un errore $Y$ accende entrambe le famiglie con la stessa sindrome.}
+\label{tab:steane_sindrome}
+\end{table}
 
 \paragraph{Il qubit logico batte il fisico: soppressione quadratica.}
-Sotto un canale depolarizzante di intensità $p$ per qubit, una simulazione Monte Carlo nel formalismo di Pauli ($200\,000$ campioni per punto) applica la correzione a peso minimo e verifica l'eventuale residuo logico. La Figura~\ref{fig:qec_steane} mostra $p_L\propto p^2$ con pendenza log--log $1.94$, come atteso per un codice di distanza 3 che fallisce a partire da errori di peso due.
+Il terzo controllo misura il beneficio della correzione. Sotto un canale depolarizzante di intensità $p$ per qubit, si stima la probabilità di errore logico $p_L$ con una simulazione Monte Carlo nel formalismo di Pauli ($200\,000$ campioni per punto, seed $=42$): per ogni campione si estrae la sindrome, si applica la correzione a peso minimo dalla Tabella~\ref{tab:steane_sindrome} e si verifica se il residuo contiene un operatore logico non banale. La Figura~\ref{fig:qec_steane} mostra il risultato in scala doppio-logaritmica: i punti seguono un andamento $p_L \propto p^2$, con pendenza log-log misurata $1.94$ --- la firma di un codice di distanza $d=3$, che corregge ogni errore singolo e fallisce solo a partire da due errori. Poiché gli eventi di peso due, il cui numero di coppie di qubit scala come $\binom{7}{2}$, forniscono il contributo dominante al fallimento, l'errore logico è soppresso da $\mathcal{O}(p)$ a $\mathcal{O}(p^2)$.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.72\textwidth]{qec_steane_curve.pdf}
-\caption[Errore logico del codice di Steane {$[[7,1,3]]$}]{La pendenza $1.94$ conferma la soppressione quadratica; l'intersezione con $p_L=p$ dà una pseudo-soglia vicina a $0.08$.}
+\caption[Errore logico del codice di Steane {$[[7,1,3]]$}]{Errore logico $p_L$ in funzione dell'errore fisico $p$ (canale depolarizzante), scala doppio-logaritmica. I punti Monte Carlo seguono il riferimento $\propto p^2$ (pendenza $d=3$); la bisettrice $p_L = p$ rappresenta il qubit fisico non protetto. L'intersezione individua la \textbf{pseudo-soglia} $p \approx 0.08$: sotto di essa il qubit logico è più affidabile del fisico, sopra la ridondanza amplifica l'errore. Curva rigenerabile da \texttt{figure\_src/gen\_qec\_steane.py}.}
 \label{fig:qec_steane}
 \end{figure}
 
-La pseudo-soglia è circa $p=0.08$: sotto tale valore il qubit logico è più affidabile del fisico. Rispetto al repetition code, Steane protegge simultaneamente da $X$, $Z$ e $Y$, ma resta a distanza fissa e l'estrazione qui simulata non include guasti delle ancille. Il surface code affronta questo limite mediante cicli ripetuti di sindrome rumorosa e distanza variabile.
+Il regime di convenienza è netto: per $p = 0.01$ si ha $p_L = 1.67 \times 10^{-3}$ (già un ordine di grandezza sotto $p$), per $p = 0.05$ si ha $p_L = 3.4 \times 10^{-2} < p$, mentre a $p = 0.10$ si ha $p_L = 0.116 > p$. La pseudo-soglia --- l'intersezione tra la curva e la bisettrice $p_L = p$ --- cade attorno a $p \approx 0.08$: al di sotto, codificare conviene.
+
+\paragraph{Confronto con il repetition e assunzioni.}
+Rispetto al repetition code (Sezione~\ref{sec:repetition}), che pure esibisce una soppressione $\propto p^2$, lo Steane paga sette qubit fisici invece di tre ma ottiene un vantaggio qualitativo decisivo: protegge simultaneamente da errori $X$, $Z$ e $Y$, mentre il repetition è cieco a un intero tipo di errore. Va infine ribadita l'assunzione dichiarata nella Sezione~\ref{sec:steane}: l'estrazione di sindrome qui implementata \emph{non è fault-tolerant}. Il modello Monte Carlo inietta errori solo sui qubit dati e assume una lettura di sindrome ideale; un errore sulle ancilla durante l'estrazione può corrompere la sindrome e indurre una correzione errata. La quantificazione di questo effetto --- e le tecniche fault-tolerant che lo mitigano --- appartiene al terreno del surface code, oggetto del Capitolo~\ref{chap:surface}, dove il decoder opera su cicli ripetuti di misura proprio per distinguere gli errori di dato da quelli di misura.
 
 \end{onehalfspace}

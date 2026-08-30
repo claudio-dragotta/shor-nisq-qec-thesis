@@ -1,146 +1,275 @@
 \begin{onehalfspace}
 
-\section{Dal modello ideale alla macchina fisica}
+\section{Introduzione al Rumore Quantistico}
 
-Shor è definito nel modello ideale di porte unitarie e misure perfette. I processori non fault-tolerant operano invece nel regime \ac{NISQ}~\cite{preskill2018}: coerenza finita, gate imperfetti, connettività limitata e lettura rumorosa restringono la profondità utile. Il numero di qubit, da solo, non determina quindi la capacità di eseguire un circuito.
+Il capitolo precedente ha presentato l'algoritmo di Shor nella sua forma ideale: un circuito che, eseguito su un calcolatore quantistico perfetto, fattorizza in tempo polinomiale. Quel calcolatore non esiste. Questo capitolo descrive la distanza fra il modello e la macchina --- da dove nasce l'errore, come lo si rappresenta formalmente, e quanto costa all'algoritmo.
 
-La protezione non può consistere nella copia diretta dello stato, vietata dal teorema del no-cloning~\cite{wootters1982}. Inoltre un errore quantistico può essere una rotazione continua o un processo dissipativo, non soltanto l'inversione discreta di un bit. Per collegare fenomeno fisico e simulazione occorre distinguere la sorgente dell'errore dal \emph{canale} matematico con cui la si approssima.
+I computer quantistici non fault-tolerant operano nel regime \ac{NISQ} \cite{preskill2018}: il solo numero di qubit fisici non determina la capacità utile, perché errori, connettività e assenza di correzione scalabile limitano la profondità dei circuiti eseguibili in modo affidabile.
 
-\section{I vincoli hardware rilevanti}
+Il rumore quantistico differisce fondamentalmente dal rumore nei sistemi classici: mentre un bit classico può essere protetto ridondando l'informazione, un qubit non può essere copiato (\textbf{teorema del no-cloning}) \cite{wootters1982}. Inoltre, gli errori quantistici non sono binari --- un qubit può subire rotazioni arbitrarie nello spazio di Hilbert --- rendendo la loro caratterizzazione intrinsecamente più ricca e più difficile di quella classica.
+
+Per analizzare il rumore in modo rigoroso è utile distinguere tre livelli di descrizione, che il presente capitolo tratta separatamente:
+\begin{itemize}
+    \item \textbf{Anatomia della macchina} (Sezione~\ref{sec:anatomia_qpu}): com'è fatta fisicamente una \ac{QPU} e \emph{dove}, nei suoi componenti, gli errori hanno origine;
+    \item \textbf{Fonti fisiche} (Sezione~\ref{sec:fonti_fisiche}): i quattro meccanismi concreti con cui l'hardware introduce errori;
+    \item \textbf{Modelli matematici} (Sezione~\ref{sec:canali}): i quattro canali quantistici con cui tali errori vengono formalizzati e simulati.
+\end{itemize}
+
+\clearpage
+\section{La Macchina Fisica: i Tre Fatti che Contano}
 \label{sec:anatomia_qpu}
 
-Per il seguito sono sufficienti tre proprietà delle \ac{QPU} superconduttive. Primo, i gate sono impulsi analogici: errori di calibrazione, accoppiamenti residui e leakage perturbano l'unitaria desiderata. Secondo, ogni operazione ha una durata, mentre rilassamento e perdita di fase avvengono su scale $T_1$ e $T_2$; la durata del cammino critico deve quindi restare piccola rispetto ai tempi di coerenza. Terzo, le interazioni a due qubit rispettano una topologia fisica: il routing aggiunge operazioni e l'esecuzione parallela può generare crosstalk. Anatomia criogenica, controllo e tecnologie di qubit sono approfonditi nella Sezione~\ref{app:anatomia} dell'Appendice~\ref{app:teoria}.
+Il rumore di un processore quantistico non è un disturbo generico ma la conseguenza diretta di come la macchina è costruita. La struttura di una \ac{QPU} superconduttiva --- l'architettura del chip criogenico, il ruolo dell'elettronica di controllo, il confronto fra le tecnologie di qubit disponibili e il meccanismo fisico della lettura --- è descritta nella Sezione~\ref{app:anatomia} dell'Appendice~\ref{app:teoria}. Ai fini del seguito bastano tre fatti, che vale la pena isolare perché ricorrono in tutto il lavoro.
 
-\section{Fonti fisiche e canali adottati}
+\textbf{Primo: le porte logiche non risiedono nel chip.} Aprendo una \ac{CPU} classica si trovano registri e porte incise nel silicio; aprendo una \ac{QPU} si trovano soltanto i qubit e le linee che li collegano. Le operazioni sono impulsi a microonde generati dall'elettronica esterna, e ``applicare un gate'' significa inviare un'onda sagomata che ruota lo stato dell'angolo voluto. Ne discende che la fedeltà di una porta è la fedeltà di un impulso analogico: non esiste una soglia di rigenerazione del segnale come nell'elettronica digitale, e ogni imprecisione si accumula.
+
+\textbf{Secondo: il budget di operazioni è finito.} Lo stato di un qubit decade con tempi caratteristici $T_1$ e $T_2$, mentre ogni gate richiede un tempo proprio. Il rapporto fra i due fissa quante operazioni si possono eseguire prima che l'informazione si perda, indipendentemente da quanto sia accurata la singola porta. È questo vincolo --- non il numero di qubit --- a determinare la profondità massima di un circuito utile, ed è la ragione per cui il Capitolo~\ref{chap:risultati} misura la barriera di scalabilità in porte a due qubit anziché in qubit.
+
+\textbf{Terzo: la topologia decide chi parla con chi.} Le \ac{QPU} differiscono per geometria --- catene lineari, griglie \textit{heavy-hex}, connettività completa --- e l'entanglement fra qubit non adiacenti richiede di attraversare quelli intermedi, con un costo che si paga in coerenza. La topologia determina quindi sia quali circuiti si mappano efficientemente, sia dove il crosstalk colpirà. È il fondamento architetturale del surface code (Capitolo~\ref{chap:surface}), che richiede interazioni fra soli vicini proprio per questa ragione.
+
+\section{Le Quattro Fonti Fisiche di Rumore}
 \label{sec:fonti_fisiche}
+
+Sui processori quantistici reali il rumore origina da quattro meccanismi distinti. Ognuno agisce su una scala temporale e spaziale diversa, e richiede strategie di mitigazione differenti.
+
+% ---
+\subsection{Decoerenza ($T_1$ e $T_2$)}
+
+La \textbf{decoerenza} è il processo per cui un qubit perde le sue proprietà quantistiche a causa dell'interazione inevitabile con l'ambiente circostante (campi elettromagnetici parassiti, fononi, fluttuazioni termiche). Si manifesta attraverso due tempi caratteristici:
+
+\begin{itemize}
+    \item \textbf{$T_1$ -- Relaxation time}: il qubit decade spontaneamente dallo stato eccitato $\ket{1}$ allo stato fondamentale $\ket{0}$ per dissipazione energetica. Fisicamente corrisponde all'emissione di un fotone verso l'ambiente. Su hardware superconduttore tipicamente $T_1 \sim 50$--$500\,\mu$s.\footnote{La notazione $T_1$ e $T_2$ è mutuata dalla spettroscopia a \ac{NMR}, dove Felix Bloch la introdusse nel 1946 per i tempi di rilassamento longitudinale e trasversale della magnetizzazione nucleare.}
+
+    \item \textbf{$T_2$ -- Dephasing time}: la fase relativa tra $\ket{0}$ e $\ket{1}$ si randomizza senza necessariamente modificare le popolazioni, distruggendo la sovrapposizione. $T_2$ comprende due contributi:
+    \begin{equation}
+        \frac{1}{T_2} = \frac{1}{2T_1} + \frac{1}{T_\phi}
+        \label{eq:T2_decomp}
+    \end{equation}
+    dove $T_\phi$ è il tempo di \textit{pura} perdita di fase. Vale sempre $T_2 \leq 2T_1$; tipicamente $T_2 \sim 50$--$200\,\mu$s.
+\end{itemize}
+
+Un criterio euristico per limitare la decoerenza non corretta lungo il cammino critico è:
+\begin{equation}
+    \tau_{\text{circuito}} \ll \min(T_1,\, T_2)
+\end{equation}
+La profondità dell'aritmetica modulare cresce polinomialmente con la dimensione dell'input, ma questa relazione asintotica non fissa da sola una soglia in bit: compilazione, parallelismo, tempi di idle, topologia e correzione d'errore determinano la durata fisica effettiva.
+
+\textbf{Connessione con l'entanglement.} $T_2$ caratterizza la perdita di coerenza di fase necessaria a sostenere l'entanglement fra registro di controllo e registro di lavoro. Nella phase estimation, ciascun qubit di controllo deve conservare la fase relativa lungo il proprio cammino causale attraverso l'esponenziazione modulare. Confrontare semplicemente $T_2/\tau_{\text{gate}}$ con il numero totale di gate a due qubit sarebbe però scorretto: il conteggio non è una durata e ignora parallelismo e idle. Per questo la campagna usa durate esplicite nel noise model e riporta separatamente conteggi e profondità della netlist.
+
+% ---
+\subsection{Errori di Gate}
+
+Le porte quantistiche fisiche non implementano perfettamente l'operazione unitaria ideale $U$, bensì un'operazione perturbata $\tilde{U} = U + \delta E$. L'\textbf{errore di gate} è quantificato dalla \textbf{gate infidelity}:
+\begin{equation}
+    r(U,\tilde{U}) = 1 - F(U,\tilde{U}), \qquad F(U,\tilde{U}) = \frac{1}{d^2}\left|\mathrm{Tr}(U^\dagger\tilde{U})\right|^2
+\end{equation}
+dove $d$ è la dimensione dello spazio di Hilbert e $F$ è la \textit{process fidelity}, pari a 1 quando $\tilde{U}=U$. Le cause principali sono le imprecisioni nel controllo di ampiezza e frequenza dei pulse a microonde, l'accoppiamento residuo \textit{always-on} tra qubit adiacenti, e il \textit{leakage} verso stati non computazionali ($\ket{2}$, $\ket{3}$, \ldots) negli oscillatori di Josephson. Su hardware IBM (2024--2025) i valori tipici sono: $r \approx 0.03$--$0.1\%$ per gate a singolo qubit ($F \approx 99.9$--$99.97\%$) e $r \approx 0.3$--$1\%$ per gate a due qubit come CNOT ed ECR ($F \approx 99$--$99.7\%$).
+
+% ---
+\subsection{Errori di Misura (Readout Errors)}
+
+La misura finale può restituire un risultato errato: il qubit si trova in $\ket{0}$ ma viene letto come $1$, o viceversa. Questo errore è modellato da una \textbf{matrice di confusione} $A$:
+\begin{equation}
+    A_{ij} = P(\text{misura } i \mid \text{stato } j), \qquad \sum_i A_{ij} = 1
+\end{equation}
+Per $n$ qubit indipendenti, $A = \bigotimes_{k=1}^n A_k$ con
+\begin{equation}
+    A_k = \begin{pmatrix} 1-e_0^{(k)} & e_1^{(k)} \\ e_0^{(k)} & 1-e_1^{(k)} \end{pmatrix}
+\end{equation}
+dove $e_0^{(k)}$ è la probabilità di leggere $1$ dato $\ket{0}$ per il $k$-esimo qubit. Valori tipici: $e_0, e_1 \approx 1$--$3\%$ su hardware IBM.
+
+% ---
+\subsection{Crosstalk}
+
+Il \textbf{crosstalk} è l'interferenza indesiderata tra qubit adiacenti durante l'esecuzione di operazioni parallele. Origina dall'accoppiamento capacitivo residuo tra qubit vicini nel chip superconduttore: quando si applica un gate su un qubit, le perturbazioni del campo si propagano ai qubit circostanti causando rotazioni parassite non intenzionali. Il crosstalk è particolarmente dannoso nei circuiti profondi con molte operazioni parallele ed è difficile da modellare analiticamente~\cite{sarovar2020}, il che rende i modelli di apprendimento automatico particolarmente adatti a caratterizzarlo. Questa affermazione, qui anticipata, riceve verifica sperimentale nella Sezione~\ref{sec:decodifica_appresa}: è precisamente in presenza di errori correlati fra qubit adiacenti --- il crosstalk --- che un decoder appreso supera quello analitico, perché tali errori non sono rappresentabili nella struttura su cui quest'ultimo si fonda.
+
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Fonte} & \textbf{Causa fisica} & \textbf{Parametro} & \textbf{Valore tipico IBM} \\
+\midrule
+Decoerenza     & Interazione con l'ambiente   & $T_1$, $T_2$                & $50$--$500\,\mu$s \\
+Errori di gate & Imprecisione pulse / leakage & Gate infidelity             & $0.03$--$1\%$ \\
+Readout errors & Risposta del rivelatore      & $e_0$, $e_1$                & $1$--$3\%$ \\
+Crosstalk      & Accoppiamento residuo        & Difficile da parametrizzare & $\sim 0.1$--$1\%$ \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Riepilogo delle quattro fonti fisiche di rumore nei processori quantistici superconduttori.}
+\label{tab:fonti_rumore}
+\end{table}
+
+% -----------------------------------------------
+\section{Dal Fenomeno Fisico al Modello Matematico}
+
+I quattro fenomeni fisici descritti nella sezione precedente non sono isolati: ciascuno può essere ricondotto a uno o più canali matematici, che ne forniscono una descrizione quantitativa precisa e simulabile. La tabella seguente stabilisce il collegamento esplicito tra i due livelli di descrizione.
+
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Fonte fisica} & \textbf{Canale matematico} & \textbf{Parametro chiave} \\
+\midrule
+Decadimento energetico ($T_1$)   & Amplitude Damping            & $\gamma = 1 - e^{-t/T_1}$ \\
+Perdita di fase ($T_2$)          & Phase Flip                   & $p = \tfrac{1}{2}(1 - e^{-t/T_2})$ \\
+Errori di gate (isotropici)      & Depolarizzante               & $p \approx$ gate infidelity \\
+Errori di gate (asimmetrici)     & Bit Flip / Phase Flip        & $p$ dal profilo dell'errore \\
+Readout errors                   & Matrice di confusione $A$    & $e_0$, $e_1$ da calibrazione \\
+Crosstalk                        & Depolarizzante (multi-qubit) & Difficile da parametrizzare \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Corrispondenza tra fonti fisiche di rumore e canali quantistici.}
+\label{tab:mapping_rumore}
+\end{table}
+
+In pratica, Qiskit Aer combina rilassamento energetico e dephasing in un \textbf{canale di thermal relaxation}, parametrizzato da $T_1$, $T_2$ e dal tempo di gate $\tau$. È un modello Markoviano controllato di queste due componenti, non una riproduzione completa dell'hardware: non include automaticamente leakage, crosstalk, deriva o errori coerenti.
+
+\clearpage
+\section{I Quattro Canali Matematici del Rumore}
 \label{sec:canali}
 
-Un canale quantistico è una mappa lineare \acf{CPTP} sulla matrice densità. Nella rappresentazione di Kraus~\cite{nielsenChuang2000},
+Per simulare e analizzare il rumore, le fonti fisiche vengono astratte in \textbf{canali quantistici}: mappe lineari \textbf{\acf{CPTP}} che agiscono sulla matrice densità $\rho$ del sistema \cite{nielsenChuang2000}. Ogni canale CPTP ammette la \textbf{rappresentazione di Kraus}:
 \begin{equation}
-    \mathcal{E}(\rho)=\sum_k K_k\rho K_k^\dagger,
-    \qquad \sum_k K_k^\dagger K_k=I.
+    \mathcal{E}(\rho) = \sum_k K_k \rho K_k^\dagger, \qquad \sum_k K_k^\dagger K_k = I
     \label{eq:kraus}
 \end{equation}
-La Tabella~\ref{tab:mapping_rumore} riunisce i livelli fisico, matematico e algoritmico, evitando di trattare come equivalenti modelli che descrivono fenomeni diversi.
+I quattro canali fondamentali, ciascuno dei quali cattura un diverso regime di errore, sono presentati di seguito.
 
-\begin{table}[!htbp]
+% ---
+\subsection{Il Canale Depolarizzante}
+
+Fra i quattro, il canale \textbf{depolarizzante} merita la trattazione esplicita perché è quello su cui poggia l'intera campagna sperimentale: modella gli errori di gate, ed è il parametro $\varepsilon_{2q}$ che la Sezione~\ref{sec:parametri_mitigazione} farà variare su tre ordini di grandezza. Con probabilità $p$ viene applicato un errore casuale fra $\{X, Y, Z\}$, ciascuno con probabilità $p/3$:
+\begin{equation}
+    \mathcal{E}_{dep}(\rho) = \left(1-p\right)\rho + \frac{p}{3}\left(X\rho X + Y\rho Y + Z\rho Z\right)
+    \label{eq:depolarizing}
+\end{equation}
+Usando l'identità $X\rho X + Y\rho Y + Z\rho Z = 2I - \rho$, valida per $\mathrm{Tr}(\rho)=1$, si ottiene la forma compatta
+\begin{equation}
+    \mathcal{E}_{dep}(\rho) = \left(1 - \frac{4p}{3}\right)\rho + \frac{4p}{3}\,\frac{I}{2},
+    \label{eq:depolarizing_compact}
+\end{equation}
+che rende evidente il significato: il canale interpola fra lo stato $\rho$ e quello massimamente misto $I/2$, contraendo \emph{isotropicamente} il vettore di Bloch di un fattore $(1-4p/3)$. Per $p=3/4$ lo stato diventa completamente misto qualunque fosse quello iniziale.
+
+L'isotropia è la ragione per cui questo canale è un modello standard degli errori di gate: non privilegia alcuna direzione e descrive un'imprecisione di controllo di cui non si specifica la natura microscopica. Nel parametro Aer $\lambda$, tuttavia, la probabilità aggregata di una componente Pauli non-identità è $3\lambda/4$ per un qubit e $15\lambda/16$ per due qubit. Come mostrerà il Capitolo~\ref{chap:risultati}, il proxy di nessun evento su $k$ gate a due qubit è quindi $(1-15\lambda_{2q}/16)^k$; non è una probabilità di successo dell'algoritmo.
+
+\subsection{Gli Altri Tre Canali}
+
+Gli altri tre canali si enunciano compattamente; le derivazioni complete --- operatori di Kraus espliciti, azione sulla matrice densità e trasformazione del vettore di Bloch --- sono nella Sezione~\ref{app:canali} dell'Appendice~\ref{app:teoria}.
+
+Il \textbf{bit flip} applica $X$ con probabilità $p$ e contrae le componenti $r_y, r_z$ del fattore $(1-2p)$, lasciando $r_x$ invariata. Il \textbf{phase flip} applica $Z$ con probabilità $p$: lascia intatte le popolazioni e sopprime le coerenze $\rho_{01}$ dello stesso fattore --- è il canale che descrive il decadimento $T_2$, poiché ponendo $p(t) = \frac{1}{2}(1-e^{-t/T_2})$ si ottiene esattamente $\rho_{01}(t) = \rho_{01}(0)\,e^{-t/T_2}$. L'\textbf{amplitude damping}, infine, modella il rilassamento energetico $T_1$: il qubit decade da $\ket{1}$ a $\ket{0}$ con probabilità $\gamma = 1-e^{-t/T_1}$, e a differenza degli altri è \emph{non simmetrico} --- contrae la sfera di Bloch verso il polo $\ket{0}$ anziché verso il centro, sicché per $t \to \infty$ ogni stato converge a $\ket{0}\bra{0}$.
+
+Questi ultimi due sono i canali che la funzione \texttt{thermal\_relaxation\_error} di Qiskit Aer combina per riprodurre la decoerenza. I preset uniformi della prima fase e della demo li impiegano con $T_1$, $T_2$ e durate dichiarate; M8 usa invece il solo proxy Pauli per gate, mentre M11 converte l'infedeltà media della snapshot senza aggiungere nuovamente $T_1/T_2$, per evitare un doppio conteggio.
+
+
+\begin{figure}[H]
 \centering
-\small
-\begin{tabular}{@{}p{2.5cm}p{3.2cm}p{2.8cm}p{4.0cm}@{}}
+\includegraphics[width=0.7\textwidth]{14_bloch_channels.pdf}
+\caption[Effetto dei canali di rumore sulla sfera di Bloch]{Effetto dei quattro canali di rumore sulla sfera di Bloch (sezione nel piano $xz$). La curva tratteggiata grigia rappresenta la sfera ideale; la superficie colorata è la sfera dopo l'applicazione del canale con il parametro indicato. Il Bit Flip contrae la sfera lungo $z$; il Phase Flip lungo $x$ (distrugge le coerenze equatoriali); il canale Depolarizzante contrae isotropicamente verso il centro; l'Amplitude Damping sposta la sfera verso il polo nord $\ket{0}$.}
+\label{fig:bloch_channels}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lllll@{}}
 \toprule
-\textbf{Fonte} & \textbf{Modello} & \textbf{Parametro} & \textbf{Impatto principale su Shor} \\
+\textbf{Canale} & \textbf{Parametro} & \textbf{Effetto coerenze} & \textbf{Effetto popolazioni} & \textbf{Modella} \\
 \midrule
-Rilassamento energetico
-& amplitude damping / thermal relaxation
-& $\gamma=1-e^{-t/T_1}$
-& perdita della popolazione $\ket{1}$ durante i blocchi profondi \\[2pt]
-Perdita di fase
-& phase flip / thermal relaxation
-& $p=\tfrac12(1-e^{-t/T_2})$
-& attenuazione delle coerenze usate dalla QPE \\[2pt]
-Imprecisione dei gate
-& canale depolarizzante a uno o due qubit
-& $\lambda_{1q},\lambda_{2q}$
-& accumulo sulle porte entangling e distorsione delle fasi \\[2pt]
-Errore di lettura
-& matrice di confusione classica
-& $e_0,e_1$
-& alterazione dei bit da cui le frazioni continue stimano $r$ \\[2pt]
-Crosstalk
-& errore correlato o coerente
-& dipendente da coppia e calendario
-& correlazioni non descritte dal modello uniforme indipendente \\
+Bit Flip          & $p$       & Contrae $r_y$, $r_z$    & Invariate       & Errori $X$ (inversione di bit) \\
+Phase Flip        & $p$       & Sopprime $\rho_{01}$    & Invariate       & Dephasing ($T_2$) \\
+Depolarizzante    & $p$       & Contrae isotropicamente & Verso $I/2$     & Errori di gate generici \\
+Amplitude Damping & $\gamma$  & Sopprime $\rho_{01}$    & Verso $\ket{0}$ & Decadimento $T_1$ \\
 \bottomrule
-\end{tabular}
-\caption{Corrispondenza fra principali fonti di rumore, modelli e vulnerabilità dell'algoritmo.}
-\label{tab:fonti_rumore}
-\label{tab:mapping_rumore}
+\end{tabular}%
+}
+\caption{I quattro canali matematici fondamentali del rumore quantistico \cite{nielsenChuang2000}.}
 \label{tab:canali_rumore}
 \end{table}
 
-\subsection{Rilassamento e perdita di fase}
+% -----------------------------------------------
+\section{Impatto del Rumore sull'Algoritmo di Shor}
 
-Il tempo $T_1$ descrive il decadimento $\ket{1}\rightarrow\ket{0}$, mentre $T_2$ descrive la perdita della fase relativa. Separando la componente puramente dissipativa da quella di puro dephasing,
-\begin{equation}
-    \frac{1}{T_2}=\frac{1}{2T_1}+\frac{1}{T_\phi},
-    \label{eq:T2_decomp}
-\end{equation}
-da cui $T_2\leq2T_1$. Il canale di amplitude damping è non unital: sposta lo stato verso $\ket{0}$. Il phase flip lascia invece invariate le popolazioni e moltiplica le coerenze per $1-2p$. Nella simulazione, Qiskit Aer combina i due contributi nel \emph{thermal relaxation error}, parametrizzato da $T_1$, $T_2$ e dalla durata del gate. Il modello è Markoviano e non include automaticamente deriva, leakage o correlazioni temporali.
+L'algoritmo di Shor è particolarmente vulnerabile al rumore a causa della sua elevata profondità circuitale e della dipendenza critica dalla precisione delle fasi. La Figura~\ref{fig:errori_shor} localizza le quattro fonti fisiche sulle fasi dell'algoritmo: ciascuna colpisce prevalentemente uno stadio diverso della pipeline.
 
-\subsection{Canale depolarizzante}
-
-La campagna usa il canale depolarizzante per rappresentare l'errore stocastico associato ai gate. Per un qubit, indicando con $p$ la probabilità totale di un Pauli non identità,
-\begin{equation}
-    \mathcal{D}_{p}(\rho)
-    =(1-p)\rho+\frac{p}{3}
-      \left(X\rho X+Y\rho Y+Z\rho Z\right).
-    \label{eq:depolarizing}
-\end{equation}
-Il canale contrae isotropicamente il vettore di Bloch e non descrive la direzione microscopica dell'errore. Aer usa invece il parametro $\lambda$ nella convenzione
-\begin{equation}
-    \mathcal{D}_{\lambda}^{(q)}(\rho)
-    =(1-\lambda)\rho+\lambda\,\frac{I}{2^q},
-    \label{eq:depolarizing_compact}
-\end{equation}
-per un gate su $q$ qubit. La probabilità aggregata della componente Pauli non identità è dunque $3\lambda/4$ per $q=1$ e $15\lambda/16$ per $q=2$. Esplicitare questa convenzione è necessario per interpretare correttamente i parametri sperimentali; la definizione del noise model e i gate ai quali è applicato sono riportati nel Capitolo~\ref{chap:metodologia}.
-
-\subsection{Lettura e rumore correlato}
-
-L'errore di misura è rappresentato, per ciascun qubit, dalla matrice di assegnazione
-\begin{equation}
-    A=
-    \begin{pmatrix}
-        1-e_0 & e_1\\
-        e_0   & 1-e_1
-    \end{pmatrix},
-    \qquad
-    A_{ij}=P(\text{esito }i\mid\text{stato }j).
-\end{equation}
-Per errori indipendenti su più qubit si usa il prodotto tensoriale delle matrici locali. Il crosstalk viola invece l'ipotesi di indipendenza: un'operazione può perturbare qubit vicini o dipendere dalle operazioni simultanee~\cite{sarovar2020}. Il modello uniforme della prima campagna non pretende di riprodurre tali correlazioni; queste vengono introdotte separatamente negli esperimenti di decodifica, dove è possibile confrontare metodi analitici e appresi sullo stesso insieme di sindromi.
-
-Le derivazioni degli operatori di Kraus, l'azione sulle componenti della matrice densità e la geometria sulla sfera di Bloch sono raccolte nella Sezione~\ref{app:canali} dell'Appendice~\ref{app:teoria}.
-
-\section{Perché Shor è sensibile al rumore}
-
-La vulnerabilità non deriva da un solo canale, ma dall'interazione fra profondità, precisione di fase e misura:
-\begin{itemize}
-    \item l'\textbf{esponenziazione modulare} domina la profondità e contiene molte porte a due qubit; aumentano sia l'esposizione agli errori di gate sia il tempo durante il quale i registri devono restare coerenti;
-    \item la \textbf{phase estimation} codifica il periodo nelle fasi relative. Dephasing ed errori coerenti riducono o spostano i picchi da cui si ricava $s/r$;
-    \item la \textbf{QFT inversa} contiene rotazioni controllate, comprese rotazioni ad angolo piccolo, sensibili alla precisione di controllo;
-    \item la \textbf{misura} finale può modificare i bit dell'intero osservato e quindi la frazione continua selezionata;
-    \item \textbf{routing e parallelismo} aggiungono gate e possono introdurre errori correlati dipendenti dalla topologia.
-\end{itemize}
-
-\begin{figure}[!htbp]
+\begin{figure}[H]
 \centering
-\resizebox{0.95\textwidth}{!}{%
-\begin{tikzpicture}[
-  >=stealth,
-  stage/.style={rectangle,draw,rounded corners=2pt,fill=blue!10,
-                minimum height=12mm,text width=28mm,align=center,font=\small},
-  flow/.style={->,thick}
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[>=stealth,
+  stage/.style={rectangle, draw=black, thick, fill=blue!10, minimum height=15mm, text width=30mm, align=center, font=\small},
+  err/.style={rectangle, draw, thick, text width=33mm, align=center, font=\scriptsize, rounded corners=1mm},
+  flow/.style={->, very thick}
 ]
-\node[stage] (S1) at (0,0)   {Preparazione\\$H^{\otimes t}$};
-\node[stage] (S2) at (4,0)   {Esponenziazione\\modulare};
-\node[stage] (S3) at (8,0)   {\ac{QFT}$^{-1}$};
-\node[stage] (S4) at (12,0)  {Misura e\\post-processing};
-\draw[flow] (S1)--(S2);
-\draw[flow] (S2)--(S3);
-\draw[flow] (S3)--(S4);
-\node[below=7mm of S2,align=center,font=\scriptsize,text=red!60!black]
-  {decoerenza, gate 2Q,\\crosstalk};
-\node[below=7mm of S3,align=center,font=\scriptsize,text=violet!70!black]
-  {dephasing, errori\\di rotazione};
-\node[below=7mm of S4,align=center,font=\scriptsize,text=orange!80!black]
-  {readout};
+% pipeline
+\node[stage] (S1) at (0,0)    {\textbf{Preparazione}\\ $H^{\otimes n}$ sul registro di controllo};
+\node[stage] (S2) at (4.2,0)  {\textbf{Esponenziazione modulare controllata}\\ profondità $O(n^3)$};
+\node[stage] (S3) at (8.4,0)  {\textbf{QFT$^{-1}$}\\ rotazioni $R_k$ con angoli $2\pi/2^k$};
+\node[stage] (S4) at (12.6,0) {\textbf{Misura}\\ lettura simultanea del registro};
+\draw[flow] (S1) -- (S2);
+\draw[flow] (S2) -- (S3);
+\draw[flow] (S3) -- (S4);
+% errori sotto
+\node[err, draw=red!60!black, fill=red!8] (E1) at (4.2,-3.2)
+  {\textbf{\textcolor{red!60!black}{\textcircled{\footnotesize 1} Decoerenza}}\\ ($T_1$, $T_2$): lo stadio più lungo --- i qubit di controllo devono restare coerenti per tutta la sua durata (bordo di coerenza)};
+\node[err, draw=violet!70!black, fill=violet!8] (E2) at (8.4,-3.2)
+  {\textbf{\textcolor{violet!70!black}{\textcircled{\footnotesize 2} Errori di gate}}\\ ogni CX imperfetto si accumula ($\sim$moltiplicativo); nella QFT$^{-1}$ gli angoli piccoli sono i più fragili};
+\node[err, draw=orange!80!black, fill=orange!10] (E3) at (12.6,-3.2)
+  {\textbf{\textcolor{orange!80!black}{\textcircled{\footnotesize 3} Errore di lettura}}\\ matrice di confusione: $0$ letto come $1$ e viceversa, tanto più probabile quanto più tardi si misura};
+\node[err, draw=teal!70!black, fill=teal!8] (E4) at (6.3,2.7)
+  {\textbf{\textcolor{teal!70!black}{\textcircled{\footnotesize 4} Crosstalk}}\\ operazioni parallele su qubit adiacenti si disturbano a vicenda: colpisce tutte le fasi, in base alla topologia};
+\draw[->, thick, red!60!black]    (E1) -- (S2);
+\draw[->, thick, violet!70!black] (E2) -- (S3);
+\draw[->, thick, violet!70!black, dashed] (E2.west) to[out=170,in=-60] (S2.south east);
+\draw[->, thick, orange!80!black] (E3) -- (S4);
+\draw[->, thick, teal!70!black] (E4.west)  to[out=185,in=80] (S2.north west);
+\draw[->, thick, teal!70!black] (E4.east)  to[out=-5,in=100] (S3.north east);
 \end{tikzpicture}%
 }
-\caption[Localizzazione del rumore nella pipeline di Shor]{Principali sorgenti di errore lungo la pipeline; decoerenza e crosstalk possono agire trasversalmente, non soltanto nello stadio indicato.}
+\caption[Dove colpiscono le quattro fonti di rumore nella pipeline di Shor]{Localizzazione delle quattro fonti fisiche di rumore sulla pipeline dell'algoritmo di Shor. La decoerenza~\textcircled{\footnotesize 1} domina l'esponenziazione modulare (lo stadio più profondo, $O(n^3)$ gate); gli errori di gate~\textcircled{\footnotesize 2} si accumulano su tutti i CX e sono particolarmente critici sulle rotazioni ad angolo piccolo della QFT$^{-1}$; l'errore di lettura~\textcircled{\footnotesize 3} colpisce la misura finale, tanto più quanto più il circuito arriva ``lungo'' al bordo di coerenza; il crosstalk~\textcircled{\footnotesize 4} agisce trasversalmente ovunque vi siano operazioni parallele su qubit adiacenti, secondo la topologia del dispositivo (Sezione~\ref{sec:anatomia_qpu}).}
 \label{fig:errori_shor}
 \end{figure}
 
-Non è corretto trasformare il solo conteggio asintotico $O((\log N)^3)$ in una probabilità di successo: gate diversi hanno durate e tassi diversi, il circuito contiene parallelismo e alcuni errori non cambiano l'esito classico. Per questa ragione il seguito usa circuiti compilati e noise model dichiarati, separando conteggio di gate, profondità, parametri fisici e metrica di successo. Le dimostrazioni di fattorizzazione su istanze piccole e circuiti semplificati~\cite{skosana2021} non rimuovono questo limite di scalabilità.
+Le tre componenti più sensibili sono:
 
-Il capitolo successivo distingue quindi gli interventi possibili: riduzione fisica del rumore, mitigazione a posteriori, correzione/tolleranza ai guasti e metodi appresi. Nessuno di essi viene assunto efficace per definizione; ciascuno richiede un confronto entro il proprio livello operativo.
+\subsection{Errori nella Quantum Fourier Transform}
+
+La \ac{QFT} richiede porte di rotazione di fase $R_k = \mathrm{diag}(1,\, e^{2\pi i/2^k})$ con angoli esponenzialmente piccoli all'aumentare di $k$. Per $k=10$, l'angolo è $2\pi/1024 \approx 6\times10^{-3}$ rad. Errori coerenti di calibrazione possono accumularsi in ampiezza, mentre un canale depolarizzante produce una degradazione stocastica diversa: non è corretto riassumere entrambi come un unico ``errore di fase'' lineare. La campagna li mantiene quindi come canali separati.
+
+\subsection{Errori nella Phase Estimation}
+
+La phase estimation richiede che i qubit del registro di controllo mantengano la coerenza lungo il cammino critico della modular exponentiation. A livello di ordine di grandezza si può scrivere:
+\begin{equation}
+    T_2 \gg \tau_{\text{gate}} \cdot O(n^3)
+\end{equation}
+Questa espressione evidenzia lo scaling, ma non determina una soglia universale in bit: la costante dipende dall'aritmetica e dalla compilazione, e un'architettura fault-tolerant sostituisce il confronto diretto con un budget di errore logico.
+
+\subsection{Errori nella Modular Exponentiation}
+
+La modular exponentiation è la componente con la maggiore profondità. Sotto l'ipotesi puramente illustrativa di eventi indipendenti con probabilità $\epsilon$ su $L$ gate, la probabilità che non avvenga alcun evento è:
+\begin{equation}
+    P_{0\text{-eventi}}=(1-\epsilon)^{L}, \qquad L \sim O(n^3).
+\end{equation}
+Ponendo soltanto per visualizzare lo scaling $L=n^3$, per $n=15$ ed $\epsilon=10^{-3}$ si ottiene $(1-10^{-3})^{3375}\approx0,034$. Questo è un \textbf{proxy di nessun evento}, non la probabilità di successo di Shor: alcuni errori possono non cambiare l'esito, mentre rilassamento, readout e struttura del circuito non sono descritti dalla formula. La Figura~\ref{fig:psuccess_vs_n} va letta esclusivamente in questo senso.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{15_psuccess_vs_n.pdf}
+\caption[Proxy di nessun evento al crescere del circuito]{Proxy illustrativo $(1-\epsilon)^{n^3}$ di nessun evento indipendente, per cinque valori di $\epsilon$. Non è una curva di successo di Shor e non deriva dai circuiti sperimentali: mostra soltanto quanto rapidamente un modello moltiplicativo ingenuo accumuli errori al crescere di un conteggio assunto pari a $n^3$.}
+\label{fig:psuccess_vs_n}
+\end{figure}
+
+% -----------------------------------------------
+\section{Sfide Pratiche su Hardware NISQ}
+
+\begin{itemize}
+    \item \textbf{Requisiti di qubit}: fattorizzare un intero a $n$ bit richiede almeno $2n$ qubit logici per la phase estimation, più ausiliari per la modular exponentiation.
+    \item \textbf{Profondità}: il circuito canonico $N=15$ di questa tesi, compilato nella base astratta \texttt{rz/sx/x/cx}, contiene 224 \texttt{cx} e ha profondità 412; una mappatura hardware aggiungerebbe routing dipendente dalla topologia.
+    \item \textbf{Soluzioni parziali}: gli esperimenti su IBM hanno dimostrato la fattorizzazione di $N=15$ e $N=21$ solo con circuiti appositamente semplificati, non generalizzabili a $N$ arbitrario \cite{skosana2021}.
+\end{itemize}
+
+Il problema non è di natura algoritmica ma fisica: l'algoritmo di Shor è teoricamente corretto, ma il substrato hardware introduce errori che ne compromettono l'output. Affrontarlo richiede strategie che operano a diversi livelli, dall'hardware al post-processing classico. Il capitolo seguente tratta separatamente la \ac{QEC} e i metodi appresi, mettendoli in relazione soltanto nella fase di decodifica della sindrome.
 
 \end{onehalfspace}

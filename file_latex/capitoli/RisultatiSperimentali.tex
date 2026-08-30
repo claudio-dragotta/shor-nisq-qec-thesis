@@ -1,51 +1,149 @@
 \begin{onehalfspace}
 
-La prima fase verifica se un classificatore applicato all'istogramma
-rumoroso riduca il numero di iterazioni necessario a fattorizzare
-$N=15$. Il confronto appaiato separa il modello dalla regola TOP-4 e
-produce un risultato netto: la ricerca multi-candidato è utile, mentre il
-filtro appreso non aggiunge valore alla medesima ricerca.
+Il Capitolo~\ref{chap:sviluppo} ha descritto M1 (TOP-1), M2
+(classificatore TOP-1 seguito da TOP-4) e l'ablazione
+$M_{\mathrm{TOP4}}$. Questo capitolo presenta la campagna rigenerata
+dopo la correzione dell'operatore $\times7\bmod15$ e dei contratti
+statistici. Il risultato principale è che la ricerca multi-candidato
+riduce le iterazioni, mentre il classificatore a valle non aggiunge
+beneficio rispetto alla stessa ricerca priva di filtro.
 
-\section{Perimetro e controlli di validità}
+% -----------------------------------------------
+\section{Setup Sperimentale}
 \label{sec:setup_m1}
 \label{sec:setup_m2}
+
+Il percorso rumoroso è limitato a $N=15$, $a=7$ e otto qubit di
+controllo. Il circuito è compilato nella base
+\texttt{rz/sx/x/cx} con \texttt{optimization\_level=2} e seed del
+transpiler 20260819. I gate RZ sono virtuali; SX/X hanno durata
+illustrativa di 50\,ns e CX di 300\,ns. Il modello uniforme combina
+depolarizzazione a uno e due qubit, rilassamento/dephasing e readout; non
+riproduce una calibrazione o la topologia di una QPU specifica.
+
+Ogni iterazione usa $1\,024$ shot, il budget massimo è 50 iterazioni e
+ogni confronto principale comprende 30 repliche. Le strategie della
+stessa replica ricevono il medesimo istogramma e il tie-break fra esiti
+equiprobabili è deterministico mediante SHA-256. Un fallimento al budget
+è codificato con la sentinella 51; $\bar M$ è calcolata sui successi e il
+budget medio include la censura. Le differenze appaiate sono valutate con
+Wilcoxon--Pratt e correzione di Holm entro ciascuna famiglia.
+
+Una campagna storica usava semi consecutivi che condividevano quasi tutti
+gli shot derivati da Aer. Quei valori non sono riutilizzati. La campagna
+schema~2 separa replica e iterazione di più del budget di shot e registra
+nel JSON seed, manifest, revisione del rumore e revisione del
+post-processing.
+
+\begin{table}[H]
+\centering
+\caption[Contratto riproducibile della campagna N=15]{Invarianti del
+circuito compilato impiegato da training, baseline, sweep e ZNE.}
+\label{tab:correzione_seed}
+\label{tab:circuit_depth}
+\begin{tabular}{lr}
+\toprule
+\textbf{Grandezza} & \textbf{Valore} \\
+\midrule
+Qubit totali & 12 \\
+Profondità / size & $412/604$ \\
+RZ / SX / CX & $302/70/224$ \\
+Misure & 8 \\
+SHA-256 circuito & \texttt{c7f4cf3bc1735dce9d5b56d8e09686e...} \\
+Qiskit / Aer & $2.5.0/0.17.2$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% -----------------------------------------------
+\section{Perimetro Ideale e Rumoroso}
 \label{sec:circuito_m1}
 \label{sec:scalabilita}
 
-Circuito, noise model, numerosità e test statistici sono quelli fissati nel
-Capitolo~\ref{chap:metodologia}. Tutte le strategie ricevono lo stesso
-istogramma e lo stesso ordinamento dei pareggi. La campagna usa soltanto
-gli artefatti generati dopo la verifica del moltiplicatore
-$\times7\bmod15$; manifest e hash impediscono di combinare revisioni
-diverse.
+L'aritmetica Beauregard per $N=21$ e $N=35$ è stata verificata
+separatamente nel caso ideale mediante truth table esaustive dei
+moltiplicatori controllati, pulizia delle ancille e confronto della legge
+QPE con quella teorica. La distanza di variazione totale è
+$1.38\times10^{-9}$ per $N=21$, $a=2$, $r=6$ e
+$2.50\times10^{-13}$ per $N=35$, $a=6$, $r=2$.
 
-Le implementazioni Beauregard per $N=21$ e $N=35$ superano i controlli
-ideali di truth table, pulizia delle ancille e distribuzione QPE. Questo
-non le rende però adatte alla stessa campagna rumorosa: per $N=21$ la
-compilazione raggiunge 21\,036 CX e profondità 23\,081. L'esclusione
-documenta un limite della simulazione classica adottata, non un limite
-dell'algoritmo quantistico.
+Questa validazione non rende però praticabile la stessa campagna
+rumorosa. Per $N=21$, otto controlli e compilazione congiunta nella base
+esecutiva, il circuito ha 21\,036 CX e profondità 23\,081. A titolo
+puramente diagnostico, con il canale depolarizzante Aer a
+$\lambda_{2q}=10^{-3}$, la probabilità che nessuna delle CX applichi un
+Pauli non-identità è
+\[
+  \left(1-\frac{15}{16}\lambda_{2q}\right)^{21036}
+  =7.24\times10^{-10}.
+\]
+Questa quantità non è una fedeltà né una probabilità di fattorizzazione.
+Le istanze $N=21/35$ restano quindi nella verifica ideale e non vengono
+mescolate ai risultati rumorosi N=15.
 
-\section{Ablazione M1--TOP-4--M2}
+\begin{table}[H]
+\centering
+\caption[Perimetro delle validazioni]{Separazione fra validazione ideale
+e campagna rumorosa.}
+\label{tab:costo_simulazione}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Istanza} & \textbf{Ideale} & \textbf{Rumorosa} \\
+\midrule
+$N=15$, $a=7$ & truth table e QPE & campagna completa \\
+$N=21$, $a=2$ & truth table e QPE & esclusa per costo \\
+$N=35$, $a=6$ & truth table e QPE & esclusa per costo \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% -----------------------------------------------
+\section{La Baseline: Metodo 1 (TOP-1)}
 \label{sec:risultati_uc_m1}
 \label{sec:analisi_m1}
 \label{sec:uc1_m1}
 \label{sec:uc2_m1}
+
+La Figura~\ref{fig:istogrammi_qpe} mostra, fra le 30 repliche nominali
+UC1, gli istogrammi con massa massima e minima sui quattro picchi teorici
+$\{0,64,128,192\}$. La selezione è dichiarata nel file di provenienza:
+replica 14 ($0.628$) e replica 16 ($0.570$). Entrambi conservano la
+struttura periodica; non sono presentati come esempi arbitrari di
+``successo'' e ``fallimento''.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{fig_istogrammi_qpe.pdf}
+    \caption[Massima e minima massa sui picchi QPE in UC1]{Istogrammi
+    nominali UC1 con massima e minima massa sui quattro picchi teorici
+    fra un insieme prefissato di 30 repliche. La selezione e i seed sono
+    salvati nell'artefatto di provenienza schema~2.}
+    \label{fig:istogrammi_qpe}
+\end{figure}
+
+La diagnostica indipendente di 60 repliche trova la moda $y=0$ in
+$30/60$ casi e una moda utile negli altri $30/60$, mentre TOP-4 trova
+sempre almeno un candidato utile. L'instabilità di TOP-1 deriva quindi da
+quale dei quattro picchi risulta dominante, non dalla completa scomparsa
+del segnale.
+
+% -----------------------------------------------
+\section{L'Ipotesi ML e il Verdetto dell'Ablazione}
 \label{sec:confronto}
 \label{sec:uc1_m2}
 \label{sec:uc2_m2}
 
-Gli istogrammi conservano in genere massa sui quattro picchi teorici
-$\{0,64,128,192\}$, ma la loro moda non è stabile: nella diagnostica
-indipendente la moda è $y=0$ in metà dei casi, mentre TOP-4 include sempre
-almeno un candidato utile. La differenza tra le strategie dipende quindi
-da come utilizzano una struttura ancora osservabile, non dalla produzione
-di un circuito diverso.
+I classificatori TOP-1 sono stati rigenerati su $2\,000$ istogrammi per
+scenario; TOP-16 ha prodotto $2\,000/2\,000$ positivi in entrambi gli
+scenari e viene registrato come audit a classe unica. Le metriche e il
+protocollo train/validation/test sono riportati nella
+Sezione~\ref{sec:valutazione_clf}. La Tabella~\ref{tab:riepilogo_rho}
+riporta invece la misura operativa, calcolata sui medesimi istogrammi per
+tutte le strategie.
 
-\begin{table}[!htbp]
+\begin{table}[H]
 \centering
-\small
-\caption{Confronto appaiato delle tre strategie, 30 repliche per scenario.}
+\caption{Confronto appaiato M1, TOP-4 e M2 ($30$ repliche per scenario)}
 \label{tab:riepilogo_m1}
 \label{tab:riepilogo_rho}
 \begin{tabular}{llcccc}
@@ -54,75 +152,169 @@ di un circuito diverso.
 $\boldsymbol{\bar M}$ & $\boldsymbol{\rho}$ vs M1 &
 \textbf{$p_{\mathrm{Holm}}$ vs M1} \\
 \midrule
-UC1 & M1    & $30/30$ & 1.37 & ---   & --- \\
+UC1 & M1 & $30/30$ & 1.37 & --- & --- \\
 UC1 & TOP-4 & $30/30$ & 1.00 & 1.367 & 0.0024 \\
-UC1 & M2    & $30/30$ & 1.50 & 0.911 & 0.7314 \\
+UC1 & M2 & $30/30$ & 1.50 & 0.911 & 0.7314 \\
 \midrule
-UC2 & M1    & $30/30$ & 1.50 & ---   & --- \\
+UC2 & M1 & $30/30$ & 1.50 & --- & --- \\
 UC2 & TOP-4 & $30/30$ & 1.00 & 1.500 & 0.0015 \\
-UC2 & M2    & $30/30$ & 1.37 & 1.098 & 0.0874 \\
+UC2 & M2 & $30/30$ & 1.37 & 1.098 & 0.0874 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-TOP-4 converge al primo tentativo in tutte le repliche ed è migliore di
-M1 in entrambi gli scenari. M2 non migliora significativamente M1 e,
-rispetto alla propria ablazione, richiede più iterazioni
-($p_{\mathrm{Holm}}=0.0033$ in UC1 e $0.0096$ in UC2). Il classificatore
-scarta dunque istogrammi che TOP-4 avrebbe risolto: il guadagno appartiene
-alla ricerca multi-candidato.
+TOP-4 converge al primo tentativo in tutte le repliche. M2 non migliora
+significativamente M1 e, rispetto alla propria ablazione, richiede più
+iterazioni: Wilcoxon bilaterale con correzione di Holm
+$p=0.0033$ (UC1) e $p=0.0096$ (UC2). Il filtro scarta dunque istogrammi
+che la ricerca TOP-4 avrebbe risolto; il guadagno appartiene alla ricerca
+multi-candidato, non al classificatore.
 
-\begin{figure}[!htbp]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.72\textwidth]{fig_iterazioni_m1_m2.pdf}
-    \caption{Iterazioni richieste da M1, TOP-4 e M2 nelle repliche
-    appaiate dei due scenari.}
+    \includegraphics[width=0.75\textwidth]{fig_iterazioni_m1_m2.pdf}
+    \caption[Analisi di ablazione M1, TOP-4 e M2]{Distribuzione delle
+    iterazioni nelle 30 repliche appaiate. I fallimenti, se presenti,
+    sarebbero mostrati separatamente con sentinella 51; in questa
+    baseline tutte le repliche hanno successo.}
     \label{fig:iterazioni_m1_m2}
 \end{figure}
 
-L'audit delle etichette completa l'interpretazione. TOP-1 definisce un
-problema addestrabile, ma predice soltanto la riuscita del candidato
-dominante; TOP-16 produce $2\,000/2\,000$ positivi in entrambi gli
-scenari. Le metriche elevate del classificatore non implicano quindi un
-vantaggio operativo. Architetture, curve ROC e analisi combinatoria sono
-riportate nella Sezione~\ref{app:classificatore}.
-
-\section{Robustezza e confronti secondari}
+% -----------------------------------------------
+\section{Robustezza Esplorativa della Strategia TOP-4}
 \label{sec:parametri_mitigazione}
 \label{subsec:sintesi_parametri}
+
+Otto famiglie di sweep variano un parametro per volta. I test sono
+appaiati all'interno del singolo punto, ma i $p$ non ricevono una
+correzione globale fra le otto famiglie: i risultati vanno quindi letti
+come esplorativi. La Tabella~\ref{tab:sintesi_parametri} evita di
+trasformare l'assenza di variazione osservata in una pretesa universale
+di insensibilità al rumore.
+
+\begin{table}[H]
+\centering
+\caption{Sintesi degli otto sweep schema~2 su $N=15$}
+\label{tab:sintesi_parametri}
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Famiglia} & \textbf{Intervallo} & \textbf{Esito TOP-4} \\
+\midrule
+$K$ & $1,2,3,4,6,8$ & soglia osservata $K=2$ \\
+$\lambda_{2q}$ & $10^{-3}$--$10^{-1}$ & $\bar M=1.00$--$1.07$, successo $100\%$ \\
+shot & $128$--$2\,048$ & $\bar M=1.00$ \\
+$K\times\lambda_{2q}$ & $K=2$--8, $5\times10^{-3}$--$5\times10^{-2}$ & $\bar M=1.00$ \\
+$T_1/T_2$ & $20/16$--$500/400\,\mu$s & $\bar M=1.00$ \\
+$\lambda_{1q}$ & $10^{-4}$--$2\times10^{-2}$ & $\bar M=1.00$ \\
+readout simmetrico & $0$--$20\%$ & $\bar M=1.00$ \\
+ottimizzazione & livelli 0--3 & $\bar M=1.00$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Il livello di ottimizzazione modifica il circuito: livello 0 produce 242
+CX e profondità 427, livello 1 produce 236/421, mentre i livelli 2 e 3
+coincidono a 224/412. Nonostante ciò TOP-4 resta a una iterazione nei
+quattro punti. Le oscillazioni di M1 negli sweep non sono monotone e, con
+30 repliche, non sono interpretate come leggi causali.
+
+\subsection{Frazione Coerente Efficace e Proxy di Nessun Evento}
 \label{subsec:frazione_coerente}
 
-Otto famiglie di sweep variano $K$, errore 2Q, numero di shot,
-$T_1/T_2$, errore 1Q, readout e livello di ottimizzazione. TOP-4 resta a
-una iterazione in tutti i punti salvo il livello più severo
-$\lambda_{2q}=0.1$, dove sale a 1.07; le oscillazioni di M1 non sono
-monotone e, con 30 repliche, non vengono interpretate causalmente. Questi
-risultati sono esplorativi, poiché non è applicata una correzione globale
-fra tutte le famiglie.
+La massa media $m$ sui quattro picchi può essere convertita in un indice
+descrittivo
+\begin{equation}
+    f=\frac{m-4/256}{1-4/256},
+    \label{eq:miscela_coerente}
+\end{equation}
+che vale zero per il fondo uniforme e uno per una distribuzione
+concentrata sui picchi. Non è una fedeltà. La Tabella
+\ref{tab:frazione_coerente} la confronta con il proxy che nessuna delle
+224 CX applichi un Pauli non-identità,
+$P_0=(1-15\lambda_{2q}/16)^{224}$.
 
-La massa sui picchi QPE diminuisce con il rumore molto più lentamente del
-proxy di nessun evento sulle CX. Ciò conferma che un evento Pauli non
-equivale necessariamente al fallimento dell'algoritmo. Definizione
-dell'indice, griglia completa e figure sono raccolte nella
-Sezione~\ref{app:parametrica}.
+\begin{table}[H]
+\centering
+\caption[Frazione efficace e proxy di nessun evento 2Q]{Media su 20
+repliche per punto. Nessuna delle due colonne è una probabilità di
+fattorizzazione.}
+\label{tab:frazione_coerente}
+\begin{tabular}{ccc}
+\toprule
+$\lambda_{2q}$ & $f$ efficace & $P_0$ proxy \\
+\midrule
+$10^{-3}$ & 0.8036 & $8.11\times10^{-1}$ \\
+$5\times10^{-3}$ & 0.7039 & $3.49\times10^{-1}$ \\
+$10^{-2}$ & 0.5938 & $1.21\times10^{-1}$ \\
+$2\times10^{-2}$ & 0.4286 & $1.44\times10^{-2}$ \\
+$5\times10^{-2}$ & 0.1688 & $2.14\times10^{-5}$ \\
+$10^{-1}$ & 0.0421 & $2.65\times10^{-10}$ \\
+$2\times10^{-1}$ & 0.0047 & $6.32\times10^{-21}$ \\
+$3\times10^{-1}$ & 0.0015 & $7.47\times10^{-33}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-Nello stesso perimetro la \ac{ZNE} a due e tre livelli non migliora M1 e
-moltiplica il costo in shot; TOP-4 è l'unica strategia che riduce
-significativamente le iterazioni. Il risultato riguarda questa istanza e
-questo modello uniforme, non costituisce una valutazione generale della
-ZNE su hardware calibrato.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.78\textwidth]{frazione_coerente.pdf}
+    \caption[Frazione efficace e proxy di nessun evento 2Q]{Il proxy
+    moltiplicativo decade più rapidamente della massa strutturata
+    osservata. La divergenza mostra che ``almeno un evento Pauli'' non
+    equivale a ``algoritmo fallito''.}
+    \label{fig:frazione_coerente}
+\end{figure}
 
-\section{Bilancio e passaggio alla correzione d'errore}
+\subsection{Confronto con la Zero-Noise Extrapolation}
+
+La ZNE digitale scala soltanto $\lambda_{1q}$ e $\lambda_{2q}$; tempi di
+coerenza e readout restano fissi. Non è gate folding hardware. ZNE-2 usa
+i livelli $(1,2)$ e ZNE-3 i livelli $(1,2,3)$, condivisi fra strategie
+nella stessa replica.
+
+\begin{table}[H]
+\centering
+\caption{Confronto M1, ZNE e TOP-4 su 30 repliche appaiate}
+\label{tab:confronto_zne}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Strategia} & \textbf{Successo} & $\boldsymbol{\bar M}$ &
+\textbf{shot/iter.} & \textbf{shot medi totali} &
+$\boldsymbol{p_{\mathrm{Holm}}}$ \\
+\midrule
+M1 & $100\%$ & 1.37 & 1\,024 & 1\,399 & --- \\
+ZNE-2 & $100\%$ & 1.50 & 2\,048 & 3\,072 & 1.000 \\
+ZNE-3 & $100\%$ & 1.57 & 3\,072 & 4\,813 & 1.000 \\
+TOP-4 & $100\%$ & 1.00 & 1\,024 & 1\,024 & 0.0024 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La ZNE non migliora M1 e aumenta il costo di campionamento; TOP-4 è
+l'unica strategia che riduce significativamente le iterazioni in questo
+confronto. Il risultato riguarda il modello uniforme e questa specifica
+istanza: non è una valutazione generale della ZNE su hardware calibrato.
+
+% -----------------------------------------------
+\section{Bilancio della Verifica e Ponte verso la Correzione d'Errore}
 \label{sec:top4_mitigazione}
 \label{sec:validita}
 \label{sec:confronto_zne}
 
-La prima fase stabilisce che una regola semplice può utilizzare meglio
-l'informazione già presente nell'istogramma, mentre il classificatore
-considerato non aggiunge informazione alla regola TOP-4. Nessun
-post-processing può però ricostruire coerenza e periodicità già distrutte
-durante il circuito. Questo limite motiva il passaggio alla
-\ac{QEC}, dove l'informazione diagnostica è esposta dalla sindrome prima
-della misura finale.
+La campagna consente quattro conclusioni delimitate dai dati:
+\begin{enumerate}
+    \item l'operatore $\times7\bmod15$ e il circuito compilato sono
+    fissati da truth table, manifest e hash;
+    \item TOP-4 riduce $\bar M$ da $1.37/1.50$ a $1.00$ nei due scenari;
+    \item il classificatore TOP-1 non migliora M1 e peggiora la propria
+    ablazione TOP-4;
+    \item la robustezza osservata negli sweep è esplorativa e non rende
+    il modello uniforme equivalente a una QPU reale.
+\end{enumerate}
+
+Il post-processing recupera informazione ancora presente
+nell'istogramma, ma non può correggere uno stato già corrotto durante il
+calcolo. Questo limite motiva il passaggio ai codici di correzione e alla
+decodifica della sindrome nei capitoli successivi.
 
 \end{onehalfspace}
