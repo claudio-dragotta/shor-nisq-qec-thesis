@@ -1,0 +1,11 @@
+M15 -- QFT approssimata, N=21, a=2, n_count=8
+Controllo di correttezza: circuito a grado pieno contro SHA canonico...
+  OK  9647853178cabcdf...
+
+  2 sottografi scartati per AGI fuori dominio prima di trovarne uno valido
+Layout fisso: [20, 33, 39, 21, 19, 40]... (20 qubit)
+
+2 configurazioni, 8 batch (4 train / 4 holdout)
+
+  k_qpe  k_arith  swap  ecr   depth   P_train   P_holdout
+  ------------------------------------------------------------
