@@ -1,0 +1,268 @@
+{
+  "identita": {
+    "milestone": "M15_qft_approssimata",
+    "revision": "m15-approximate-qft-topology-aware-v1",
+    "N": 21,
+    "a": 2,
+    "n_count": 8,
+    "shots": 1024,
+    "batches": 8,
+    "holdout_fraction": 0.5,
+    "seed": 42,
+    "layout": [
+      20,
+      33,
+      39,
+      21,
+      19,
+      40,
+      22,
+      41,
+      42,
+      43,
+      44,
+      18,
+      23,
+      34,
+      24,
+      14,
+      38,
+      0,
+      45,
+      46
+    ],
+    "config": [
+      [
+        7,
+        6,
+        false
+      ],
+      [
+        7,
+        4,
+        false
+      ],
+      [
+        7,
+        3,
+        false
+      ],
+      [
+        7,
+        2,
+        false
+      ],
+      [
+        7,
+        1,
+        false
+      ],
+      [
+        1,
+        1,
+        false
+      ]
+    ]
+  },
+  "points": [
+    {
+      "k_qpe": 7,
+      "k_arith": 6,
+      "elimina_swap": false,
+      "is_riferimento": true,
+      "depth": 145669,
+      "size": 365862,
+      "n_ecr": 49661,
+      "operations": {
+        "rz": 186310,
+        "sx": 125665,
+        "ecr": 49661,
+        "x": 4218,
+        "measure": 8,
+        "barrier": 1
+      },
+      "punteggio_fedelta": 1.0,
+      "batches": [
+        {
+          "batch": 0,
+          "partition": "train",
+          "seed_simulator": 2401666175,
+          "shots": 128,
+          "successes": 34,
+          "P_success": 0.265625
+        },
+        {
+          "batch": 1,
+          "partition": "train",
+          "seed_simulator": 1459527904,
+          "shots": 128,
+          "successes": 39,
+          "P_success": 0.3046875
+        },
+        {
+          "batch": 2,
+          "partition": "train",
+          "seed_simulator": 2991277573,
+          "shots": 128,
+          "successes": 40,
+          "P_success": 0.3125
+        },
+        {
+          "batch": 3,
+          "partition": "train",
+          "seed_simulator": 3373980267,
+          "shots": 128,
+          "successes": 36,
+          "P_success": 0.28125
+        },
+        {
+          "batch": 4,
+          "partition": "holdout",
+          "seed_simulator": 290026768,
+          "shots": 128,
+          "successes": 32,
+          "P_success": 0.25
+        },
+        {
+          "batch": 5,
+          "partition": "holdout",
+          "seed_simulator": 875652959,
+          "shots": 128,
+          "successes": 37,
+          "P_success": 0.2890625
+        },
+        {
+          "batch": 6,
+          "partition": "holdout",
+          "seed_simulator": 3950526342,
+          "shots": 128,
+          "successes": 34,
+          "P_success": 0.265625
+        },
+        {
+          "batch": 7,
+          "partition": "holdout",
+          "seed_simulator": 1349421791,
+          "shots": 128,
+          "successes": 32,
+          "P_success": 0.25
+        }
+      ],
+      "train": {
+        "P_success": 0.291015625,
+        "P_success_se": 0.020074350618284494,
+        "successes": 149,
+        "shots": 512,
+        "n_batches": 4
+      },
+      "holdout": {
+        "P_success": 0.263671875,
+        "P_success_se": 0.019472988971404422,
+        "successes": 135,
+        "shots": 512,
+        "n_batches": 4
+      },
+      "P_success": 0.27734375
+    },
+    {
+      "k_qpe": 7,
+      "k_arith": 4,
+      "elimina_swap": false,
+      "is_riferimento": false,
+      "depth": 131877,
+      "size": 331697,
+      "n_ecr": 45366,
+      "operations": {
+        "rz": 168956,
+        "sx": 113635,
+        "ecr": 45366,
+        "x": 3732,
+        "measure": 8,
+        "barrier": 1
+      },
+      "punteggio_fedelta": 1.0,
+      "batches": [
+        {
+          "batch": 0,
+          "partition": "train",
+          "seed_simulator": 2401666175,
+          "shots": 128,
+          "successes": 28,
+          "P_success": 0.21875
+        },
+        {
+          "batch": 1,
+          "partition": "train",
+          "seed_simulator": 1459527904,
+          "shots": 128,
+          "successes": 35,
+          "P_success": 0.2734375
+        },
+        {
+          "batch": 2,
+          "partition": "train",
+          "seed_simulator": 2991277573,
+          "shots": 128,
+          "successes": 39,
+          "P_success": 0.3046875
+        },
+        {
+          "batch": 3,
+          "partition": "train",
+          "seed_simulator": 3373980267,
+          "shots": 128,
+          "successes": 34,
+          "P_success": 0.265625
+        },
+        {
+          "batch": 4,
+          "partition": "holdout",
+          "seed_simulator": 290026768,
+          "shots": 128,
+          "successes": 38,
+          "P_success": 0.296875
+        },
+        {
+          "batch": 5,
+          "partition": "holdout",
+          "seed_simulator": 875652959,
+          "shots": 128,
+          "successes": 36,
+          "P_success": 0.28125
+        },
+        {
+          "batch": 6,
+          "partition": "holdout",
+          "seed_simulator": 3950526342,
+          "shots": 128,
+          "successes": 31,
+          "P_success": 0.2421875
+        },
+        {
+          "batch": 7,
+          "partition": "holdout",
+          "seed_simulator": 1349421791,
+          "shots": 128,
+          "successes": 31,
+          "P_success": 0.2421875
+        }
+      ],
+      "train": {
+        "P_success": 0.265625,
+        "P_success_se": 0.019519039151666685,
+        "successes": 136,
+        "shots": 512,
+        "n_batches": 4
+      },
+      "holdout": {
+        "P_success": 0.265625,
+        "P_success_se": 0.019519039151666685,
+        "successes": 136,
+        "shots": 512,
+        "n_batches": 4
+      },
+      "P_success": 0.265625
+    }
+  ],
+  "aggiornato": "2026-08-30T20:29:08.602179+02:00"
+}
