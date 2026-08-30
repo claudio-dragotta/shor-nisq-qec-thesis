@@ -1,0 +1,33 @@
+M15 -- QFT approssimata, N=15, a=7, n_count=8
+Controllo di correttezza: circuito a grado pieno contro SHA canonico...
+  OK  c7f4cf3bc1735dce...
+
+  1 sottografi scartati per AGI fuori dominio prima di trovarne uno valido
+Layout fisso: [93, 106, 107, 108, 105, 87]... (12 qubit)
+
+14 configurazioni, 8 batch (4 train / 4 holdout)
+
+  k_qpe  k_arith  swap  ecr   depth   P_train   P_holdout
+  ------------------------------------------------------------
+      1        -    si   279    1141   0.6304    0.6279
+      2        -    si   305    1242   0.5566    0.5422
+      3        -    si   328    1330   0.5322    0.5210
+      4        -    si   360    1414   0.4871    0.4771
+      5        -    si   365    1391   0.4634    0.4607
+      6        -    si   360    1306   0.4839    0.4749
+      7        -    si   362    1351   0.4910    0.4792
+      1        -    no   279    1141   0.6304    0.6279
+      2        -    no   305    1242   0.5566    0.5422
+      3        -    no   328    1330   0.5322    0.5210
+      4        -    no   360    1414   0.4871    0.4771
+      5        -    no   365    1391   0.4634    0.4607
+      6        -    no   360    1306   0.4839    0.4749
+      7        -    no   362    1351   0.4910    0.4792
+
+Scritto artifacts/v1_20260830/results_M15_qft_N15_v1_20260830_151350.json
+Esito primario: differenza +0.1487 IC 95% [+0.1273; +0.1699] -> approximation_not_worse
+Porte a due qubit: 362 -> 279 (+83)
+
+AVVERTENZA: con r=4 le fasi sono 0, 1/4, 1/2, 3/4, esatte in due bit.
+Un esito positivo su N=15 e' debole per costruzione: il test discriminante e' N=21.
+python exit=0
