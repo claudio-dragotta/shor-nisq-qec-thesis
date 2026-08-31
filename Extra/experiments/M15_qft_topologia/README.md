@@ -236,3 +236,71 @@ osservato in nessuna condizione.
 **Non è un risultato che sostenga l'approssimazione come leva pratica su N=21.** È invece
 una delimitazione quantitativa di quanto quella leva possa valere, ricavata da grandezze
 tutte misurate.
+
+---
+
+## M15b — Benchmark sulla stima di fase (31/08/2026)
+
+### Perché non su Shor
+
+M15 ha mostrato che su N=21 il confronto non discrimina: 49.661 porte a due qubit fanno
+~15 ms contro un T2 di ~100 µs, centocinquanta volte la coerenza, quindi ogni configurazione
+finisce sul pavimento. Un benchmark comparativo su Shor misurerebbe il rumore in tre modi
+diversi.
+
+L'oggetto giusto è la QFT nel suo uso canonico: la **stima di fase**. Con `U = diag(1, e^{2πiφ})`
+e il bersaglio in `|1⟩`, l'operazione controllata `U^(2^j)` collassa in una singola rotazione
+di fase: l'esponenziazione costa `n` porte e il grosso resta nella QFT inversa — la struttura
+che si vuole studiare, senza l'aritmetica modulare intorno. Il circuito costa **decine** di
+porte a due qubit, non decine di migliaia, quindi sopravvive al rumore realistico.
+
+È anche la forma in cui il risultato si generalizza: la QPE è il nucleo condiviso da Shor,
+amplitude estimation e da ogni procedura che estragga informazione spettrale.
+
+### Metrica, dichiarata prima
+
+Successo = la misura restituisce la migliore stima a `n` bit della fase, cioè
+`round(φ·2ⁿ) mod 2ⁿ`. Selezione di `k` sui batch di train, riporto su holdout disgiunti.
+
+### Risultati — 4096 shot, 8 batch, calibrazione FakeSherbrooke
+
+| n | fase | rappr. | k scelto | holdout | QFT piena | IC Newcombe 95% | ECR risp. |
+|---|---|---|---|---|---|---|---|
+| 6 | 1/6 | no | 2 | 0,3755 | 0,3599 | `[−0,014; +0,045]` | 25 |
+| 6 | 21/2⁶ | sì | 2 | 0,5576 | 0,5059 | **`[+0,021; +0,082]`** | 25 |
+| 6 | 1/3 | no | 2 | 0,3564 | 0,3418 | `[−0,015; +0,044]` | 25 |
+| 8 | 1/6 | no | 3 | 0,2861 | 0,2598 | `[−0,001; +0,054]` | 28 |
+| 8 | 85/2⁸ | sì | 3 | 0,4014 | 0,3545 | **`[+0,017; +0,077]`** | 28 |
+| 8 | 1/3 | no | 3 | 0,2930 | 0,2500 | **`[+0,016; +0,070]`** | 28 |
+| 10 | 1/6 | no | 2 | 0,2354 | 0,1641 | **`[+0,047; +0,096]`** | 78 |
+| 10 | 341/2¹⁰ | sì | 2 | 0,3564 | 0,2310 | **`[+0,098; +0,153]`** | 78 |
+| 10 | 1/3 | no | 2 | 0,2280 | 0,1733 | **`[+0,030; +0,079]`** | 78 |
+
+**Tutti e nove i contrasti sono positivi**; sei hanno l'intervallo interamente sopra lo zero.
+
+### Tre osservazioni
+
+**1. Il grado ottimo non cresce con il registro.** Vale `k = 2` o `3` a tutte le dimensioni,
+mentre la QFT piena ne usa `n−1`. Il risparmio cresce quindi con `n`: 25 porte a `n=6`,
+78 a `n=10`.
+
+**2. L'effetto cresce con la dimensione.** Il vantaggio passa da `+0,015 … +0,052` a `n=6`
+a `+0,055 … +0,126` a `n=10`. Più il registro è grande, più conviene troncare.
+
+**3. Le fasi esatte guadagnano di più.** In tutte e tre le dimensioni il vantaggio maggiore
+è sulla fase rappresentabile in `n` bit. È il meccanismo che **spiega la discrepanza fra le
+istanze di Shor**: su `N=15`, con `r=4`, le fasi sono `0, ¼, ½, ¾` — esatte in due bit — e
+troncare è quasi gratuito; su `N=21`, con `r=6`, le fasi valgono `j/6` e le rotazioni fini
+trasportano informazione.
+
+### Che cosa si può affermare
+
+Esiste un grado di troncamento della QFT che, sotto rumore di calibrazione realistico,
+**batte la trasformata piena** nella stima di fase; il grado ottimo è piccolo e
+sostanzialmente indipendente dalla dimensione del registro, mentre il vantaggio cresce con
+essa. È determinabile in anticipo dai soli conteggi di porte e dai dati di calibrazione,
+senza eseguire l'algoritmo.
+
+Limiti: un layout per dimensione, una sola snapshot di calibrazione, tre fasi bersaglio.
+Il contrasto è appaiato — stessi batch, stessi semi, stesso layout — quindi il confronto
+interno è pulito; la generalizzazione ad altri dispositivi non è dimostrata.
