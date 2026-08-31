@@ -179,3 +179,60 @@ WhatsApp successivi ha scritto che *«servirebbero benchmark comparativi»*. La 
 
 M15 esiste perché il numero serva comunque a scrivere conclusioni e sviluppi futuri in forma
 difendibile. **Non va promosso a capitolo senza una decisione esplicita del relatore.**
+
+---
+
+## Sweep di sensibilità al rumore — N=21, concluso il 31/08/2026
+
+A rumore di calibrazione pieno tutte le configurazioni stanno sul pavimento uniforme
+(65/256 = 0,2539) e il confronto non è risolvibile. La domanda è stata quindi riformulata:
+**a quale frazione dell'errore di calibrazione l'approssimazione inizia a pagare?**
+
+Layout fisso `[20, 33, 39, …]`, 256 shot, 4 batch, 128 shot per braccio su holdout.
+
+| fattore | QFT piena | troncata `k_arith=1` | contrasto (troncata − piena) |
+|---|---|---|---|
+| 1,0 | 0,2637 (+0,5σ) | 0,2930 (+1,4σ) | +0,029 `[−0,037; +0,098]` |
+| 0,03 | 0,2812 (+0,7σ) | 0,2891 (+0,9σ) | +0,008 `[−0,102; +0,117]` |
+| 0,01 | 0,2734 (+0,5σ) | 0,2734 (+0,5σ) | 0,000 `[−0,108; +0,108]` |
+| 0,003 | **0,3828 (+3,4σ)** | 0,2734 (+0,5σ) | **−0,109** `[−0,221; +0,006]` |
+
+σ misura la distanza dal pavimento uniforme.
+
+### Esito
+
+**In nessun regime esaminato l'approssimazione ha mostrato un vantaggio misurabile.**
+
+- A rumore da 1,0 a 0,01 tutto sta sul pavimento: il circuito è distrutto e il successo
+  coincide con quello di chi tira a indovinare.
+- A 0,003, l'unico livello dove emerge un segnale, **è la QFT piena a staccarsi**
+  (`+3,4σ` dal pavimento) mentre la troncata resta ferma. Il contrasto la favorisce di
+  circa 11 punti, con intervallo che sfiora lo zero.
+
+### Perché il margine è stretto per costruzione
+
+Modellando il circuito come «senza errori dà l'ideale, altrimenti il pavimento», con gli
+ingressi misurati — ideali `0,4667` e `0,4013`, porte `49.661` e `23.178`, AGI media
+`0,0104` sui 20 archi del layout — si ottiene un incrocio, ma limitato:
+
+**vantaggio massimo della troncata: +2,9 punti percentuali, a fattore 0,0041.**
+
+Per dimostrarlo a 3σ servirebbero **5.257 shot per braccio**, cioè oltre quindici ore di
+simulazione per un solo livello di rumore.
+
+Il limite è **robusto**: dipende solo dal rapporto fra i conteggi di porte (2,14×) e dalla
+penalità ideale (6,5 punti). Non cambia applicando la correzione che la tesi ha già
+misurato sulla frazione coerente efficace, la quale sposta *dove* avviene l'incrocio ma
+non *quanto* vale.
+
+### Che cosa si può affermare
+
+Su N=21 l'approssimazione della QFT dimezza le porte a due qubit (−52%) al prezzo di 6,5
+punti di resa ideale. Ne segue in linea di principio un incrocio — sotto una certa qualità
+dell'hardware conviene approssimare, sopra conviene la trasformata intera — ma il vantaggio
+massimo ottenibile è di circa **tre punti percentuali**, e su questa istanza non è stato
+osservato in nessuna condizione.
+
+**Non è un risultato che sostenga l'approssimazione come leva pratica su N=21.** È invece
+una delimitazione quantitativa di quanto quella leva possa valere, ricavata da grandezze
+tutte misurate.
