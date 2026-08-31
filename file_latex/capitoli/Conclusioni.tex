@@ -193,15 +193,27 @@ CX. Troncarle sotto una soglia d'angolo dimezza le porte a due qubit, da 49\,661
 sotto una certa qualità delle porte conviene approssimare, sopra conviene la trasformata
 intera.
 
-La misura di quell'incrocio è però il contributo più utile, perché è negativa e
-quantitativa: il vantaggio massimo ottenibile vale circa tre punti percentuali e richiede
-porte a due qubit due ordini di grandezza più accurate di quelle attuali, mentre nel regime
-oggi accessibile nessuna variante supera il pavimento dell'istanza. Poiché la trasformata
-di Fourier è il nucleo condiviso da un'intera famiglia di algoritmi --- stima di fase,
-amplitude estimation, e ogni procedura che estragga informazione spettrale --- una
-metodologia che ne scelga la decomposizione in funzione della topologia e del profilo
-d'errore del dispositivo si applicherebbe ben oltre la fattorizzazione. Questa tesi ne
-stabilisce il perimetro di convenienza; verificarla sull'intera famiglia resta una
-direzione dichiarata, non un risultato acquisito (Sezione~\ref{sec:qft_topologia}).
+La misura di quell'incrocio è però il contributo più utile, perché è quantitativa. Su
+questa istanza il vantaggio massimo vale circa tre punti percentuali e richiederebbe porte
+a due qubit due ordini di grandezza più accurate di quelle attuali; nel regime oggi
+accessibile nessuna variante supera il pavimento dell'istanza, e il circuito di $N=21$ è
+comunque centocinquanta volte più lungo del tempo di coerenza disponibile. Il limite
+appartiene tuttavia all'istanza, non al metodo: ripetendo la misura sulla \textbf{stima
+di fase} --- che della trasformata è l'uso canonico, e che costa decine di porte a due
+qubit anziché decine di migliaia --- la trasformata troncata batte quella piena in
+\textbf{tutti e nove} i confronti eseguiti, con un vantaggio che cresce fino a $+0{,}126$
+su registri da dieci qubit. Il grado ottimo di troncamento non cresce con la dimensione del
+registro mentre il risparmio sì, e le fasi esattamente rappresentabili guadagnano più delle
+altre: quest'ultima regolarità spiega perché su $N=15$, dove l'ordine $r=4$ produce fasi
+esatte in due bit, l'approssimazione risultasse gratuita, e su $N=21$ no.
+
+Poiché la trasformata di Fourier è il nucleo condiviso da un'intera famiglia di algoritmi ---
+stima di fase, amplitude estimation, e ogni procedura che estragga informazione spettrale
+--- il risultato si legge come regola di progetto e non come proprietà della
+fattorizzazione: il grado di troncamento conveniente è \textbf{determinabile in anticipo}
+dai soli conteggi di porte del circuito compilato e dai dati di calibrazione del
+dispositivo, senza eseguire l'algoritmo. La verifica qui condotta impiega però un solo
+dispositivo e poche fasi bersaglio: estenderla ad altre topologie resta il passo successivo
+(Sezione~\ref{sec:qft_topologia}).
 
 \end{onehalfspace}
