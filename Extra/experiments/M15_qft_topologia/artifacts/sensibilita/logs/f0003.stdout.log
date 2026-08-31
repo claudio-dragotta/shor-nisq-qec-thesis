@@ -1,0 +1,18 @@
+M15 -- QFT approssimata, N=21, a=2, n_count=8
+Controllo di correttezza: circuito a grado pieno contro SHA canonico...
+  OK  9647853178cabcdf...
+
+Fattore di rumore: 0.003 (analisi di sensibilita, NON dispositivo reale)
+  2 sottografi scartati per AGI fuori dominio prima di trovarne uno valido
+Layout fisso: [20, 33, 39, 21, 19, 40]... (20 qubit)
+
+2 configurazioni, 4 batch (2 train / 2 holdout)
+
+  k_qpe  k_arith  swap  ecr   depth   P_train   P_holdout
+  ------------------------------------------------------------
+      7        6    si 49661  145669   0.4375    0.3828
+      7        1    si 23178   75785   0.3125    0.2734
+
+Scritto artifacts/sensibilita/results_M15_qft_N21_v1_20260831_152704.json
+Esito primario: differenza +0.0000 IC 95% [-0.1175; +0.1175] -> approximation_worse
+Porte a due qubit: 49661 -> 49661 (+0)

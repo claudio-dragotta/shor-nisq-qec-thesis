@@ -11,6 +11,16 @@
 # ideali; a rumore alto vince la TRONCATA, perche' ha meta' delle porte. Fra i due deve
 # esserci un incrocio, ed e' quello il risultato.
 #
+# SCELTA DEI LIVELLI. Il primo tentativo usava 0,3 / 0,1 / 0,03 e misurava pavimento:
+# con AGI media 0,0104 sui 20 archi del layout, gli errori attesi sono 155 / 52 / 15,5
+# sulla QFT piena da 49.661 ECR. Il circuito e' cenere molto prima. L'incrocio sta dove
+# uno sopravvive e l'altro no, cioe' dove gli errori attesi scendono sotto l'unita':
+#   fattore 0,01  -> 5,2 errori (piena)  2,4 (troncata)
+#   fattore 0,003 -> 1,5                 0,7
+# Si tiene 0,03 come estremo alto, anche perche' la tesi ha gia' mostrato che questo
+# conto e' pessimista: la frazione coerente efficace dava k_eff fra 14 e 20 invece
+# delle 166 porte nominali.
+#
 # ESPLORATIVO: 256 shot per configurazione danno un errore standard di circa 0,04 su
 # holdout. Serve a vedere l'andamento e l'incrocio, non a dare un intervallo stretto.
 #
@@ -23,7 +33,7 @@ PY=/home/claudio/quantum-env/bin/python
 RUN=artifacts/sensibilita
 mkdir -p "$RUN/logs" 2>/dev/null || true
 
-for F in 0.3 0.1 0.03; do
+for F in 0.03 0.01 0.003; do
   ETICHETTA=$(echo "$F" | tr -d '.')
   echo "=== fattore di rumore $F ==="
   $PY -u qft_approssimata.py \
