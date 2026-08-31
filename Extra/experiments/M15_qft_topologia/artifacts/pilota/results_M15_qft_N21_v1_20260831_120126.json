@@ -1,0 +1,221 @@
+{
+  "schema_version": "2.0",
+  "milestone": "M15_qft_approssimata",
+  "revision": "m15-approximate-qft-topology-aware-v1",
+  "timestamp": "2026-08-31T12:01:25.232788+02:00",
+  "seed": 42,
+  "config": {
+    "N": 21,
+    "a": 2,
+    "n_count": 8,
+    "shots": 256,
+    "batches": 2,
+    "holdout_fraction": 0.5,
+    "k_arith_max": 4,
+    "solo_struttura": false
+  },
+  "backend": {
+    "name": "fake_sherbrooke",
+    "class": "FakeSherbrooke",
+    "num_qubits": 127,
+    "calibration_sha256": "04b6a48ff808e71fee3ba0770d87079fcac7b50abb7cc931f90e632e6d9f2c11"
+  },
+  "software_versions": {
+    "qiskit": "2.5.0",
+    "qiskit-aer": "0.17.2",
+    "qiskit-ibm-runtime": "0.48.0",
+    "numpy": "2.5.1",
+    "scipy": "1.18.0"
+  },
+  "manifest": {
+    "circuit_revision": "shor-qpe-v2-amod15-correct",
+    "noise_model_revision": "uniform-rz-virtual-v2",
+    "postprocess_revision": "seeded-sha256-tie-break-v1",
+    "circuit_sha256": "9647853178cabcdf6a07536f2e14cc349a84fafb148d1f096cb0b94750c9eb34",
+    "basis_gates": [
+      "rz",
+      "sx",
+      "x",
+      "cx"
+    ],
+    "optimization_level": 2,
+    "seed_transpiler": 20260819,
+    "depth": 23081,
+    "size": 49002,
+    "gate_counts": {
+      "rz": 23993,
+      "cx": 21036,
+      "sx": 2971,
+      "x": 994,
+      "measure": 8,
+      "barrier": 1
+    },
+    "python": "3.12.3",
+    "packages": {
+      "numpy": "2.5.1",
+      "qiskit": "2.5.0",
+      "qiskit-aer": "0.17.2",
+      "scikit-learn": "1.9.0"
+    }
+  },
+  "canonical_circuit_sha256": "9647853178cabcdf6a07536f2e14cc349a84fafb148d1f096cb0b94750c9eb34",
+  "noise_model": {
+    "revision": "m11-target-agi-depolarizing-only-v2",
+    "description": "per-qubit depolarizing from calibration AGI, symmetric readout, rz virtual"
+  },
+  "design": {
+    "layout": [
+      20,
+      33,
+      39,
+      21,
+      19,
+      40,
+      22,
+      41,
+      42,
+      43,
+      44,
+      18,
+      23,
+      34,
+      24,
+      14,
+      38,
+      0,
+      45,
+      46
+    ],
+    "layout_scartati_agi_fuori_dominio": [
+      {
+        "layout": [
+          11,
+          12,
+          13,
+          10,
+          9,
+          17,
+          8,
+          30,
+          7,
+          6,
+          29,
+          31,
+          28,
+          32,
+          35,
+          36,
+          27,
+          5,
+          51,
+          26
+        ],
+        "motivo": "Average gate infidelity fuori dominio: 1.0"
+      },
+      {
+        "layout": [
+          63,
+          62,
+          61,
+          72,
+          81,
+          80,
+          64,
+          82,
+          65,
+          66,
+          67,
+          60,
+          53,
+          68,
+          83,
+          41,
+          84,
+          85,
+          54,
+          73
+        ],
+        "motivo": "Average gate infidelity fuori dominio: 1.0"
+      }
+    ],
+    "n_train_batches": 1,
+    "n_holdout_batches": 1,
+    "shot_schedule": [
+      128,
+      128
+    ],
+    "seed_schedule": [
+      2401666175,
+      1459527904
+    ]
+  },
+  "analysis": {
+    "preregistered_rule": "select on train partition, report on disjoint holdout partition",
+    "selected_on_train": {
+      "k_qpe": 7,
+      "k_arith": 1,
+      "elimina_swap": false
+    },
+    "selected_holdout": {
+      "P_success": 0.28125,
+      "P_success_se": 0.039740214744874616,
+      "successes": 36,
+      "shots": 128,
+      "n_batches": 1
+    },
+    "caveat_N15_degenerate": false
+  },
+  "points": [
+    {
+      "k_qpe": 7,
+      "k_arith": 1,
+      "elimina_swap": false,
+      "is_riferimento": false,
+      "depth": 75785,
+      "size": 172548,
+      "n_ecr": 23178,
+      "operations": {
+        "rz": 88900,
+        "sx": 58215,
+        "ecr": 23178,
+        "x": 2247,
+        "measure": 8,
+        "barrier": 1
+      },
+      "punteggio_fedelta": 1.0,
+      "batches": [
+        {
+          "batch": 0,
+          "partition": "train",
+          "seed_simulator": 2401666175,
+          "shots": 128,
+          "successes": 39,
+          "P_success": 0.3046875
+        },
+        {
+          "batch": 1,
+          "partition": "holdout",
+          "seed_simulator": 1459527904,
+          "shots": 128,
+          "successes": 36,
+          "P_success": 0.28125
+        }
+      ],
+      "train": {
+        "P_success": 0.3046875,
+        "P_success_se": 0.04068294207801406,
+        "successes": 39,
+        "shots": 128,
+        "n_batches": 1
+      },
+      "holdout": {
+        "P_success": 0.28125,
+        "P_success_se": 0.039740214744874616,
+        "successes": 36,
+        "shots": 128,
+        "n_batches": 1
+      },
+      "P_success": 0.29296875
+    }
+  ]
+}

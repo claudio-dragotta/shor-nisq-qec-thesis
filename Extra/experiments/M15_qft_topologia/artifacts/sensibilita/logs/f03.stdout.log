@@ -1,0 +1,12 @@
+M15 -- QFT approssimata, N=21, a=2, n_count=8
+Controllo di correttezza: circuito a grado pieno contro SHA canonico...
+  OK  9647853178cabcdf...
+
+Fattore di rumore: 0.3 (analisi di sensibilita, NON dispositivo reale)
+  2 sottografi scartati per AGI fuori dominio prima di trovarne uno valido
+Layout fisso: [20, 33, 39, 21, 19, 40]... (20 qubit)
+
+2 configurazioni, 4 batch (2 train / 2 holdout)
+
+  k_qpe  k_arith  swap  ecr   depth   P_train   P_holdout
+  ------------------------------------------------------------

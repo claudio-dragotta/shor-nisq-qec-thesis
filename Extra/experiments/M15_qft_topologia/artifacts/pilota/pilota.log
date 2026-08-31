@@ -1,0 +1,14 @@
+M15 -- QFT approssimata, N=21, a=2, n_count=8
+Controllo di correttezza: circuito a grado pieno contro SHA canonico...
+  OK  9647853178cabcdf...
+
+  2 sottografi scartati per AGI fuori dominio prima di trovarne uno valido
+Layout fisso: [20, 33, 39, 21, 19, 40]... (20 qubit)
+
+1 configurazioni, 2 batch (1 train / 1 holdout)
+
+  k_qpe  k_arith  swap  ecr   depth   P_train   P_holdout
+  ------------------------------------------------------------
+      7        1    si 23178   75785   0.3047    0.2812
+
+Scritto artifacts/pilota/results_M15_qft_N21_v1_20260831_120126.json
