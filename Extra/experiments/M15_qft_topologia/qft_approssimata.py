@@ -223,6 +223,32 @@ def verifica_circuito_canonico(N, a, n_count):
 # Misura
 # --------------------------------------------------------------------------------------
 
+
+def scala_calibrazione(cal, fattore):
+    """Copia della calibrazione con tutti i tassi d'errore moltiplicati per ``fattore``.
+
+    Si scala il dato di calibrazione, non il modello, cosi' da riusare
+    ``noise_model_layout`` senza duplicarlo. Il fattore 1.0 restituisce la
+    calibrazione originale invariata.
+
+    ATTENZIONE alla comparabilita': la selezione del layout deve usare la
+    calibrazione NON scalata. Abbassando il rumore, gli archi con AGI pari a 1 --
+    quelli che fanno scartare un sottografo -- rientrerebbero nel dominio, e il
+    layout scelto cambierebbe da un livello all'altro rendendo i confronti
+    incommensurabili.
+    """
+    if fattore == 1.0:
+        return cal
+    if not 0.0 < fattore <= 1.0:
+        raise ValueError('fattore-rumore deve stare in (0, 1]')
+    scalata = dict(cal)
+    for chiave in ('sx_err', 'x_err', 'readout'):
+        if chiave in cal:
+            scalata[chiave] = {q: float(v) * fattore for q, v in cal[chiave].items()}
+    if 'ecr' in cal:
+        scalata['ecr'] = {k: float(v) * fattore for k, v in cal['ecr'].items()}
+    return scalata
+
 def conta_successi(counts, N, a, n_count):
     """Successi = esiti da cui il post-processing estrae un fattore. Non e' fedelta'."""
     successi, totale = 0, sum(counts.values())
@@ -400,6 +426,8 @@ def main():
                          'Esclude il braccio elimina_swap, dimostrato identico.')
     ap.add_argument('--checkpoint', default=None,
                     help='file di ripresa; scritto dopo ogni configurazione')
+    ap.add_argument('--fattore-rumore', type=float, default=1.0,
+                    help='scala i tassi d errore di calibrazione; 1.0 = calibrazione reale')
     ap.add_argument('--candidati-layout', type=int, default=20,
                     help='sottografi da campionare per trovarne uno con AGI nel dominio')
     ap.add_argument('--solo-struttura', action='store_true',
@@ -423,6 +451,12 @@ def main():
     cal_hash = P.calibration_hash(cal)
     adj = P.coupling_non_orientata(cal)
 
+    # Il layout si sceglie sulla calibrazione REALE (vedi scala_calibrazione);
+    # solo il modello di rumore usa quella scalata.
+    cal_rumore = scala_calibrazione(cal, args.fattore_rumore)
+    if args.fattore_rumore != 1.0:
+        print(f'Fattore di rumore: {args.fattore_rumore} (analisi di sensibilita, NON dispositivo reale)')
+
     # Layout fisso: M15 non fa variare il collocamento -- quello e' l'oggetto di M11.
     n_qubits_circuito = shor_circuit_approx(args.N, a, n_count,
                                             n_count - 1, n_b, False).num_qubits
@@ -436,10 +470,18 @@ def main():
     layout, coupling, noise_model, scartati = None, None, None, []
     for candidato in candidati:
         try:
-            nm = None if args.solo_struttura else P.noise_model_layout(candidato, cal)
+            # La VALIDITA' del sottografo si giudica sempre sulla calibrazione reale.
+            # Se la si giudicasse su quella scalata, abbassando il rumore gli archi con
+            # AGI pari a 1 rientrerebbero nel dominio e il layout scelto cambierebbe da
+            # un livello di rumore all'altro: i confronti non sarebbero piu'
+            # commensurabili. Verificato il 31/08/2026, dopo che un primo tentativo
+            # sceglieva [11,12,13,...] a fattore 0,3 contro [20,33,39,...] a fattore 1.
+            P.noise_model_layout(candidato, cal)
         except ValueError as exc:
             scartati.append({'layout': [int(q) for q in candidato], 'motivo': str(exc)})
             continue
+        nm = (None if args.solo_struttura else
+              P.noise_model_layout(candidato, cal_rumore))
         layout, coupling, noise_model = candidato, P.coupling_ridotta(candidato, cal), nm
         break
     if layout is None:
@@ -469,6 +511,7 @@ def main():
     identita = {'milestone': MILESTONE, 'revision': REVISION, 'N': args.N, 'a': a,
                 'n_count': n_count, 'shots': args.shots, 'batches': args.batches,
                 'holdout_fraction': args.holdout_fraction, 'seed': args.seed,
+                'fattore_rumore': args.fattore_rumore,
                 'layout': [int(q) for q in layout],
                 'config': [[c['k_qpe'], c['k_arith'], c['elimina_swap']]
                            for c in config]}
@@ -561,6 +604,7 @@ def main():
                    'shots': args.shots, 'batches': args.batches,
                    'holdout_fraction': args.holdout_fraction,
                    'k_arith_max': args.k_arith_max,
+                   'fattore_rumore': args.fattore_rumore,
                    'solo_struttura': bool(args.solo_struttura)},
         'backend': {'name': backend.name, 'class': type(backend).__name__,
                     'num_qubits': int(backend.num_qubits),
@@ -569,6 +613,7 @@ def main():
         'manifest': experiment_manifest(args.N, a, n_count),
         'canonical_circuit_sha256': sha_canonico,
         'noise_model': {'revision': P.NOISE_MODEL_REVISION,
+                        'noise_scaling_factor': args.fattore_rumore,
                         'description': 'per-qubit depolarizing from calibration AGI, '
                                        'symmetric readout, rz virtual'},
         'design': {'layout': [int(q) for q in layout],
