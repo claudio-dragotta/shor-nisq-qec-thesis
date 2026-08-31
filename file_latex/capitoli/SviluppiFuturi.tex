@@ -34,6 +34,56 @@ quindi stratificare sia la larghezza sia l'ordine e dichiarare a priori
 quale delle due variabili intende studiare.
 
 % -----------------------------------------------
+\section{Ottimizzazione della Trasformata di Fourier Consapevole della Topologia}
+\label{sec:qft_topologia}
+
+La direzione precedente indica l'approximate QFT fra le varianti da esplorare.
+Una campagna esplorativa condotta a chiusura del lavoro ne ha misurato il margine, e il
+risultato merita di essere riportato perché delimita l'intera famiglia di ottimizzazioni
+di questo tipo.
+
+Il punto di partenza è che nell'aritmetica di Beauregard il costo non si concentra nella
+trasformata finale del period finding, ma nelle QFT interne agli addizionatori modulari:
+per $N=21$ la compilazione conta 11\,436 porte \texttt{cp} contro 3\,406 \texttt{cx}, e la
+trasformata conclusiva vale 28 rotazioni sulle circa 47\,000 porte complessive. Troncare
+le rotazioni sotto una soglia d'angolo negli addizionatori porta le porte a due qubit da
+49\,661 a 23\,178, cioè le dimezza; troncare quella finale non sposta l'ordine di
+grandezza. Il primo dato utile è dunque \emph{dove} agire.
+
+Il risparmio non è però gratuito. Sulla stessa istanza la resa ideale scende da $0{,}4667$
+a $0{,}4013$: circa sei punti e mezzo pagati in precisione algoritmica. Ne segue in linea
+di principio un incrocio, perché le due quantità scalano diversamente con la qualità
+delle porte: sotto una certa soglia di errore conviene approssimare, sopra conviene la
+trasformata intera.
+
+La misura colloca quell'incrocio e ne quantifica l'ampiezza. Il vantaggio massimo ottenibile
+dalla variante troncata è di circa \textbf{tre punti percentuali}, e si realizza soltanto
+con porte a due qubit circa \textbf{duecento volte più accurate} di quelle oggi
+disponibili. Nel regime accessibile alla simulazione con calibrazione realistica nessuna
+delle configurazioni esaminate supera il pavimento uniforme dell'istanza, e nel solo
+punto in cui un segnale emerge è la trasformata \emph{piena} a prevalere. Il limite è
+strutturale: dipende dal rapporto fra i conteggi di porte e dalla penalità ideale, non dal
+livello di rumore scelto.
+
+Questa delimitazione ha una portata più generale della fattorizzazione. La trasformata di
+Fourier quantistica è il nucleo comune di un'intera famiglia di algoritmi --- stima di fase,
+amplitude estimation, e in generale ogni procedura che estragga informazione spettrale ---
+e in tutti questi casi il costo si concentra nelle stesse rotazioni controllate di piccolo
+angolo. Una metodologia che scelga la decomposizione della trasformata in funzione della
+topologia e del profilo d'errore del dispositivo, riducendo SWAP e profondità dove il
+routing li impone, si applicherebbe quindi all'intera famiglia e non alla sola istanza
+studiata qui. Va però detto con chiarezza che \textbf{questa estensione non è stata
+verificata sperimentalmente} in questo lavoro: la misura riguarda Shor su $N=21$, e la
+generalizzazione resta una direzione, non un risultato.
+
+Il precedente più vicino è la compilazione \emph{noise-adaptive}, che ordina o vincola il
+collocamento del circuito usando i dati di calibrazione~\cite{murali2019, tannu2019}. La
+differenza rispetto a quella linea, e il motivo per cui resta spazio, è che tali metodi
+ottimizzano la fedeltà del circuito, mentre per un algoritmo come Shor conta soltanto che
+il post-processing restituisca i fattori. I due obiettivi non coincidono, e la campagna
+sulla compilazione riportata in Appendice~\ref{app:fase2} misura quanto non coincidano.
+
+% -----------------------------------------------
 \section{Validazione su Hardware Quantistico Reale}
 \label{sec:hw_reale}
 

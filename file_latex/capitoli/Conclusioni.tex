@@ -183,4 +183,25 @@ richiede operazioni logiche fault-tolerant; l'apprendimento può contribuire
 alla decodifica solo dove dispone di una struttura che il decoder
 analitico non rappresenta.
 
+Lo stesso criterio, applicato a monte anziché a valle, delimita la direzione con cui il
+lavoro si chiude. Se il post-processing non può recuperare informazione già distrutta, la
+leva rimasta è intervenire sul circuito prima che il rumore agisca: e nell'aritmetica
+modulare il costo si concentra in un punto solo, le trasformate di Fourier interne agli
+addizionatori, dove per $N=21$ stanno 11\,436 rotazioni controllate contro 3\,406 porte
+CX. Troncarle sotto una soglia d'angolo dimezza le porte a due qubit, da 49\,661 a
+23\,178, al prezzo di sei punti e mezzo di resa ideale. Il compromesso genera un incrocio:
+sotto una certa qualità delle porte conviene approssimare, sopra conviene la trasformata
+intera.
+
+La misura di quell'incrocio è però il contributo più utile, perché è negativa e
+quantitativa: il vantaggio massimo ottenibile vale circa tre punti percentuali e richiede
+porte a due qubit due ordini di grandezza più accurate di quelle attuali, mentre nel regime
+oggi accessibile nessuna variante supera il pavimento dell'istanza. Poiché la trasformata
+di Fourier è il nucleo condiviso da un'intera famiglia di algoritmi --- stima di fase,
+amplitude estimation, e ogni procedura che estragga informazione spettrale --- una
+metodologia che ne scelga la decomposizione in funzione della topologia e del profilo
+d'errore del dispositivo si applicherebbe ben oltre la fattorizzazione. Questa tesi ne
+stabilisce il perimetro di convenienza; verificarla sull'intera famiglia resta una
+direzione dichiarata, non un risultato acquisito (Sezione~\ref{sec:qft_topologia}).
+
 \end{onehalfspace}
