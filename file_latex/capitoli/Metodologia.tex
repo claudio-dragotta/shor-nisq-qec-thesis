@@ -23,6 +23,21 @@ istanze $N=21$, $a=2$, e $N=35$, $a=6$, sono validate idealmente mediante
 truth table, pulizia delle ancille e distribuzione QPE, ma sono escluse dal
 campionamento rumoroso per il costo della simulazione.
 
+La scelta di quella costruzione non è accessoria. Realizzare l'esponenziazione modulare
+come operatore unitario denso, sintetizzato dal transpiler a partire dalla sua matrice,
+costa $O(4^k)$ porte elementari su $k$ qubit~\cite{Barenco1995}: un andamento esponenziale
+che rende il circuito impraticabile non appena l'istanza cresce. La decomposizione di
+Beauregard~\cite{beauregard2002} evita la sintesi densa costruendo l'aritmetica modulare
+\emph{nel dominio della} \ac{QFT} con addizionatori di Draper, e ottiene $O(n^3)$ porte
+elementari su $2n+3$ qubit per un modulo di $n$ bit. Anche così il costo resta elevato: per
+$N=21$, $a=2$ e otto qubit di conteggio la compilazione congiunta nella base
+\texttt{rz/sx/x/cx} produce 21\,036 porte \ac{CX} e profondità 23\,081.
+
+Che l'aritmetica viva dentro trasformate di Fourier ha una conseguenza che ricorre nel
+seguito: il costo dominante non sta nella trasformata finale della \ac{QPE}, ma nelle
+trasformate interne agli addizionatori, ed è lì che un'eventuale approssimazione deve agire
+per incidere.
+
 \begin{table}[!htbp]
 \centering
 \small
