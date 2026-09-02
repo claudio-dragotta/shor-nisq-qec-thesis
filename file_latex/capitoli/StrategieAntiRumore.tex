@@ -142,13 +142,24 @@ non produce un risultato leggibile, indipendentemente dal numero di qubit dispon
 Ridurre la profondità a parità di funzione è quindi una strategia anti-rumore a pieno
 titolo, che agisce sulla causa invece che sull'effetto.
 
-La letteratura recente percorre la direzione complementare. Chevignard, Fouque e
-Schrottenloher~\cite{chevignard2025} mostrano che l'aritmetica modulare può essere
-calcolata in forma \emph{approssimata} riducendo il numero di \textbf{qubit} logici,
-e su quel risultato si fonda la stima di Gidney~\cite{gidney2025}. Le due leve sono
-ortogonali --- lì si approssima l'aritmetica per risparmiare qubit, qui la trasformata
-per risparmiare porte --- e agiscono su vincoli diversi: il costo di realizzare i qubit
-da un lato, la profondità rispetto alla coerenza dall'altro.
+La letteratura recente percorre una direzione diversa, e vale la pena confrontarla con
+precisione. Chevignard, Fouque e Schrottenloher~\cite{chevignard2025} calcolano
+l'aritmetica modulare in forma \emph{approssimata} tramite un sistema di residui, e
+riducono i \textbf{qubit} logici da circa $2n$ a $n/2 + o(n)$: per RSA-2048 stimano 1730
+qubit contro i 6144 dell'implementazione di riferimento.
+
+Il risparmio non è però gratuito, e sono gli autori stessi a dichiararlo: il loro circuito
+richiede $2^{35{,}5}$ porte Toffoli e in media quaranta esecuzioni, per un totale di
+$2^{40{,}9}$, contro le $2^{31{,}3}$ di una singola esecuzione del riferimento. Comprano
+cioè qubit \emph{pagandoli in porte}, muovendosi nella direzione opposta a quella seguita
+qui. Un lavoro successivo~\cite{gidney2025} recupera gran parte di quel costo con
+ottimizzazioni aritmetiche, arrivando per la stessa istanza a 1399 qubit logici.
+
+Le due strategie rispondono dunque a vincoli distinti: il costo di realizzare e mantenere
+i qubit da un lato, la profondità rispetto al tempo di coerenza dall'altro. Nel regime
+fault-tolerant a cui quelle stime si riferiscono il primo vincolo domina; nel regime
+\ac{NISQ} considerato in questo lavoro domina il secondo, ed è la ragione per cui qui si
+ottimizzano le porte.
 
 I risultati quantitativi e il perimetro entro cui valgono sono ripresi nel
 Capitolo~\ref{chap:conclusioni} e nella Sezione~\ref{sec:qft_topologia}.
