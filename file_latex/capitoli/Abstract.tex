@@ -228,6 +228,13 @@ $0{,}2459$ a $p_g=0{,}5$, cioè il pavimento uniforme
 $P_{\mathrm{unif}}=63/256=0{,}2461$. La
 curva non descrive un algoritmo che fallisce, ma uno che degrada verso l'estrazione casuale, con
 entrambi gli asintoti fissati in anticipo dalla teoria.
+\textbf{Trasformata approssimata.} Una verifica esplorativa condotta a chiusura del lavoro
+mostra che troncare le rotazioni della \ac{QFT} sotto una soglia d'angolo dimezza le porte
+a due qubit del circuito per $N=21$ (da 49\,661 a 23\,178) e, sulla stima di fase, supera la
+trasformata piena in tutti e nove i confronti eseguiti su tre dimensioni di registro, fino a
+$+0{,}126$ su dieci qubit di conteggio. Il grado ottimo di troncamento non cresce con il
+registro, mentre il risparmio sì.
+
 
 \section*{Discussione e Conclusioni}
 
@@ -253,6 +260,12 @@ QEC valgono entro il modello Clifford--Pauli, indicato come potenzialmente
 ottimistico~\cite{plaquette2026}; l'analisi di sensibilità è un proxy per gate, non una simulazione
 fault-tolerant. Rispetto al piano, $N=21$ e $N=35$ restano validati solo idealmente ed esclusi per
 costo dalle campagne rumorose, e l'accelerazione GPU prevista non è stata impiegata.
+Sul fronte delle risorse la letteratura recente percorre l'asse opposto: approssimando
+l'aritmetica modulare si scende per RSA-2048 a 1730 qubit logici contro 6144, ma pagando
+$2^{40{,}9}$ porte Toffoli contro $2^{31{,}3}$~\cite{chevignard2025}. Qui si ottimizzano invece
+le porte, perché nel regime \ac{NISQ} il vincolo dominante è la profondità rispetto al tempo
+di coerenza e non il numero di qubit.
+
 
 Gli sviluppi futuri discendono dai limiti --- mappatura per operazione logica, rumore
 \emph{channel-first}, decoder ricorrenti o a grafo~\cite{alphaqubit2024} --- ma la ricaduta più

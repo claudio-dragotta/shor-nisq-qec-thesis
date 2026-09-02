@@ -22,6 +22,12 @@ QEC valgono entro il modello Clifford--Pauli, indicato come potenzialmente
 ottimistico~\cite{plaquette2026}; l'analisi di sensibilità è un proxy per gate, non una simulazione
 fault-tolerant. Rispetto al piano, $N=21$ e $N=35$ restano validati solo idealmente ed esclusi per
 costo dalle campagne rumorose, e l'accelerazione GPU prevista non è stata impiegata.
+Sul fronte delle risorse la letteratura recente percorre l'asse opposto: approssimando
+l'aritmetica modulare si scende per RSA-2048 a 1730 qubit logici contro 6144, ma pagando
+$2^{40{,}9}$ porte Toffoli contro $2^{31{,}3}$~\cite{chevignard2025}. Qui si ottimizzano invece
+le porte, perché nel regime NISQ il vincolo dominante è la profondità rispetto al tempo
+di coerenza e non il numero di qubit.
+
 
 Gli sviluppi futuri discendono dai limiti --- mappatura per operazione logica, rumore
 \emph{channel-first}, decoder ricorrenti o a grafo~\cite{alphaqubit2024} --- ma la ricaduta più
