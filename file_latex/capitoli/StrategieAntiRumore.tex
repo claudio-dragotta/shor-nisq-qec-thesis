@@ -117,6 +117,45 @@ Chiarito il quadro teorico, è importante spiegare concretamente cosa porta il m
 
 La prima fase sperimentale verifica questa ipotesi con un confronto appaiato. La riduzione delle iterazioni si ottiene davvero (da $\bar{M}_1=1.37$ a $\bar{M}=1.00$ nello scenario moderato), ma l'ablazione attribuisce il beneficio alla ricerca multi-candidato TOP-K: aggiungere il classificatore aumenta il costo rispetto a TOP-4 in entrambi gli scenari. Il risultato negativo delimita il solo filtro \ac{ML} applicato a questo output e a queste etichette; non è una conclusione generale sull'apprendimento per la mitigazione o la decodifica.
 
+\section{Una Strategia sul Circuito: la Trasformata di Fourier Approssimata}
+\label{sec:aqft_strategia}
+
+Le strategie viste finora agiscono sul rumore o sui risultati. Una leva distinta agisce
+invece sul \emph{circuito}, prima che il rumore intervenga, ed è stata valutata in fase
+di sperimentazione con alcuni test preliminari, riportati qui per completezza e ripresi
+nelle conclusioni.
+
+La trasformata di Fourier quantistica impiega rotazioni controllate il cui angolo decresce
+esponenzialmente con la distanza fra i qubit: le ultime valgono frazioni di grado, ma
+costano quanto le prime. Scartare quelle sotto una soglia --- la \emph{trasformata
+approssimata} --- riduce il numero di porte al prezzo di una perdita di precisione
+algoritmica. Sul circuito per $N=21$ il troncamento delle trasformate interne agli
+addizionatori porta le porte a due qubit da 49\,661 a 23\,178, dimezzandole; sulla stima
+di fase, misurata su tre dimensioni di registro, la trasformata troncata supera quella
+piena in tutti e nove i confronti eseguiti.
+
+Il motivo per cui la leva agisce sulle \emph{porte} e non sui qubit merita di essere
+esplicitato, perché è il vincolo dominante nel regime \ac{NISQ}. Ogni porta ha una durata
+propria, e la somma lungo il cammino critico deve restare piccola rispetto ai tempi di
+coerenza $T_1$ e $T_2$: un circuito che impieghi più tempo di quanto lo stato sopravviva
+non produce un risultato leggibile, indipendentemente dal numero di qubit disponibili.
+Ridurre la profondità a parità di funzione è quindi una strategia anti-rumore a pieno
+titolo, che agisce sulla causa invece che sull'effetto.
+
+La letteratura recente percorre la direzione complementare. Chevignard, Fouque e
+Schrottenloher~\cite{chevignard2025} mostrano che l'aritmetica modulare può essere
+calcolata in forma \emph{approssimata} riducendo il numero di \textbf{qubit} logici,
+e su quel risultato si fonda la stima di Gidney~\cite{gidney2025}. Le due leve sono
+ortogonali --- lì si approssima l'aritmetica per risparmiare qubit, qui la trasformata
+per risparmiare porte --- e agiscono su vincoli diversi: il costo di realizzare i qubit
+da un lato, la profondità rispetto alla coerenza dall'altro.
+
+I risultati quantitativi e il perimetro entro cui valgono sono ripresi nel
+Capitolo~\ref{chap:conclusioni} e nella Sezione~\ref{sec:qft_topologia}.
+
+% -----------------------------------------------
+\section{Dall'Esito della Prima Fase alla Struttura del Lavoro}
+
 È questo esito a determinare la struttura del resto dell'elaborato. Il Capitolo~\ref{chap:metodologia} descrive gli strumenti, l'architettura e l'implementazione del sistema sperimentale, e il Capitolo~\ref{chap:risultati} riporta la verifica con la relativa ablazione. L'esperimento mostra che l'istogramma contiene candidati utili, sfruttati da TOP-4, ma non che un classificatore su quelle etichette aggiunga informazione alla regola semplice. Per intervenire sugli errori che il post-processing non può recuperare, il \textbf{nucleo del lavoro} si sposta durante il calcolo e occupa i tre capitoli successivi: la costruzione e la caratterizzazione dei codici correttori, dal codice a ripetizione al codice di Steane (Capitolo~\ref{chap:qec}); il surface code, la stima sperimentale dell'errore logico e il confronto fra decodifica analitica e appresa (Capitolo~\ref{chap:surface}); infine, una sensibilità fenomenologica di Shor mantenuta esplicitamente distinta dai tassi QEC per ciclo (Capitolo~\ref{chap:integrazione}). In questa seconda parte i metodi appresi e la \ac{QEC} vengono confrontati entro i rispettivi contratti, senza identificarli come un'unica disciplina.
 
 \end{onehalfspace}

@@ -92,6 +92,32 @@ senza eseguire l'algoritmo. È questa la forma in cui il contributo si generaliz
 proprietà della fattorizzazione, ma una regola di progetto per la trasformata di Fourier
 quantistica e quindi per la famiglia di algoritmi che la contiene.
 
+Tre direzioni indipendenti convergono qui, e il passo successivo più promettente è
+\textbf{comporle}. La prima è quella misurata in questo lavoro: approssimare la
+trasformata per ridurre le \emph{porte}, e con esse la profondità rispetto al tempo di
+coerenza. La seconda approssima l'aritmetica modulare per ridurre i \emph{qubit}
+logici~\cite{chevignard2025}, ed è la base delle stime di risorse più recenti~\cite{gidney2025}.
+La terza riorganizza la stima di fase in blocchi indipendenti, riducendo il \emph{registro}
+di conteggio a pochi qubit~\cite{shukla2026}.
+
+Agiscono su tre grandezze distinte --- porte, qubit di lavoro, qubit di conteggio --- e
+non si ostacolano a vicenda: nulla, in linea di principio, impedisce di troncare la
+trasformata di un circuito che già usi aritmetica approssimata e un registro di fase
+ridotto. Verificare se i guadagni si sommino, o se una delle leve eroda il margine delle
+altre, richiede un disegno sperimentale che le vari congiuntamente ed è la domanda che
+questo lavoro lascia aperta con maggiore fiducia, perché le tre riduzioni sono ciascuna
+già documentata.
+
+Va infine osservato che la trasformata di Fourier quantistica non è una particolarità
+della fattorizzazione. Compare nella stima di fase, nell'amplitude estimation e nel
+conteggio quantistico, nella risoluzione di sistemi lineari, nel problema del sottogruppo
+nascosto di cui Shor è un caso particolare, e nelle simulazioni che alternano dominio
+delle posizioni e dei momenti. In tutti questi casi il costo si concentra nelle stesse
+rotazioni controllate di piccolo angolo, e la regola di progetto ricavata qui --- scegliere
+il grado di troncamento dai conteggi di porte e dai dati di calibrazione, prima di
+eseguire --- si applicherebbe senza modifiche sostanziali. È il motivo per cui il
+contributo va letto come metodologico e non come risultato sulla fattorizzazione.
+
 I limiti della verifica vanno però dichiarati. Le misure usano un layout per ciascuna
 dimensione, una sola snapshot di calibrazione e tre fasi bersaglio; il confronto è
 appaiato, sugli stessi batch e con gli stessi semi, quindi il contrasto interno è pulito,
