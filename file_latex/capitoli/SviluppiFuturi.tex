@@ -100,13 +100,22 @@ logici~\cite{chevignard2025}, ed è la base delle stime di risorse più recenti~
 La terza riorganizza la stima di fase in blocchi indipendenti, riducendo il \emph{registro}
 di conteggio a pochi qubit~\cite{shukla2026}.
 
-Agiscono su tre grandezze distinte --- porte, qubit di lavoro, qubit di conteggio --- e
-non si ostacolano a vicenda: nulla, in linea di principio, impedisce di troncare la
-trasformata di un circuito che già usi aritmetica approssimata e un registro di fase
-ridotto. Verificare se i guadagni si sommino, o se una delle leve eroda il margine delle
-altre, richiede un disegno sperimentale che le vari congiuntamente ed è la domanda che
-questo lavoro lascia aperta con maggiore fiducia, perché le tre riduzioni sono ciascuna
-già documentata.
+Agiscono su tre grandezze distinte --- porte, qubit di lavoro, qubit di conteggio --- ma
+sarebbe un errore darle per semplicemente additive. La riduzione dei qubit di lavoro si
+ottiene infatti \emph{spendendo} porte: per RSA-2048 il conteggio Toffoli complessivo
+passa da $2^{31{,}3}$ a $2^{40{,}9}$ a fronte del calo da 6144 a 1730 qubit
+logici~\cite{chevignard2025}, e un lavoro successivo ne recupera buona parte con
+ottimizzazioni aritmetiche~\cite{gidney2025}. Comporre quella leva con un troncamento
+della trasformata significa quindi agire due volte, in versi opposti, sulla stessa
+grandezza.
+
+La terza direzione è invece dichiarata complementare dagli autori stessi, che la
+presentano come rivolta allo strato di stima di fase anziché a quello
+aritmetico~\cite{shukla2026}: il registro di conteggio scende da $2n+1$ a tre o quattro
+qubit lasciando invariato il registro di lavoro. Determinare se i tre guadagni si sommino
+davvero, e a quale prezzo in profondità, richiede un disegno che li vari congiuntamente ed
+è la domanda che questo lavoro lascia aperta con maggiore fiducia, perché le tre riduzioni
+sono ciascuna già documentata e quantificata.
 
 Va infine osservato che la trasformata di Fourier quantistica non è una particolarità
 della fattorizzazione. Compare nella stima di fase, nell'amplitude estimation e nel
