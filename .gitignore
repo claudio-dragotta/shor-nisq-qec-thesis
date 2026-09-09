@@ -38,3 +38,7 @@ file_latex_sommario/*.synctex.gz
 file_latex_sommario/*.fdb_latexmk
 file_latex_sommario/*.fls
 file_latex_sommario/main.pdf
+
+# Anteprime .png dei generatori: rigenerabili da figure_src/*.py.
+# Il deliverable versionato e' il .pdf in file_latex/figure/.
+figure_src/anteprime/
