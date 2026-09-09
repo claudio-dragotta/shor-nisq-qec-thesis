@@ -6,9 +6,11 @@ soglie di F1 e AUC fissate a priori e resta inutile, perché scarta istogrammi c
 risolto. Sulla sindrome, dove il dato conserva una struttura locale più ricca del solo istogramma
 finale, la stessa tecnologia guadagna, ma solo nella forma ibrida --- la rete affianca il matching
 invece di sostituirlo --- e solo finché il rumore contiene correlazioni che il decoder analitico non
-rappresenta. Il criterio unificante è quindi verificabile: un modello appreso
-aggiunge valore quando sfrutta informazione che il metodo di riferimento lascia inutilizzata, non
-quando ne replica la regola decisionale.
+rappresenta. Il criterio unificante è verificabile entro il perimetro misurato: un
+modello appreso aggiunge valore quando sfrutta informazione che il metodo di riferimento
+lascia inutilizzata, non quando ne replica la regola decisionale. Il braccio negativo dice
+che cosa non si ottiene con le risorse di questo lavoro, e non si estende ai decoder
+appresi in generale.
 
 L'autovalutazione riguarda il metodo: senza il braccio $\pi_4$ la riduzione da $1{,}37$ a $1{,}00$
 sarebbe stata attribuita al classificatore, un falso positivo del tutto presentabile; l'audit
@@ -21,7 +23,10 @@ post-processing permissivo; le stime
 QEC valgono entro il modello Clifford--Pauli, indicato come potenzialmente
 ottimistico~\cite{plaquette2026}; l'analisi di sensibilità è un proxy per gate, non una simulazione
 fault-tolerant. Rispetto al piano, $N=21$ e $N=35$ restano validati solo idealmente ed esclusi per
-costo dalle campagne rumorose, e l'accelerazione GPU prevista non è stata impiegata.
+costo dalle campagne rumorose, l'accelerazione GPU prevista non è stata impiegata e nessun esperimento è stato eseguito su
+hardware reale: l'accesso a una macchina è stato valutato e scartato d'accordo con il
+relatore, sicché tutta la validazione poggia su modelli di rumore e snapshot di
+calibrazione.
 Sul fronte delle risorse la letteratura recente percorre l'asse opposto: approssimando
 l'aritmetica modulare si scende per RSA-2048 a 1730 qubit logici contro 6144, ma pagando
 $2^{40{,}9}$ porte Toffoli contro $2^{31{,}3}$~\cite{chevignard2025}. Qui si ottimizzano invece
