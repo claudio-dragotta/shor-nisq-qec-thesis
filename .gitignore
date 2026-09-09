@@ -44,3 +44,7 @@ file_latex_sommario/main.pdf
 # Anteprime .png dei generatori: rigenerabili da figure_src/*.py.
 # Il deliverable versionato e' il .pdf in file_latex/figure/.
 figure_src/anteprime/
+
+# Snapshot del PDF compilato: artefatto, non sorgente. Era stato committato 42
+# volte per 359 MB di storia. Si rigenera con latexmk, o si scarica da Overleaf.
+tesi_compilata.pdf

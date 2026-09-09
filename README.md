@@ -199,7 +199,6 @@ file_latex_sommario/  5+5 page summary for the LM ISI template
 figure_src/           deterministic figure generators
 Extra/experiments/    code and versioned artifacts, grouped by milestone
 AVVIO_WSL.md          environment and experimental pipeline walkthrough
-tesi_compilata.pdf    compiled thesis
 ```
 
 | Block | Directory |
