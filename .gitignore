@@ -1,7 +1,9 @@
 .vscode/
 
-# Repo git separato (mirror pubblico della demo su Render)
-Extra/shor-demo/
+# La demo e' un repo git separato con un remote suo. Qui entra come
+# submodule: il repo della tesi registra QUALE commit della demo va con
+# quale stato della tesi, e un clone --recurse-submodules ricostruisce la
+# cartella. I file restano nel repo della demo, non duplicati qui.
 
 __pycache__/
 *.pyc
