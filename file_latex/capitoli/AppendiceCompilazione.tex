@@ -83,6 +83,22 @@ SHA-256, il cui prefisso è \texttt{04b6a48f}. Il risultato completo è nel file
 \path{results_M11_pilota_v2_20260826_222137.json}.
 % M11_RESULTS_END
 
+Le Figure~\ref{fig:m11_scatter} e~\ref{fig:m11_hardware_map} riportano rispettivamente la dispersione fra partizione di selezione e holdout sui 40 layout validi e la collocazione dei due layout selezionati sulla coupling map della snapshot.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.78\textwidth]{gen_m11_scatter.pdf}
+\caption[Layout M11: selezione contro holdout]{I 40 layout validi nel piano $P_{\rm success}$ sulla partizione di selezione contro $P_{\rm success}$ sull'holdout, con barre d'errore statistiche e diagonale $y = x$ come riferimento. Sono evidenziati il layout scelto dal punteggio di calibrazione minimo (ID 35) e quello scelto dal successo massimo in selezione (ID 48). La dispersione attorno alla diagonale è lo scarto fra prestazione osservata sui dati usati per scegliere e prestazione su dati indipendenti: è la ragione dello split 4/4. Gli assi \textbf{non} rappresentano la correlazione $\rho_s$ discussa nel testo, che lega il punteggio di calibrazione al successo holdout ed è una grandezza diversa. Esito osservazionale sul campione random-growth non uniforme: nessun claim causale e nessuna generalizzazione all'intera topologia. Figura rigenerabile da \texttt{figure\_src/gen\_m11\_scatter.py} a partire da \texttt{results\_M11\_pilota\_v2\_20260826\_222137.json}.}
+\label{fig:m11_scatter}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{gen_m11_hardware_map.pdf}
+\caption[Collocazione dei layout selezionati sulla coupling map]{Sottografo di connettività della snapshot \texttt{FakeSherbrooke} attorno ai qubit impiegati: sono disegnati i qubit dei due layout selezionati e i loro primi vicini, non l'intero registro da 127 qubit. Pannello sinistro layout 35, pannello destro layout 48; in viola i qubit comuni ai due layout, in grigio quelli non impiegati. La disposizione dei nodi sul foglio è un'\textbf{incorporazione grafica} di tipo \textit{force-directed} e non riproduce la geometria \textit{heavy-hex} del processore: la figura mostra quali qubit e quali accoppiamenti i due layout occupano, non dove essi si trovino fisicamente sul chip. Serve a rendere concreta l'eterogeneità della coupling map su cui il punteggio di calibrazione è costruito; non aggiunge evidenza al confronto fra le due regole di selezione. Figura rigenerabile da \texttt{figure\_src/gen\_m11\_hardware\_map.py}.}
+\label{fig:m11_hardware_map}
+\end{figure}
+
 % -----------------------------------------------
 \section{M11b: readout effettivo dopo il routing}
 \label{sec:app_comp_ruoli}
