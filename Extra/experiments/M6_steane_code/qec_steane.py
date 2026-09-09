@@ -3,7 +3,7 @@ qec_steane.py — Milestone M6 (documento di indirizzo, §9): codice di Steane [
 Codice CENTRALE della tesi: primo codice che corregge un errore ARBITRARIO (X, Z o Y)
 su un singolo qubit.
 
-Costruito per gradi, con validazione a flag (piano_azione_qec.md, Parte V):
+Costruito per gradi, con validazione a flag (piano delle milestone QEC, Parte V):
   --mode check   : prepara |0_L> e misura i 6 stabilizzatori -> DEVE dare 000000
                    (lo stato e' nel code space). Se no, l'encoding e' sbagliato: STOP.
   --mode verify  : inietta X, Z, Y su ciascuno dei 7 qubit -> la syndrome table deve

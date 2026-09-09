@@ -3,7 +3,7 @@ qec_surface.py — Milestone M7 (documento di indirizzo, §10): surface code.
 Stima del logical error rate p_L con decoder reale (MWPM via PyMatching) su circuiti
 generati da Stim, per distanze d = 3, 5, 7.
 
-Flag di validazione (piano_azione_qec.md, Parte V — M7):
+Flag di validazione (piano delle milestone QEC, Parte V — M7):
   - sanity: a p piccolo, d maggiore -> p_L minore;
   - FLAG DECISIVO: le curve d=3,5,7 si INCROCIANO a una soglia p_th (~0.5-1%);
   - sotto soglia d up => p_L down (soppressione), sopra soglia d up => p_L up.
