@@ -1,33 +1,62 @@
 """
-gen_qec_surface.py — figura M7: curve p vs p_L del surface code per d=3,5,7.
-Legge il JSON di experiments/M7_surface_code/ e produce qec_surface_curve.pdf/png:
-la firma della soglia è l'incrocio delle curve a distanza crescente.
+gen_qec_surface.py — figura M7: curve p vs p_L del surface code in base Z.
+Legge un JSON esplicito di experiments/M7_surface_code/ e produce
+qec_surface_curve.pdf in file_latex/figure, con anteprima .png in
+figure_src/anteprime: la firma della soglia è l'incrocio delle curve a
+distanza crescente.
 
-Uso: python gen_qec_surface.py
+Questa figura non è più inclusa nella tesi: nel capitolo sul surface code è
+stata sostituita da gen_qec_surface_zone.py, che mostra entrambe le basi con
+le zone operative. Resta disponibile come vista in sola base Z.
+
+L'input è esplicito: nessuna selezione implicita del file più recente. Il
+default punta al JSON canonico a quattro distanze (d = 3, 5, 7, 9); i file del
+31/07/2026 ne contengono solo tre.
+
+Uso:
+    python gen_qec_surface.py
+    python gen_qec_surface.py --input <file.json>
 """
-import glob
+import argparse
 import json
 import os
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-EXP_DIR = os.path.join(os.path.dirname(__file__), '..', 'Extra', 'experiments', 'M7_surface_code')
+_HERE = os.path.dirname(os.path.abspath(__file__))
+EXP_DIR = os.path.join(_HERE, '..', 'Extra', 'experiments', 'M7_surface_code')
+PNG_DIR = os.path.join(_HERE, 'anteprime')
+
+# JSON M7 canonico in base Z, indicato per nome esatto: la regola sui
+# generatori vieta di lasciare che sia il glob a scegliere.
+DEFAULT_INPUT = 'results_M7_surface_z_20260808_001903.json'
 
 
-def _latest():
-    files = sorted(glob.glob(os.path.join(EXP_DIR, 'results_M7_surface_*.json')))
-    if not files:
-        raise FileNotFoundError("Nessun JSON M7. Esegui: python qec_surface.py")
-    with open(files[-1]) as f:
+def _parse_args():
+    ap = argparse.ArgumentParser(description='Figura M7: curve p vs p_L, base Z.')
+    ap.add_argument('--input', default=os.path.join(EXP_DIR, DEFAULT_INPUT),
+                    help='JSON M7 da usare (default: %(default)s)')
+    return ap.parse_args()
+
+
+def _load(path):
+    if not os.path.isfile(path):
+        raise FileNotFoundError(
+            f"JSON M7 non trovato: {path}. "
+            "Indicarlo con --input, oppure eseguire qec_surface.py."
+        )
+    with open(path) as f:
         return json.load(f)
 
 
 def main():
-    data = _latest()
+    args = _parse_args()
+    data = _load(args.input)
+    print(f"[gen_qec_surface] input <- {os.path.basename(args.input)}")
     curve = data['curve']
     table = curve['table']
-    p_th = curve.get('threshold')
+    p_th = curve['threshold']   # niente fallback: deve venire dal JSON
     distances = sorted(int(d) for d in table)
 
     fig, ax = plt.subplots(figsize=(6.2, 4.6))
@@ -56,10 +85,13 @@ def main():
     ax.grid(alpha=0.3, which='both')
     fig.tight_layout()
 
-    out = os.path.join(os.path.dirname(__file__), '..', 'file_latex', 'figure', 'qec_surface_curve')
+    out = os.path.join(_HERE, '..', 'file_latex', 'figure', 'qec_surface_curve')
     fig.savefig(out + '.pdf')
-    fig.savefig(out + '.png', dpi=150)
-    print(f"Figura salvata: {out}.pdf / .png  (soglia p_th={p_th})")
+    os.makedirs(PNG_DIR, exist_ok=True)
+    png = os.path.join(PNG_DIR, 'qec_surface_curve.png')
+    fig.savefig(png, dpi=150)
+    print(f"Figura salvata: {out}.pdf  (soglia p_th={p_th})")
+    print(f"Anteprima: {png}")
 
 
 if __name__ == '__main__':
