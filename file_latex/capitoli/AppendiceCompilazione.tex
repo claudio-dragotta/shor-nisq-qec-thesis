@@ -99,6 +99,29 @@ Le Figure~\ref{fig:m11_scatter} e~\ref{fig:m11_hardware_map} riportano rispettiv
 \label{fig:m11_hardware_map}
 \end{figure}
 
+\paragraph{Perch\'e la correlazione va misurata e non assunta.}
+Gli strumenti di selezione del layout costruiscono un punteggio aggregando le
+grandezze di calibrazione disponibili prima dell'esecuzione. I-QMapper, per
+esempio, assegna a ogni layout un \emph{Layout-Quality Score} che riassume in
+un solo valore gli errori di readout e di gate a due qubit del
+layout~\cite{bazayeva2026}, con la stessa logica del punteggio impiegato
+qui. La grandezza che tali punteggi intendono approssimare non \`e per\`o il
+punteggio stesso, ma la prestazione osservata: quanto strettamente le due
+siano legate \`e una domanda empirica, e su questo campione la risposta
+misurata \`e debole ($\rho_s=-0,184$, con intervallo che include lo zero). Il
+contributo di M11 va letto in questa direzione: non una critica a una regola
+di selezione particolare --- il pilota non ne implementa nessuna di
+letteratura --- ma la misura, su un campione dichiaratamente non uniforme, di
+un legame che la pratica corrente tende a dare per acquisito. Un confronto
+utile \`e con i metodi che ordinano i layout apprendendo da esecuzioni
+passate: Hartnett e collaboratori addestrano un modello d'errore su misure di
+hardware \ac{IBM} e riportano una riduzione dell'errore di selezione di
+$3{,}2\times$ rispetto alla scelta casuale su un dispositivo a 16
+qubit~\cite{hartnett2024}. Il contrasto \`e istruttivo e non contraddittorio:
+un punteggio \emph{appreso da esecuzioni} mostra un guadagno misurato, mentre
+qui \`e un punteggio \emph{derivato dalla sola calibrazione} a essere valutato,
+su una snapshot e su un campione di layout non uniforme.
+
 % -----------------------------------------------
 \section{M11b: readout effettivo dopo il routing}
 \label{sec:app_comp_ruoli}
