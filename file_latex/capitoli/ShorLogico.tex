@@ -60,6 +60,27 @@ La direzione --- meno qubit a parit\`a{} di affidabilit\`a{} --- conferma che il
 collo di bottiglia non \`e{} l'algoritmo in s\'e{}, ma l'efficienza dell'infrastruttura
 di correzione che lo sostiene. \`E{} una valutazione prospettica, non un risultato di questa tesi.
 
+Il movimento \`e proseguito nel corso del 2026 e la Tabella~\ref{tab:traiettoria_risorse} lo riassume, con una avvertenza da leggere prima dei numeri: le due voci pi\`u{} recenti sono \emph{preprint} non ancora sottoposti a revisione paritaria, e i loro valori dipendono da assunzioni architetturali esplicite ma non verificate sperimentalmente. Vanno letti come traiettoria, non come previsioni consolidate.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{0.26\textwidth}p{0.08\textwidth}p{0.20\textwidth}p{0.30\textwidth}}
+\toprule
+\textbf{Lavoro} & \textbf{Anno} & \textbf{Bersaglio} & \textbf{Qubit fisici e tempo} \\
+\midrule
+Gidney ed Eker\aa{}~\cite{gidney2021} & 2019 & RSA-2048 & $\sim$20 milioni, 8 ore \\
+Gidney~\cite{gidney2025} & 2025 & RSA-2048 & $<$ 1 milione, $<$ 1 settimana \\
+Pinnacle, qLDPC~\cite{pinnacle2026} & 2026 & RSA-2048 & $<$ 100\,000 (preprint) \\
+Cain \emph{et al.}~\cite{cain2026} & 2026 & P-256; RSA-2048 & $\sim$10\,000 atomici; P-256 in giorni con 26\,000 (preprint) \\
+\bottomrule
+\end{tabular}
+\caption[Traiettoria delle stime di risorsa per Shor su scala crittografica]{Stime pubblicate del costo fisico di Shor su istanze crittografiche. Le righe non sono direttamente confrontabili fra loro: cambiano famiglia di codice, modello d'errore assunto, tempo di ciclo e criterio di successo. L'architettura Pinnacle sostituisce il surface code con codici qLDPC assumendo errore fisico $10^{-3}$, ciclo di codice di $1\,\mu$s e tempo di reazione di $10\,\mu$s; Cain e collaboratori stimano il costo su atomi riconfigurabili e dichiarano il tempo di esecuzione per RSA-2048 da uno a due ordini di grandezza superiore a quello per P-256. Nessuno di questi valori \`e un risultato di questa tesi n\'e discende dalle sue curve.}
+\label{tab:traiettoria_risorse}
+\end{table}
+
+Il punto che interessa qui non \`e la cifra puntuale, che cambier\`a ancora, ma il fatto che la discesa di un ordine di grandezza per anno sia trainata quasi per intero da correzione d'errore e compilazione --- cio\`e dal perimetro di questo lavoro --- e non da modifiche all'algoritmo di Shor.
+
 % -----------------------------------------------
 \section{Risultati M8 e M13}
 \label{sec:risultati_logico}
@@ -153,6 +174,8 @@ guadagno del decoder & differenza osservata sotto rumore correlato del benchmark
 M8 stabilisce una relazione quantitativa robusta all'interno del proprio modello: ridurre la probabilit\`a Pauli per gate riporta il successo verso il limite ideale dell'istanza. Non stabilisce quale codice raggiunga uno specifico $p_L$ per gate, n\'e confronta Steane e surface code a parit\`a di hardware. Per compiere quel passo servirebbe almeno una compilazione in un gate set logico, il conteggio dei cicli di correzione associati a ciascuna operazione, un decoder con latenze e correlazioni esplicite e un modello delle operazioni non-Clifford.
 
 Il risultato chiarisce anche il ruolo del post-processing. Il successo per misura degrada in modo netto lungo la curva; una strategia TOP-K pu\`o invece saturare su questa piccola istanza perch\'e quattro candidati coprono rapidamente almeno un esito utile. Una percentuale TOP-4 elevata non prova dunque che l'informazione quantistica sia rimasta intatta: deve essere letta insieme alla massa utile per misura e ai limiti dovuti ai pareggi.
+
+La direzione qualitativa che il proxy assume --- che portare l'esecuzione al livello logico riduca l'errore osservato --- ha nel frattempo un riscontro sperimentale, e va riportato con precisione perch\'e la sua portata \`e limitata. Su una QPU ad atomi neutri da 114 qubit fisici, una variante di Shor \`e stata eseguita su qubit logici ottenendo fino a un dimezzamento della distanza in variazione totale rispetto all'esecuzione fisica; sullo stesso dispositivo, ladder di CX logiche a profondit\`a costante mostrano un errore da due a quattro volte inferiore, e un codice $[[16,4,4]]$ con decodifica a round singolo un miglioramento di un fattore otto~\cite{rines2025}. Due precisazioni sono necessarie. La prima: quella dimostrazione di Shor \`e \textbf{pre-compilata e non scalabile}, e ricade quindi sotto la critica di Smolin e collaboratori~\cite{smolin2013} esattamente come le dimostrazioni su $N$ piccoli discusse nell'Appendice~\ref{app:shor_esteso}; il dato che essa fornisce riguarda il guadagno del livello logico sul fisico, non la fattorizzazione. La seconda: la cifra di 48 qubit logici su 280 atomi che circola associata a questi risultati appartiene a un lavoro \emph{diverso}, il processore logico su array riconfigurabili di Bluvstein e collaboratori~\cite{bluvstein2024}, che esegue campionamento su ipercubo e non Shor. Il riscontro conferma dunque il verso dell'effetto e ne d\`a un ordine di grandezza; non converte un punto surface-code in una probabilit\`a di successo di Shor, e non modifica di una riga il limite interpretativo del proxy.
 
 Infine, $N=15$ resta un'istanza didattica. Le conclusioni supportate riguardano la sensibilit\`a del circuito corretto e riproducibile a canali d'errore controllati. La fattibilit\`a di Shor su scala crittografica rimane una domanda architetturale distinta, dominata dall'overhead fault-tolerant e non risolta da questa simulazione.
 

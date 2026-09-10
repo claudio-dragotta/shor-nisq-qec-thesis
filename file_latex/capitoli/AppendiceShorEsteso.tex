@@ -15,7 +15,9 @@ Nonostante la solidità teorica, l'esecuzione di Shor su hardware reale rimane l
     \item \textbf{2021 -- Qubit superconduttori \ac{IBM}}: dimostrazione compilata della fattorizzazione di $N = 21$ su processori \ac{IBM} Quantum utilizzando 5 qubit \cite{skosana2021}.
 \end{itemize}
 
-Queste istanze evidenziano quanto la distanza dalle chiavi crittograficamente rilevanti sia ancora enorme. Una specifica stima di risorse per fattorizzare un numero a $L$ bit riporta circa $5L+1$ qubit logici e $72L^3$ gate \cite{shor_challenges2025}; costanti e overhead dipendono però dall'architettura aritmetica e dal protocollo fault-tolerant. In ogni caso, i valori per RSA-2048 restano fuori portata per i processori \ac{NISQ} attuali.
+Queste istanze evidenziano quanto la distanza dalle chiavi crittograficamente rilevanti sia ancora enorme. Una stima classica del fabbisogno, formulata sul modello di circuito privo di correzione d'errore, riporta $5K+1$ qubit di memoria e circa $72K^3$ gate elementari per fattorizzare un numero di $K$ bit \cite{beckman1996}; costanti e overhead dipendono però dall'architettura aritmetica e, nelle stime moderne, dal protocollo fault-tolerant, rispetto al quale quel conteggio va inteso come limite inferiore ottimistico. In ogni caso, i valori per RSA-2048 restano fuori portata per i processori \ac{NISQ} attuali.
+
+Alla distanza teorica se ne aggiunge una operativa, documentata da una campagna recente su più piattaforme cloud: le costruzioni circuitali restano specifiche per ciascun modulo, e le fedeltà delle macchine si presentano instabili, con tassi d'errore elevati e fluttuanti \cite{shor_challenges2025}. È la ragione per cui, in questo lavoro, $N=15$ è trattato come istanza illustrativa e non come misura di fattibilità.
 
 \subsubsection{Miglioramenti Algoritmici: Regev 2023}
 

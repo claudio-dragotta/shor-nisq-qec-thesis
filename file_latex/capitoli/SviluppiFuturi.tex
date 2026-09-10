@@ -86,6 +86,30 @@ Shor}, perché per $N=15$ l'ordine $r=4$ produce fasi $0$, $1/4$, $1/2$, $3/4$, 
 due bit, mentre per $N=21$ l'ordine $r=6$ dà fasi $j/6$, dove le rotazioni fini
 trasportano ancora informazione.
 
+La prima di queste regolarità --- quella che a prima vista sorprende di più, perché un
+registro più lungo sembrerebbe richiedere più rotazioni fini --- ha una spiegazione
+teorica indipendente, pubblicata mentre questo lavoro era in corso. Akoramurthy e
+Surendiran derivano per la stima di fase con trasformata troncata un limite in forma
+chiusa sulla distanza in variazione totale fra la distribuzione esatta e quella
+troncata~\cite{akoramurthy2026}:
+%
+\begin{equation}
+\mathrm{TV}\!\left(P_\phi,\, P_\phi^{d}\right) \;\le\; \frac{\pi\,(m-d)}{2^{d}},
+\label{eq:bound_troncamento}
+\end{equation}
+%
+dove $m$ è la dimensione del registro e $d$ il grado di troncamento. Il numeratore cresce
+linearmente in $m$, il denominatore esponenzialmente in $d$: un $d$ piccolo e
+\emph{costante} basta quindi a schiacciare il termine d'errore anche al crescere del
+registro, ed è esattamente il comportamento osservato qui per via empirica. Gli autori
+riportano inoltre una riduzione del $31{,}3$--$43{,}7\%$ nel conteggio di porte e un
+passaggio di complessità da $O(m^2)$ a $O(m \log m)$ per $d = O(\log m)$. Il loro impianto
+sperimentale si ferma però alla stima di fase e non affronta la fattorizzazione: la
+delimitazione riportata sopra --- che su Shor la stessa leva vale al massimo tre punti
+percentuali, e solo con porte a due qubit molto più accurate delle attuali --- resta
+propria di questo lavoro, così come la selezione del grado su dati disgiunti da quelli di
+verifica.
+
 Ne segue che il grado di troncamento conveniente è \textbf{determinabile in anticipo}, dai
 soli conteggi di porte del circuito compilato e dai dati di calibrazione del dispositivo,
 senza eseguire l'algoritmo. È questa la forma in cui il contributo si generalizza: non una
@@ -96,7 +120,9 @@ Tre direzioni indipendenti convergono qui, e il passo successivo più promettent
 \textbf{comporle}. La prima è quella misurata in questo lavoro: approssimare la
 trasformata per ridurre le \emph{porte}, e con esse la profondità rispetto al tempo di
 coerenza. La seconda approssima l'aritmetica modulare per ridurre i \emph{qubit}
-logici~\cite{chevignard2025}, ed è la base delle stime di risorse più recenti~\cite{gidney2025}.
+logici~\cite{chevignard2025}, ed è alla base della discesa nelle stime di risorsa
+degli ultimi anni~\cite{gidney2025}, di cui la Tabella~\ref{tab:traiettoria_risorse}
+riporta la traiettoria e i relativi caveat.
 La terza riorganizza la stima di fase in blocchi indipendenti, riducendo il \emph{registro}
 di conteggio a pochi qubit~\cite{shukla2026}.
 
@@ -112,7 +138,10 @@ grandezza.
 La terza direzione è invece dichiarata complementare dagli autori stessi, che la
 presentano come rivolta allo strato di stima di fase anziché a quello
 aritmetico~\cite{shukla2026}: il registro di conteggio scende da $2n+1$ a tre o quattro
-qubit lasciando invariato il registro di lavoro. Determinare se i tre guadagni si sommino
+qubit lasciando invariato il registro di lavoro. Il meccanismo è descritto per esteso
+nella loro proposta per la stima di fase, dove blocchi indipendenti di più qubit di
+controllo stimano più bit di fase entro una finestra, con una risoluzione esplicita
+dell'ambiguità dal bit meno significativo verso il più significativo~\cite{shuklaqpe2026}. Determinare se i tre guadagni si sommino
 davvero, e a quale prezzo in profondità, richiede un disegno che li vari congiuntamente ed
 è la domanda che questo lavoro lascia aperta con maggiore fiducia, perché le tre riduzioni
 sono ciascuna già documentata e quantificata.
@@ -142,6 +171,16 @@ sulla compilazione riportata in Appendice~\ref{app:fase2} misura quanto non coin
 % -----------------------------------------------
 \section{Validazione su Hardware Quantistico Reale}
 \label{sec:hw_reale}
+
+Va anzitutto dichiarato che l'assenza di esecuzione su hardware è una
+\textbf{scelta deliberata e concordata}, non una questione rimasta
+irrisolta: pur essendo divenuto disponibile in corso d'opera l'accesso a
+un dispositivo, si è convenuto di non impiegarlo, poiché le domande
+sperimentali del lavoro erano già state chiuse sui modelli di rumore e
+sulle snapshot di calibrazione. L'intera validazione riportata in questa
+tesi appartiene quindi a quel perimetro, e ogni confronto con una
+macchina reale resta un lavoro successivo, di cui questa sezione descrive
+il protocollo.
 
 Il modello rumoroso della tesi è uniforme e illustrativo: non include
 coupling map, routing, crosstalk, leakage o deriva della calibrazione. Il
