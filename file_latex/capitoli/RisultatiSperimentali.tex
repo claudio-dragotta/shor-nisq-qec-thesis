@@ -14,7 +14,16 @@ beneficio rispetto alla stessa ricerca priva di filtro.
 \label{sec:setup_m2}
 
 Il percorso rumoroso è limitato a $N=15$, $a=7$ e otto qubit di
-controllo. Il circuito è compilato nella base
+controllo. La scelta va dichiarata per quello che è: Smolin, Smith e
+Vargo hanno mostrato che una versione compilata di Shor, costruita
+sfruttando la conoscenza della risposta, fattorizza prodotti di due
+primi qualunque in tempo costante e con due soli qubit coerenti, sicché
+la difficoltà reale non si misura dalla taglia del numero fattorizzato
+ma dalla lunghezza del periodo cercato~\cite{smolin2013}. Questo lavoro
+non presenta perciò $N=15$ come evidenza di fattibilità: l'istanza serve
+a rendere confrontabili fra loro strategie di post-processing sul
+medesimo istogramma, e ogni conclusione riguarda quel confronto. Il
+circuito è compilato nella base
 \texttt{rz/sx/x/cx} con \texttt{optimization\_level=2} e seed del
 transpiler 20260819. I gate RZ sono virtuali; SX/X hanno durata
 illustrativa di 50\,ns e CX di 300\,ns. Il modello uniforme combina
@@ -169,6 +178,23 @@ iterazioni: Wilcoxon bilaterale con correzione di Holm
 $p=0.0033$ (UC1) e $p=0.0096$ (UC2). Il filtro scarta dunque istogrammi
 che la ricerca TOP-4 avrebbe risolto; il guadagno appartiene alla ricerca
 multi-candidato, non al classificatore.
+
+Il confronto con la letteratura recente chiarisce perché l'ablazione sia
+il risultato portante e non un dettaglio di metodo. Yang e Markidis
+addestrano alberi e foreste casuali su $680$ distribuzioni raccolte da
+sistemi \ac{IBM} reali per prevedere se il post-processing a frazioni
+continue recupererà l'ordine vero, usando quattro caratteristiche della
+distribuzione, fra cui la frazione di massa verificata dominante, che
+risulta la più informativa~\cite{yang2026}. Il loro impianto ha un
+vantaggio che questo lavoro non possiede --- i dati provengono da
+hardware, non da un modello di rumore --- ma pone una domanda diversa:
+quanto valga il classificatore \emph{rispetto a una regola semplice}
+disponibile sugli stessi istogrammi resta fuori dal confronto. È
+precisamente la quantità che l'ablazione qui misura, e il suo esito è
+negativo. Un risultato negativo di questo tipo non contraddice quei
+lavori: ne delimita la portata, indicando che il valore incrementale del
+filtro appreso va misurato contro la ricerca multi-candidato prima di
+essere attribuito all'apprendimento.
 
 \begin{figure}[H]
     \centering
