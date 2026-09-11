@@ -1,0 +1,189 @@
+\begin{onehalfspace}
+
+Questo lavoro ha affrontato una domanda operativa: quanta informazione
+dell'output rumoroso di Shor può essere recuperata a valle e quando diventa
+necessario correggere l'errore durante il calcolo? La risposta delimita i due
+regimi. Su $N=15$ una ricerca multi-candidato sfrutta meglio l'informazione già
+misurata, mentre un classificatore applicato allo stesso output non aggiunge
+valore. Oltre questo margine occorre intervenire sulle sindromi e sulla
+correzione d'errore.
+
+% -----------------------------------------------
+\section{Le Domande di Ricerca}
+\label{sec:risposte_dr}
+
+\paragraph{DR1 --- Come cambia Shor al variare dei canali di rumore?}
+Nel modello uniforme per $N=15$, aumentando $\lambda_{2q}$ la massa sui quattro
+picchi QPE scende da $0.804$ a $0.042$, mentre il proxy di nessun evento Pauli
+sulle 224 CX decade da $0.811$ a $2.65\times10^{-10}$: quest'ultimo non predice
+quindi il successo algoritmico. Gli sweep di $\lambda_{1q}$, $T_1/T_2$, readout
+e shot non ordinano causalmente i canali con 30 repliche; TOP-4 resta invece a
+una iterazione, salvo il valore $1.07$ a $\lambda_{2q}=0.1$. Risultati e
+diagnostiche complete sono nelle Sezioni~\ref{sec:parametri_mitigazione}
+e~\ref{app:parametrica}.
+
+\paragraph{DR2 --- Come si estrae una sindrome senza misurare lo stato logico?}
+Nel codice a ripetizione si misurano le parità $Z_1Z_2$ e $Z_2Z_3$, non i qubit
+logici: la sindrome localizza il bit alterato senza rivelarne l'ampiezza. La
+curva Monte Carlo coincide con $p_L=3p^2-2p^3$ entro l'incertezza, ma protegge
+un solo tipo di errore per volta (Sezione~\ref{sec:repetition}).
+
+\paragraph{DR3 --- Quali vantaggi e limiti offre Steane $[[7,1,3]]$?}
+La struttura CSS corregge un errore Pauli arbitrario su un qubit e la
+corrispondenza sindrome--errore è verificata nei 21 casi. La pendenza log--log
+$1.94$ conferma la soppressione quadratica attesa; distanza fissa ed estrazione
+non fault-tolerant ne impediscono però una lettura scalabile
+(Sezione~\ref{sec:steane}).
+
+\paragraph{DR4 --- Il surface code mostra un comportamento di soglia?}
+Sì, entro il memory experiment e il modello circuit-level adottati: le curve
+per $d=3,5,7,9$ si incrociano intorno allo $0.9\%$ in base Z e allo $0.7\%$ in
+base X, con soppressione sotto soglia e amplificazione sopra soglia. Il relativo
+$p$ non coincide con $\lambda_{2q}$ della campagna Shor, perciò il confronto è
+solo qualitativo (Sezione~\ref{sec:surface_risultati}).
+
+\paragraph{DR5 --- Quale errore logico è compatibile con Shor?}
+Nel modello fenomenologico, a $p_L=0$ il successo per esecuzione resta circa
+$0.75$ per la quota intrinsecamente non utile degli esiti QPE; le ripetizioni ne
+aumentano la probabilità cumulativa. La curva è però una sensibilità, non una
+previsione end-to-end: il logical error rate di una memoria non può essere
+assegnato a ogni gate di Shor senza operazioni fault-tolerant e canali residui
+espliciti (Sezione~\ref{sec:risultati_logico}).
+
+\paragraph{DR6 --- Quando un decoder appreso può superare quello analitico?}
+Il vantaggio compare quando il rumore contiene correlazioni assenti dal grafo
+del matching. Il decoder ibrido riduce l'errore rispetto a \ac{MWPM} a distanza
+3, ma il margine si restringe e non è significativo a distanza 7 per la rete
+densa adottata. Il risultato individua quindi una nicchia residuale, non una
+sostituzione generale dei decoder analitici (Sezione~\ref{sec:decodifica_appresa}
+e Appendice~\ref{app:decodifica}).
+
+% -----------------------------------------------
+\section{Verifica delle Ipotesi}
+\label{sec:verifica_ipotesi}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption[Esito delle ipotesi]{Esito dopo la rigenerazione schema~2.}
+\label{tab:esito_ipotesi}
+\begin{tabular}{p{3.8cm}p{2.2cm}p{7.2cm}}
+\toprule
+\textbf{Ipotesi} & \textbf{Esito} & \textbf{Evidenza} \\
+\midrule
+Il classificatore riduce le iterazioni
+& smentita
+& M2 non migliora M1; TOP-4 supera M2 in UC1 e UC2
+($p_{\mathrm{Holm}}=0.0033/0.0096$). \\
+\addlinespace
+F1 $>0.85$ e AUC $>0.90$
+& confermata, ma insufficiente
+& SVM: F1 $0.919/0.923$ e AUC $0.965/0.958$; le metriche descrivono TOP-1,
+non l'utilità operativa. \\
+\addlinespace
+Il vantaggio si mantiene crescendo $N$
+& non verificata
+& $N=21/35$ sono validati idealmente ma esclusi dal rumore per costo; va
+controllato anche l'ordine $r$. \\
+\addlinespace
+Soppressione quadratica a distanza 3
+& confermata nel modello
+& Ripetizione coerente con $3p^2-2p^3$; Steane con pendenza $1.94$. \\
+\addlinespace
+Soglia del surface code
+& confermata nel modello
+& Incrocio delle curve $d=3,5,7,9$ e inversione del beneficio sopra soglia. \\
+\addlinespace
+Trasferimento diretto di $p_L$ a Shor
+& non dimostrato
+& La curva è fenomenologica; manca una mappatura per operazione
+fault-tolerant. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+L'audit chiarisce perché buone metriche non bastano: TOP-1 genera classi
+addestrabili, mentre TOP-16 rende positivi tutti i $2\,000$ campioni di entrambi
+gli scenari. Con 63 esiti utili su 256, la probabilità combinatoria di non
+includerne alcuno fra sedici celle è appena
+$\binom{193}{16}/\binom{256}{16}=0.9275\%$. La costruzione delle etichette e i
+relativi controlli sono documentati nell'Appendice~\ref{sec:audit_etichette}.
+
+% -----------------------------------------------
+\section{Contributi del Lavoro}
+
+\textbf{Demo ideale e rumorosa separate.}
+Il percorso ideale espone circuito, stato e QPE; quello rumoroso rende
+selezionabili depolarizzazione 1Q/2Q, $T_1/T_2$, readout ed errore coerente.
+$N=21/35$ restano nel perimetro ideale e $N=15$ in quello rumoroso.
+
+\textbf{Ablazione appaiata e riproducibile.}
+M1, TOP-4 e M2 ricevono lo stesso istogramma. TOP-4 porta $\bar M$ da $1.37$ a
+$1.00$ nello scenario moderato e da $1.50$ a $1.00$ nello stress, mentre il
+classificatore peggiora la propria ablazione; seed, tie-break, sentinelle,
+revisioni e manifest sono conservati negli artefatti.
+
+\textbf{Validazione funzionale dell'aritmetica.}
+Il moltiplicatore $\times7\bmod15$ è coperto da truth table; il percorso
+Beauregard per $N=21/35$ da proprietà esaustive e confronti QPE. Il controllo
+mostra perché picchi o ordine, isolatamente, non validano l'operatore.
+
+\textbf{Progressione QEC con limiti espliciti.}
+Ripetizione, Steane, surface code e decodifica appresa sono collegati da
+metriche dichiarate senza rendere commensurabili modelli di rumore diversi;
+Shor logico chiude la progressione come analisi fenomenologica.
+
+% -----------------------------------------------
+\section{Limiti}
+\label{sec:limiti_finali}
+
+Nessun risultato deriva da hardware quantistico. È una scelta concordata: la
+disponibilità di un dispositivo è sopraggiunta dopo la chiusura delle domande
+sui modelli di rumore e sulle snapshot di calibrazione. La validazione resta
+quindi simulativa; il solo riscontro su macchina reale è quello discusso per
+citazione nella Sezione~\ref{subsec:discussione_logico}.
+
+La campagna Shor usa rumore uniforme, indipendente e stazionario, senza
+topologia, routing, crosstalk, leakage o deriva. $N=15$ è didattico, TOP-K ha
+una verifica classica permissiva, gli sweep impiegano 30 repliche e i test non
+sono corretti globalmente fra otto famiglie; $N=21/35$ non sono simulati sotto
+rumore. Nella QEC, Steane non ha estrazione fault-tolerant, memoria e proxy per
+gate non condividono lo stesso $p_L$, e il decoder denso non mantiene il
+vantaggio alle maggiori distanze. Le stime crittografiche richiedono dunque
+architetture fault-tolerant complete, non estrapolazioni dalle curve di $N=15$.
+
+% -----------------------------------------------
+\section{Il Criterio che Unifica il Lavoro}
+
+Un complemento semplice è utile quando sfrutta informazione trascurata dal
+metodo base senza alterarne la generazione: TOP-4 verifica candidati già
+nell'istogramma e il decoder residuale interviene dove il matching ha una
+debolezza rappresentazionale. La complessità non crea valore se replica una
+regola semplice, usa etichette degeneri o costa più del beneficio. Ne segue il
+confine fra mitigazione e correzione: TOP-K recupera un picco già misurato, ma
+non ricostruisce informazione distrutta; la scalabilità richiede operazioni
+logiche fault-tolerant e l'apprendimento è utile solo se dispone di struttura
+assente nel decoder analitico.
+
+L'AQFT applica lo stesso criterio a monte. Troncare le rotazioni interne agli
+addizionatori dimezza le porte a due qubit ($49\,661\rightarrow23\,178$), ma su
+$N=21$ riduce la resa ideale di circa $6.5$ punti; il vantaggio massimo, circa
+tre punti, richiederebbe porte quasi duecento volte più accurate, mentre il
+circuito resta circa 150 volte più lungo della coerenza disponibile. Nella
+stima di fase, molto più corta, la variante troncata vince invece tutti i nove
+confronti e raggiunge $+0.126$ a dieci qubit. Il grado ottimo resta due o tre,
+il risparmio cresce con il registro e le fasi esattamente rappresentabili
+beneficiano di più: ciò spiega la differenza fra $r=4$ per $N=15$ e $r=6$ per
+$N=21$. Conteggi compilati e calibrazione permettono quindi di scegliere il
+troncamento prima dell'esecuzione. Dati, limite teorico e perimetro di
+generalizzazione sono nella Sezione~\ref{sec:qft_topologia}.
+
+Questa riduzione delle porte è complementare, ma non automaticamente additiva,
+alla riduzione dei qubit di lavoro ottenuta con aritmetica approssimata
+\cite{chevignard2025,gidney2025} e alla riduzione del registro di fase mediante
+blocchi indipendenti~\cite{shukla2026}. Le tre leve agiscono su porte, qubit di
+lavoro e qubit di conteggio; studiarne congiuntamente costi e profondità è la
+domanda aperta più naturale.
+
+\end{onehalfspace}

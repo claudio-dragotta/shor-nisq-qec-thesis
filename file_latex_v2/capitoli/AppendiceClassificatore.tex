@@ -1,0 +1,198 @@
+\begin{onehalfspace}
+
+Questa sezione documenta il classificatore valutato nella prima fase
+sperimentale (Capitolo~\ref{chap:risultati}) e, soprattutto, separa due
+domande che nella prima versione della campagna erano state confuse:
+\emph{il candidato più frequente conduce ai fattori?} (TOP-1) e
+\emph{esiste un candidato utile fra i primi sedici?} (TOP-16). Tutti i
+numeri riportati provengono dagli artefatti schema~2 rigenerati con il
+circuito $N=15$, $a=7$ corretto, il medesimo manifest del circuito e seed
+deterministici.
+
+\subsection{L'Ipotesi alla Prova: il Classificatore ML}
+\label{sec:risultati_uc_m2}
+\label{sec:valutazione_clf}
+
+Il Metodo~2 usa un classificatore come \emph{gate di qualità}: riceve la
+distribuzione normalizzata sui $2^8=256$ esiti e, se approva
+l'istogramma, tenta l'estrazione dei fattori dai quattro candidati più
+frequenti. L'ablazione $M_{\mathrm{TOP4}}$ applica la stessa ricerca senza
+filtro e consente quindi di distinguere l'effetto del classificatore da
+quello della ricerca multi-candidato.
+
+Per ciascuno dei due scenari sono stati generati $2\,000$ istogrammi da
+$1\,024$ shot. I cinque parametri del modello uniforme
+($\lambda_{1q}$, $\lambda_{2q}$, $T_1$, $T_2$ e readout) sono stati
+campionati indipendentemente in un intervallo relativo del $\pm50\%$
+attorno al preset. Il dataset è stato separato in train, validation e
+test con proporzioni $60/20/20$: la scelta dell'architettura usa soltanto
+la validation; il test viene valutato una sola volta dopo il refit su
+train+validation.
+
+La regola TOP-1 produce $1\,262$ positivi e $738$ negativi in UC1
+($63.1\%/36.9\%$), e $1\,453$ positivi e $547$ negativi in UC2
+($72.7\%/27.3\%$). Random Forest, \ac{SVM} RBF calibrata e \ac{MLP}
+$(256,128)$ sono state confrontate mediante F1 sulla validation. La
+Tabella~\ref{tab:clf_metrics} riporta la valutazione indipendente del
+modello selezionato.
+
+\begin{table}[H]
+\centering
+\caption{Metriche TOP-1 sul test set indipendente (400 istogrammi per scenario)}
+\label{tab:clf_metrics}
+\begin{tabular}{llccc}
+\toprule
+\textbf{Scenario} & \textbf{Modello selezionato} & \textbf{F1} &
+\textbf{Accuratezza} & \textbf{\acs{AUC}-ROC} \\
+\midrule
+UC1 & \ac{SVM} & 0.919 & 0.895 & 0.965 \\
+UC2 & \ac{SVM} & 0.923 & 0.888 & 0.958 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Sulla validation l'\ac{SVM} ottiene F1 pari a $0.908$ in UC1 e $0.929$
+in UC2, contro $0.811/0.842$ della Random Forest e $0.874/0.906$
+dell'\ac{MLP}. Queste metriche mostrano che il modello riproduce bene la
+regola TOP-1; non dimostrano però che il filtro riduca il costo operativo.
+Quel confronto richiede gli stessi istogrammi per M1, TOP-4 e M2 ed è
+riportato nella Sezione~\ref{sec:confronto}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{fig_roc_curve.pdf}
+    \caption[Curve ROC dei classificatori TOP-1 selezionati]{Curve ROC
+    sul test set indipendente dei due classificatori \acs{SVM} selezionati
+    mediante validation. Le aree sono $0.965$ (UC1) e $0.958$ (UC2); la
+    diagonale rappresenta un classificatore casuale.}
+    \label{fig:roc_curve}
+\end{figure}
+
+% -----------------------------------------------
+\subsection[Audit delle etichette TOP-1 e TOP-16]{Audit delle Etichette: TOP-1 e TOP-16 Sono Problemi Diversi}
+\label{sec:audit_etichette}
+
+La campagna rigenerata calcola entrambe le etichette sullo \emph{stesso}
+istogramma, eliminando l'ambiguità del dataset storico. L'esito è
+riassunto nella Tabella~\ref{tab:audit_etichette}.
+
+\begin{table}[H]
+\centering
+\caption[Audit delle etichette TOP-1 e TOP-16]{Bilanciamento delle due
+regole sul dataset completo. TOP-16 è a classe unica e non consente un
+addestramento discriminante.}
+\label{tab:audit_etichette}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Regola} & \textbf{UC1: positivi/negativi} &
+\textbf{UC2: positivi/negativi} \\
+\midrule
+TOP-1  & $1\,262/738$ & $1\,453/547$ \\
+TOP-16 & $2\,000/0$   & $2\,000/0$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Il runner non forza un modello sul dataset TOP-16: registra
+esplicitamente \texttt{single-class-dataset} e interrompe
+l'addestramento per quella regola. M2 usa perciò soltanto i modelli TOP-1
+e conserva nel payload \texttt{label\_top\_k=1}. Questo controllo evita
+di attribuire capacità predittiva a un classificatore costante.
+
+Una diagnostica separata su 60 esecuzioni nominali UC1 chiarisce la
+struttura della classe TOP-1. La moda è $y=0$ in $30/60$ casi e conduce
+ai fattori negli altri $30/60$; i primi quattro candidati contengono
+invece almeno un esito utile in $60/60$ casi. La Tabella
+\ref{tab:struttura_negativi} riporta la distribuzione della moda.
+
+\begin{table}[H]
+\centering
+\caption[Distribuzione della moda su UC1]{Distribuzione della misura più
+frequente su 60 istogrammi nominali indipendenti.}
+\label{tab:struttura_negativi}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Valore della moda} & \textbf{Occorrenze} & \textbf{Frazione} \\
+\midrule
+$0$   & 30 & $50.0\%$ \\
+$64$  &  5 & $8.3\%$ \\
+$128$ & 15 & $25.0\%$ \\
+$192$ & 10 & $16.7\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+L'esito $y=0$ rappresenta la fase nulla e non fornisce il periodo, ma
+non implica che l'istogramma sia privo di segnale. Nel campione
+rappresentativo della Figura~\ref{fig:audit_istogramma_negativo}, la
+moda $y=0$ raccoglie 176 conteggi, mentre $y=64$, $192$ e $128$ ne
+raccolgono rispettivamente 160, 141 e 131: tutti e tre conducono ai
+fattori. La massa complessiva sui quattro picchi è $0.594$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{audit_istogramma_negativo.pdf}
+    \caption[Istogramma TOP-1 negativo ma recuperabile con TOP-4]{Esempio
+    nominale UC1 in cui TOP-1 fallisce perché la moda è $y=0$, mentre i
+    successivi tre picchi conducono ai fattori. Il classificatore TOP-1
+    apprende quindi una regola sul candidato dominante, non una misura
+    generale della presenza di segnale quantistico.}
+    \label{fig:audit_istogramma_negativo}
+\end{figure}
+
+\subsubsection{Perché TOP-16 Produce una Classe Quasi Sempre Positiva}
+\label{subsec:soglia_classe_negativa}
+
+Per $N=15$, $a=7$ e otto bit di controllo, 63 dei 256 esiti conducono ai
+fattori tramite la procedura di frazioni continue adottata. Anche per un
+istogramma uniforme, la probabilità che nessuno dei primi $K$ candidati
+sia utile è quindi
+\begin{equation}
+    P_{\mathrm{neg}}(K)=
+    \frac{\binom{256-63}{K}}{\binom{256}{K}}.
+    \label{eq:tetto_negativi}
+\end{equation}
+Per $K=16$ essa vale soltanto $0.9275\%$: la regola assegna dunque
+un'etichetta positiva a oltre il $99\%$ degli istogrammi uniformi per
+puro effetto combinatorio. Il risultato $2\,000/0$ osservato nei due
+dataset è coerente con questo limite e non autorizza a concludere che il
+segnale sia perfetto.
+
+\begin{table}[H]
+\centering
+\caption[Tetto combinatorio alla classe negativa in funzione di $K$]{Probabilità
+di non includere alcuno dei 63 esiti utili scegliendo $K$ celle da 256
+senza informazione sulla distribuzione.}
+\label{tab:tetto_topk}
+\label{tab:soglia_negativi}
+\begin{tabular}{cc}
+\toprule
+\textbf{Regola} & $P_{\mathrm{neg}}(K)$ \\
+\midrule
+TOP-1  & $75.39\%$ \\
+TOP-2  & $56.76\%$ \\
+TOP-4  & $32.06\%$ \\
+TOP-16 & $0.93\%$  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.78\textwidth]{tetto_classe_negativa.pdf}
+    \caption[Tetto combinatorio alla classe negativa]{Decadimento di
+    $P_{\mathrm{neg}}(K)$ al crescere del numero di candidati. La figura
+    è rigenerata dai dati schema~2 e rende visibile perché TOP-16 non
+    definisce un problema di classificazione bilanciato su questa
+    istanza.}
+    \label{fig:tetto_classe_negativa}
+\end{figure}
+
+Il verdetto ha un perimetro preciso: non mostra che l'apprendimento
+automatico sia inutile in generale, ma che un filtro a valle addestrato
+su TOP-1 replica una decisione già superata da TOP-4, mentre la regola
+TOP-16 è quasi sempre positiva per costruzione. Questo motiva lo
+spostamento dell'apprendimento dalla distribuzione finale alla sindrome
+di errore nelle sezioni del Capitolo~\ref{chap:risultati} dedicate alla \ac{QEC}.
+
+\end{onehalfspace}

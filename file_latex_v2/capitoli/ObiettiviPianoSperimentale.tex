@@ -1,0 +1,106 @@
+\begin{onehalfspace}
+
+Il Capitolo~\ref{chap:introduzione} ha individuato il divario fra la rilevanza teorica di Shor e la sua realizzabilità su dispositivi rumorosi. Questo capitolo formula il problema di ricerca e fissa il contratto essenziale con cui vengono valutati gli esperimenti; obiettivi analitici, requisiti, configurazioni e protocolli completi sono trasferiti nella Sezione~\ref{app:obiettivi}. La motivazione crittografica estesa --- confronto fra \ac{GNFS} e Shor, vulnerabilità di \ac{RSA} e rischio \emph{harvest now, decrypt later} --- è nella Sezione~\ref{sec:motivazione}.
+
+\section{Obiettivi generali}
+
+L'obiettivo generale è analizzare l'algoritmo di Shor e stabilire come il rumore limiti la sua esecuzione, distinguendo il potenziale computazionale asintotico dalle condizioni necessarie per ottenerlo. Il lavoro non assume che una tecnica sia utile per definizione: ne misura il contributo rispetto a baseline esplicite e sotto unità coerenti.
+
+Il disegno segue due fasi. La prima verifica se un classificatore applicato a valle dell'esecuzione riduca il costo rispetto alla baseline TOP-1 e alla sola ricerca TOP-4. La seconda studia la protezione durante l'esecuzione mediante codici a ripetizione, Steane e surface code, quindi confronta decoder analitici e appresi sulla sindrome. Un'analisi separata misura la sensibilità di Shor a un proxy Pauli per gate compilato senza identificarlo con il tasso logico per ciclo o per memoria dei benchmark \ac{QEC}.
+
+\section{Obiettivi specifici}
+
+Gli obiettivi operativi sono:
+
+\begin{enumerate}
+    \item fissare i fondamenti matematici e fisici indispensabili a leggere circuiti e rumore quantistici;
+    \item descrivere Shor attraverso \textit{period finding}, \ac{QFT}, phase estimation, complessità e implicazioni per \ac{RSA};
+    \item implementare e validare in Qiskit la \ac{QFT}, l'esponenziazione modulare e il circuito di fattorizzazione sulle istanze comprese nel perimetro;
+    \item caratterizzare decoerenza, errori di gate e di misura, distinguendo mitigazione e correzione d'errore;
+    \item determinare \emph{dove} un modello appreso aggiunga valore, confrontandone l'uso sull'istogramma finale e sulla sindrome;
+    \item misurare soppressione, break-even e soglia di ripetizione, Steane $[[7,1,3]]$ e surface code, quindi collegare i risultati a Shor soltanto tramite un'analisi di sensibilità dichiaratamente fenomenologica.
+\end{enumerate}
+
+La formulazione estesa, con attività, output attesi e limiti di ciascun obiettivo, è riportata nella Sezione~\ref{app:obiettivi:specifici} come approfondimento di questa sezione.
+
+La parte sperimentale risponde alle seguenti \textbf{domande di ricerca}:
+
+\begin{description}
+    \item[\textbf{DR1.}] Come degrada la probabilità di successo di Shor al crescere dell'errore fisico sui gate, e quale fonte di rumore è la più dannosa?
+    \item[\textbf{DR2.}] In che modo un codice a ripetizione permette di introdurre il concetto di sindrome senza collassare lo stato logico?
+    \item[\textbf{DR3.}] Quali vantaggi e limiti offre il codice di Steane $[[7,1,3]]$ come primo codice capace di correggere un errore arbitrario su un qubit?
+    \item[\textbf{DR4.}] Perché il surface code è più rilevante per scenari scalabili, e come si stima il suo logical error rate tramite decodifica? Esiste un comportamento di soglia osservabile?
+    \item[\textbf{DR5.}] Come varia il successo di Shor al crescere di un proxy Pauli uniforme per gate, e quante ripetizioni indipendenti servono per superare una soglia operativa prefissata?
+    \item[\textbf{DR6.}] Esiste un regime in cui un decoder \emph{appreso dai dati} supera il decoder analitico standard, e da che cosa dipende? In particolare: il vantaggio dipende dalla qualità della calibrazione del modello di rumore, oppure dalla sua rappresentabilità nella struttura del decoder?
+\end{description}
+
+Le prime cinque domande seguono una progressione: Shor, rumore, codifica,
+decodifica e integrazione. DR6 chiude il confronto fra i due impieghi
+dell'apprendimento automatico.
+
+\section{Ipotesi di lavoro}
+\label{sec:ipotesi}
+
+\textbf{Ipotesi principale.} Il classificatore del Metodo~2 riduce significativamente il numero medio di iterazioni rispetto al Metodo~1 sugli stessi istogrammi. Il fattore descrittivo è
+\begin{equation}
+    \rho=\frac{\bar{M}_1}{\bar{M}_2}\gg1,
+    \label{eq:fattore_riduzione}
+\end{equation}
+mentre l'inferenza riguarda le differenze appaiate fra repliche. \textbf{Ipotesi secondaria~1:} il classificatore distingue esecuzioni corrette ed errate con F1$>0.85$ e AUC$>0.90$ sul test indipendente. \textbf{Ipotesi secondaria~2:} l'eventuale vantaggio si mantiene dal preset di riferimento a quello di stress sul medesimo circuito $N=15$; $N=21$ resta una validazione ideale dell'aritmetica e delle risorse e non entra nella verifica inferenziale.
+
+La fase QEC verifica tre ulteriori ipotesi. \textbf{QEC~1, soppressione:} per i codici di distanza $d=3$, $p_L\propto p^2$ a piccolo $p$ ed esiste un regime $p_L<p$. \textbf{QEC~2, soglia:} per il surface code le curve $p_L(p)$ a distanze crescenti si incrociano in prossimità di $p_{th}$; sotto tale valore aumentare $d$ riduce $p_L$. \textbf{QEC~3, sensibilità:} nel proxy M8 il successo di Shor è compatibile con una funzione non crescente del parametro Pauli per gate e le ripetizioni indipendenti possono superare una soglia cumulativa non raggiunta dal singolo run ideale. Quest'ultima ipotesi non converte direttamente i benchmark Steane o surface code.
+
+Test, trattamento dei fallimenti, pareggi, correzioni per confronti multipli e criteri di accettazione sono specificati nella Sezione~\ref{app:obiettivi:protocollo}.
+
+\section{Contributo originale}
+\label{sec:contributo_originale}
+
+Il contributo originale è articolato in quattro risultati metodologici:
+
+\begin{itemize}
+    \item \textbf{TOP-K e ablazione:} M1, TOP-4 e M2 ricevono lo stesso istogramma, così il confronto separa la ricerca multi-candidato dal filtro \ac{ML} senza introdurre una diversa realizzazione Monte Carlo;
+    \item \textbf{quantificazione riproducibile:} il fattore $\rho$ e i confronti appaiati sono calcolati sui due preset $N=15$ usando gli artefatti schema~2 successivi alla correzione del moltiplicatore $\times7\bmod15$; $N=21$ fornisce un controllo ideale separato;
+    \item \textbf{caratterizzazione a livelli:} ripetizione, Steane e surface code sono valutati nelle rispettive unità QEC, mentre M8 misura separatamente la sensibilità di Shor a un proxy per gate; senza compilazione fault-tolerant tali grandezze non vengono sovrapposte;
+    \item \textbf{criterio di utilità dell'apprendimento:} l'impiego sull'output finale e quello sulla sindrome sono entrambi confrontati con una baseline analitica a parità di informazione, delimitando il regime in cui il modello appreso produce un guadagno misurabile.
+\end{itemize}
+
+I requisiti verificabili e gli input/output che rendono operativi questi contributi sono nelle Sezioni~\ref{sec:requisiti} e~\ref{sec:input_output}.
+
+\section{Perimetro sperimentale}
+\label{sec:use_case}
+
+Il corpo si concentra su due istanze con ruoli distinti. $N=15$, $a=7$ alimenta le due campagne rumorose uniformi, \emph{riferimento} e \emph{stress}, sulle quali vengono confrontati M1, TOP-4 e M2. $N=21$, $a=2$ è invece usata soltanto per validare idealmente l'aritmetica reversibile di Beauregard, il ripristino degli ancilla, la QPE e il costo compilato; non le vengono attribuiti risultati rumorosi. I preset numerici, il razionale completo delle istanze e gli audit ulteriori sono trasferiti nelle Sezioni~\ref{app:obiettivi:usecase} e~\ref{subsec:razionale_istanze}.
+
+\section{Metriche e criteri di valutazione}
+\label{sec:metriche}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}lXXX@{}}
+\toprule
+\textbf{Esperimento} & \textbf{Confronto} & \textbf{Metrica primaria} & \textbf{Criterio} \\
+\midrule
+Shor rumoroso, $N=15$ & M1--TOP-4--M2 appaiati & iterazioni, successo entro $M_{\max}$, $\rho$ & vantaggio significativo e non solo descrittivo \\
+Validazione $N=21$ & aritmetica e QPE ideali & correttezza, ancilla, costo compilato & trasformazione esatta; nessuna inferenza rumorosa \\
+Codici QEC & fisico--logico e distanze $d$ & $p_L$, pendenza, break-even, $p_{th}$ & $p_L<p$ e soppressione al crescere di $d$ sotto soglia \\
+Decoder di sindrome & appreso/ibrido--\ac{MWPM} & differenza di $p_L$ sugli stessi campioni & guadagno riproducibile nel regime dichiarato \\
+Shor M8 & livelli del proxy Pauli & $P_{\mathrm{success}}(p_L)$ e $P(k)$ & sensibilità non crescente, senza conversione QEC diretta \\
+\bottomrule
+\end{tabularx}
+\caption{Sintesi del perimetro, delle metriche e dei criteri di valutazione.}
+\label{tab:contratto_sintesi}
+\end{table}
+
+Per M1 e M2, $\bar{M}$ è accompagnata dal tasso di successo e dalla dispersione; il test usa vettori appaiati completi e conserva i fallimenti entro il budget. Accuratezza, F1 e AUC valutano il classificatore ma non sostituiscono la metrica operativa. Il readout error è incluso nel noise model, senza correzione post-hoc; la ricerca TOP-4 costituisce l'ablazione che isola il contributo del classificatore. Definizioni, preset, seed, gestione dei pareggi e protocollo statistico completo sono nella Sezione~\ref{app:obiettivi:protocollo}.
+
+\subsection{Metriche della parte QEC}
+\label{subsec:metriche_qec}
+
+Il \textit{logical error rate} $p_L$ è stimato con numero di campioni, seed e incertezza binomiale dichiarati. Pendenza di soppressione, break-even e soglia descrivono i codici; in M8 lo stesso simbolo indica esplicitamente la probabilità totale di un Pauli non identità dopo ciascun gate incluso nel proxy. La distinzione delle unità impedisce di trasformare un memory experiment in una previsione hardware non giustificata. Le definizioni operative complete sono nella Sezione~\ref{app:obiettivi:metriche}.
+
+\section{Articolazione del lavoro di ricerca}
+
+Il Capitolo~\ref{chap:quadro} sviluppa teoria e metodologia, il Capitolo~\ref{chap:implementazione} traduce il contratto nell'architettura sperimentale e il Capitolo~\ref{chap:risultati} valuta ipotesi e domande sui dati; la roadmap analitica dell'intero elaborato è nella Sezione~\ref{app:intro:struttura}.
+
+\end{onehalfspace}

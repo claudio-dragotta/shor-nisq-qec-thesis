@@ -1,0 +1,262 @@
+% Derivazioni migrate dal Cap. 5 per il vincolo di lunghezza del corpo.
+% Il capitolo mantiene il canale depolarizzante in forma completa e gli enunciati
+% compatti degli altri tre.
+
+I quattro canali quantistici che modellano il rumore sono mappe \ac{CPTP} in rappresentazione di Kraus, secondo l'Eq.~\ref{eq:kraus}. Il Capitolo~\ref{chap:rumore} ne riporta il canale depolarizzante per esteso, essendo quello su cui poggia la campagna sperimentale, e l'enunciato compatto degli altri tre; qui se ne danno le derivazioni complete.
+
+\subsection{Canale Bit Flip}
+
+Il canale \textbf{bit flip} modella un errore di tipo $X$ discreto: con probabilità $p$ il qubit viene invertito ($\ket{0}\leftrightarrow\ket{1}$), con probabilità $1-p$ rimane invariato. Gli operatori di Kraus sono $K_0 = \sqrt{1-p}\,I$ e $K_1 = \sqrt{p}\,X$, e il canale agisce come:
+\begin{equation}
+    \mathcal{E}_{BF}(\rho) = (1-p)\,\rho + p\,X\rho X
+    \label{eq:bitflip}
+\end{equation}
+Sulla sfera di Bloch, le componenti $r_y$ e $r_z$ vengono contratte di un fattore $(1-2p)$ mentre la componente $r_x$ rimane invariata. Per $p=1/2$ il canale annulla le componenti $y$ e $z$, ma conserva $r_x$: equivale a una completa dephasing nella base degli autostati di $X$, non alla distruzione completa dello stato.
+
+% ---
+\subsection{Canale Phase Flip}
+
+Il canale \textbf{phase flip} modella la perdita di informazione di fase senza cambiamento di popolazione: la sovrapposizione decade senza che l'energia venga dissipata. Con operatori di Kraus $K_0 = \sqrt{1-p}\,I$ e $K_1 = \sqrt{p}\,Z$, il canale è:
+\begin{equation}
+    \mathcal{E}_{PF}(\rho) = (1-p)\,\rho + p\,Z\rho Z
+    \label{eq:phaseflip}
+\end{equation}
+L'effetto sulla matrice densità è immediato:
+\begin{equation}
+    \mathcal{E}_{PF}\!\begin{pmatrix}\rho_{00} & \rho_{01} \\ \rho_{10} & \rho_{11}\end{pmatrix}
+    = \begin{pmatrix}\rho_{00} & (1-2p)\,\rho_{01} \\ (1-2p)\,\rho_{10} & \rho_{11}\end{pmatrix}
+\end{equation}
+Le popolazioni $\rho_{00}$ e $\rho_{11}$ rimangono invariate, mentre le \textbf{coerenze} $\rho_{01}$, $\rho_{10}$ vengono soppresse di un fattore $(1-2p)$. Questo è il canale che descrive il decadimento $T_2$: parametrizzando $p(t) = \frac{1}{2}(1-e^{-t/T_2})$, si ottiene $\rho_{01}(t) = \rho_{01}(0)\,e^{-t/T_2}$.
+
+% ---
+\subsection{Canale di Amplitude Damping}
+
+Il canale di \textbf{amplitude damping} modella il rilassamento energetico $T_1$: il qubit decade spontaneamente dallo stato eccitato $\ket{1}$ allo stato fondamentale $\ket{0}$ con probabilità $\gamma = 1-e^{-t/T_1}$. Gli operatori di Kraus sono:
+\begin{equation}
+    K_0 = \begin{pmatrix}1 & 0 \\ 0 & \sqrt{1-\gamma}\end{pmatrix}, \qquad
+    K_1 = \begin{pmatrix}0 & \sqrt{\gamma} \\ 0 & 0\end{pmatrix}
+    \label{eq:kraus_ad}
+\end{equation}
+Il canale agisce sulla matrice densità come:
+\begin{equation}
+    \mathcal{E}_{AD}\!(\rho) = \begin{pmatrix}
+        \rho_{00} + \gamma\,\rho_{11} & \sqrt{1-\gamma}\,\rho_{01} \\
+        \sqrt{1-\gamma}\,\rho_{10}   & (1-\gamma)\,\rho_{11}
+    \end{pmatrix}
+    \label{eq:amp_damping_explicit}
+\end{equation}
+La popolazione $\rho_{11}$ decade verso $\rho_{00}$ con tasso $\gamma$, mentre le coerenze vengono soppresse di $\sqrt{1-\gamma}$. A differenza dei canali precedenti, questo canale è \textbf{non simmetrico}: sulla sfera di Bloch contrae la sfera verso il polo nord $\ket{0}$, non verso il centro:
+\begin{equation}
+    r_x \to \sqrt{1-\gamma}\,r_x, \qquad r_y \to \sqrt{1-\gamma}\,r_y, \qquad r_z \to (1-\gamma)\,r_z + \gamma
+\end{equation}
+Per $t \to \infty$ ($\gamma \to 1$), qualsiasi stato converge a $\ket{0}\bra{0}$, indipendentemente dallo stato iniziale.
+
+\subsection{Confronto geometrico dei quattro canali}
+
+La visualizzazione seguente, trasferita dal corpo, completa le derivazioni
+mostrando che canali con probabilità d'errore simili possono produrre geometrie
+molto diverse nello spazio degli stati.
+
+Per il canale depolarizzante, l'identità
+$X\rho X+Y\rho Y+Z\rho Z=2I-\rho$ (per $\operatorname{Tr}\rho=1$) conduce
+dalla forma a miscela di Pauli alla forma compatta della
+Eq.~\eqref{eq:depolarizing_compact}. Il vettore di Bloch è moltiplicato per
+$1-4p/3$ e, per $p=3/4$, lo stato diventa massimamente misto qualunque fosse
+l'ingresso. Nel parametro Aer $\lambda$, invece, la probabilità aggregata di
+una Pauli non identità è $3\lambda/4$ su un qubit e $15\lambda/16$ su due.
+I preset uniformi compongono depolarizzazione e thermal relaxation; M8 usa il
+solo proxy Pauli per gate, mentre M11 converte l'infedeltà media della snapshot
+senza aggiungere nuovamente $T_1/T_2$, evitando il doppio conteggio.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{14_bloch_channels.pdf}
+\caption[Effetto dei canali di rumore sulla sfera di Bloch]{Effetto dei quattro
+canali nel piano $xz$. La curva tratteggiata è la sfera ideale: bit flip e
+phase flip contraggono direzioni selettive, il depolarizzante contrae
+isotropicamente e l'amplitude damping sposta lo stato verso $\ket{0}$.}
+\label{fig:bloch_channels}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Canale} & \textbf{Effetto sulle coerenze} & \textbf{Popolazioni} & \textbf{Modella} \\
+\midrule
+Bit flip & contrae $r_y,r_z$ & scambiate & errore $X$ \\
+Phase flip & sopprime $\rho_{01}$ & invariate & dephasing $T_2$ \\
+Depolarizzante & contrazione isotropa & verso $I/2$ & gate generico \\
+Amplitude damping & sopprime $\rho_{01}$ & verso $\ket{0}$ & rilassamento $T_1$ \\
+\bottomrule
+\end{tabular}
+\caption{Confronto fra i quattro canali fondamentali~\cite{nielsenChuang2000}.}
+\label{tab:canali_rumore}
+\end{table}
+
+% La sezione seguente genera intenzionalmente A.5 pur essendo collocata in
+% coda al file dei canali: evita di modificare la struttura di main.tex.
+\section{Strategie anti-rumore e richiami estesi di QEC}
+\label{app:strategie_estese}
+
+Questa sezione raccoglie il materiale trasferito dalla parte del
+Capitolo~\ref{chap:quadro} dedicata alle strategie. Nel corpo restano la tabella
+comparativa, il ciclo QEC essenziale e le scelte che guidano gli esperimenti;
+qui sono conservati rassegna, esempi e confronti estesi.
+
+\subsection{I quattro livelli di intervento}
+
+\begin{enumerate}
+    \item \textbf{Soppressione del rumore.} Agisce prima o durante il calcolo
+    riducendo fisicamente l'accoppiamento con l'ambiente. Comprende
+    \emph{dynamical decoupling}, ottimizzazione della durata dei gate e
+    isolamento criogenico ed elettromagnetico. Riduce il rumore ma è vincolata
+    all'hardware disponibile.
+
+    \item \textbf{Mitigazione degli errori.} Opera a posteriori senza
+    correggere i qubit. \ac{ZNE}, \emph{probabilistic error cancellation} e
+    gate twirling combinano più esecuzioni o randomizzazioni per stimare
+    l'output ideale. Il limite è l'overhead di campionamento, la cui legge
+    dipende dalla tecnica e può diventare esponenziale nell'errore totale,
+    soprattutto per la PEC.
+
+    \item \textbf{Tolleranza ai guasti.} Codifica ogni qubit logico in molti
+    qubit fisici. Sotto le ipotesi del threshold theorem e al di sotto della
+    soglia~\cite{aharonov1997fault}, l'errore logico può essere ridotto
+    aumentando distanza e overhead. Le stime per algoritmi di grande scala
+    possono richiedere centinaia o migliaia di qubit fisici per qubit logico,
+    a seconda di codice, errore fisico e obiettivo.
+
+    \item \textbf{Metodi appresi.} Modelli classici possono classificare
+    output, stimare qualità o assistere un decoder. Non sono automaticamente
+    \ac{QML}, né sostituiscono per definizione mitigazione o QEC.
+\end{enumerate}
+
+Nel perimetro della tesi la soppressione non è controllabile, la mitigazione
+richiede esecuzioni aggiuntive e la fault tolerance completa eccede le risorse
+disponibili. Un modello a valle non modifica il circuito, ma il suo vantaggio è
+un'ipotesi da confrontare con regole semplici. Per questo TOP-1, TOP-4 e M2
+usano gli stessi istogrammi, mentre la \ac{ZNE} è un controllo secondario.
+
+\subsection{Usi possibili dei metodi appresi}
+
+Il termine appropriato per gli esperimenti è \textbf{machine learning classico
+applicato a dati quantistici}: Random Forest, \ac{SVM} e \ac{MLP} sono
+addestrati ed eseguiti classicamente. Il \ac{QML} in senso stretto impiega
+circuiti o modelli quantistici nell'apprendimento e non è implementato. Tre usi
+distinti chiariscono il perimetro:
+\begin{itemize}
+    \item nella \textbf{caratterizzazione del rumore}, una regressione può
+    collegare $T_1,T_2$, profondità e fedeltà per predire la qualità;
+    \item nell'\textbf{ottimizzazione circuitale}, un agente può adattare
+    decomposizione e routing al profilo d'errore del dispositivo;
+    \item nella \textbf{decodifica QEC}, un modello usa le sindromi per
+    proporre una correzione o correggere residualmente una decisione analitica.
+\end{itemize}
+Il terzo caso colloca il machine learning \emph{dentro una fase} della QEC,
+senza ridefinire la disciplina.
+
+\subsection{Principio, codici e decoder QEC}
+\label{app:qec_richiami_teoria}
+
+Il no-cloning impedisce di proteggere un qubit duplicandolo, ma non di
+\emph{distribuire} l'informazione logica su più qubit fisici. Misurando
+operatori collettivi si ottiene una sindrome dell'errore senza rivelare, e
+quindi distruggere, lo stato logico. Il paradigma comprende:
+\begin{enumerate}
+    \item codifica di $\ket{\psi_L}$ su $n$ qubit fisici;
+    \item misura di stabilizzatori che commutano con i codeword e
+    anticommutano con determinate classi d'errore;
+    \item decodifica della sindrome e scelta dell'operazione di recupero.
+\end{enumerate}
+
+Il \textbf{codice di Shor}~\cite{shorcorrection1995} codifica un qubit in nove
+e corregge un errore singolo arbitrario:
+\begin{equation}
+ \ket{0_L}=\frac{(\ket{000}+\ket{111})^{\otimes3}}{2\sqrt2},\qquad
+ \ket{1_L}=\frac{(\ket{000}-\ket{111})^{\otimes3}}{2\sqrt2}.
+\end{equation}
+La struttura combina protezione dalla fase mediante interferenza e dal bit flip
+mediante ripetizione. Il \textbf{codice di Steane}~\cite{steane1996} usa sette
+qubit e la struttura del codice classico di Hamming $[7,4,3]$; è un codice
+\ac{CSS}~\cite{calderbankShor1996} e corregge anch'esso un errore singolo. Il
+\textbf{surface code}~\cite{fowler2012} dispone invece i qubit su una griglia
+2D con interazioni locali: sotto una soglia dipendente da circuito, rumore e
+decoder, aumentare la distanza $d$ sopprime l'errore logico; sopra soglia lo
+amplifica.
+
+Il punto di contatto con il machine learning è la decodifica
+\cite{torlaiMelko2017,alphaqubit2024}. Un modello può sostituire il decoder o
+intervenire sui suoi residui, ma deve essere confrontato a parità di sindromi e
+calendario. Nel protocollo studiato la sostituzione del matching non conviene;
+l'affiancamento recupera invece una parte degli errori correlati assenti dal
+grafo analitico. Questo è un risultato circoscritto al modello simulato, non una
+superiorità generale dei decoder appresi.
+
+\subsection{Verifica del filtro appreso nella prima fase}
+
+Senza ML, ogni iterazione produce un istogramma: TOP-1 prova la moda e TOP-4 i
+primi quattro esiti. Le iterazioni non vanno confuse con gli shot che formano
+ciascun istogramma; nelle campagne la media è fra 1 e 1.5 iterazioni. Con ML,
+il classificatore riceve le feature dell'istogramma già campionato e decide se
+attivare TOP-4: non classifica il singolo shot e non elimina il costo di
+costruzione della distribuzione.
+
+L'ipotesi preregistrata era una riduzione rispetto a TOP-1. Essa si osserva
+(nello scenario moderato da $\bar M_1=1.37$ a $\bar M=1.00$), ma l'ablazione
+mostra che deriva dalla ricerca multi-candidato: il classificatore costa più di
+TOP-4 in entrambi gli scenari. Il risultato negativo delimita quel filtro e
+quelle etichette; non è una conclusione generale su ML, mitigazione o decoder.
+
+\subsection{AQFT e scambio fra qubit e porte}
+\label{app:aqft_estesa}
+
+La \ac{QFT} impiega rotazioni controllate con angolo esponenzialmente più
+piccolo all'aumentare della distanza fra qubit. L'\ac{AQFT} scarta quelle sotto
+una soglia: perde precisione algoritmica, ma riduce il conteggio di porte. Per
+$N=21$, troncare le trasformate interne agli addizionatori porta le porte a due
+qubit da 49\,661 a 23\,178; nelle tre dimensioni del registro di phase
+estimation la variante troncata supera quella completa in tutti i nove
+confronti. Ridurre la profondità è una strategia anti-rumore perché accorcia il
+cammino critico rispetto a $T_1$ e $T_2$, indipendentemente dal numero di qubit
+disponibili.
+
+Chevignard, Fouque e Schrottenloher~\cite{chevignard2025} perseguono uno scambio
+diverso: l'aritmetica modulare approssimata in un sistema di residui riduce i
+qubit logici da circa $2n$ a $n/2+o(n)$; per RSA-2048 stima 1730 qubit contro i
+6144 del riferimento. Gli autori riportano però $2^{35.5}$ porte Toffoli e in
+media quaranta esecuzioni, $2^{40.9}$ complessive, contro $2^{31.3}$ per una
+singola esecuzione di riferimento. Un lavoro successivo~\cite{gidney2025}
+riduce il costo e arriva a 1399 qubit logici. Nel regime fault-tolerant domina
+il costo dei qubit; nel regime NISQ simulato qui domina la profondità rispetto
+alla coerenza. Le due strategie rispondono quindi a vincoli diversi.
+
+\subsection{Transizione fra le due fasi sperimentali}
+
+Il primo esito delimita il post-processing: l'istogramma contiene candidati
+utili, sfruttati da TOP-4, ma il classificatore su quelle etichette non aggiunge
+informazione. Il nucleo successivo si sposta durante il calcolo: codice a
+ripetizione, Steane, surface code e confronto fra decodifica analitica e
+appresa. L'analisi fenomenologica di Shor resta separata dai tassi QEC per
+ciclo, mentre l'\ac{AQFT} valuta una leva circuitale complementare.
+
+\subsection{Dettagli tecnici del contratto sperimentale}
+\label{app:contratto_metodo_esteso}
+
+Questo blocco conserva i dettagli operativi alleggeriti nella sezione
+metodologica. Il circuito è compilato una sola volta nella base
+\texttt{rz/sx/x/cx}, con \texttt{optimization\_level=2} e seed del transpiler
+fissato. La configurazione di riferimento contiene 224 porte \texttt{cx} e ha
+profondità 412; hash e conteggi completi della netlist sono registrati nel
+manifest. Per ogni coppia (replica, iterazione), Aer genera un unico istogramma
+che viene consegnato senza ricampionamento a M1, TOP-4 e M2.
+
+I pareggi di frequenza sono risolti mediante una priorità SHA-256 dipendente
+dal seed e dalla bitstring. In questo modo l'ordine dei candidati non dipende
+né dall'ordine interno del dizionario né dal valore numerico dell'esito. Il
+dataset conserva sia l'etichetta TOP-1 sia l'audit TOP-16, mentre la pipeline
+usa esclusivamente il modello TOP-1 compatibile con il manifest. Ciascuno
+scenario contiene 30 repliche e un budget di 50 iterazioni; il fallimento al
+budget assume la sentinella 51. I test inferenziali agiscono sempre sui vettori
+appaiati completi, non sulle sole medie aggregate.

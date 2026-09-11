@@ -1,0 +1,148 @@
+% Blocchi migrati dal Cap. 4 per il vincolo di lunghezza del corpo.
+% La rilevanza crittografica in forma estesa e' nell'Appendice C (Contesto).
+
+Questa sezione raccoglie il materiale di contesto e di approfondimento dell'algoritmo di Shor: lo stato delle realizzazioni sperimentali, i miglioramenti algoritmici recenti, la roadmap verso il calcolo fault-tolerant e il confronto con l'algoritmo di Grover. Il Capitolo~\ref{chap:shor} ne riporta la sintesi.
+
+\subsection{Sviluppi Recenti e Stato dell'Arte}
+
+\subsubsection{Implementazioni su Hardware Reale}
+
+Nonostante la solidità teorica, l'esecuzione di Shor su hardware reale rimane limitata a istanze molto piccole a causa dei requisiti di profondità circuitale. I principali risultati sperimentali sono:
+
+\begin{itemize}
+    \item \textbf{2001 -- \ac{NMR} (Vandersypen et al.)}: prima dimostrazione sperimentale di Shor su un sistema a 7 spin nucleari; fattorizzazione di $N = 15$ in $3 \times 5$ \cite{vandersypen2001}.
+    \item \textbf{2016 -- Ioni intrappolati (Monz et al.)}: implementazione scalabile su 5 qubit ionici; fattorizzazione di $N = 15$ con un'architettura modulare \cite{monz2016}.
+    \item \textbf{2021 -- Qubit superconduttori \ac{IBM}}: dimostrazione compilata della fattorizzazione di $N = 21$ su processori \ac{IBM} Quantum utilizzando 5 qubit \cite{skosana2021}.
+\end{itemize}
+
+Queste istanze evidenziano quanto la distanza dalle chiavi crittograficamente rilevanti sia ancora enorme. Una stima classica del fabbisogno, formulata sul modello di circuito privo di correzione d'errore, riporta $5K+1$ qubit di memoria e circa $72K^3$ gate elementari per fattorizzare un numero di $K$ bit \cite{beckman1996}; costanti e overhead dipendono però dall'architettura aritmetica e, nelle stime moderne, dal protocollo fault-tolerant, rispetto al quale quel conteggio va inteso come limite inferiore ottimistico. In ogni caso, i valori per RSA-2048 restano fuori portata per i processori \ac{NISQ} attuali.
+
+Alla distanza teorica se ne aggiunge una operativa, documentata da una campagna recente su più piattaforme cloud: le costruzioni circuitali restano specifiche per ciascun modulo, e le fedeltà delle macchine si presentano instabili, con tassi d'errore elevati e fluttuanti \cite{shor_challenges2025}. È la ragione per cui, in questo lavoro, $N=15$ è trattato come istanza illustrativa e non come misura di fattibilità.
+
+\subsubsection{Miglioramenti Algoritmici: Regev 2023}
+
+Un risultato teorico rilevante è stato pubblicato nel 2023 da Oded Regev \cite{regev2023}. La proposta fattorizza un intero di $n$ bit eseguendo indipendentemente circa $\sqrt n+4$ circuiti, ciascuno con $\widetilde O(n^{3/2})$ gate, seguiti da post-processing classico polinomiale. Il confronto con Shor non può quindi essere ridotto al solo conteggio di gate di una singola esecuzione: aumentano il numero di run e, nella costruzione originale, anche lo spazio quantistico; inoltre l'articolo dichiara non chiaro l'effettivo vantaggio implementativo. Il risultato è un miglioramento asintotico importante, non una dimostrazione di praticabilità su dispositivi NISQ.
+
+\subsubsection{Roadmap IBM verso il Quantum Fault-Tolerant}
+
+\ac{IBM} ha delineato una roadmap concreta verso il calcolo quantistico fault-tolerant \cite{ibm_roadmap2025}:
+\begin{itemize}
+    \item \textbf{2025}: processori Loon e Nighthawk (120 qubit con 218 coupler sintonizzabili), con dimostrazione dei componenti chiave per la fault-tolerance tramite codici qLDPC;
+    \item \textbf{2026}: target di vantaggio quantistico su problemi pratici;
+    \item \textbf{2029}: sistema Quantum Starling con 200 qubit logici e oltre $10^8$ operazioni quantistiche.
+\end{itemize}
+
+Questi traguardi sono obiettivi industriali dichiarati da IBM, soggetti a revisione, e non stabiliscono quando una macchina avrà le risorse logiche necessarie a rompere RSA-2048. Rafforzano la necessità di preparare la migrazione, ma non forniscono una previsione crittografica.
+
+Le sfide hardware principali per l'esecuzione di Shor su istanze crittograficamente rilevanti sono analizzate in dettaglio nel Capitolo~\ref{chap:rumore}, mentre l'implementazione pratica con Qiskit e le tecniche di ottimizzazione basate su intelligenza artificiale sono presentate nel Capitolo~\ref{chap:sviluppo}.
+\clearpage
+
+\subsection{Contesto: Confronto con l'Algoritmo di Grover}
+
+Per collocare correttamente l'algoritmo di Shor nel panorama dell'informatica quantistica, è utile confrontarlo con l'altro grande risultato algoritmico degli anni Novanta: l'algoritmo di Grover per la ricerca non strutturata \cite{grover1996}.
+
+\subsubsection{Il Problema di Grover}
+
+Dato un insieme di $N$ elementi e una funzione oracolo $f:\{0,\ldots,N-1\}\to\{0,1\}$, l'obiettivo è trovare $x^*$ tale che $f(x^*)=1$. Classicamente, nel caso peggiore, sono necessarie $O(N)$ interrogazioni. Grover (1996) dimostrò che un algoritmo quantistico, sfruttando il meccanismo di \textit{amplitude amplification}, può trovare la soluzione in sole $O(\sqrt{N})$ interrogazioni -- uno \textbf{speedup quadratico} che è stato dimostrato ottimale: nessun algoritmo quantistico può fare meglio \cite{bennett1997,zalka1999}.
+
+\subsubsection{Differenze Fondamentali}
+
+I due algoritmi rappresentano due regimi distinti di vantaggio quantistico:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}lp{5cm}p{5cm}@{}}
+\toprule
+\textbf{Caratteristica} & \textbf{Shor} & \textbf{Grover} \\
+\midrule
+Problema target          & Fattorizzazione intera / period finding & Ricerca non strutturata \\[2pt]
+Speedup                  & Esponenziale rispetto al miglior classico & Quadratico: $O(\sqrt{N})$ vs $O(N)$ \\[2pt]
+Tecnica quantistica core & QFT + Phase Estimation          & Amplitude Amplification \\[2pt]
+Ottimalità               & Non dimostrata in assoluto      & Dimostrata ottimale \cite{bennett1997} \\[2pt]
+Impatto crittografico    & Rompe RSA, DH, ECDSA (chiave pubblica) & Dimezza sicurezza AES/SHA (simmetrica) \\[2pt]
+Requisiti hardware       & $O(\log N)$ qubit, alta profondità & $O(\log N)$ qubit, bassa profondità \\
+\bottomrule
+\end{tabular}
+\caption{Confronto tra l'algoritmo di Shor e l'algoritmo di Grover}
+\end{table}
+
+L'impatto sulla crittografia simmetrica di Grover è significativo ma gestibile: raddoppiare la lunghezza delle chiavi (da AES-128 a AES-256) è sufficiente a ripristinare il livello di sicurezza. Al contrario, non esiste un analogo rimedio per RSA: l'unica risposta è la migrazione verso gli standard post-quantum discussi nella Sezione~\ref{app:intro:pqc}. È per questa ragione che l'algoritmo di Shor rappresenta la minaccia quantistica più urgente e motivante per la ricerca sul calcolo quantistico applicato.
+
+Tutta l'analisi svolta in questa sezione ha però assunto un modello di calcolo \textit{ideale}: porte unitarie perfette, coerenza illimitata, nessuna interazione con l'ambiente. Su hardware reale questi presupposti non reggono, e la distanza tra il modello teorico e l'esecuzione fisica è precisamente il nodo critico che rende ancora irraggiungibile la fattorizzazione di numeri crittograficamente rilevanti. Comprendere le origini e gli effetti del rumore quantistico è quindi il passo necessario per valutare le reali prospettive dell'algoritmo di Shor.
+
+\subsection{Sensibilità delle componenti di Shor al rumore}
+\label{app:shor_rumore_esteso}
+
+La seguente analisi è stata trasferita dalla Sezione sul rumore del
+Capitolo~\ref{chap:quadro}. Nel corpo resta il nesso causale essenziale; qui si
+conservano derivazioni, esempio numerico e figura di scala.
+
+\subsubsection{Errori nella Quantum Fourier Transform}
+
+La \ac{QFT} usa rotazioni
+$R_k=\operatorname{diag}(1,e^{2\pi i/2^k})$ con angoli esponenzialmente
+piccoli. Per $k=10$, $2\pi/1024\simeq6\times10^{-3}$ rad. Gli errori coerenti
+di calibrazione possono sommarsi in ampiezza, mentre il canale depolarizzante
+produce degradazione stocastica: non è quindi corretto ricondurli a un solo
+``errore di fase'' lineare. Le campagne li mantengono distinti.
+
+\subsubsection{Errori nella Phase Estimation}
+
+I qubit di controllo devono mantenere la coerenza lungo il cammino critico
+dell'esponenziazione modulare. Come ordine di grandezza,
+\begin{equation}
+    T_2\gg\tau_{\text{gate}}\,O(n^3),
+\end{equation}
+ma questa espressione non determina una soglia universale in bit: la costante
+dipende da aritmetica e compilazione, mentre in regime fault-tolerant il
+confronto diretto è sostituito da un budget di errore logico.
+
+\subsubsection{Errori nell'esponenziazione modulare}
+
+Sotto l'ipotesi puramente illustrativa di $L$ eventi indipendenti con
+probabilità $\epsilon$, il proxy di nessun evento è
+\begin{equation}
+    P_{0\text{-eventi}}=(1-\epsilon)^L,\qquad L\sim O(n^3).
+\end{equation}
+Ponendo soltanto per visualizzare la scala $L=n^3$, per $n=15$ e
+$\epsilon=10^{-3}$ si ottiene
+$(1-10^{-3})^{3375}\simeq0.034$. Non è una probabilità di successo di Shor:
+alcuni errori possono non alterare l'esito e la formula non rappresenta
+rilassamento, readout o struttura circuitale.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{15_psuccess_vs_n.pdf}
+\caption[Proxy di nessun evento al crescere del circuito]{Proxy illustrativo
+$(1-\epsilon)^{n^3}$ per cinque valori di $\epsilon$. La curva non deriva dai
+circuiti sperimentali e mostra soltanto l'accumulo moltiplicativo di eventi.}
+\label{fig:psuccess_vs_n}
+\end{figure}
+
+\subsection{Scelta dell'aritmetica e perimetro delle istanze}
+\label{app:shor_perimetro_esteso}
+
+Questo dettaglio metodologico proviene dalla sezione sul disegno sperimentale.
+Sintetizzare l'esponenziazione modulare come un operatore unitario denso costa
+$O(4^k)$ porte elementari su $k$ qubit~\cite{Barenco1995}. La decomposizione
+di Beauregard~\cite{beauregard2002} evita tale sintesi costruendo l'aritmetica
+nel dominio della \ac{QFT}, con addizionatori di Draper, e richiede
+$O(n^3)$ porte su $2n+3$ qubit. Il costo resta elevato: per $N=21$, $a=2$ e
+otto qubit di conteggio, la compilazione congiunta in
+\texttt{rz/sx/x/cx} produce 21\,036 porte \ac{CX} e profondità 23\,081.
+Il costo dominante non è la trasformata finale della \ac{QPE}, ma le
+trasformate interne agli addizionatori; è lì che l'approssimazione deve agire
+per incidere sul conteggio di porte.
+
+Le campagne rumorose sono perciò limitate a $N=15$, $a=7$. Le istanze
+$N=21$, $a=2$, e $N=35$, $a=6$, sono state validate idealmente mediante truth
+table, pulizia delle ancille e distribuzione QPE, ma escluse dal campionamento
+rumoroso per il costo della simulazione. Questa distinzione impedisce di
+confondere validazione funzionale e fattibilità rumorosa.
+
+In termini di spazio, fattorizzare un intero di $n$ bit richiede almeno
+$2n$ qubit logici per la phase estimation, oltre alle ancille necessarie
+all'aritmetica modulare. Il conteggio non include l'overhead fault-tolerant e
+non basta a stimare la fattibilità: connettività e routing possono aumentare
+profondità e numero di porte senza modificare il numero di qubit logici.

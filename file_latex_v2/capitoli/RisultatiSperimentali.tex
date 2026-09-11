@@ -1,0 +1,256 @@
+\begin{onehalfspace}
+
+Il Capitolo~\ref{chap:sviluppo} ha descritto M1 (TOP-1), M2
+(classificatore TOP-1 seguito da TOP-4) e l'ablazione
+$M_{\mathrm{TOP4}}$. Questa prima parte del capitolo presenta la campagna rigenerata
+dopo la correzione dell'operatore $\times7\bmod15$ e dei contratti
+statistici. Il risultato principale è che la ricerca multi-candidato
+riduce le iterazioni, mentre il classificatore a valle non aggiunge
+beneficio rispetto alla stessa ricerca priva di filtro.
+
+% -----------------------------------------------
+\section{Setup Sperimentale}
+\label{sec:setup_m1}
+\label{sec:setup_m2}
+
+Il confronto rumoroso usa un'unica istanza controllata, $N=15$, $a=7$,
+e due preset uniformi illustrativi. Le tre strategie ricevono, replica per
+replica, gli stessi istogrammi: il disegno isola così la regola di
+post-processing senza confonderla con una diversa realizzazione Monte
+Carlo. Il modello combina depolarizzazione, rilassamento/dephasing e
+readout, ma non riproduce la calibrazione o la topologia di una QPU
+specifica. Ogni confronto principale comprende 30 repliche da $1\,024$
+shot per iterazione e usa Wilcoxon--Pratt con correzione di Holm.
+
+Il contratto completo --- circuito e versioni, seed, manifest, gestione
+dei pareggi e della censura, insieme al resoconto della campagna storica
+non riutilizzata --- è conservato nella
+Sezione~\ref{app:fase1_contratto} dell'Appendice~\ref{app:fase1}.
+
+% -----------------------------------------------
+\section{Perimetro Ideale e Rumoroso}
+\label{sec:circuito_m1}
+\label{sec:scalabilita}
+
+La verifica di scala resta distinta dalla campagna rumorosa. Per $N=21$,
+$a=2$, la truth table, la pulizia delle ancille e la legge QPE ideale
+confermano l'aritmetica; la compilazione globale raggiunge però 21\,036 CX
+e profondità 23\,081, rendendo la simulazione rumorosa completa estranea
+al confronto principale. L'ulteriore controllo ideale su $N=35$, le
+distanze di variazione totale, il proxy di nessun evento e la tabella del
+perimetro sono riportati nella Sezione~\ref{app:fase1_contratto}. Nel
+seguito, i risultati rumorosi riguardano esclusivamente $N=15$.
+
+% -----------------------------------------------
+\section{La Baseline: Metodo 1 (TOP-1)}
+\label{sec:risultati_uc_m1}
+\label{sec:analisi_m1}
+\label{sec:uc1_m1}
+\label{sec:uc2_m1}
+
+La diagnostica indipendente di 60 repliche trova la moda $y=0$ in
+$30/60$ casi e una moda utile negli altri $30/60$, mentre TOP-4 trova
+sempre almeno un candidato utile. L'instabilità di TOP-1 deriva quindi da
+quale dei quattro picchi teorici risulta dominante, non dalla completa
+scomparsa del segnale. Gli istogrammi estremi, selezionati con criterio
+prefissato e seed registrati, sono mostrati nella
+Figura~\ref{fig:istogrammi_qpe} dell'Appendice~\ref{app:fase1}.
+
+% -----------------------------------------------
+\section{L'Ipotesi ML e il Verdetto dell'Ablazione}
+\label{sec:confronto}
+\label{sec:uc1_m2}
+\label{sec:uc2_m2}
+
+I classificatori TOP-1 sono stati rigenerati su $2\,000$ istogrammi per
+scenario; TOP-16 ha prodotto $2\,000/2\,000$ positivi in entrambi gli
+scenari e viene registrato come audit a classe unica. Le metriche e il
+protocollo train/validation/test sono riportati nella
+Sezione~\ref{sec:valutazione_clf}. La Tabella~\ref{tab:riepilogo_rho}
+riporta invece la misura operativa, calcolata sui medesimi istogrammi per
+tutte le strategie.
+
+\begin{table}[H]
+\centering
+\caption{Confronto appaiato M1, TOP-4 e M2 ($30$ repliche per scenario)}
+\label{tab:riepilogo_m1}
+\label{tab:riepilogo_rho}
+\begin{tabular}{llcccc}
+\toprule
+\textbf{Scenario} & \textbf{Strategia} & \textbf{Successo} &
+$\boldsymbol{\bar M}$ & $\boldsymbol{\rho}$ vs M1 &
+\textbf{$p_{\mathrm{Holm}}$ vs M1} \\
+\midrule
+UC1 & M1 & $30/30$ & 1.37 & --- & --- \\
+UC1 & TOP-4 & $30/30$ & 1.00 & 1.367 & 0.0024 \\
+UC1 & M2 & $30/30$ & 1.50 & 0.911 & 0.7314 \\
+\midrule
+UC2 & M1 & $30/30$ & 1.50 & --- & --- \\
+UC2 & TOP-4 & $30/30$ & 1.00 & 1.500 & 0.0015 \\
+UC2 & M2 & $30/30$ & 1.37 & 1.098 & 0.0874 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+TOP-4 converge al primo tentativo in tutte le repliche. M2 non migliora
+significativamente M1 e, rispetto alla propria ablazione, richiede più
+iterazioni: Wilcoxon bilaterale con correzione di Holm
+$p=0.0033$ (UC1) e $p=0.0096$ (UC2). Il filtro scarta dunque istogrammi
+che la ricerca TOP-4 avrebbe risolto; il guadagno appartiene alla ricerca
+multi-candidato, non al classificatore.
+
+Il confronto con la letteratura recente chiarisce perché l'ablazione sia
+il risultato portante e non un dettaglio di metodo. Yang e Markidis
+addestrano alberi e foreste casuali su $680$ distribuzioni raccolte da
+sistemi \ac{IBM} reali per prevedere se il post-processing a frazioni
+continue recupererà l'ordine vero, usando quattro caratteristiche della
+distribuzione, fra cui la frazione di massa verificata dominante, che
+risulta la più informativa~\cite{yang2026}. Il loro impianto ha un
+vantaggio che questo lavoro non possiede --- i dati provengono da
+hardware, non da un modello di rumore --- ma pone una domanda diversa:
+quanto valga il classificatore \emph{rispetto a una regola semplice}
+disponibile sugli stessi istogrammi resta fuori dal confronto. È
+precisamente la quantità che l'ablazione qui misura, e il suo esito è
+negativo. Un risultato negativo di questo tipo non contraddice quei
+lavori: ne delimita la portata, indicando che il valore incrementale del
+filtro appreso va misurato contro la ricerca multi-candidato prima di
+essere attribuito all'apprendimento.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{fig_iterazioni_m1_m2.pdf}
+    \caption[Analisi di ablazione M1, TOP-4 e M2]{Distribuzione delle
+    iterazioni nelle 30 repliche appaiate. I fallimenti, se presenti,
+    sarebbero mostrati separatamente con sentinella 51; in questa
+    baseline tutte le repliche hanno successo.}
+    \label{fig:iterazioni_m1_m2}
+\end{figure}
+
+% -----------------------------------------------
+\section{Robustezza Esplorativa della Strategia TOP-4}
+\label{sec:parametri_mitigazione}
+\label{subsec:sintesi_parametri}
+
+Otto famiglie di sweep variano un parametro per volta. I test sono
+appaiati all'interno del singolo punto, ma i $p$ non ricevono una
+correzione globale fra le otto famiglie: i risultati vanno quindi letti
+come esplorativi. La Tabella~\ref{tab:sintesi_parametri} evita di
+trasformare l'assenza di variazione osservata in una pretesa universale
+di insensibilità al rumore.
+
+\begin{table}[H]
+\centering
+\caption{Sintesi degli otto sweep schema~2 su $N=15$}
+\label{tab:sintesi_parametri}
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Famiglia} & \textbf{Intervallo} & \textbf{Esito TOP-4} \\
+\midrule
+$K$ & $1,2,3,4,6,8$ & soglia osservata $K=2$ \\
+$\lambda_{2q}$ & $10^{-3}$--$10^{-1}$ & $\bar M=1.00$--$1.07$, successo $100\%$ \\
+shot & $128$--$2\,048$ & $\bar M=1.00$ \\
+$K\times\lambda_{2q}$ & $K=2$--8, $5\times10^{-3}$--$5\times10^{-2}$ & $\bar M=1.00$ \\
+$T_1/T_2$ & $20/16$--$500/400\,\mu$s & $\bar M=1.00$ \\
+$\lambda_{1q}$ & $10^{-4}$--$2\times10^{-2}$ & $\bar M=1.00$ \\
+readout simmetrico & $0$--$20\%$ & $\bar M=1.00$ \\
+ottimizzazione & livelli 0--3 & $\bar M=1.00$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Il livello di ottimizzazione modifica il circuito: livello 0 produce 242
+CX e profondità 427, livello 1 produce 236/421, mentre i livelli 2 e 3
+coincidono a 224/412. Nonostante ciò TOP-4 resta a una iterazione nei
+quattro punti. Le oscillazioni di M1 negli sweep non sono monotone e, con
+30 repliche, non sono interpretate come leggi causali.
+
+\paragraph{Diagnostiche e confronto con ZNE.}
+\label{subsec:frazione_coerente}
+\label{subsec:diagnostiche_qpe}
+La sola iterazione di successo non descrive quanta struttura periodica resti
+nell'istogramma. La Figura~\ref{fig:istogrammi_qpe} mostra, fra le 30 repliche
+nominali UC1, i casi con massa massima e minima sui quattro picchi teorici
+$\{0,64,128,192\}$.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.88\textwidth]{fig_istogrammi_qpe.pdf}
+    \caption{Repliche UC1 con massa massima e minima sui quattro picchi QPE
+    teorici.}
+    \label{fig:istogrammi_qpe}
+\end{figure}
+
+La massa media $m$ sui picchi viene convertita nell'indice descrittivo
+\begin{equation}
+    f=\frac{m-4/256}{1-4/256},
+    \label{eq:miscela_coerente}
+\end{equation}
+che vale zero per il fondo uniforme e uno per una distribuzione concentrata
+sui picchi. Non è una fedeltà. La Tabella~\ref{tab:frazione_coerente} lo
+confronta con il proxy $P_0=(1-15\lambda_{2q}/16)^{224}$.
+
+\begin{table}[!htbp]
+\centering
+\caption{Massa efficace sui picchi e proxy di nessun evento 2Q.}
+\label{tab:frazione_coerente}
+\begin{tabular}{ccc}
+\toprule
+$\lambda_{2q}$ & $f$ efficace & $P_0$ proxy \\
+\midrule
+$10^{-3}$ & 0.8036 & $8.11\times10^{-1}$ \\
+$5\times10^{-3}$ & 0.7039 & $3.49\times10^{-1}$ \\
+$10^{-2}$ & 0.5938 & $1.21\times10^{-1}$ \\
+$2\times10^{-2}$ & 0.4286 & $1.44\times10^{-2}$ \\
+$5\times10^{-2}$ & 0.1688 & $2.14\times10^{-5}$ \\
+$10^{-1}$ & 0.0421 & $2.65\times10^{-10}$ \\
+$2\times10^{-1}$ & 0.0047 & $6.32\times10^{-21}$ \\
+$3\times10^{-1}$ & 0.0015 & $7.47\times10^{-33}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.76\textwidth]{frazione_coerente.pdf}
+    \caption{Il proxy di nessun evento decade più rapidamente della massa
+    strutturata osservata sui picchi.}
+    \label{fig:frazione_coerente}
+\end{figure}
+
+La struttura QPE sopravvive dunque anche quando il proxy moltiplicativo di
+nessun evento Pauli è già prossimo a zero: i due indicatori non sono né
+fedeltà né probabilità di fattorizzazione e non vanno identificati. Il
+protocollo completo e gli altri sweep restano nell'Appendice~\ref{app:fase1}.
+
+Nello stesso perimetro, la ZNE digitale non migliora M1 e porta il costo
+medio da $1\,399$ a $3\,072$--$4\,813$ shot, mentre TOP-4 raggiunge
+$\bar M=1.00$ con $1\,024$ shot. Il protocollo, che scala solo i parametri
+depolarizzanti e non equivale al gate folding su hardware, e la tabella
+appaiata completa sono conservati nella
+Sezione~\ref{sec:app_zne} e nella Tabella~\ref{tab:confronto_zne}.
+Il verdetto è locale al modello uniforme e a questa istanza, non una
+valutazione generale della ZNE.
+
+% -----------------------------------------------
+\section{Bilancio della Verifica e Ponte verso la Correzione d'Errore}
+\label{sec:top4_mitigazione}
+\label{sec:validita}
+\label{sec:confronto_zne}
+
+La campagna consente quattro conclusioni delimitate dai dati:
+\begin{enumerate}
+    \item l'operatore $\times7\bmod15$ e il circuito compilato sono
+    fissati da truth table, manifest e hash;
+    \item TOP-4 riduce $\bar M$ da $1.37/1.50$ a $1.00$ nei due scenari;
+    \item il classificatore TOP-1 non migliora M1 e peggiora la propria
+    ablazione TOP-4;
+    \item la robustezza osservata negli sweep è esplorativa e non rende
+    il modello uniforme equivalente a una QPU reale.
+\end{enumerate}
+
+Il post-processing recupera informazione ancora presente
+nell'istogramma, ma non può correggere uno stato già corrotto durante il
+calcolo. Questo limite motiva il passaggio ai codici di correzione e alla
+decodifica della sindrome nelle sezioni successive.
+
+\end{onehalfspace}

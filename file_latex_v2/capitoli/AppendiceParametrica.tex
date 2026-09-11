@@ -1,0 +1,343 @@
+\begin{onehalfspace}
+
+Questa sezione riporta la campagna parametrica schema~2 sulla
+strategia TOP-K, di cui il Capitolo~\ref{chap:risultati} riporta la sintesi. Il protocollo usa $N=15$, $a=7$,
+$n_{\mathrm{count}}=8$, 30 repliche, budget massimo 50 e, salvo diversa
+indicazione, $1\,024$ shot. Il preset di riferimento è
+$\lambda_{1q}=10^{-3}$, $\lambda_{2q}=10^{-2}$,
+$T_1/T_2=100/80\,\mu$s e readout simmetrico $2\%$.
+
+M1 e TOP-K condividono lo stesso istogramma per ogni coppia
+replica--iterazione. I fallimenti sono codificati con sentinella 51 e i
+pareggi con una priorità SHA-256 dipendente dal seed. I confronti usano
+Wilcoxon appaiato--Pratt. Poiché non è applicata una correzione globale
+fra le otto famiglie, i $p$ di questa sezione hanno finalità
+esplorativa.
+
+Il materiale seguente approfondisce le Sezioni~\ref{sec:setup_m1}--\ref{sec:parametri_mitigazione}
+del corpo. In quei punti restano il disegno, i risultati decisivi e la loro interpretazione;
+qui sono raccolti il contratto riproducibile, le validazioni accessorie e tutte le diagnostiche
+necessarie a verificarli senza interrompere il filo della discussione.
+
+% -----------------------------------------------
+\subsection{Contratto sperimentale e perimetro delle validazioni}
+\label{app:fase1_contratto}
+
+Il percorso rumoroso è limitato a $N=15$, $a=7$ e otto qubit di
+controllo. Smolin, Smith e Vargo hanno mostrato che una versione compilata
+di Shor costruita sfruttando la conoscenza della risposta può fattorizzare
+prodotti di due primi in tempo costante e con due soli qubit coerenti;
+l'istanza non è quindi presentata come evidenza di scalabilità, ma come
+banco di prova comune per strategie di post-processing sul medesimo
+istogramma~\cite{smolin2013}.
+
+Il circuito è compilato nella base \texttt{rz/sx/x/cx} con
+\texttt{optimization\_level=2} e seed del transpiler 20260819. I gate RZ
+sono virtuali; SX/X hanno durata illustrativa di 50\,ns e CX di 300\,ns.
+Il modello uniforme combina depolarizzazione a uno e due qubit,
+rilassamento/dephasing e readout: non riproduce una calibrazione né la
+topologia di una QPU specifica. Ogni iterazione usa $1\,024$ shot, il budget
+massimo è 50 e ogni confronto principale comprende 30 repliche. Le
+strategie della stessa replica ricevono il medesimo istogramma; i pareggi
+sono risolti mediante una priorità SHA-256 dipendente dal seed. I fallimenti
+al budget sono codificati con sentinella 51 e le differenze appaiate sono
+valutate con Wilcoxon--Pratt e correzione di Holm entro ciascuna famiglia.
+
+Una campagna storica usava semi consecutivi che condividevano quasi tutti
+gli shot derivati da Aer. I relativi valori non sono riutilizzati. La
+campagna schema~2 separa replica e iterazione di più del budget di shot e
+registra nel JSON seed, manifest, revisione del rumore e revisione del
+post-processing.
+
+\begin{table}[H]
+\centering
+\caption[Contratto riproducibile della campagna N=15]{Invarianti del
+circuito compilato impiegato da training, baseline, sweep e ZNE.}
+\label{tab:correzione_seed}
+\label{tab:circuit_depth}
+\begin{tabular}{lr}
+\toprule
+\textbf{Grandezza} & \textbf{Valore} \\
+\midrule
+Qubit totali & 12 \\
+Profondità / size & $412/604$ \\
+RZ / SX / CX & $302/70/224$ \\
+Misure & 8 \\
+SHA-256 circuito & \texttt{c7f4cf3bc1735dce9d5b56d8e09686e...} \\
+Qiskit / Aer & $2.5.0/0.17.2$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+L'aritmetica Beauregard per $N=21$ e $N=35$ è stata verificata
+separatamente nel caso ideale mediante truth table esaustive dei
+moltiplicatori controllati, pulizia delle ancille e confronto della legge
+QPE con quella teorica. La distanza di variazione totale è
+$1.38\times10^{-9}$ per $N=21$, $a=2$, $r=6$ e
+$2.50\times10^{-13}$ per $N=35$, $a=6$, $r=2$. Per $N=21$, otto
+controlli e compilazione congiunta nella base esecutiva producono 21\,036
+CX e profondità 23\,081. Al valore diagnostico
+$\lambda_{2q}=10^{-3}$, la probabilità che nessuna CX applichi un Pauli
+non-identità è
+\[
+  \left(1-\frac{15}{16}\lambda_{2q}\right)^{21036}
+  =2.70\times10^{-9};
+\]
+non è una fedeltà né una probabilità di fattorizzazione.
+
+\begin{table}[H]
+\centering
+\caption[Perimetro delle validazioni]{Separazione fra validazione ideale
+e campagna rumorosa. Nel corpo è mantenuto il solo confronto centrale su
+$N=15$ e il controllo di scala su $N=21$; $N=35$ resta documentato qui.}
+\label{tab:costo_simulazione}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Istanza} & \textbf{Ideale} & \textbf{Rumorosa} \\
+\midrule
+$N=15$, $a=7$ & truth table e QPE & campagna completa \\
+$N=21$, $a=2$ & truth table e QPE & esclusa per costo \\
+$N=35$, $a=6$ & truth table e QPE & esclusa per costo \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% -----------------------------------------------
+\subsection{Variazione di K}
+\label{subsec:sweep_k}
+
+\begin{table}[H]
+\centering
+\caption[Sweep del numero di candidati]{M1 e TOP-K sui medesimi 30
+vettori di iterazioni. $K=1$ coincide con il controllo M1.}
+\label{tab:sweep_k}
+\begin{tabular}{cccccc}
+\toprule
+$K$ & $\bar M_1$ & $\bar M_{\mathrm{TOP}K}$ & successo & $\rho$ & $p$ \\
+\midrule
+1 & 1.37 & 1.37 & $100\%$ & 1.000 & 1.000 \\
+2 & 1.37 & 1.00 & $100\%$ & 1.367 & $<0.001$ \\
+3 & 1.37 & 1.00 & $100\%$ & 1.367 & $<0.001$ \\
+4 & 1.37 & 1.00 & $100\%$ & 1.367 & $<0.001$ \\
+6 & 1.37 & 1.00 & $100\%$ & 1.367 & $<0.001$ \\
+8 & 1.37 & 1.00 & $100\%$ & 1.367 & $<0.001$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La soglia osservata è $K=2$, non $K=r=4$. Questo risultato dipende
+dalla banda di esiti che la post-elaborazione mappa su un periodo utile e
+non costituisce una regola generale per altre istanze.
+
+% -----------------------------------------------
+\subsection{Variazione di
+\texorpdfstring{$\lambda_{2q}$}{lambda 2q}}
+\label{subsec:sweep_eps}
+
+Per il canale Aer a due qubit,
+$\mathcal E(\rho)=(1-\lambda)\rho+\lambda I/4$, la probabilità
+aggregata della componente Pauli non-identità è $15\lambda/16$. Sul
+circuito da 224 CX il proxy di nessun evento è quindi
+$(1-15\lambda_{2q}/16)^{224}$; non è una probabilità di successo.
+
+\begin{table}[H]
+\centering
+\caption[Sweep del parametro Aer $\lambda_{2q}$]{Il tasso di successo è
+$100\%$ per tutte le 30 repliche di ciascun punto.}
+\label{tab:sweep_eps}
+\label{tab:sweep_eps2q}
+\begin{tabular}{cccccc}
+\toprule
+$\lambda_{2q}$ & proxy & $\bar M_1$ & $\bar M_{\mathrm{TOP4}}$ & $\rho$ & $p$ \\
+\midrule
+$10^{-3}$ & $8.11\times10^{-1}$ & 1.93 & 1.00 & 1.933 & $<0.001$ \\
+$5\times10^{-3}$ & $3.49\times10^{-1}$ & 1.90 & 1.00 & 1.900 & $<0.001$ \\
+$10^{-2}$ & $1.21\times10^{-1}$ & 1.37 & 1.00 & 1.367 & $<0.001$ \\
+$2\times10^{-2}$ & $1.44\times10^{-2}$ & 1.33 & 1.00 & 1.333 & 0.001 \\
+$5\times10^{-2}$ & $2.14\times10^{-5}$ & 1.33 & 1.00 & 1.333 & $<0.001$ \\
+$10^{-1}$ & $2.65\times10^{-10}$ & 1.57 & 1.07 & 1.469 & 0.001 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Al punto estremo TOP-4 richiede in media 1.07 iterazioni: la robustezza
+non è assoluta, pur restando il successo $30/30$ entro il budget.
+
+% -----------------------------------------------
+\subsection{Variazione degli Shot}
+\label{subsec:sweep_shots}
+
+\begin{table}[H]
+\centering
+\caption[Sweep degli shot]{Risultati su 30 repliche per punto.}
+\label{tab:sweep_shots}
+\begin{tabular}{ccccc}
+\toprule
+shot & $\bar M_1$ & $\bar M_{\mathrm{TOP4}}$ & $\rho$ & $p$ \\
+\midrule
+128  & 1.37 & 1.00 & 1.367 & 0.001 \\
+256  & 1.57 & 1.00 & 1.567 & $<0.001$ \\
+512  & 1.57 & 1.00 & 1.567 & 0.001 \\
+1\,024 & 1.37 & 1.00 & 1.367 & $<0.001$ \\
+2\,048 & 1.70 & 1.00 & 1.700 & $<0.001$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+TOP-4 è stabile già a 128 shot; M1 oscilla senza andamento monotono,
+coerentemente con una competizione campionaria fra quattro picchi.
+
+% -----------------------------------------------
+\subsection{Analisi Congiunta
+\texorpdfstring{$K\times\lambda_{2q}$}{K x lambda 2q}}
+\label{subsec:sweep_joint}
+
+\begin{table}[H]
+\centering
+\caption[Griglia $K\times\lambda_{2q}$]{Ogni cella è
+$\bar M_{\mathrm{TOP}K}$ su 30 repliche e ha successo $100\%$.}
+\label{tab:sweep_joint}
+\begin{tabular}{ccccc}
+\toprule
+$K$ & $5\times10^{-3}$ & $10^{-2}$ & $2\times10^{-2}$ & $5\times10^{-2}$ \\
+\midrule
+2 & 1.00 & 1.00 & 1.00 & 1.00 \\
+4 & 1.00 & 1.00 & 1.00 & 1.00 \\
+6 & 1.00 & 1.00 & 1.00 & 1.00 \\
+8 & 1.00 & 1.00 & 1.00 & 1.00 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% -----------------------------------------------
+\subsection{Parametri Secondari}
+\label{subsec:sweep_secondari}
+
+RZ è virtuale (0\,ns), SX/X dura 50\,ns e CX 300\,ns. $T_2$ viene
+variato insieme a $T_1$ mantenendo $T_2=0.8T_1$.
+
+\begin{table}[H]
+\centering
+\caption[Sweep di $T_1/T_2$]{TOP-4 ottiene $\bar M=1.00$ e successo
+$100\%$ in tutti i punti.}
+\label{tab:sweep_t1}
+\begin{tabular}{ccccc}
+\toprule
+$T_1/T_2$ ($\mu$s) & $\bar M_1$ & $\bar M_{\mathrm{TOP4}}$ & $\rho$ & $p$ \\
+\midrule
+20/16 & 1.47 & 1.00 & 1.467 & $<0.001$ \\
+50/40 & 2.20 & 1.00 & 2.200 & $<0.001$ \\
+100/80 & 1.37 & 1.00 & 1.367 & $<0.001$ \\
+200/160 & 1.60 & 1.00 & 1.600 & 0.001 \\
+500/400 & 1.80 & 1.00 & 1.800 & $<0.001$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption[Sweep di $\lambda_{1q}$]{TOP-4 ottiene $\bar M=1.00$ e
+successo $100\%$ in tutti i punti.}
+\label{tab:sweep_eps1q}
+\begin{tabular}{cccc}
+\toprule
+$\lambda_{1q}$ & $\bar M_1$ & $\rho$ & $p$ \\
+\midrule
+$10^{-4}$ & 1.60 & 1.600 & $<0.001$ \\
+$5\times10^{-4}$ & 1.43 & 1.433 & $<0.001$ \\
+$10^{-3}$ & 1.37 & 1.367 & $<0.001$ \\
+$5\times10^{-3}$ & 1.67 & 1.667 & $<0.001$ \\
+$10^{-2}$ & 1.57 & 1.567 & $<0.001$ \\
+$2\times10^{-2}$ & 1.47 & 1.467 & $<0.001$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption[Sweep del readout simmetrico]{TOP-4 ottiene $\bar M=1.00$ e
+successo $100\%$ in tutti i punti.}
+\label{tab:sweep_pro}
+\begin{tabular}{cccc}
+\toprule
+$p_{\mathrm{ro}}$ & $\bar M_1$ & $\rho$ & $p$ \\
+\midrule
+$0\%$ & 1.33 & 1.333 & 0.004 \\
+$1\%$ & 1.50 & 1.500 & $<0.001$ \\
+$2\%$ & 1.37 & 1.367 & $<0.001$ \\
+$5\%$ & 1.47 & 1.467 & $<0.001$ \\
+$10\%$ & 1.30 & 1.300 & 0.002 \\
+$20\%$ & 1.47 & 1.467 & $<0.001$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Le oscillazioni non monotone di M1 sconsigliano inferenze causali sui
+singoli parametri con questa numerosità. Il risultato supportato è più
+limitato: TOP-4 non varia nei punti osservati.
+
+% -----------------------------------------------
+\subsection{Livello di Ottimizzazione}
+\label{subsec:sensibilita_metodo}
+
+\begin{table}[H]
+\centering
+\caption[Sweep di \texttt{optimization\_level}]{Conteggi della
+compilazione effettiva e metriche su 30 repliche.}
+\label{tab:sweep_optlevel}
+\label{tab:sensitivity}
+\begin{tabular}{cccccc}
+\toprule
+livello & CX & profondità & $\bar M_1$ & $\bar M_{\mathrm{TOP4}}$ & $\rho$ \\
+\midrule
+0 & 242 & 427 & 1.47 & 1.00 & 1.467 \\
+1 & 236 & 421 & 1.50 & 1.00 & 1.500 \\
+2 & 224 & 412 & 1.37 & 1.00 & 1.367 \\
+3 & 224 & 412 & 1.37 & 1.00 & 1.367 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% -----------------------------------------------
+\subsection{Diagnostiche della struttura QPE}
+
+Le diagnostiche decisive sono mantenute nel corpo: la
+Figura~\ref{fig:istogrammi_qpe} confronta le repliche estreme,
+l'Equazione~\ref{eq:miscela_coerente} definisce l'indice descrittivo e la
+Tabella~\ref{tab:frazione_coerente} con la
+Figura~\ref{fig:frazione_coerente} mostrano lo scarto dal proxy di nessun
+evento. Gli sweep precedenti ne conservano qui il contesto parametrico.
+
+% -----------------------------------------------
+\subsection{Confronto con Zero-Noise Extrapolation}
+\label{sec:app_zne}
+
+La ZNE digitale scala $\lambda_{1q}$ e $\lambda_{2q}$, mantenendo fissi
+coerenza e readout. ZNE-2 usa due livelli e ZNE-3 tre livelli condivisi;
+non è gate folding su hardware.
+
+\begin{table}[H]
+\centering
+\caption[Confronto ZNE appaiato]{I $p$ sono corretti con Holm nella
+famiglia M1 contro ZNE-2, ZNE-3 e TOP-4.}
+\label{tab:confronto_zne}
+\begin{tabular}{lccccc}
+\toprule
+strategia & successo & $\bar M$ & shot/iter. & shot medi totali & $p_{\mathrm{Holm}}$ \\
+\midrule
+M1 & $100\%$ & 1.37 & 1\,024 & 1\,399 & --- \\
+ZNE-2 & $100\%$ & 1.50 & 2\,048 & 3\,072 & 1.000 \\
+ZNE-3 & $100\%$ & 1.57 & 3\,072 & 4\,813 & 1.000 \\
+TOP-4 & $100\%$ & 1.00 & 1\,024 & 1\,024 & 0.0024 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Validazione fuori dalla campagna rumorosa.}
+I moltiplicatori Beauregard per $N=21/35$ sono validati idealmente e non
+entrano negli sweep. Il contratto completo e il valore coerente con la
+parametrizzazione Aer del canale a due qubit sono riportati nella
+Sezione~\ref{app:fase1_contratto}; nessuno dei proxy è interpretato come
+probabilità di successo.
+
+\end{onehalfspace}

@@ -1,0 +1,121 @@
+\begin{onehalfspace}
+
+L'implementazione segue un unico contratto: preset rumorosi controllati per $N=15$,
+validazioni ideali separate per $N=21/35$, confronto appaiato delle strategie e
+artefatti schema~2. I dettagli di netlist, manifest e organizzazione dei sorgenti sono
+trasferiti nella Sezione~\ref{app:contratto_codice}.
+
+% -----------------------------------------------
+\section{L'algoritmo di Shor: implementazione di riferimento}
+\label{sec:impl_shor}
+
+Il circuito costruisce la \ac{QPE} con un registro di conteggio e uno di lavoro; applica
+la moltiplicazione modulare controllata, la \ac{QFT} inversa e la misura. Il
+post-processing ricava il periodo mediante frazioni continue e verifica i fattori non
+banali con il \ac{GCD}. La QFT inversa è decomposta in Hadamard, rotazioni di fase
+controllate e scambi; i relativi estratti sono nei
+Listati~\ref{lst:circuito_completo_di_shor}
+e~\ref{lst:implementazione_della_quantum_fourier}.
+
+Per $N=15$, $a=7$, la rete textbook realizza realmente l'operazione elementare
+$\times7\bmod15$ per il numero di potenze richiesto. Ciò corregge la precedente
+selezione mediante il solo valore \texttt{power \% 4}, che non rappresentava in generale
+$U^{\texttt{power}}$ (Listato~\ref{lst:modular_exponentiation_per_n15}). Per $N=21$ e
+$N=35$ si impiega invece l'aritmetica reversibile di Beauregard, verificata idealmente
+mediante truth table, pulizia degli ausiliari e prove QPE.
+
+La compilazione, comune a training, baseline e sweep, fissa il livello di
+ottimizzazione 2, il seed del transpiler e la base \texttt{rz/sx/x/cx}. Le
+istanze maggiori sono escluse dalla campagna rumorosa completa per il costo della
+netlist, ma non dai controlli ideali. Profondità, conteggi delle porte e hash SHA-256
+delle compilazioni di riferimento sono riportati nella
+Sezione~\ref{app:netlist_manifest}.
+
+% -----------------------------------------------
+\section{Configurazione del modello di rumore}
+\label{sec:noise_model}
+
+Il modello \texttt{qiskit\_aer.noise} è \textbf{uniforme e illustrativo}, non una
+calibrazione hardware. Le \texttt{rz} sono cambi di frame virtuali, quindi senza durata
+né errore; \texttt{sx/x} durano 50\,ns e \texttt{cx} 300\,ns. Depolarizzazione e
+rilassamento termico agiscono su \texttt{sx/x} e \texttt{cx}, mentre il readout è
+descritto da una matrice di confusione simmetrica separata
+(Listato~\ref{lst:costruzione_del_noise_model}).
+
+I simboli $\epsilon_{1q}$ e $\epsilon_{2q}$ indicano il parametro Aer $\lambda$ di
+\texttt{depolarizing\_error}; per due qubit la probabilità Pauli non-identità è
+$15\lambda/16$. Per i 224 gate \texttt{cx} della compilazione N15, il proxy che nessuno
+di tali eventi si verifichi è ${\bigl(1-15\lambda/16\bigr)}^{224}$. Non è una probabilità di
+successo: esclude rumore 1Q, rilassamento e readout.
+
+% -----------------------------------------------
+\section{Implementazione dei metodi proposti}
+\label{sec:impl_metodi}
+
+\subsection{Metodo 1: selezione TOP-1}
+\label{sec:impl_metodo1}
+
+M1 seleziona il primo esito per frequenza, tenta il post-processing e, in caso di
+fallimento, passa all'iterazione successiva. Un tie-break SHA-256 derivato da seed e
+bitstring rende l'ordinamento indipendente dal dizionario e dal valore numerico del
+candidato (Listato~\ref{lst:pipeline_del_metodo_1}).
+
+\subsection{Metodo 2: classificatore ML e ricerca TOP-4}
+\label{sec:impl_metodo2}
+
+M2 combina addestramento offline e inferenza online. La stessa netlist genera, da ogni
+istogramma, le etichette TOP-1 e TOP-16; Random Forest, \ac{SVM} RBF e \ac{MLP} sono
+confrontati con split stratificato. Il modello schema~2 registra definizione
+dell'etichetta, revisione, preset, seed e hash del circuito, e l'inferenza rifiuta
+manifest incompatibili. Se il filtro accetta l'istogramma, vengono provati fino a
+quattro candidati: M1, TOP-4 e M2 ricevono pertanto gli stessi conteggi, tie-break e
+post-processing. I Listati~\ref{lst:generazione_del_dataset_con}
+e~\ref{lst:loop_di_inferenza_del} rendono verificabile il flusso; l'audit completo è
+nella Sezione~\ref{app:classificatore}.
+
+% -----------------------------------------------
+\section{Infrastruttura di test e raccolta dati}
+\label{sec:infrastruttura}
+
+Le campagne N15 usano $K=30$ repliche appaiate e una sola simulazione per produrre
+l'istogramma comune alle tre strategie. Seed sufficientemente distanziati evitano la
+quasi sovrapposizione degli stream Aer; il primo successo è registrato separatamente e
+un fallimento entro \texttt{max\_iter} riceve la sentinella
+\texttt{max\_iter+1}. I confronti impiegano il Wilcoxon appaiato con
+\texttt{zero\_method='pratt'}. Artefatti JSON, parametri, vettori appaiati, versioni,
+hash e regole esatte per seed e test sono descritti nella
+Sezione~\ref{app:contratto_codice} e sintetizzati dal
+Listato~\ref{lst:schema_di_orchestrazione_degli}.
+
+% -----------------------------------------------
+\section{Implementazione della correzione d'errore}
+\label{sec:impl_qec}
+
+La seconda fase sostituisce l'istogramma finale di un circuito profondo con la sindrome
+di circuiti di memoria. Qiskit Aer gestisce il codice a ripetizione, Steane e il proxy
+di Shor; Stim e PyMatching rendono praticabile il surface code, mentre scikit-learn
+serve il decoder appreso. La mappa completa fra moduli, strumenti e costo dominante è
+nella Tabella~\ref{tab:organizzazione_qec} dell'Appendice~\ref{app:strumentiecodice}.
+
+Il flusso comune prepara lo stato logico, inserisce il canale nel punto dichiarato,
+estrae la sindrome su ancille e consegna gli eventi al decoder; l'esito è un successo o
+fallimento logico, non una misura diretta della fedeltà di Shor. Repetition, Steane e
+surface code realizzano questo schema con livelli crescenti di protezione. La curva di
+sensibilità di Shor costituisce invece un secondo livello: riceve un proxy per gate e
+misura la resa in fattori. Tenere separati i due livelli evita di convertire senza
+giustificazione il tasso per memoria dei codici nel parametro per gate del circuito.
+
+Nel codice a ripetizione la parità è copiata su ancille senza misurare i dati; nel codice
+di Steane $\ket{0_L}$ è preparato e decodificato con una lookup table a peso minimo,
+dichiarando ideale l'estrazione di sindrome. Per il surface code il crosstalk viene
+iniettato anche dentro i blocchi \texttt{REPEAT} e \ac{MWPM} opera sui detection event.
+Nel proxy di Shor, il $p_L$ per gate viene convertito nella convenzione depolarizzante di
+Aer; non è identificato con il logical error rate per round senza un mapping aggiuntivo.
+Il decoder appreso e \ac{MWPM} ricevono gli stessi eventi. Algoritmi, assunzioni e
+listati per ciascun componente sono raccolti nella Sezione~\ref{app:dettagli_qec}.
+
+Ogni script propaga il seed e registra nel JSON campioni, parametri e versioni; le figure
+sono generate dagli artefatti senza trascrizione manuale. Questa disciplina costituisce
+il contratto di riproducibilità comune alle due fasi.
+
+\end{onehalfspace}
