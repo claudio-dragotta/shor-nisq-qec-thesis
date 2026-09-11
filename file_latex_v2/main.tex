@@ -1,0 +1,285 @@
+\documentclass[oneside, 12pt]{report}
+
+\usepackage[a4paper, left=3cm, right=3cm, top=4cm, bottom=3cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{graphicx}
+\graphicspath{{figure/}}
+\usepackage{url}
+\usepackage{subfig}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{braket}         % Notazione di Dirac: \ket{}, \bra{}, \braket{}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{afterpage}
+\usepackage{bm}
+\usepackage{multirow}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{tikz}
+\usetikzlibrary{quantikz2}  % Circuiti quantistici
+\usetikzlibrary{positioning, arrows.meta, calc}
+\usetikzlibrary{decorations.pathmorphing, decorations.pathreplacing}  % onde microonde, graffe
+\usepackage{listings}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{setspace}
+\usepackage[bottom]{footmisc}
+\usepackage{float}
+% Lasciare a LaTeX margine per comporre figure e tabelle senza creare
+% pagine semivuote. I singoli float usano normalmente [!htbp].
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+\renewcommand{\topfraction}{0.90}
+\renewcommand{\bottomfraction}{0.80}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.75}
+\usepackage[backend=biber, citestyle=numeric, sorting=none]{biblatex}
+% hyperref segue footmisc e biblatex, così anche i richiami di nota ricevono
+% destinazioni PDF valide; glossaries viene caricato subito dopo per usarle.
+\usepackage[breaklinks, hidelinks]{hyperref}
+\usepackage[acronym, nopostdot, nogroupskip, toc]{glossaries}
+\makenoidxglossaries
+% Compatibilità con i comandi del vecchio pacchetto acronym
+\let\ac\gls
+\providecommand{\acf}[1]{\acrfull{#1}}
+\providecommand{\acl}[1]{\acrlong{#1}}
+\providecommand{\acs}[1]{\acrshort{#1}}
+\input{capitoli/Acronimi}   % definizioni acronimi nel preambolo
+
+% Stile codice Python/Qiskit
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{orange},
+    showstringspaces=false,
+    frame=none,
+    breaklines=true,
+    captionpos=b
+}
+
+% Pagina bianca
+\newcommand{\blankpage}{%
+    \null\thispagestyle{empty}\addtocounter{page}{-1}\newpage
+}
+
+% Inserisce un file gia' strutturato come ex capitolo sotto una nuova
+% macrosezione, abbassando localmente di un livello i suoi titoli.
+% Il testo, le etichette e la numerazione interna restano invariati.
+\newcommand{\inputdemoted}[1]{%
+    \begingroup
+    \let\savedsection\section
+    \let\savedsubsection\subsection
+    \let\savedsubsubsection\subsubsection
+    \let\section\savedsubsection
+    \let\subsection\savedsubsubsection
+    \let\subsubsection\paragraph
+    \input{#1}%
+    \endgroup
+}
+
+% Separa, nello stesso sorgente, le evidenze centrali E1--E4 stampate nel
+% corpo dai controlli estesi E5--E12 conservati nell'Appendice E.
+\newif\ifdecoderbody
+\decoderbodyfalse
+
+\onehalfspacing
+\setlength{\skip\footins}{1cm}
+\addbibresource{Bibliografia.bib}
+
+\begin{document}
+
+\input{TITLE}
+
+\begin{titlepage}
+    \vspace*{5cm}
+    \begin{center}
+        \emph{Alla mia famiglia, \\
+        per il sostegno incondizionato e l'amore che non è mai venuto meno. \\
+        A me stesso, per la determinazione e la perseveranza con cui ho affrontato questo percorso.}
+    \end{center}
+\end{titlepage}
+
+\pagenumbering{roman}
+
+% -----------------------------------------------
+% Abstract: pagina divisoria + testo del Sommario del Lavoro di Tesi.
+% Sta prima dell'indice, che e' la collocazione consueta.
+\input{capitoli/Abstract}
+
+% -----------------------------------------------
+\tableofcontents
+
+% -----------------------------------------------
+\addcontentsline{toc}{chapter}{\listfigurename}
+\listoffigures
+
+% -----------------------------------------------
+\addcontentsline{toc}{chapter}{\listtablename}
+\listoftables
+
+% -----------------------------------------------
+\printnoidxglossary[type=\acronymtype, nonumberlist, title={Elenco degli Acronimi}]
+
+% -----------------------------------------------
+% Chiude la seconda pagina dell'elenco degli acronimi ancora in numerazione
+% romana; la numerazione araba deve iniziare realmente con il Capitolo 1.
+\clearpage
+\pagenumbering{arabic}
+\chapter{Introduzione}
+\label{chap:introduzione}
+\input{capitoli/Introduzione}
+
+% -----------------------------------------------
+\chapter{Problema di ricerca, obiettivi e criteri di valutazione}
+\label{chap:obiettivi}
+\label{chap:specifiche}
+\input{capitoli/ObiettiviPianoSperimentale}
+
+% -----------------------------------------------
+% Il quadro teorico e il metodo sono raccolti in un unico capitolo. Le etichette
+% dei precedenti capitoli restano come alias per preservare tutti i riferimenti.
+\chapter{Fondamenti teorici e metodologia sperimentale}
+\label{chap:quadro}
+\label{chap:shor}
+\label{chap:rumore}
+\label{chap:strategie}
+\label{chap:metodologia}
+\section{Fondamenti del calcolo quantistico}
+\inputdemoted{capitoli/Fondamenti}
+\section{L'algoritmo di Shor}
+\inputdemoted{capitoli/Shor}
+\section{Rumore quantistico nei sistemi NISQ}
+\inputdemoted{capitoli/Rumore}
+\section{Strategie per la riduzione del rumore quantistico}
+\inputdemoted{capitoli/StrategieAntiRumore}
+\section{Disegno e metodo sperimentale}
+\inputdemoted{capitoli/Metodologia}
+
+% -----------------------------------------------
+\chapter{Architettura e implementazione del sistema sperimentale}
+\label{chap:implementazione}
+\label{chap:sviluppo}
+\input{capitoli/Strumenti}
+\input{capitoli/Sviluppo}
+
+% -----------------------------------------------
+% Tutte le campagne e i relativi risultati sono presentati nello stesso capitolo.
+% Le etichette storiche rimangono alias dello stesso capitolo per retro-compatibilita'.
+\chapter{Risultati e discussione sperimentale}
+\label{chap:risultati}
+\label{chap:risultati1}
+\label{chap:conclusioni1}
+\label{chap:risultati2}
+\label{chap:conclusioni2}
+\label{chap:qec}
+\label{chap:predizione}
+\label{chap:surface}
+\label{chap:integrazione}
+\section{Fase NISQ: classificatore ML e strategia TOP-K}
+\inputdemoted{capitoli/RisultatiSperimentali}
+\section{Correzione d'errore: codici a ripetizione e di Steane}
+\inputdemoted{capitoli/CorrezioneErrori}
+\section{Surface code e decodifica}
+\inputdemoted{capitoli/SurfaceCode}
+\section{Analisi di sensibilità di Shor}
+\inputdemoted{capitoli/ShorLogico}
+\input{capitoli/RisultatiAQFT}
+\input{capitoli/DiscussioneRisultati}
+
+% -----------------------------------------------
+\chapter{Conclusioni e sviluppi futuri}
+\label{chap:conclusioni}
+\label{chap:sviluppi}
+\section{Conclusioni}
+\inputdemoted{capitoli/Conclusioni}
+\section{Sviluppi futuri}
+\inputdemoted{capitoli/SviluppiFuturi}
+
+% -----------------------------------------------
+\appendix
+
+% --- A ---------------------------------------------------------------------
+\chapter{Trattazione teorica estesa}
+\label{app:teoria}
+\section{Fondamenti del calcolo quantistico}
+\label{app:fondamenti}
+\input{capitoli/AppendiceFondamenti}
+\section{L'anatomia fisica di una QPU}
+\label{app:anatomia}
+\input{capitoli/AppendiceAnatomiaQPU}
+\section{L'algoritmo di Shor --- approfondimenti e stato dell'arte}
+\label{app:shor_esteso}
+\input{capitoli/AppendiceShorEsteso}
+\section{I canali di rumore: derivazioni complete}
+\label{app:canali}
+\input{capitoli/AppendiceCanali}
+
+% --- B ---------------------------------------------------------------------
+\chapter{Strumenti, ambiente e codice}
+\label{app:strumentiecodice}
+\section{Strumenti e ambiente di simulazione --- trattazione estesa}
+\label{app:strumenti}
+\input{capitoli/AppendiceStrumenti}
+\section{Codice sorgente dei componenti implementati}
+\label{app:codice}
+\input{capitoli/AppendiceCodice}
+
+% --- C ---------------------------------------------------------------------
+\chapter{Contesto e motivazione}
+\label{app:contesto}
+\section{Contesto esteso dell'introduzione}
+\label{app:introduzione}
+\input{capitoli/AppendiceIntroduzione}
+\section{Dettaglio degli obiettivi e del piano sperimentale}
+\label{app:obiettivi}
+\input{capitoli/AppendiceObiettivi}
+
+% --- D ---------------------------------------------------------------------
+\chapter{Fase 1: la campagna classica nel dettaglio}
+\label{app:fase1}
+\section{Campagna parametrica e confronto con la Zero-Noise Extrapolation}
+\label{app:parametrica}
+\input{capitoli/AppendiceParametrica}
+\section{Il classificatore ML: architettura, addestramento e metriche}
+\label{app:classificatore}
+\input{capitoli/AppendiceClassificatore}
+
+% --- E ---------------------------------------------------------------------
+\chapter{Fase 2: la campagna QEC nel dettaglio}
+\label{app:fase2}
+\section{Laboratori preliminari QEC: codici a ripetizione e di Steane}
+\label{app:laboratori_qec}
+\input{capitoli/AppendiceLaboratoriQEC}
+\section{Surface code: protocollo e controlli sul modello}
+\label{app:surface_protocollo_generale}
+\input{capitoli/AppendiceSurfaceProtocollo}
+\section{La decodifica appresa: la campagna completa}
+\label{app:decodifica}
+\input{capitoli/AppendiceDecodificaAppresa}
+\section{Analisi di sensibilità di Shor: dettagli e verifiche}
+\label{app:shor_sensibilita}
+\input{capitoli/AppendiceShorSensibilita}
+\section[Compilazione consapevole della struttura: un'esplorazione]{Compilazione consapevole della struttura:\\ un'esplorazione}
+\label{app:compilazione}
+\inputdemoted{capitoli/AppendiceCompilazione}
+
+% -----------------------------------------------
+\begingroup
+\setlength{\emergencystretch}{2em}
+\printbibliography[heading=bibintoc, title={Bibliografia}]
+\endgroup
+
+% -----------------------------------------------
+\chapter*{Ringraziamenti}
+\input{capitoli/Ringraziamenti}
+
+
+\end{document}

@@ -1,0 +1,136 @@
+\begin{onehalfspace}
+
+Questa sezione richiama soltanto gli elementi di calcolo quantistico necessari a
+seguire Shor, il modello di rumore e i codici correttori: stato del qubit,
+rappresentazione di Bloch, porte essenziali, algebra di Pauli, misura e
+interferenza. La costruzione assiomatica completa, il prodotto tensoriale,
+l'insieme esteso delle porte e il modello di complessit\`a sono raccolti nella
+Sezione~\ref{app:fondamenti} dell'Appendice~\ref{app:teoria}.
+
+\section{Richiami di Calcolo Quantistico}
+\label{chap:fondamenti}
+
+L'algoritmo di Shor~\cite{shor1994} fattorizza un intero $N$ in tempo
+polinomiale nel numero di bit,
+\begin{equation}
+    T_{\text{Shor}}(N)=O\!\left((\log N)^3\right),
+    \label{eq:shor_complexity}
+\end{equation}
+combinando riduzione classica al \textit{period finding}, nucleo quantistico
+basato su \ac{QPE} e \ac{QFT}, e post-elaborazione classica. La sezione
+successiva sviluppa questi passaggi; qui si fissano le primitive che essi
+utilizzano.
+
+\subsection{Qubit, Sovrapposizione e Sfera di Bloch}
+
+Un qubit \`e un vettore unitario di $\mathbb{C}^2$,
+\begin{equation}
+    \ket{\psi}=\alpha\ket{0}+\beta\ket{1},\qquad
+    |\alpha|^2+|\beta|^2=1,
+\end{equation}
+dove la regola di Born associa $|\alpha|^2$ e $|\beta|^2$ alle probabilit\`a
+dei due esiti. Eliminata la fase globale, ogni stato puro ammette la
+parametrizzazione
+\begin{equation}
+    \ket{\psi}=\cos\!\left(\frac{\theta}{2}\right)\ket{0}
+    +e^{i\phi}\sin\!\left(\frac{\theta}{2}\right)\ket{1},
+    \qquad \theta\in[0,\pi],\ \phi\in[0,2\pi),
+    \label{eq:bloch_param}
+\end{equation}
+visualizzata dalla sfera di Bloch in Figura~\ref{fig:bloch}. I poli sono
+$\ket{0}$ e $\ket{1}$; l'equatore raccoglie le sovrapposizioni equiprobabili
+con fasi diverse.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.39\textwidth]{bloch_sphere.png}
+    \caption[La sfera di Bloch]{Rappresentazione di uno stato puro mediante gli
+    angoli della~\eqref{eq:bloch_param}. Nel Capitolo~\ref{chap:rumore} i canali
+    sono descritti come contrazioni o traslazioni di questa sfera.}
+    \label{fig:bloch}
+\end{figure}
+
+Per $n$ qubit lo spazio diventa $\mathbb{C}^{2^n}$. Uno stato \`e
+\emph{entangled} quando non pu\`o essere fattorizzato negli stati dei singoli
+qubit; in Shor questa correlazione lega registro di controllo e registro di
+lavoro durante la stima di fase. La dimensione esponenziale consente tali
+correlazioni ma, da sola, non prova un vantaggio computazionale. Definizioni,
+stati di Bell e fragilit\`a dell'entanglement sono approfonditi nella
+Sezione~\ref{sec:entanglement_fragile}.
+
+Uno stato generale del registro ha la forma
+\begin{equation}
+    \ket{\psi}=\sum_{x\in\{0,1\}^n}\alpha_x\ket{x},
+    \qquad \sum_x|\alpha_x|^2=1.
+\end{equation}
+L'esempio minimo è lo stato di Bell
+$\ket{\Phi^+}=(\ket{00}+\ket{11})/\sqrt{2}$, che non ammette una
+fattorizzazione $\ket{\psi_A}\otimes\ket{\psi_B}$. Il circuito della
+Figura~\ref{fig:circuit_bell} mostra che una Hadamard crea le due ampiezze e
+una CNOT le correla: misurare il primo qubit determina così anche il secondo.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.62\textwidth]{circuit_bell.png}
+    \caption[Circuito per lo stato di Bell $\ket{\Phi^+}$]{Preparazione di
+    $\ket{\Phi^+}$. La porta $H$ crea la sovrapposizione e la CNOT introduce
+    la correlazione non separabile fra i due qubit.}
+    \label{fig:circuit_bell}
+\end{figure}
+
+Per Shor l'entanglement non è soltanto un esempio formale: trasferisce la
+periodicità dal registro di lavoro a quello di controllo durante la
+\ac{QPE}. L'accoppiamento con l'ambiente trasferisce invece informazione di
+fase fuori dal sistema e riduce l'interferenza osservabile. Questa fragilità
+collega direttamente il richiamo astratto ai tempi $T_1$ e $T_2$ e ai canali
+del rumore discussi nelle sezioni successive.
+
+\subsection{Porte, Algebra di Pauli e Interferenza}
+
+Le porte sono trasformazioni unitarie ($U^\dagger U=I$). La
+Tabella~\ref{tab:porte_essenziali} contiene le sei primitive richiamate nel
+seguito; matrici, circuiti e universalit\`a sono sviluppati nell'Appendice A.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llc l}
+\toprule
+\textbf{Porta} & \textbf{Matrice} & \textbf{Qubit} & \textbf{Effetto} \\
+\midrule
+$X$ & $\begin{pmatrix}0&1\\1&0\end{pmatrix}$ & 1 & \textit{bit flip} \\[7pt]
+$Y$ & $\begin{pmatrix}0&-i\\i&0\end{pmatrix}$ & 1 & bit e phase flip \\[7pt]
+$Z$ & $\begin{pmatrix}1&0\\0&-1\end{pmatrix}$ & 1 & \textit{phase flip} \\[7pt]
+$H$ & $\tfrac{1}{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$ & 1 & sovrapposizione uniforme \\[7pt]
+$R_\phi$ & $\begin{pmatrix}1&0\\0&e^{i\phi}\end{pmatrix}$ & 1 & rotazione di fase \\[7pt]
+CNOT & $\begin{pmatrix}1&0&0&0\\0&1&0&0\\0&0&0&1\\0&0&1&0\end{pmatrix}$ & 2 & nega il target se il control \`e $1$ \\
+\bottomrule
+\end{tabular}
+\caption[Le porte quantistiche essenziali]{Le porte impiegate nella trattazione:
+$X,Y,Z$ descrivono gli errori di Pauli; $H$ e $R_\phi$ costruiscono la \ac{QFT};
+la CNOT domina il costo a due qubit.}
+\label{tab:porte_essenziali}
+\end{table}
+
+Insieme a $I$, le matrici di Pauli formano una base degli operatori su un
+qubit. Poich\'e $Y=iXZ$, correggere le componenti $X$ e $Z$ permette, per
+linearit\`a, di trattare anche le loro combinazioni. Le relazioni
+\begin{equation}
+\begin{aligned}
+    X^2=Y^2=Z^2&=I,\\
+    XY=iZ,\quad YZ=iX,\quad ZX&=iY,\\
+    \{X,Y\}=\{Y,Z\}=\{X,Z\}&=0
+\end{aligned}
+\label{eq:algebra_pauli}
+\end{equation}
+spiegano il criterio di sindrome: un errore \`e rilevato quando anticommuta con
+almeno uno stabilizzatore misurato. Nei codici \ac{CSS}, stabilizzatori di tipo
+$X$ e $Z$ diagnosticano separatamente le due componenti.
+
+La misura di $\ket{\psi}=\sum_x\alpha_x\ket{x}$ restituisce $x$ con
+probabilit\`a $|\alpha_x|^2$ ed \`e irreversibile. Prima della misura, un
+algoritmo utile orchestra l'\textbf{interferenza}: cancella le ampiezze degli
+esiti errati e rinforza quelle corrette. In Shor \`e la \ac{QFT} a rendere
+osservabile, mediante questo meccanismo, la periodicit\`a cercata.
+
+\end{onehalfspace}

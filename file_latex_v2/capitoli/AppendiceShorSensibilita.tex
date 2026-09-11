@@ -1,0 +1,119 @@
+\begin{onehalfspace}
+
+Questa sezione documenta per esteso l'analisi M8/M13 sintetizzata nella
+Sezione~\ref{sec:risultati_logico} del Capitolo~\ref{chap:risultati}.
+Conserva la separazione fra livelli, la griglia completa, l'analisi delle
+ripetizioni e il contesto fault-tolerant; nel corpo rimangono definizione
+del proxy, curva principale e conclusione.
+
+\subsection{Separazione dei quattro livelli}
+\label{app:shor_quattro_livelli}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{clll}
+\toprule
+\textbf{Livello} & \textbf{Oggetto} & \textbf{Strumento} & \textbf{Domanda} \\
+\midrule
+1 & Shor ideale & Qiskit Aer & limite senza rumore \\
+2 & Shor rumoroso & Aer + noise model & sensibilità agli errori fisici \\
+3 & QEC isolata & Qiskit; Stim/PyMatching & soppressione dell'errore \\
+4 & proxy per gate & Aer + canale Pauli & sensibilità a un residuo uniforme \\
+\bottomrule
+\end{tabular}
+\caption[Architettura a quattro livelli della parte sperimentale]{I
+quattro livelli isolano domande diverse. Il quarto non è una simulazione
+fault-tolerant e non riceve automaticamente i tassi aggregati del terzo.}
+\label{tab:quattro_livelli}
+\end{table}
+
+Una simulazione esplicita incontra una barriera dimensionale --- sostituire
+ognuno dei dodici qubit di $N=15$ con un blocco codificato conduce a
+centinaia di qubit --- e una strutturale: Stim è efficiente sui circuiti
+stabilizer, mentre aritmetica modulare e QFT rendono Shor non-Clifford.
+Aer simula il circuito generale piccolo e Stim/PyMatching caratterizza la
+QEC isolata; nessuno dei due equivale a una compilazione fault-tolerant.
+
+Il manifest M8 registra 224 CX, 302 RZ, 70 SX, 8 misure e lo SHA-256 con
+prefisso \texttt{c7f4cf3b} e suffisso \texttt{a50f4ba2c}. Ogni punto aggrega 20 repliche da
+4096 shot, cioè $81\,920$ misure. Il successo per misura vale uno quando
+frazioni continue e controlli MCD restituiscono fattori non banali.
+
+\subsection{Contesto delle stime fault-tolerant}
+\label{app:shor_risorse}
+
+Le stime crittografiche comprendono routing, cicli di sindrome, fabbriche
+di stati magici e schedulazione; non derivano dall'estrapolazione di
+$N=15$. Gidney ed Eker\aa{} stimavano circa venti milioni di qubit e otto
+ore per RSA-2048~\cite{gidney2021}; lavori successivi riducono il costo
+grazie ad aritmetica, codifica e preparazione delle risorse, ma sotto
+assunzioni architetturali differenti.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{0.26\textwidth}p{0.08\textwidth}p{0.20\textwidth}p{0.30\textwidth}}
+\toprule
+\textbf{Lavoro} & \textbf{Anno} & \textbf{Bersaglio} & \textbf{Qubit fisici e tempo} \\
+\midrule
+Gidney ed Eker\aa{}~\cite{gidney2021} & 2019 & RSA-2048 & $\sim$20 milioni, 8 ore \\
+Gidney~\cite{gidney2025} & 2025 & RSA-2048 & $<$1 milione, $<$1 settimana \\
+Pinnacle, qLDPC~\cite{pinnacle2026} & 2026 & RSA-2048 & $<$100\,000 (preprint) \\
+Cain \emph{et al.}~\cite{cain2026} & 2026 & P-256; RSA-2048 & $\sim$10\,000 atomici; P-256 in giorni con 26\,000 (preprint) \\
+\bottomrule
+\end{tabular}
+\caption[Traiettoria delle stime di risorsa per Shor su scala crittografica]{Le
+righe non sono direttamente confrontabili: cambiano codice, modello
+d'errore, ciclo e criterio di successo. Le due voci 2026 sono preprint e
+nessun valore discende dalle curve di questa tesi.}
+\label{tab:traiettoria_risorse}
+\end{table}
+
+La discesa delle stime è trainata soprattutto da correzione e
+compilazione, ma resta una valutazione prospettica. La curva M8 è una
+sensibilità locale e non una previsione di risorse.
+
+\subsection{Griglia M8 completa e probabilità cumulativa}
+\label{app:shor_m8_dettaglio}
+
+La griglia completa con intervalli Wilson, l'Equazione~\ref{eq:cumulativa} e
+la curva delle ripetizioni sono mantenute nel corpo, rispettivamente nella
+Tabella~\ref{tab:m8_griglia_completa} e nella
+Figura~\ref{fig:qec_shor_pk}. Qui resta il contesto che impedisce di tradurre
+automaticamente quei punti in requisiti fault-tolerant.
+
+\subsection{Perché le metriche QEC non entrano direttamente in M8}
+\label{app:shor_metriche}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{0.22\textwidth}p{0.38\textwidth}p{0.26\textwidth}}
+\toprule
+\textbf{Grandezza} & \textbf{Unità/contesto} & \textbf{Inseribile direttamente in M8?} \\
+\midrule
+$p_L$ di M8 & Pauli non-identità dopo ogni SX/X/CX & sì, per definizione \\
+errore Steane & fallimento del protocollo protetto & no \\
+errore surface code & fallimento logico per memoria/ciclo e distanza & no \\
+guadagno decoder & differenza nel benchmark correlato & no \\
+\bottomrule
+\end{tabular}
+\caption[Contratto tra risultati QEC e curva M8]{La conversione richiede
+circuito logico, cicli, operazioni fault-tolerant e correlazioni residue.}
+\label{tab:decoder_su_shor}
+\end{table}
+
+Una verifica recente su 114 atomi mostra che una variante pre-compilata
+di Shor su qubit logici dimezza fino a un fattore due la distanza in
+variazione totale rispetto all'esecuzione fisica; ladder CX logiche
+mostrano errori due--quattro volte inferiori e un codice $[[16,4,4]]$ un
+fattore otto~\cite{rines2025}. Il risultato riguarda il vantaggio del
+livello logico, non una fattorizzazione scalabile e resta soggetto alla
+critica di Smolin~\cite{smolin2013}. La cifra di 48 qubit logici su 280
+atomi appartiene invece al distinto esperimento di Bluvstein
+\emph{et al.}~\cite{bluvstein2024}, non a Shor. Questa evidenza conferma
+solo la direzione qualitativa del proxy; non fornisce la conversione
+mancante.
+
+\end{onehalfspace}

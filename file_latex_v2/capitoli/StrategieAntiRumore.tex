@@ -1,0 +1,108 @@
+\begin{onehalfspace}
+
+La risposta al rumore può agire sull'hardware, sulla stima dell'output, sulla
+codifica dell'informazione o sul circuito. Questa sezione confronta tali leve e
+isola quelle effettivamente valutate; la rassegna estesa è nella
+Sezione~\ref{app:strategie_estese} dell'Appendice~\ref{app:teoria}.
+
+\section{Le Quattro Strategie: Panoramica e Scelta}
+
+La \textbf{soppressione} riduce fisicamente l'accoppiamento con l'ambiente; la
+\textbf{mitigazione} stima a posteriori l'output ideale mediante campionamento
+aggiuntivo; la \textbf{fault tolerance} codifica qubit logici in molti qubit
+fisici e, sotto soglia, sopprime l'errore aumentando la distanza
+\cite{aharonov1997fault}; i \textbf{metodi appresi} svolgono infine compiti
+classici di classificazione o decodifica. Queste categorie non coincidono: in
+particolare, il machine learning può assistere una fase della \ac{QEC}, ma non
+la sostituisce.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Strategia} & \textbf{Quando agisce} & \textbf{Costo dominante} & \textbf{Uso qui} \\
+\midrule
+Soppressione & prima/durante il calcolo & controllo hardware & no \\
+Mitigazione & dopo il calcolo & campioni aggiuntivi & confronto ZNE \\
+Fault tolerance/QEC & durante il calcolo & qubit e cicli & sì, simulata \\
+Metodi appresi & post-processing/decoder & dati e calcolo classico & valutati \\
+\bottomrule
+\end{tabular}
+\caption{Confronto delle strategie anti-rumore nel perimetro della tesi.}
+\label{tab:strategie_confronto}
+\end{table}
+
+Nel regime studiato non si assume un vantaggio del modello appreso: la prima
+fase lo confronta con TOP-1 e con l'ablazione TOP-4 sullo stesso istogramma; la
+seconda lo colloca soltanto nella decodifica delle sindromi. La ac{ZNE} resta
+un controllo secondario, non la strategia principale.
+
+\section{Machine Learning Classico per la Robustezza al Rumore}
+\label{sec:qml_overview}
+
+Random Forest, \ac{SVM} e \ac{MLP} sono qui modelli \textbf{classici applicati
+a dati quantistici}, non \ac{QML}: addestramento e inferenza non impiegano un
+circuito quantistico. Possibili usi comprendono caratterizzazione del rumore,
+ottimizzazione circuitale e decodifica delle sindromi; il lavoro verifica il
+post-processing dell'istogramma e, separatamente, un correttore residuo del
+decoder. Le altre possibilità sono documentate nell'Appendice A.
+
+\section[Correzione degli Errori Quantistici e Ruolo del Machine Learning]{Correzione degli Errori Quantistici e Ruolo del Machine Learning}
+\label{sec:qec_overview}
+
+La \ac{QEC} distribuisce un qubit logico su più qubit fisici e ricava
+informazione sull'errore senza misurare lo stato logico. Il ciclo essenziale è:
+\begin{enumerate}
+    \item \textbf{codifica} dello stato $\ket{\psi_L}$;
+    \item \textbf{misura degli stabilizzatori}, che produce una sindrome;
+    \item \textbf{decodifica e recupero}, analitici o assistiti da un modello.
+\end{enumerate}
+Il codice di Shor $[[9,1,3]]$ dimostra la correzione di un errore arbitrario;
+Steane $[[7,1,3]]$ riduce l'overhead con una costruzione \ac{CSS}; il surface
+code usa una griglia locale e sopprime l'errore logico sotto una soglia che
+dipende da circuito, rumore e decoder. Stati logici e proprietà complete sono
+riportati nella Sezione~\ref{app:qec_richiami_teoria}.
+
+\subsection{Machine Learning come Possibile Componente del Decoder QEC}
+\label{sec:qec_ml}
+
+La sindrome conserva informazione strutturata sull'errore e rende sensato un
+confronto fra decoder analitico e appreso sugli stessi campioni
+\cite{torlaiMelko2017,alphaqubit2024}. Nella
+Sezione~\ref{sec:decodifica_appresa} il modello non sostituisce con vantaggio il
+matching; come correttore residuo, invece, recupera parte delle correlazioni che
+il grafo analitico non rappresenta. Il risultato resta circoscritto al modello
+simulato.
+
+\section{Motivazione Pratica: il Contributo di questa Tesi}
+\label{sec:motivazione_ml}
+
+Nella prima fase M1 prova la moda, TOP-4 i primi quattro candidati e M2 usa un
+classificatore per decidere se attivare la stessa ricerca TOP-4. La riduzione
+rispetto a M1 esiste, ma l'ablazione la attribuisce alla ricerca
+multi-candidato: il filtro appreso non aggiunge informazione alla regola
+semplice. Questo esito negativo motiva lo spostamento del focus dalla sola
+lettura dell'output alla correzione durante il calcolo.
+
+\section{Una Strategia sul Circuito: la Trasformata di Fourier Approssimata}
+\label{sec:aqft_strategia}
+
+Una leva complementare riduce il circuito prima che agisca il rumore. La
+\ac{AQFT} elimina le rotazioni controllate più piccole: introduce errore di
+approssimazione, ma riduce porte e profondità. Per $N=21$, il troncamento nelle
+trasformate interne agli addizionatori porta le porte 2Q da 49\,661 a 23\,178;
+nella stima di fase la variante troncata supera quella completa in tutti i nove
+confronti eseguiti. È un risultato esplorativo, ripreso nella
+Sezione~\ref{sec:qft_topologia}; confronto con le proposte che riducono i qubit
+logici e relativi costi sono nella Sezione~\ref{app:aqft_estesa}.
+
+\section{Dall'esito della prima fase alla struttura del lavoro}
+
+Il filo sperimentale procede quindi da un controllo NISQ appaiato, che separa
+effetto TOP-K ed effetto ML, alla protezione durante il calcolo: codice a
+ripetizione, Steane, surface code e decodifica. La sensibilità di Shor al proxy
+per gate resta distinta dai tassi logici per ciclo; l'\ac{AQFT} chiude il
+percorso agendo direttamente sul costo circuitale.
+
+\end{onehalfspace}

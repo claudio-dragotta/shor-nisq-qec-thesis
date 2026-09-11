@@ -1,0 +1,177 @@
+\begin{onehalfspace}
+
+Questa sezione conserva la trattazione estesa e i protocolli dei laboratori
+introduttivi sintetizzati nella Sezione~\ref{sec:repetition} e nella
+Sezione~\ref{sec:steane} del Capitolo~\ref{chap:risultati}. Le curve e i
+risultati decisivi restano nel corpo; qui sono raccolti gli strumenti
+concettuali, le lookup table e le assunzioni necessarie a verificarli.
+
+\subsection{Dalla ridondanza alla codifica per stabilizzatori}
+\label{app:qec_richiami}
+
+L'idea classica di trasmettere tre copie di un bit e decidere a maggioranza
+non si trasferisce direttamente al caso quantistico. Il teorema di
+no-cloning~\cite{wootters1982} impedisce di copiare uno stato ignoto e la
+misura diretta distruggerebbe la sovrapposizione da proteggere. La
+\ac{QEC} codifica invece l'informazione di un qubit logico nelle
+correlazioni di più qubit fisici~\cite{shorcorrection1995,steane1996,roffe2019}.
+Operatori ausiliari rivelano quale classe di errore si è verificata senza
+rivelare i coefficienti dello stato logico.
+
+Il ciclo generale comprende: (i) codifica di $\ket{\psi_L}$; (ii) azione
+del rumore; (iii) estrazione della sindrome mediante ancille; (iv)
+decodifica classica; (v) correzione fisica o aggiornamento del \emph{Pauli
+frame}. Uno stabilizzatore $S$ lascia invariati gli stati del codice,
+$S\ket{\psi_L}=\ket{\psi_L}$: un esito $-1$ segnala l'uscita dal
+sottospazio valido senza distinguere gli stati logici che lo compongono.
+
+Un codice $[[n,k,d]]$ usa $n$ qubit fisici per $k$ qubit logici e ha
+distanza $d$, pari al peso minimo di un errore logico non rilevato. Può
+correggere
+\begin{equation}
+ t=\left\lfloor\frac{d-1}{2}\right\rfloor
+ \label{eq:distanza_t}
+\end{equation}
+errori arbitrari. Il teorema della soglia garantisce in linea di principio
+un regime in cui l'aumento della distanza riduce l'errore
+logico~\cite{aharonov1997fault}; la sua osservazione quantitativa è oggetto
+della Sezione~\ref{sec:surface_risultati}.
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabularx}{\textwidth}{@{}p{2.0cm}p{1.6cm}XXX@{}}
+\toprule
+\textbf{Codice} & \textbf{Parametri} & \textbf{Corregge} & \textbf{Pro / Contro} & \textbf{Uso nella tesi} \\
+\midrule
+Repetition (bit-flip) & $[[3,1,1]]$ su X & solo bit-flip & semplice / non corregge phase-flip & primo laboratorio \\
+Repetition (phase-flip) & 3 qubit, base H & solo phase-flip & mostra dualità X/Z / parziale & controllo duale \\
+Shor code & $[[9,1,3]]$ & errore arbitrario singolo & storico, intuitivo / più pesante & richiamo didattico~\cite{shorcorrection1995} \\
+Steane code & $[[7,1,3]]$ & errore arbitrario singolo & \ac{CSS}, compatto / distanza bassa & secondo laboratorio~\cite{steane1996} \\
+Five-qubit & $[[5,1,3]]$ & errore arbitrario singolo & minimo / non \ac{CSS} & confronto teorico \\
+Surface code & $d^2$ dati $+O(d^2)$ ancille & errori locali su griglia 2D & scalabile / overhead elevato & campagna principale~\cite{fowler2012} \\
+\bottomrule
+\end{tabularx}
+\caption[Confronto tra codici correttori quantistici]{Confronto esteso e
+progressione metodologica: repetition per introdurre la sindrome, Steane
+per un errore arbitrario, surface code per soglia e scalabilità.}
+\label{tab:confronto_codici}
+\end{table}
+
+\subsection{Protocollo completo del codice a ripetizione}
+\label{app:qec_repetition}
+
+Il codice contro errori X codifica $\ket{0_L}=\ket{000}$ e
+$\ket{1_L}=\ket{111}$: lo stato
+$\alpha\ket{0}+\beta\ket{1}$ diventa
+$\alpha\ket{000}+\beta\ket{111}$, uno stato entangled e non tre copie.
+Gli stabilizzatori $Z_1Z_2$ e $Z_2Z_3$ misurano la parità tramite due
+ancille. Il duale nella base di Hadamard usa $X_1X_2$ e $X_2X_3$ e
+protegge dagli errori Z; la concatenazione delle due protezioni conduce
+al codice di Shor a nove qubit.
+
+Il primo controllo inietta deterministicamente un errore su ciascun qubit
+dato e verifica che la sindrome identifichi la posizione senza misurare
+l'informazione logica.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Errore iniettato} & \textbf{Sindrome $(a_0,a_1)$} & \textbf{Qubit dedotto} & \textbf{Esito} \\
+\midrule
+nessuno & $(0,0)$ & --- & \checkmark \\
+su $q_0$ & $(1,0)$ & $q_0$ & \checkmark \\
+su $q_1$ & $(1,1)$ & $q_1$ & \checkmark \\
+su $q_2$ & $(0,1)$ & $q_2$ & \checkmark \\
+\bottomrule
+\end{tabular}
+\caption[Verifica della sindrome del codice a ripetizione]{Lookup table
+verificata per il codice bit-flip e per il duale phase-flip. L'ancilla
+$a_0$ misura la parità di $\{0,1\}$ e $a_1$ quella di $\{1,2\}$. La
+coincidenza cifra per cifra a parità di seed verifica l'implementazione
+della dualità, non costituisce una conferma indipendente del fatto
+algebrico.}
+\label{tab:sindrome_repetition}
+\end{table}
+
+Il secondo controllo prepara lo stato logico, applica a ciascun qubit un
+errore indipendente con probabilità $p$, estrae la sindrome, corregge e
+decodifica. I $20\,000$ campioni per punto (seed 42) producono la curva
+riportata nella Figura~\ref{fig:qec_repetition}. Un errore Z resta
+invisibile al codice bit-flip, e viceversa per il duale: è il limite che
+motiva il passaggio allo Steane.
+
+\subsection{Struttura e protocollo completo del codice di Steane}
+\label{app:qec_steane}
+
+Lo Steane~\cite{steane1996} è un codice \ac{CSS} derivato dal codice di
+Hamming $[7,4,3]$: codifica un qubit in sette, ha distanza 3 e corregge
+un errore X, Z o Y su un singolo qubit.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lcl}
+\toprule
+\textbf{Parametro} & \textbf{Valore} & \textbf{Significato} \\
+\midrule
+$n$ & 7 & qubit fisici \\
+$k$ & 1 & qubit logici \\
+$d$ & 3 & distanza \\
+$t$ & 1 & errori arbitrari correggibili (Eq.~\ref{eq:distanza_t}) \\
+Tipo & \ac{CSS} & sindromi X e Z separate \\
+\bottomrule
+\end{tabular}
+\caption[Parametri del codice di Steane]{Parametri del codice di Steane $[[7,1,3]]$.}
+\label{tab:steane_parametri}
+\end{table}
+
+Nella convenzione adottata i generatori sono
+\begin{equation}
+\begin{aligned}
+\text{tipo X:}\quad & IIIXXXX,\quad IXXIIXX,\quad XIXIXIX,\\
+\text{tipo Z:}\quad & IIIZZZZ,\quad IZZIIZZ,\quad ZIZIZIZ.
+\end{aligned}
+\label{eq:steane_stabilizzatori}
+\end{equation}
+Gli stabilizzatori Z rilevano gli errori X, quelli X rilevano gli errori
+Z e un errore Y accende entrambe le famiglie. I tre bit di sindrome,
+letti come numero binario, indicano la posizione del qubit colpito.
+
+Il protocollo comprende: preparazione di $\ket{0_L}$ o $\ket{+_L}$;
+iniezione manuale di X, Z e Y su ciascuno dei sette qubit; misura della
+sindrome; costruzione della lookup table; stima della correzione al
+variare di $p$; distinzione fra errori sui dati e sulle ancille. La
+preparazione di $\ket{0_L}$ usa tre qubit seme in sovrapposizione e una
+rete CNOT; i sei stabilizzatori restituiscono $000000$ su tutti i
+$2\,000$ campioni, verificando l'appartenenza al code space.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccc}
+\toprule
+\textbf{Qubit} & \textbf{Sindrome} & \textbf{Valore} & \textbf{Correzione} \\
+\midrule
+$q_0$ & $001$ & 1 & applica $X$ (o $Z$) su $q_0$ \\
+$q_1$ & $010$ & 2 & applica su $q_1$ \\
+$q_2$ & $011$ & 3 & applica su $q_2$ \\
+$q_3$ & $100$ & 4 & applica su $q_3$ \\
+$q_4$ & $101$ & 5 & applica su $q_4$ \\
+$q_5$ & $110$ & 6 & applica su $q_5$ \\
+$q_6$ & $111$ & 7 & applica su $q_6$ \\
+\bottomrule
+\end{tabular}
+\caption[Syndrome table del codice di Steane]{Tabella
+sindrome--qubit--correzione verificata per tutti i 21 casi: X, Z e Y su
+ciascuno dei sette qubit.}
+\label{tab:steane_sindrome}
+\end{table}
+
+La simulazione Monte Carlo usa $200\,000$ campioni per punto (seed 42),
+applica la correzione a peso minimo e verifica il residuo logico. La
+versione implementata assume errori sui qubit dati e sindrome ideale:
+l'estrazione non è fault-tolerant. Un guasto sulle ancille può corrompere
+la sindrome e indurre una correzione errata; i cicli rumorosi e ripetuti
+del surface code affrontano precisamente questo limite.
+
+\end{onehalfspace}

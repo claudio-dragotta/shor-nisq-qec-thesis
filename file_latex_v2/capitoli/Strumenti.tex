@@ -1,0 +1,59 @@
+\begin{onehalfspace}
+
+Il Capitolo~\ref{chap:obiettivi} ha fissato l'ipotesi da verificare: ridurre il numero
+medio di esecuzioni necessarie per ottenere fattori validi di Shor mediante un filtro
+classico. Il Capitolo~\ref{chap:quadro} ha poi definito rumore, metriche e metodologia.
+Qui si presenta soltanto l'architettura che collega tali elementi alle due campagne
+sperimentali: la prima confronta TOP-1, TOP-4 e il filtro \ac{ML}; la seconda studia
+codici correttori e decodifica della sindrome. Le motivazioni estese degli strumenti e
+gli estratti del codice sono raccolti, rispettivamente, nelle
+Sezioni~\ref{app:strumenti} e~\ref{app:codice}; i risultati sono nel
+Capitolo~\ref{chap:risultati}.
+
+L'architettura operativa è articolata in quattro livelli. Il livello circuitale costruisce
+Shor e produce una netlist compilata una sola volta per ogni configurazione; il livello di
+simulazione associa a quella netlist il preset di rumore e genera i campioni; il livello
+decisionale applica post-processing, classificatore o decoder; il livello di analisi salva
+metriche e metadati prima di generare tabelle e figure. La separazione impedisce che una
+modifica al classificatore alteri il circuito o che una differenza di compilazione venga
+scambiata per un effetto del metodo. Nella prima fase l'oggetto condiviso è l'istogramma
+delle misure; nella seconda è la sequenza dei detection event. Cambia quindi il dato su cui
+si decide, non la regola generale di confronto su campioni comuni.
+
+\section{Strumenti e configurazione dell'ambiente}
+\label{chap:strumenti}
+
+\subsection{Strumenti e ambiente di simulazione}
+\label{sec:strumenti_ambiente}
+
+La toolchain segue la natura dei circuiti. \textbf{Qiskit}~\cite{qiskit2023} e
+\textbf{Qiskit Aer} costruiscono, compilano e simulano lo Shor generale di piccola
+taglia; il classificatore della prima fase usa \textbf{scikit-learn}~\cite{scikit_learn}.
+Per i milioni di campioni stabilizer richiesti dal surface code si impiegano invece
+\textbf{Stim}~\cite{stim2021} e \textbf{PyMatching}~\cite{pymatching2021}. Questa
+separazione evita di attribuire a un simulatore statevector un regime che cresce come
+$2^n$, ma non rende Shor simulabile con Stim perché le sue rotazioni di fase non sono
+Clifford. Confronto dei framework, metodi di Aer e ragioni della scelta sono sviluppati
+nella Sezione~\ref{app:strumenti}.
+
+La campagna rumorosa principale usa
+\texttt{AerSimulator(method='statevector')} per il circuito didattico a 12 qubit di
+$N=15$; $N=21$ e $N=35$ sono riservati ai controlli ideali di correttezza e costo.
+Il noise model uniforme e illustrativo combina depolarizzazione, rilassamento termico e
+readout e viene applicato, dopo compilazione, alla base \texttt{rz/sx/x/cx}. Non è una
+calibrazione di una QPU nominata.
+
+\subsection{Ambiente e contratto operativo}
+\label{sec:setup}
+
+Le esecuzioni canoniche avvengono su \ac{CPU} in \ac{WSL}2 con dipendenze fissate;
+interprete, librerie e backend sono registrati nel manifest di ciascun artefatto.
+L'accelerazione \ac{GPU}, prevista inizialmente, non è entrata nel contratto
+riproducibile perché il backend Aer non era utilizzabile nell'ambiente di sviluppo.
+\label{sec:gpu_limit} Versioni, configurazione WSL, limite di memoria e diagnosi del
+fallimento sono documentati nelle Sezioni~\ref{sec:wsl} e~\ref{sec:gpu}; il comando di
+installazione e l'errore osservato compaiono nei
+Listati~\ref{lst:installazione_dellambiente_python_e}
+e~\ref{lst:errore_gpu_su_wsl}.
+
+\end{onehalfspace}

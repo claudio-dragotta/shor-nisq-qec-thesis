@@ -1,0 +1,121 @@
+\begin{onehalfspace}
+
+Questa sezione approfondisce le Sezioni~\ref{sec:surface_concetto}--\ref{sec:oltre_pauli}
+del Capitolo~\ref{chap:risultati}. Nel corpo restano curve, soglie, legge
+di scala e conclusioni; qui sono conservati il funzionamento del codice,
+la griglia sperimentale, le verifiche di riproducibilità e il controllo
+sui canali non-Pauli.
+
+\subsection{Surface code e decodifica MWPM}
+\label{app:surface_teoria}
+
+Il surface code~\cite{kitaev2003,fowler2012} dispone su una griglia
+bidimensionale qubit dati e qubit di misura. Gli stabilizzatori sono locali
+e un patch planare ruotato di distanza $d$ usa $d^2$ dati, oltre a un
+numero dello stesso ordine di ancille. Le misure sono ripetute per più
+round perché anche la sindrome è rumorosa; una variazione fra due cicli
+costituisce un \emph{detection event}.
+
+Nel bulk, una catena d'errore produce tipicamente detection events in
+coppie; al bordo uno dei due estremi può terminare sul confine. Il
+\ac{MWPM} associa gli eventi minimizzando un peso collegato alla
+probabilità delle catene~\cite{pymatching2021}. Se errore reale e
+correzione differiscono per un ciclo che attraversa il patch, si verifica
+un errore logico silenzioso: la sua frequenza è $p_L$.
+
+La stima richiede milioni di circuiti con centinaia di qubit, ma i memory
+experiment sono circuiti stabilizer. Stim~\cite{stim2021} sfrutta il
+teorema di Gottesman--Knill per campionare detection events; PyMatching
+costruisce il grafo dal \ac{DEM} e decodifica. Il Listato~\ref{lst:stim_pymatching}
+nella Sezione~\ref{app:codice} documenta l'implementazione. Shor non è un
+circuito stabilizer: per questo i tassi del memory experiment non sono
+trasferiti direttamente alla successiva analisi di sensibilità.
+
+\subsection{Griglia sperimentale e riproducibilità}
+\label{app:surface_protocollo}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Variabile} & \textbf{Valori} & \textbf{Osservazione attesa} \\
+\midrule
+distanza $d$ & 3, 5, 7, 9 & $p_L$ diminuisce con $d$ sotto soglia \\
+rounds & $d$ e $2d$ & cicli di memoria quantistica \\
+$p$ fisico & $10^{-4}$ \dots $2\times10^{-2}$ & curva $p$--$p_L$ \\
+shot & $\geq10^4$ per punto & intervalli di confidenza stabili \\
+base & memory X e memory Z & controllo delle due protezioni \\
+\bottomrule
+\end{tabularx}
+\caption[Disegno sperimentale surface code]{Griglia prescritta. La
+campagna eseguita copre le quattro distanze, entrambe le basi,
+$\mathrm{rounds}=d$ e $p\in[2\times10^{-3},10^{-2}]$; lo scaling a
+$2d$ resta un'estensione.}
+\label{tab:surface_esperimento}
+\end{table}
+
+Il modello è circuit-level: depolarizzazione dopo ogni Clifford e flip di
+reset e misura con probabilità $p$. Il campione è dimensionato punto per
+punto per raccogliere circa duecento eventi logici, da $2\times10^5$ a
+$4\times10^7$ shot. Una prima passata da $2\times10^5$ stima l'ordine di
+grandezza di $p_L$; la seconda fissa la numerosità. A $d=9$ e
+$p=2\times10^{-3}$ una numerosità fissa darebbe due soli eventi e il
+$70\%$ di incertezza relativa, mentre il campionamento adattivo la porta
+al $3.5\%$. Seed e numerosità sono registrati per ogni punto. Una
+ripetizione indipendente ha riprodotto tutte le stime entro l'errore
+statistico e le stesse soglie.
+
+\subsection{Errori coerenti, leakage e controllo full-state}
+\label{app:surface_non_pauli}
+
+Stim rappresenta gate Clifford ed errori Pauli casuali. L'hardware può
+però produrre sovrarotazioni coerenti, leakage verso $\ket{2}$ e
+correlazioni temporali; una simulazione solo Clifford--Pauli può quindi
+essere ottimistica~\cite{plaquette2026}. In una sovrarotazione
+$U=e^{-i\varepsilon H}$ le ampiezze si sommano coerentemente, mentre un
+errore stocastico accumula probabilità.
+
+Il divario è illustrato da un qubit soggetto a $N$ operazioni con
+$p=10^{-2}$, modellate come X stocastico oppure come
+$R_X(\theta)$ con $\sin^2(\theta/2)=p$. Le probabilità esatte sono
+$[1-(1-2p)^N]/2$ e $\sin^2(N\theta/2)$; nel tratto iniziale crescono
+come $Np$ e $N^2p$. A $N=8$ il secondo errore è circa sette volte il
+primo per i parametri scelti.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{qec_coherent.pdf}
+\caption[Errore coerente vs errore di Pauli]{Accumulo su un qubit a
+parità di probabilità marginale per operazione. La simulazione full-state
+(marcatori) coincide con le espressioni teoriche; il fattore osservato non
+è universale.}
+\label{fig:qec_coherent}
+\end{figure}
+
+Lo studio di riferimento riporta, in altri regimi, errori logici
+$1.7\%$ contro $23.5\%$ in presenza di leakage e $18.1\%$ contro
+$38.7\%$ con errori coerenti; per un surface code a distanza 9 il divario
+può raggiungere un fattore 25--56 e spostare la soglia di circa il
+$20\%$~\cite{plaquette2026}. Questi valori non sono trasferiti alla
+campagna della tesi: motivano un approccio channel-first, nel quale il
+canale fisico è definito una volta e approssimato solo dopo aver stabilito
+quale informazione preservare.
+
+Il controllo interno usa un codice a distanza 3 simulato full-state per
+quattro cicli, confrontando X di Pauli e $R_X$ coerente a pari
+probabilità marginale. A $p=3\times10^{-2}$ il canale coerente produce
+meno flip grezzi ($0.237$ contro $0.262$) ma un errore MWPM leggermente
+maggiore ($0.0789$ contro $0.0767$, $+2.9\%$). Le misure ripetute
+interrompono parte dell'accumulo coerente, senza equivalere a un twirling
+Pauli completo.
+
+Il decoder ibrido ottiene guadagni $1.019$, $1.036$, $1.041$ sotto Pauli
+e $1.029$, $1.048$, $1.052$ sotto sovrarotazione, per
+$p=1,2,3\times10^{-2}$. Lo scarto è circa una deviazione standard e non
+è significativo. Il risultato esclude quindi la regola semplicistica
+``non-Pauli implica vantaggio appreso'': ciò che il matching non
+rappresenta è la non decomponibilità in archi, come nel crosstalk che
+accende più di due detector. Le soglie del corpo restano baseline entro
+il modello Pauli; leakage e canali più ricchi sono sviluppi futuri.
+
+\end{onehalfspace}

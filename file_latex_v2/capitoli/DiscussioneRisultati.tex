@@ -1,0 +1,75 @@
+\begin{onehalfspace}
+
+\section{Discussione complessiva dei risultati}
+\label{sec:discussione_complessiva}
+
+Letti congiuntamente, i risultati descrivono tre livelli distinti di intervento sul calcolo
+quantistico: il recupero dell'informazione dall'istogramma finale, la protezione dello stato
+mediante correzione d'errore e la riduzione preventiva del costo circuitale. Il confronto è
+significativo soltanto mantenendo separate le rispettive metriche: il numero di iterazioni
+della campagna NISQ, l'errore logico dei benchmark QEC e il proxy Pauli per gate dell'analisi
+di Shor non sono quantità direttamente sostituibili l'una all'altra. Proprio questa
+separazione permette però di ricavare un criterio comune su dove ciascun metodo produca
+valore.
+
+Nel regime NISQ il risultato più netto non appartiene al classificatore, ma alla regola di
+ricerca. Nei due scenari appaiati, TOP-4 porta il numero medio di iterazioni da $1.37$ e
+$1.50$ a $1.00$, con successo in tutte le repliche, mentre M2 non migliora significativamente
+la baseline e risulta peggiore della propria ablazione priva di filtro
+(Tabella~\ref{tab:riepilogo_rho}). Anche la ZNE digitale non riduce le iterazioni e porta gli
+shot medi totali a $3\,072$ e $4\,813$, contro i $1\,024$ di TOP-4
+(Tabella~\ref{tab:confronto_zne}). In questo perimetro, dunque, conviene prima sfruttare in
+modo esplicito i pochi picchi ancora informativi; un modello appreso a valle non ricostruisce
+informazione che il rumore ha già cancellato e deve essere valutato contro una regola semplice
+disponibile sul medesimo istogramma.
+
+I laboratori QEC mostrano invece che intervenire durante la conservazione dello stato può
+cambiare l'ordine dell'errore, purché si operi nel regime appropriato. Il codice a ripetizione
+segue $p_L=3p^2-2p^3$ entro l'incertezza Monte Carlo
+(Figura~\ref{fig:qec_repetition}); lo Steane $[[7,1,3]]$ estende la protezione a errori
+arbitrari, con pendenza log--log $1.94$ e pseudo-soglia attorno a $p\simeq0.08$
+(Figura~\ref{fig:qec_steane}). Il surface code rende scalabile la stessa idea: i fit forniscono
+$p_{th}=0.86\%$ in base Z e $0.81\%$ in base X e, a $p=2\times10^{-3}$, l'errore logico
+scende da $1.94\times10^{-3}$ a distanza 3 a $2.01\times10^{-5}$ a distanza 9
+(Figura~\ref{fig:qec_surface}). Questi valori costituiscono una baseline entro il modello
+Pauli circuit-level; non sono ancora una previsione calibrata di un'esecuzione
+fault-tolerant di Shor.
+
+La campagna sulla decodifica precisa anche quando l'apprendimento sia giustificato. La
+sostituzione diretta di MWPM non vince in nessuna delle quattordici configurazioni considerate
+e richiede $10^5$--$10^6$ campioni per arrivare al pareggio a distanza 3. Quando però il
+rumore correlato viola la decomponibilità in archi assunta dal matching, il decoder ibrido
+riduce l'errore logico fino al $21\%$; il vantaggio si restringe a distanza 5 e si annulla a
+distanza 7 (Tabella~\ref{tab:sintesi_decodifica}). Il confronto con BP+OSD delimita
+ulteriormente il risultato: un decoder analitico più espressivo ottiene a distanza 5 guadagni
+del $17$--$27\%$, contro l'$1$--$3\%$ dell'ibrido. Il valore del modello appreso emerge quindi
+da una cecità strutturale del metodo analitico, non dalla sola imprecisione dei suoi parametri.
+
+L'analisi di sensibilità di Shor collega questi risultati senza forzare una conversione tra
+metriche. Nel proxy uniforme per gate, il successo per singola misura passa da $0.7489$ in
+assenza di rumore a $0.4518$ per $p_L=0.02$, quindi raggiunge un plateau empirico vicino a
+$0.245$ oltre $p_L=0.1$ (Figura~\ref{fig:qec_shor_logico}). TOP-4 resta pari a $1.000$ fino
+a $p_L=0.05$, ma scende a $0.670$ a $p_L=0.2$: il post-processing conserva quindi efficacia
+anche quando la massa utile è degradata, senza rendere il circuito immune al rumore. Come
+formalizzato nella Tabella~\ref{tab:decoder_su_shor}, trasformare le curve QEC in probabilità
+di fattorizzazione richiederebbe ancora un gate set logico, cicli di sindrome, operazioni
+non-Clifford e un modello delle correlazioni residue.
+
+Infine, l'ottimizzazione della QFT mostra che ridurre le porte è utile solo se il rumore evitato
+compensa l'approssimazione introdotta. Su Shor per $N=21$, il troncamento porta le operazioni
+a due qubit da $49\,661$ a $23\,178$, ma riduce la resa ideale da $0.4667$ a $0.4013$ e offre
+al massimo circa tre punti percentuali di vantaggio, in un regime che richiede porte a due
+qubit circa duecento volte più accurate di quelle considerate realistiche. Sulla stima di
+fase, invece, la variante troncata vince in tutti e nove i confronti e raggiunge $+0.126$ su
+dieci qubit; il grado ottimo resta due o tre (Sezione~\ref{sec:qft_topologia}). La stessa
+trasformazione può dunque essere sfavorevole dentro un circuito troppo profondo e vantaggiosa
+nel sottoproblema per cui il suo costo è dominante.
+
+Nel complesso emerge una regola unitaria: la complessità è giustificata solo quando agisce sul
+collo di bottiglia osservato. TOP-K sfrutta informazione residua; la QEC sopprime l'errore sotto
+soglia; l'apprendimento recupera struttura assente dal decoder analitico; il troncamento della
+QFT conviene se il risparmio circuitale supera la perdita algoritmica. Restano tre limiti:
+l'istanza rumorosa principale è $N=15$, le soglie dipendono dal modello e manca una simulazione
+end-to-end fault-tolerant. Sono quindi criteri sperimentali, non previsioni per QPU reali.
+
+\end{onehalfspace}
