@@ -1,0 +1,92 @@
+\begin{onehalfspace}
+
+I risultati separano ciò che è dimostrato da ciò che resta da verificare:
+$N=21/35$ sono validati nel percorso ideale, mentre il confronto controllato
+fra canali di rumore è sostenibile su $N=15$. Le estensioni seguenti colmano
+questa distanza senza estrapolare oltre il perimetro sperimentale.
+
+% -----------------------------------------------
+\section{Scalabilità a Istanze di Maggiore Dimensione}
+\label{sec:scalabilita_futura}
+
+La priorità è ridurre l'aritmetica modulare. Per $N=21$, $a=2$ e otto
+controlli, la compilazione congiunta in base \texttt{rz/sx/x/cx} produce
+$21\,036$ CX e profondità $23\,081$: conteggi effettivi, non somme di blocchi.
+AQFT con soglia esplicita, addizionatori alternativi, sintesi per il gate set
+del backend e riduzione delle operazioni controllate sono le leve immediate.
+Ogni variante dovrà però superare le verifiche già adottate: moltiplicazione
+corretta, ancille pulite, coerenza di fase e QPE ideale vicina alla teoria; il
+solo conteggio dei gate non dimostra la correttezza. La Sezione~\ref{sec:qft_topologia}
+fornisce già il primo protocollo quantitativo per scegliere il troncamento.
+
+La scalabilità va stratificata anche per ordine moltiplicativo $r$. Infatti
+$N=35$, $a=6$ ha ordine 2 e non costituisce una progressione monotona rispetto
+a $N=21$, $a=2$, che ha ordine 6. Larghezza e ordine devono quindi essere
+variati e dichiarati separatamente.
+
+% -----------------------------------------------
+\section{Validazione su Hardware Quantistico Reale}
+\label{sec:hw_reale}
+
+La validazione hardware, esclusa deliberatamente dal perimetro corrente,
+richiede di ripetere il protocollo $N=15$ registrando backend, timestamp,
+calibrazione dei qubit, layout iniziale e finale, conteggi post-routing e job
+identifier, a parità di shot e con seed dichiarati. Ai quattro scenari della
+demo andrebbe aggiunta una modalità ``calibrazione acquisita'', datata e
+costruita dallo snapshot reale: diventerebbe così misurabile il
+\emph{simulation gap} rispetto al rumore uniforme, che non include coupling
+map, routing, crosstalk, leakage e deriva.
+
+Per $N=21/35$ la QPU evita il costo dello statevector classico, ma non la
+profondità né i vincoli di connettività. Prima dell'esecuzione servono pertanto
+una sintesi più corta e un budget d'errore riferito al circuito realmente
+instradato.
+
+% -----------------------------------------------
+\section{Generalizzazione ad Altri Algoritmi Quantistici}
+\label{sec:altri_algoritmi}
+
+TOP-K è trasferibile solo quando più candidati sono verificabili classicamente
+a basso costo, come in Shor o in alcuni problemi di ricerca; non segue che
+migliori VQE~\cite{peruzzo2014} o QAOA~\cite{farhi2014}, il cui output è un
+valore atteso. Ogni estensione dovrà fissare una funzione di validazione, il
+costo delle $K$ prove, una baseline TOP-1 sugli stessi campioni e un controllo
+contro il successo puramente combinatorio. Grover con verifica economica è un
+primo banco di prova; per gli algoritmi variazionali sono più naturali
+l'allocazione adattiva degli shot e la mitigazione del bias dell'osservabile.
+
+% -----------------------------------------------
+\section{Integrazione con la Quantum Error Correction}
+\label{sec:qec_integrazione}
+
+Il $p_L$ dello Shor logico è una probabilità fenomenologica di Pauli
+non-identità per gate del proxy, non il logical error rate di una memoria
+surface-code. Una previsione end-to-end richiede prima la mappatura delle
+operazioni fault-tolerant sui rispettivi canali residui e poi, per ciascun
+tipo, conteggi logici, costo della magic-state distillation, decoder e latenza
+di feed-forward, correlazioni e propagazione degli intervalli di confidenza.
+Fino ad allora il modello resta una sensibilità, non una stima hardware.
+
+Per la decodifica appresa sono promettenti modelli a grafo o convoluzionali
+coerenti con la località del reticolo, storia temporale dei cicli e soft
+information analogica. Queste direzioni introducono struttura o informazione,
+anziché ingrandire una rete densa sul medesimo vettore di sindrome.
+
+% -----------------------------------------------
+\section{Evoluzione del Classificatore ML}
+\label{sec:evoluzione_ml}
+
+TOP-1 è addestrabile ma predice soltanto il candidato dominante; TOP-16 rende
+positivi tutti i $2\,000$ campioni per scenario e M2 perde contro TOP-4. Non è
+quindi utile cambiare solo l'architettura mantenendo la stessa etichetta. Un
+nuovo obiettivo dovrebbe incorporare il costo, per esempio gli shot attesi
+risparmiati al netto di uno scarto errato; training e test andrebbero separati
+anche per backend o giorno di calibrazione, con soglia scelta su validation.
+Bilanciamento e confronto con massa sui picchi, entropia e TOP-K devono
+precedere l'addestramento (Appendice~\ref{sec:audit_etichette}).
+
+Il ruolo più credibile dell'apprendimento resta comunque sulla sindrome, dove
+può rappresentare correlazioni assenti da un decoder analitico, non sull'output
+finale già degradato.
+
+\end{onehalfspace}

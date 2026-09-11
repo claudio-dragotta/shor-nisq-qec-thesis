@@ -25,6 +25,25 @@ file_latex/*.fdb_latexmk
 file_latex/*.fls
 file_latex/main.pdf
 
+# Artefatti build LaTeX -- versione riorganizzata v2
+file_latex_v2/*.aux
+file_latex_v2/*.log
+file_latex_v2/*.bbl
+file_latex_v2/*.bcf
+file_latex_v2/*.blg
+file_latex_v2/*.lof
+file_latex_v2/*.lot
+file_latex_v2/*.out
+file_latex_v2/*.run.xml
+file_latex_v2/*.toc
+file_latex_v2/*.synctex.gz
+file_latex_v2/*.fdb_latexmk
+file_latex_v2/*.fls
+file_latex_v2/main.pdf
+
+# Render temporanei usati per il controllo visivo del PDF.
+file_latex_v2/tmp/
+
 # Artefatti build LaTeX -- sommario (stesse regole di file_latex/)
 file_latex_sommario/*.aux
 file_latex_sommario/*.log

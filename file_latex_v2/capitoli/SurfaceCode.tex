@@ -1,0 +1,192 @@
+\begin{onehalfspace}
+
+Lo Steane mostra la soppressione a distanza fissa; il surface
+code~\cite{kitaev2003,fowler2012} introduce invece un parametro scalabile,
+la distanza $d$. Questa sezione misura $p_L(p,d)$ con Stim e PyMatching,
+verifica il comportamento di soglia e mette alla prova separatamente il
+modello con cui il codice è simulato e quello con cui è decodificato. La
+teoria operativa, il protocollo completo e i controlli full-state sono
+conservati nella Sezione~\ref{app:surface_protocollo_generale}
+dell'Appendice~\ref{app:fase2}.
+
+% -----------------------------------------------
+\section{Il Codice su Griglia: Concetto Operativo}
+\label{sec:surface_concetto}
+
+Qubit dati e ancille di misura occupano una griglia locale. Un patch
+ruotato di distanza $d$ usa $d^2$ dati e un numero comparabile di ancille;
+le variazioni di sindrome fra round consecutivi costituiscono i
+\emph{detection events}. La costruzione completa è nella
+Sezione~\ref{app:surface_teoria}.
+
+% -----------------------------------------------
+\section{La Decodifica: Minimum Weight Perfect Matching}
+\label{sec:mwpm}
+
+Il \ac{MWPM} accoppia gli estremi delle catene osservate minimizzandone il
+peso~\cite{pymatching2021}. Se errore e correzione differiscono per un
+ciclo logico, il fallimento è silenzioso e contribuisce a $p_L$. Stim
+campiona efficientemente i circuiti stabilizer e PyMatching decodifica il
+\ac{DEM}; Shor non appartiene a questa classe, quindi le metriche non sono
+trasferite direttamente. Dettagli e listato sono nelle
+Sezioni~\ref{app:surface_teoria} e~\ref{app:codice}.
+
+% -----------------------------------------------
+\section{Disegno Sperimentale}
+\label{sec:surface_esperimento}
+
+La campagna copre $d=3,5,7,9$, le basi memory X/Z,
+$\mathrm{rounds}=d$ e $p\in[2\times10^{-3},10^{-2}]$. Il criterio è
+l'inversione dell'ordine delle curve: sotto soglia aumentare $d$ deve
+ridurre $p_L$, sopra soglia deve aumentarlo. Griglia prescritta, parte
+eseguita e numerosità sono nella Tabella~\ref{tab:surface_esperimento}
+dell'Appendice~\ref{app:fase2}.
+
+% -----------------------------------------------
+\section{Risultati}
+\label{sec:surface_risultati}
+
+Stim e PyMatching realizzano memory experiment a
+$\mathrm{rounds}=d$ sotto rumore circuit-level. Il campione adattivo,
+da $2\times10^5$ a $4\times10^7$ shot, raccoglie circa duecento eventi
+logici per punto. La Figura~\ref{fig:qec_surface} riporta $p_L(p)$ per
+$d=3,5,7,9$ nelle due basi; protocollo e audit dei seed sono nella
+Sezione~\ref{app:surface_protocollo}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{gen_qec_surface_zone.pdf}
+\caption[Comportamento a soglia del surface code nelle due basi]{Errore logico $p_L$ in funzione dell'errore fisico $p$ (\textit{circuit-level}) per il surface code ruotato a distanza $d = 3, 5, 7, 9$, decoder \ac{MWPM}, scala doppio-logaritmica; pannello sinistro memory Z, pannello destro memory X. A $p$ basso le curve \emph{divergono} --- distanza maggiore dà errore logico molto minore --- e si \emph{incrociano} in prossimità della soglia. È la firma del comportamento \textit{threshold-like}: sotto soglia la ridondanza sopprime l'errore, sopra soglia lo amplifica. Il confine fra zona verde e zona rossa è posto alla soglia \emph{letta dall'incrocio} ($0.9\%$ in base Z, $0.7\%$ in base X), non a quella stimata dal fit della legge di scala discusso più avanti ($0.86\%$ e $0.81\%$): le due stime usano regimi diversi e vanno confrontate come tali. La campitura è un ausilio di lettura relativo a \emph{questo} circuito, a \emph{questo} decoder e a \emph{questo} modello di rumore, non una partizione universale del piano. Barre d'errore statistiche (spesso più piccole del marcatore); figura rigenerabile da \texttt{figure\_src/gen\_qec\_surface\_zone.py}.}
+\label{fig:qec_surface}
+\end{figure}
+
+\paragraph{La soglia è osservata.}
+Il risultato centrale è la presenza di un incrocio netto. Nel regime sotto-soglia la soppressione è marcata e cresce con la distanza: a $p = 2 \times 10^{-3}$ si passa da $p_L = 1.94 \times 10^{-3}$ ($d=3$) a $5.10 \times 10^{-4}$ ($d=5$), a $1.02 \times 10^{-4}$ ($d=7$), a $2.01 \times 10^{-5}$ ($d=9$) --- con fattori di soppressione $3.8$, $5.0$ e $5.1$ per incremento di distanza. La vicinanza degli ultimi due fattori è compatibile con una soppressione approssimativamente geometrica nell'intervallo $d=5$--$9$; quattro sole distanze non bastano per affermare che sia stato raggiunto il regime asintotico. L'ordine si mantiene fino a circa $p = 6 \times 10^{-3}$; oltre, le curve si accavallano e a $p = 10^{-2}$ è \emph{invertito} ($p_L = 3.9\%$ per $d=3$ contro $5.6\%$ per $d=9$): sopra soglia aumentare la distanza peggiora l'errore. La soglia osservata, $p_{th} \approx 0.9\%$ in base Z e $\approx 0.7\%$ in base X, è una stima specifica del circuito, del decoder e del modello di rumore adottati. Il comportamento qualitativo comune alle due basi costituisce un controllo di coerenza, non una prova di universalità della soglia.
+
+\paragraph{Dalla constatazione alla legge di scala.}
+Con quattro distanze anziché tre la soglia non va più soltanto letta dall'incrocio: può essere \emph{stimata}. La teoria prevede che, sotto soglia, l'errore logico segua
+\begin{equation}
+    p_L(d, p) \;=\; A \left(\frac{p}{p_{th}}\right)^{\lfloor (d+1)/2 \rfloor},
+    \label{eq:legge_scala_surface}
+\end{equation}
+dove l'esponente è il numero di errori fisici necessari a produrre un errore logico non rilevabile. Adattando~\eqref{eq:legge_scala_surface} ai punti con $p \leq 6\times10^{-3}$ per tutte e quattro le distanze si ottiene $A = 3.5\times10^{-2}$ e $p_{th} = 0.86\%$ in base Z ($A = 3.4\times10^{-2}$, $p_{th} = 0.81\%$ in base X), con residuo quadratico medio di $0.08$ in $\ln p_L$ --- ossia un accordo entro l'$8\%$ su cinque ordini di grandezza di errore logico. La stima della soglia ricavata dal fit e quella letta dall'incrocio concordano, il che è un controllo non banale: la prima usa il comportamento sotto soglia, la seconda quello al confine.
+
+Il valore di questa formulazione è che rende il risultato \emph{predittivo} anziché descrittivo. Invertendo la~\eqref{eq:legge_scala_surface} si ottiene la distanza minima necessaria a raggiungere un dato errore logico, e con essa il costo in qubit fisici, che per il surface code ruotato è $2d^2 - 1$ per qubit logico.
+
+\begin{table}[H]
+\centering
+\caption[Distanza e costo in qubit richiesti dalla legge di scala]{Distanza minima e costo in qubit fisici per qubit logico, ricavati invertendo la~\eqref{eq:legge_scala_surface} con i parametri stimati in base Z. Il confronto fra le due colonne quantifica quanto la fedeltà dei gate valga in risorse: dimezzare l'errore fisico da $2\times10^{-3}$ a $10^{-3}$ riduce di oltre tre volte il numero di qubit necessari a raggiungere $p_L = 10^{-6}$.}
+\label{tab:distanza_richiesta}
+\begin{tabular}{lcccc}
+\hline
+ & \multicolumn{2}{c}{$p = 2\times10^{-3}$} & \multicolumn{2}{c}{$p = 10^{-3}$} \\
+$p_L$ richiesto & $d$ & qubit fisici & $d$ & qubit fisici \\
+\hline
+$10^{-4}$  & \phantom{0}9 & \phantom{0}161 & \phantom{0}5 & \phantom{00}49 \\
+$10^{-6}$  & 15 & \phantom{0}449 & \phantom{0}9 & \phantom{0}161 \\
+$10^{-9}$  & 23 & 1\,057 & 17 & \phantom{0}577 \\
+$10^{-12}$ & 33 & 2\,177 & 23 & 1\,057 \\
+\hline
+\end{tabular}
+\end{table}
+
+\paragraph{Distanza dall'hardware attuale.}
+Il confronto fra la soglia e i preset uniformi del Capitolo~\ref{chap:rumore} è soltanto qualitativo. Il parametro $p$ del memory experiment circuit-level non coincide con $\lambda_{2q}$ del circuito di Shor, e il logical error rate dell'osservabile di memoria non coincide automaticamente con una probabilità per gate logico. Nel modello simulato, ridurre $p$ sotto la regione di incrocio rende vantaggioso aumentare la distanza; sopra tale regione la ridondanza amplifica il rumore. Il Capitolo~\ref{chap:integrazione} esplora invece una griglia esogena e dichiarata di errore Pauli per gate compilato: non trasferisce questi valori uno-a-uno. Per una previsione end-to-end servirebbe una mappatura per operazione logica e relativo circuito fault-tolerant.
+
+La legge di scala permette però di andare oltre il singolo punto e di rispondere in modo diretto alla domanda di risorse. L'istanza $N=15$ richiede dodici qubit logici (otto di controllo e quattro di lavoro); combinando questo dato con la Tabella~\ref{tab:distanza_richiesta} si ottiene che una versione codificata al livello $p_L = 10^{-4}$ --- quello che il Capitolo~\ref{chap:integrazione} individua come sufficiente --- costerebbe \textbf{circa $1\,900$ qubit fisici} a $p = 2\times10^{-3}$, e ne basterebbero \textbf{poco meno di $600$} se la fedeltà dei gate migliorasse di un fattore due. È il modo più concreto di enunciare il costo della correzione: non un fattore moltiplicativo astratto, ma due ordini di grandezza di qubit per eseguire in modo protetto la fattorizzazione di un numero a quattro bit.
+
+\paragraph{Riproducibilità.}
+Seed, numerosità adattiva e intervalli binomiali sono registrati punto per
+punto; una seconda esecuzione indipendente riproduce le curve e le soglie
+entro l'errore statistico. Il protocollo a due passate e i limiti dello
+scaling a $2d$ sono documentati nella
+Sezione~\ref{app:surface_protocollo}.
+
+% -----------------------------------------------
+\section{Oltre il Modello di Pauli: Errori Coerenti e Leakage}
+\label{sec:oltre_pauli}
+
+Stim fornisce una baseline Clifford--Pauli, non una previsione calibrata
+dell'hardware: sovrarotazioni coerenti e leakage possono violarne le
+assunzioni~\cite{plaquette2026}. Il controllo full-state a distanza 3
+trova, a $p=3\times10^{-2}$, meno flip grezzi sotto sovrarotazione
+($0.237$ contro $0.262$) ma un errore MWPM leggermente maggiore
+($0.0789$ contro $0.0767$, $+2.9\%$). Le misure ripetute interrompono
+parte dell'accumulo coerente; il canale Pauli resta un'approssimazione,
+non un'identità.
+
+Sul decoder ibrido, i guadagni sotto Pauli sono $1.019$--$1.041$ e sotto
+errore coerente $1.029$--$1.052$: lo scarto è circa una deviazione
+standard e non significativo. Il vantaggio appreso non dipende quindi dal
+generico carattere non-Pauli, ma dalla non decomponibilità del meccanismo
+in archi del grafo. Teoria, esempio a singolo qubit, Figura~\ref{fig:qec_coherent},
+dati completi e implicazioni channel-first sono conservati nella
+Sezione~\ref{app:surface_non_pauli} dell'Appendice~\ref{app:fase2}.
+
+% -----------------------------------------------
+\section{La Decodifica Appresa: Sintesi della Campagna}
+\label{sec:decodifica_appresa}
+
+Il \ac{MWPM} richiede che ogni meccanismo accenda al più due detection
+events e sia rappresentabile come un arco. Il crosstalk fra due dati
+adiacenti può accenderne quattro: resta Pauli, ma non è decomponibile.
+Questa è la seconda idealizzazione sottoposta a prova. Lo stesso tipo di
+modello appreso giudicato superfluo sull'istogramma viene applicato alla
+sindrome, che conserva relazioni spaziali e temporali assenti dall'output.
+
+La Tabella~\ref{tab:sintesi_decodifica} anticipa l'esito dei sette
+esperimenti principali. Le evidenze decisive E1--E4 sono presentate subito
+dopo la sintesi; i controlli E5--E12 sono riportati per esteso nella
+Sezione~\ref{app:decodifica}.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{cXX}
+\toprule
+ & \textbf{domanda} & \textbf{esito} \\
+\midrule
+E1 & sostituire il matching con una rete? & \textbf{No}: nessuna vittoria su 14 configurazioni; pareggio a $d=3$, sconfitta a $d=5$ \\
+E1b & quanti dati servirebbero? & $10^5$--$10^6$ campioni solo per pareggiare a $d=3$ \\
+E2 & e se il rumore esce dal modello del decoder? & la rete vince a $d=3$ ($1.14$--$1.19\times$) \\
+E3 & sa prevedere \emph{quando} il matching sbaglia? & sì, \ac{AUC} $=0.941$ \\
+E4 & affiancarlo invece di sostituirlo? & $-18/-21\%$ a $d=3$, $-1/-3\%$ a $d=5$, \textbf{nullo a $d=7$} \\
+E5 & è trasferibile fra profili di rumore? & sì, 12 trasferimenti su 12 battono il matching \\
+E6 & un modello \emph{mal calibrato} apre un margine? & \textbf{No}: 0 su 12; il matching perde solo l'$1$--$3\%$ \\
+E7 & un decoder analitico migliore lo cattura già? & a $d=5$ sì, e meglio della rete \\
+\bottomrule
+\end{tabularx}
+\caption[Sintesi della campagna sulla decodifica appresa]{Sintesi dei
+sette esperimenti principali. E1--E4 sono sviluppati nel corpo; E5--E12,
+con tabelle, figure e test di significatività, sono nella
+Sezione~\ref{app:decodifica}.}
+\label{tab:sintesi_decodifica}
+\end{table}
+
+\paragraph{Che cosa se ne ricava.}
+Il perimetro è una rete densa e dati alla portata di questa tesi, non il
+limite dei decoder neurali industriali~\cite{alphaqubit2026}. In tale
+perimetro \textbf{sostituire} il decoder analitico non conviene;
+\textbf{affiancarlo} può ridurre $p_L$ fino al $21\%$ quando il rumore
+correlato esce dalla struttura del grafo, senza peggiorarlo entro la
+risoluzione quando il modello è corretto. E6 esclude che basti una cattiva
+calibrazione; E7 mostra che BP+OSD recupera il $17$--$27\%$ a $d=5$,
+contro l'$1$--$3\%$ dell'ibrido.
+
+E8--E11 mostrano inoltre che i guadagni non si sommano: matching con
+residuo, BP+OSD con residuo e rete autonoma raggiungono lo stesso pavimento
+entro l'$1$--$2\%$, anche aumentando di quaranta volte i parametri. Ne
+segue il criterio definitivo: un modello appreso produce valore quando
+la classe di errore non è rappresentabile nella struttura del metodo
+analitico, non quando lo è con parametri imprecisi. A $d=7$ il vantaggio
+si annulla; prima di introdurre apprendimento va quindi adottato il miglior
+decoder analitico disponibile.
+
+\paragraph{Evidenze principali E1--E4.}
+La sintesi precedente è ora motivata sui dati e sui confronti appaiati che
+sostengono il risultato centrale.
+\decoderbodytrue
+\input{capitoli/AppendiceDecodificaAppresa}
+\decoderbodyfalse
+
+\end{onehalfspace}

@@ -1,0 +1,139 @@
+\begin{onehalfspace}
+
+\section[Ottimizzazione topologica della QFT]{Ottimizzazione della trasformata di Fourier consapevole della topologia}
+\label{sec:qft_topologia}
+
+La QFT approssimata è una delle varianti naturali da esplorare.
+Una campagna esplorativa condotta a chiusura del lavoro ne ha misurato il margine, e il
+risultato merita di essere riportato perché delimita l'intera famiglia di ottimizzazioni
+di questo tipo.
+
+Il punto di partenza è che nell'aritmetica di Beauregard il costo non si concentra nella
+trasformata finale del period finding, ma nelle QFT interne agli addizionatori modulari:
+per $N=21$ la compilazione conta 11\,436 porte \texttt{cp} contro 3\,406 \texttt{cx}, e la
+trasformata conclusiva vale 28 rotazioni sulle circa 47\,000 porte complessive. Troncare
+le rotazioni sotto una soglia d'angolo negli addizionatori porta le porte a due qubit da
+49\,661 a 23\,178, cioè le dimezza; troncare quella finale non sposta l'ordine di
+grandezza. Il primo dato utile è dunque \emph{dove} agire.
+
+Il risparmio non è però gratuito. Sulla stessa istanza la resa ideale scende da $0{,}4667$
+a $0{,}4013$: circa sei punti e mezzo pagati in precisione algoritmica. Ne segue in linea
+di principio un incrocio, perché le due quantità scalano diversamente con la qualità
+delle porte: sotto una certa soglia di errore conviene approssimare, sopra conviene la
+trasformata intera.
+
+La misura colloca quell'incrocio e ne quantifica l'ampiezza. Su questa istanza il
+vantaggio massimo ottenibile dalla variante troncata è di circa \textbf{tre punti
+percentuali}, e si realizza soltanto con porte a due qubit circa \textbf{duecento volte
+più accurate} di quelle oggi disponibili. Nel regime accessibile alla simulazione con
+calibrazione realistica nessuna delle configurazioni esaminate supera il pavimento
+uniforme dell'istanza, e nel solo punto in cui un segnale emerge è la trasformata
+\emph{piena} a prevalere. Su $N=21$ il circuito è del resto centocinquanta volte più
+lungo del tempo di coerenza tipico, quindi il confronto non discrimina né in simulazione
+né su hardware.
+
+Questo limite appartiene però all'istanza, non al metodo. Ripetendo la misura sulla
+\textbf{stima di fase} --- che della trasformata è l'uso canonico, e che con un unitario
+di fase costa decine di porte a due qubit invece di decine di migliaia --- il quadro si
+rovescia. Su nove confronti, distribuiti su tre dimensioni di registro e su fasi bersaglio
+sia rappresentabili sia non rappresentabili in $n$ bit, la trasformata troncata batte
+quella piena in \textbf{tutti e nove}, con intervallo di confidenza interamente positivo
+in sei. Su registro da dieci qubit il vantaggio raggiunge $+0{,}126$, con intervallo di
+Newcombe al 95\% $[+0{,}098;\ +0{,}153]$.
+
+Tre regolarità rendono il risultato utilizzabile in fase di progetto. Il grado ottimo di
+troncamento \textbf{non cresce con la dimensione del registro}: resta due o tre a tutte le
+taglie esaminate, mentre la trasformata piena ne impiega $n-1$; il risparmio cresce quindi
+con $n$, da venticinque porte a due qubit su sei a settantotto su dieci. Di conseguenza
+\textbf{il vantaggio aumenta con la dimensione}, da circa due punti percentuali a sei
+qubit fino a tredici a dieci. E le fasi esattamente rappresentabili guadagnano più di
+quelle che non lo sono: è il meccanismo che \textbf{spiega la differenza fra le istanze di
+Shor}, perché per $N=15$ l'ordine $r=4$ produce fasi $0$, $1/4$, $1/2$, $3/4$, esatte in
+due bit, mentre per $N=21$ l'ordine $r=6$ dà fasi $j/6$, dove le rotazioni fini
+trasportano ancora informazione.
+
+La prima di queste regolarità --- quella che a prima vista sorprende di più, perché un
+registro più lungo sembrerebbe richiedere più rotazioni fini --- ha una spiegazione
+teorica indipendente, pubblicata mentre questo lavoro era in corso. Akoramurthy e
+Surendiran derivano per la stima di fase con trasformata troncata un limite in forma
+chiusa sulla distanza in variazione totale fra la distribuzione esatta e quella
+troncata~\cite{akoramurthy2026}:
+%
+\begin{equation}
+\mathrm{TV}\!\left(P_\phi,\, P_\phi^{d}\right) \;\le\; \frac{\pi\,(m-d)}{2^{d}},
+\label{eq:bound_troncamento}
+\end{equation}
+%
+dove $m$ è la dimensione del registro e $d$ il grado di troncamento. Il numeratore cresce
+linearmente in $m$, il denominatore esponenzialmente in $d$: un $d$ piccolo e
+\emph{costante} basta quindi a schiacciare il termine d'errore anche al crescere del
+registro, ed è esattamente il comportamento osservato qui per via empirica. Gli autori
+riportano inoltre una riduzione del $31{,}3$--$43{,}7\%$ nel conteggio di porte e un
+passaggio di complessità da $O(m^2)$ a $O(m \log m)$ per $d = O(\log m)$. Il loro impianto
+sperimentale si ferma però alla stima di fase e non affronta la fattorizzazione: la
+delimitazione riportata sopra --- che su Shor la stessa leva vale al massimo tre punti
+percentuali, e solo con porte a due qubit molto più accurate delle attuali --- resta
+propria di questo lavoro, così come la selezione del grado su dati disgiunti da quelli di
+verifica.
+
+Ne segue che il grado di troncamento conveniente è \textbf{determinabile in anticipo}, dai
+soli conteggi di porte del circuito compilato e dai dati di calibrazione del dispositivo,
+senza eseguire l'algoritmo. È questa la forma in cui il contributo si generalizza: non una
+proprietà della fattorizzazione, ma una regola di progetto per la trasformata di Fourier
+quantistica e quindi per la famiglia di algoritmi che la contiene.
+
+Tre direzioni indipendenti convergono qui, e il passo successivo più promettente è
+\textbf{comporle}. La prima è quella misurata in questo lavoro: approssimare la
+trasformata per ridurre le \emph{porte}, e con esse la profondità rispetto al tempo di
+coerenza. La seconda approssima l'aritmetica modulare per ridurre i \emph{qubit}
+logici~\cite{chevignard2025}, ed è alla base della discesa nelle stime di risorsa
+degli ultimi anni~\cite{gidney2025}, di cui la Tabella~\ref{tab:traiettoria_risorse}
+riporta la traiettoria e i relativi caveat.
+La terza riorganizza la stima di fase in blocchi indipendenti, riducendo il \emph{registro}
+di conteggio a pochi qubit~\cite{shukla2026}.
+
+Agiscono su tre grandezze distinte --- porte, qubit di lavoro, qubit di conteggio --- ma
+sarebbe un errore darle per semplicemente additive. La riduzione dei qubit di lavoro si
+ottiene infatti \emph{spendendo} porte: per RSA-2048 il conteggio Toffoli complessivo
+passa da $2^{31{,}3}$ a $2^{40{,}9}$ a fronte del calo da 6144 a 1730 qubit
+logici~\cite{chevignard2025}, e un lavoro successivo ne recupera buona parte con
+ottimizzazioni aritmetiche~\cite{gidney2025}. Comporre quella leva con un troncamento
+della trasformata significa quindi agire due volte, in versi opposti, sulla stessa
+grandezza.
+
+La terza direzione è invece dichiarata complementare dagli autori stessi, che la
+presentano come rivolta allo strato di stima di fase anziché a quello
+aritmetico~\cite{shukla2026}: il registro di conteggio scende da $2n+1$ a tre o quattro
+qubit lasciando invariato il registro di lavoro. Il meccanismo è descritto per esteso
+nella loro proposta per la stima di fase, dove blocchi indipendenti di più qubit di
+controllo stimano più bit di fase entro una finestra, con una risoluzione esplicita
+dell'ambiguità dal bit meno significativo verso il più significativo~\cite{shuklaqpe2026}. Determinare se i tre guadagni si sommino
+davvero, e a quale prezzo in profondità, richiede un disegno che li vari congiuntamente ed
+è la domanda che questo lavoro lascia aperta con maggiore fiducia, perché le tre riduzioni
+sono ciascuna già documentata e quantificata.
+
+Va infine osservato che la trasformata di Fourier quantistica non è una particolarità
+della fattorizzazione. Compare nella stima di fase, nell'amplitude estimation e nel
+conteggio quantistico, nella risoluzione di sistemi lineari, nel problema del sottogruppo
+nascosto di cui Shor è un caso particolare, e nelle simulazioni che alternano dominio
+delle posizioni e dei momenti. In tutti questi casi il costo si concentra nelle stesse
+rotazioni controllate di piccolo angolo, e la regola di progetto ricavata qui --- scegliere
+il grado di troncamento dai conteggi di porte e dai dati di calibrazione, prima di
+eseguire --- si applicherebbe senza modifiche sostanziali. È il motivo per cui il
+contributo va letto come metodologico e non come risultato sulla fattorizzazione.
+
+I limiti della verifica vanno però dichiarati. Le misure usano un layout per ciascuna
+dimensione, una sola snapshot di calibrazione e tre fasi bersaglio; il confronto è
+appaiato, sugli stessi batch e con gli stessi semi, quindi il contrasto interno è pulito,
+ma la generalizzazione ad altri dispositivi e ad altre topologie non è dimostrata.
+
+Il precedente più vicino è la compilazione \emph{noise-adaptive}, che ordina o vincola il
+collocamento del circuito usando i dati di calibrazione~\cite{murali2019, tannu2019}. La
+differenza rispetto a quella linea, e il motivo per cui resta spazio, è che tali metodi
+ottimizzano la fedeltà del circuito, mentre per un algoritmo come Shor conta soltanto che
+il post-processing restituisca i fattori. I due obiettivi non coincidono, e la campagna
+sulla compilazione riportata in Appendice~\ref{app:fase2} misura quanto non coincidano.
+
+% -----------------------------------------------
+
+\end{onehalfspace}

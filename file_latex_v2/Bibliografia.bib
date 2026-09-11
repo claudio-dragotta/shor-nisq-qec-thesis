@@ -1,0 +1,814 @@
+% ============================================================
+% BIBLIOGRAFIA - Tesi Magistrale: Implementazione e Ottimizzazione
+% dell'Algoritmo di Shor in Ambienti Quantistici Rumorosi
+% mediante Modelli di Intelligenza Artificiale
+% Claudio Dragotta - Università Campus Bio-Medico di Roma - 2024/2025
+% ============================================================
+
+% --- ARTICOLI FONDAMENTALI ---
+
+@article{feynman1982,
+  author    = {Richard P. Feynman},
+  title     = {Simulating Physics with Computers},
+  journal   = {International Journal of Theoretical Physics},
+  year      = {1982},
+  volume    = {21},
+  number    = {6--7},
+  pages     = {467--488},
+  doi       = {10.1007/BF02650179}
+}
+
+@article{deutsch1985,
+  author    = {David Deutsch},
+  title     = {Quantum Theory, the Church-Turing Principle and the Universal Quantum Computer},
+  journal   = {Proceedings of the Royal Society of London. Series A},
+  year      = {1985},
+  volume    = {400},
+  number    = {1818},
+  pages     = {97--117},
+  doi       = {10.1098/rspa.1985.0070}
+}
+
+@inproceedings{shor1994,
+  author    = {Peter W. Shor},
+  title     = {Algorithms for Quantum Computation: Discrete Logarithms and Factoring},
+  booktitle = {Proceedings of the 35th Annual Symposium on Foundations of Computer Science (FOCS)},
+  year      = {1994},
+  pages     = {124--134},
+  publisher = {IEEE},
+  doi       = {10.1109/SFCS.1994.365700}
+}
+
+@inproceedings{grover1996,
+  author    = {Lov K. Grover},
+  title     = {A Fast Quantum Mechanical Algorithm for Database Search},
+  booktitle = {Proceedings of the 28th Annual ACM Symposium on Theory of Computing (STOC)},
+  year      = {1996},
+  pages     = {212--219},
+  publisher = {ACM},
+  doi       = {10.1145/237814.237866}
+}
+
+% --- LIBRI DI RIFERIMENTO ---
+
+@book{nielsenChuang2000,
+  author    = {Michael A. Nielsen and Isaac L. Chuang},
+  title     = {Quantum Computation and Quantum Information},
+  publisher = {Cambridge University Press},
+  year      = {2000},
+  address   = {Cambridge, UK},
+  edition   = {10th Anniversary Edition},
+  isbn      = {978-1107002173}
+}
+
+% --- RSA E CRITTOGRAFIA ---
+
+@article{rsa1978,
+  author    = {Ronald L. Rivest and Adi Shamir and Leonard Adleman},
+  title     = {A Method for Obtaining Digital Signatures and Public-Key Cryptosystems},
+  journal   = {Communications of the ACM},
+  year      = {1978},
+  volume    = {21},
+  number    = {2},
+  pages     = {120--126},
+  doi       = {10.1145/359340.359342}
+}
+
+@misc{nist2024pqc,
+  author       = {{National Institute of Standards and Technology}},
+  title        = {{Post-Quantum Cryptography Standards: FIPS 203, 204, 205}},
+  year         = {2024},
+  howpublished = {\url{https://csrc.nist.gov/pubs/fips/203/final}},
+  note         = {FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA). Pubblicazione formale agosto 2024.}
+}
+
+@misc{nist_pqc_explainer2026,
+  author       = {{National Institute of Standards and Technology}},
+  title        = {{What Is Post-Quantum Cryptography?}},
+  year         = {2026},
+  howpublished = {\url{https://www.nist.gov/cybersecurity-and-privacy/what-post-quantum-cryptography}},
+  note         = {Aggiornato il 27 febbraio 2026; consultato il 26 agosto 2026}
+}
+
+@article{rsa250_2020,
+  author    = {Fabrice Boudot and Pierrick Gaudry and Aurore Guillevic and Nadia Heninger and Emmanuel Thom{\'{e}} and Paul Zimmermann},
+  title     = {Factoring {RSA}-250},
+  journal   = {Cryptology ePrint Archive},
+  year      = {2020},
+  note      = {Report 2020/697, \url{https://eprint.iacr.org/2020/697}}
+}
+
+@article{vandersypen2001,
+  author    = {Lieven M. K. Vandersypen and Matthias Steffen and Gregory Breyta and Costantino S. Yannoni and Mark H. Sherwood and Isaac L. Chuang},
+  title     = {Experimental Realization of Shor's Quantum Factoring Algorithm Using Nuclear Magnetic Resonance},
+  journal   = {Nature},
+  year      = {2001},
+  volume    = {414},
+  pages     = {883--887},
+  doi       = {10.1038/414883a}
+}
+
+@article{monz2016,
+  author    = {Thomas Monz and Daniel Nigg and Esteban A. Martinez and Matthias F. Brandl and Philipp Schindler and Richard Rines and Shannon X. Wang and Isaac L. Chuang and Rainer Blatt},
+  title     = {Realization of a Scalable Shor Algorithm},
+  journal   = {Science},
+  year      = {2016},
+  volume    = {351},
+  number    = {6277},
+  pages     = {1068--1070},
+  doi       = {10.1126/science.aad9480}
+}
+
+@article{skosana2021,
+  author    = {Unathi Skosana and Mark Tame},
+  title     = {Demonstration of {S}hor's Factoring Algorithm for $N=21$ on {IBM} Quantum Processors},
+  journal   = {Scientific Reports},
+  year      = {2021},
+  volume    = {11},
+  pages     = {16599},
+  doi       = {10.1038/s41598-021-95973-w}
+}
+
+@misc{regev2023,
+  author        = {Oded Regev},
+  title         = {An Efficient Quantum Factoring Algorithm},
+  year          = {2023},
+  eprint        = {2308.06572},
+  archiveprefix = {arXiv}
+}
+
+@misc{ibm_roadmap2025,
+  author       = {{IBM Quantum}},
+  title        = {{IBM Quantum Roadmap}},
+  year         = {2026},
+  howpublished = {\url{https://www.ibm.com/roadmaps/quantum/}},
+  note         = {Roadmap aggiornata a marzo 2026; obiettivi dichiarati soggetti a modifica}
+}
+
+@misc{shor_challenges2025,
+  author        = {Paul Bagourd and Julian Jang-Jaccard and Vincent Lenders and Alain Mermoud and Torsten Hoefler and Cornelius Hempel},
+  title         = {Practical Challenges in Executing {S}hor's Algorithm on Existing Quantum Platforms},
+  year          = {2025},
+  eprint         = {2512.15330},
+  archiveprefix = {arXiv}
+}
+
+@misc{ml_mitigation2023,
+  author        = {Haoran Liao and Derek S. Wang and Iskandar Sitdikov and Ciro Salcedo-Gallo and Alireza Seif and Zlatko K. Minev},
+  title         = {Machine Learning for Practical Quantum Error Mitigation},
+  year          = {2023},
+  eprint        = {2309.17368},
+  archiveprefix = {arXiv}
+}
+
+@inproceedings{shor_hpec2023,
+  author    = {Dewang Sun and Naifeng Zhang and Franz Franchetti},
+  title     = {Optimization and Performance Analysis of {S}hor's Algorithm in {Q}iskit},
+  booktitle = {IEEE High Performance Extreme Computing Conference (HPEC)},
+  year      = {2023},
+  publisher = {IEEE},
+  note      = {Available at \url{https://users.ece.cmu.edu/~franzf/papers/hpec_2023_Quantum_final.pdf}}
+}
+
+% --- CORREZIONE DEGLI ERRORI QUANTISTICI ---
+
+@article{aharonov1997fault,
+  author    = {Dorit Aharonov and Michael Ben-Or},
+  title     = {Fault-Tolerant Quantum Computation with Constant Error Rate},
+  journal   = {SIAM Journal on Computing},
+  year      = {2008},
+  volume    = {38},
+  number    = {4},
+  pages     = {1207--1282},
+  doi       = {10.1137/S0097539799359385},
+  note      = {Versione preliminare presentata a STOC 1997; preprint arXiv:quant-ph/9906129}
+}
+
+
+
+@article{shorcorrection1995,
+  author    = {Peter W. Shor},
+  title     = {Scheme for Reducing Decoherence in Quantum Computer Memory},
+  journal   = {Physical Review A},
+  year      = {1995},
+  volume    = {52},
+  number    = {4},
+  pages     = {R2493--R2496},
+  doi       = {10.1103/PhysRevA.52.R2493}
+}
+
+@article{steane1996,
+  author    = {Andrew M. Steane},
+  title     = {Error Correcting Codes in Quantum Theory},
+  journal   = {Physical Review Letters},
+  year      = {1996},
+  volume    = {77},
+  number    = {5},
+  pages     = {793--797},
+  doi       = {10.1103/PhysRevLett.77.793}
+}
+
+@article{fowler2012,
+  author    = {Austin G. Fowler and Matteo Mariantoni and John M. Martinis and Andrew N. Cleland},
+  title     = {Surface Codes: Towards Practical Large-Scale Quantum Computation},
+  journal   = {Physical Review A},
+  year      = {2012},
+  volume    = {86},
+  number    = {3},
+  pages     = {032324},
+  doi       = {10.1103/PhysRevA.86.032324}
+}
+
+@article{temme2017,
+  author    = {Kristan Temme and Sergey Bravyi and Jay M. Gambetta},
+  title     = {Error Mitigation for Short-Depth Quantum Circuits},
+  journal   = {Physical Review Letters},
+  year      = {2017},
+  volume    = {119},
+  number    = {18},
+  pages     = {180509},
+  doi       = {10.1103/PhysRevLett.119.180509},
+  note      = {Articolo fondativo della Zero-Noise Extrapolation (ZNE): propone l'amplificazione controllata del rumore seguita da estrapolazione a zero rumore per stimare l'output ideale di un circuito NISQ}
+}
+
+@article{bell1964,
+  author  = {John S. Bell},
+  title   = {On the {Einstein} {Podolsky} {Rosen} Paradox},
+  journal = {Physics},
+  year    = {1964},
+  volume  = {1},
+  number  = {3},
+  pages   = {195--200},
+  doi     = {10.1103/PhysicsPhysiqueFizika.1.195}
+}
+
+@incollection{lenstra1993gnfs,
+  author    = {Arjen K. Lenstra and Hendrik W. {Lenstra Jr.}},
+  title     = {The Development of the Number Field Sieve},
+  booktitle = {Lecture Notes in Mathematics},
+  volume    = {1554},
+  publisher = {Springer-Verlag},
+  year      = {1993},
+  doi       = {10.1007/BFb0091537}
+}
+
+@article{josephson1962,
+  author  = {Brian D. Josephson},
+  title   = {Possible New Effects in Superconductive Tunnelling},
+  journal = {Physics Letters},
+  year    = {1962},
+  volume  = {1},
+  number  = {7},
+  pages   = {251--253},
+  doi     = {10.1016/0031-9163(62)91369-0}
+}
+
+@article{koch2007,
+  author  = {Jens Koch and Terri M. Yu and Jay Gambetta and A. A. Houck and D. I. Schuster and J. Majer and Alexandre Blais and M. H. Devoret and S. M. Girvin and R. J. Schoelkopf},
+  title   = {Charge-insensitive Qubit Design Derived from the {Cooper} Pair Box},
+  journal = {Physical Review A},
+  year    = {2007},
+  volume  = {76},
+  number  = {4},
+  pages   = {042319},
+  doi     = {10.1103/PhysRevA.76.042319}
+}
+
+% --- OTTIMALITÀ DI GROVER ---
+
+@article{bennett1997,
+  author    = {Charles H. Bennett and Ethan Bernstein and Gilles Brassard and Umesh Vazirani},
+  title     = {Strengths and Weaknesses of Quantum Computing},
+  journal   = {SIAM Journal on Computing},
+  year      = {1997},
+  volume    = {26},
+  number    = {5},
+  pages     = {1510--1523},
+  doi       = {10.1137/S0097539796300933}
+}
+
+@article{zalka1999,
+  author    = {Christof Zalka},
+  title     = {Grover's Quantum Searching Algorithm is Optimal},
+  journal   = {Physical Review A},
+  year      = {1999},
+  volume    = {60},
+  number    = {4},
+  pages     = {2746--2751},
+  doi       = {10.1103/PhysRevA.60.2746}
+}
+
+% --- HARDWARE E NISQ ---
+
+@article{preskill2018,
+  author    = {John Preskill},
+  title     = {Quantum Computing in the NISQ Era and Beyond},
+  journal   = {Quantum},
+  year      = {2018},
+  volume    = {2},
+  pages     = {79},
+  doi       = {10.22331/q-2018-08-06-79}
+}
+
+@article{arute2019,
+  author    = {Frank Arute and others},
+  title     = {Quantum Supremacy Using a Programmable Superconducting Processor},
+  journal   = {Nature},
+  year      = {2019},
+  volume    = {574},
+  pages     = {505--510},
+  doi       = {10.1038/s41586-019-1666-5}
+}
+
+
+% --- FRAMEWORK E STRUMENTI ---
+
+@misc{qiskit2023,
+  author       = {{Qiskit contributors}},
+  title        = {Qiskit: An Open-source Framework for Quantum Computing},
+  year         = {2023},
+  howpublished = {\url{https://qiskit.org}},
+  doi          = {10.5281/zenodo.2573505}
+}
+
+% --- TEOREMA NO-CLONING ---
+
+@article{wootters1982,
+  author    = {William K. Wootters and Wojciech H. Zurek},
+  title     = {A Single Quantum Cannot be Cloned},
+  journal   = {Nature},
+  year      = {1982},
+  volume    = {299},
+  pages     = {802--803},
+  doi       = {10.1038/299802a0}
+}
+
+% --- TUTORIAL IBM QUANTUM: SHOR ---
+
+@misc{ibm_shor_tutorial,
+  author       = {{IBM Quantum}},
+  title        = {Shor's Algorithm -- IBM Quantum Documentation},
+  year         = {2024},
+  howpublished = {\url{https://quantum.cloud.ibm.com/docs/en/tutorials/shors-algorithm}},
+  note         = {Tutorial ufficiale IBM per l'implementazione dell'algoritmo di Shor con Qiskit Runtime su hardware reale (\texttt{ibm\_marrakesh}). Include Dynamical Decoupling e Gate Twirling come tecniche di soppressione del rumore}
+}
+
+% --- MACHINE LEARNING PER QEC E ERROR MITIGATION ---
+
+@article{alphaqubit2024,
+  author    = {Johannes Bausch and Andrew W. Senior and Francisco J. H. Heras and Thomas Edlich and Alex Davies and Michael Newman and Cody Jones and Kevin Satzinger and Murphy Yuezhen Niu and Sam Blackwell and George Holland and Dvir Kafri and Juan Atalaya and Craig Gidney and Demis Hassabis and Sergio Boixo and Hartmut Neven and Pushmeet Kohli},
+  title     = {Learning High-Accuracy Error Decoding for Quantum Processors},
+  journal   = {Nature},
+  year      = {2024},
+  volume    = {635},
+  pages     = {834--840},
+  doi       = {10.1038/s41586-024-08148-8},
+  note      = {AlphaQubit: decoder neurale sviluppato da Google DeepMind e Google Quantum AI. Supera i decoder analitici classici su hardware Sycamore a 241 qubit}
+}
+
+@misc{transformer_decoder2023,
+  author        = {Johannes Bausch and Andrew W. Senior and others},
+  title         = {Learning to Decode the Surface Code with a Recurrent, Transformer-Based Neural Network},
+  year          = {2023},
+  eprint        = {2310.05900},
+  archiveprefix = {arXiv},
+  note          = {Decoder transformer per surface code; supera i decoder state-of-the-art su hardware Google Sycamore per distanze 3--11}
+}
+
+@article{epjqt_noise2024,
+  author    = {J. A. Bravo-Montes and Miriam Bastante and Guillermo Botella and Alberto del Barrio and F. Garc{\'i}a-Herrero},
+  title     = {A Methodology to Select and Adjust Quantum Noise Models Through Emulators: Benchmarking Against Real Backends},
+  journal   = {EPJ Quantum Technology},
+  year      = {2024},
+  volume    = {11},
+  pages     = {71},
+  doi       = {10.1140/epjqt/s40507-024-00284-4},
+  note      = {Metodologia sistematica per la selezione e calibrazione di noise model per emulatori rispetto a backend reali IBM. Benchmark su ibm\_perth (7 qubit)}
+}
+
+% --- LIBRERIE E STRUMENTI ---
+
+@article{scikit_learn,
+  author    = {Fabian Pedregosa and Ga{\"{e}}l Varoquaux and Alexandre Gramfort and Vincent Michel and Bertrand Thirion and Olivier Grisel and Mathieu Blondel and Peter Prettenhofer and Ron Weiss and Vincent Dubourg and Jake Vanderplas and Alexandre Passos and David Cournapeau and Matthieu Brucher and Matthieu Perrot and \'{E}douard Duchesnay},
+  title     = {Scikit-learn: Machine Learning in {P}ython},
+  journal   = {Journal of Machine Learning Research},
+  year      = {2011},
+  volume    = {12},
+  pages     = {2825--2830}
+}
+
+% --- FRAMEWORK ALTERNATIVI ---
+
+@misc{cirq2024,
+  author       = {{Google Quantum AI}},
+  title        = {Cirq: A Python Framework for Writing, Manipulating, and Running Quantum Circuits},
+  year         = {2024},
+  howpublished = {\url{https://quantumai.google/cirq}},
+  note         = {Framework open-source Google per processori superconduttori Sycamore}
+}
+
+@misc{pennylane2022,
+  author       = {Ville Bergholm and others},
+  title        = {{PennyLane}: Automatic Differentiation of Hybrid Quantum-Classical Computations},
+  year         = {2022},
+  note         = {arXiv:1811.04968. Framework Xanadu orientato a circuiti variazionali e quantum machine learning}
+}
+
+% --- NSA CNSA 2.0 ---
+
+@misc{nsa_cnsa2022,
+  author       = {{National Security Agency}},
+  title        = {{Commercial National Security Algorithm Suite 2.0 (CNSA 2.0)}},
+  year         = {2022},
+  howpublished = {\url{https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF}},
+  note         = {Cybersecurity Advisory, settembre 2022. Fissa le scadenze di migrazione verso algoritmi resistenti ai computer quantistici entro il 2030--2035}
+}
+
+% --- APPLE PQ3 ---
+
+@misc{apple_pq3_2024,
+  author       = {{Apple Security Engineering and Architecture}},
+  title        = {{iMessage with PQ3: The new state of the art in quantum-secure messaging}},
+  year         = {2024},
+  howpublished = {\url{https://security.apple.com/blog/imessage-pq3/}},
+  note         = {Febbraio 2024. Primo protocollo di messaggistica con crittografia post-quantistica di livello 3, basato su ML-KEM per lo scambio di chiavi ibride}
+}
+
+% --- ASPETTO SPERIMENTALE DISUGUAGLIANZE DI BELL ---
+
+@article{aspect1982,
+  author    = {Alain Aspect and Philippe Grangier and G{\'e}rard Roger},
+  title     = {Experimental Realization of {Einstein-Podolsky-Rosen-Bohm} {Gedankenexperiment}: A New Violation of {Bell}'s Inequalities},
+  journal   = {Physical Review Letters},
+  year      = {1982},
+  volume    = {49},
+  number    = {2},
+  pages     = {91--94},
+  doi       = {10.1103/PhysRevLett.49.91}
+}
+
+% --- PORTE ELEMENTARI E DECOMPOSIZIONE UNITARIA ---
+
+@article{Barenco1995,
+  author    = {Adriano Barenco and Charles H. Bennett and Richard Cleve and David P. DiVincenzo and Norman Margolus and Peter Shor and Tycho Sleator and John A. Smolin and Harald Weinfurter},
+  title     = {Elementary gates for quantum computation},
+  journal   = {Physical Review A},
+  year      = {1995},
+  volume    = {52},
+  number    = {5},
+  pages     = {3457--3467},
+  doi       = {10.1103/PhysRevA.52.3457},
+  note      = {Dimostra che qualsiasi operatore unitario su $k$ qubit può essere decomposto in $O(4^k)$ porte elementari; fondamento teorico per la complessità della decomposizione UnitaryGate}
+}
+
+% --- CIRCUITO SHOR OTTIMIZZATO (2n+3 QUBIT) ---
+
+@article{beauregard2002,
+  author    = {St{\'e}phane Beauregard},
+  title     = {Circuit for {S}hor's Algorithm Using $2n+3$ Qubits},
+  journal   = {Quantum Information and Computation},
+  year      = {2003},
+  volume    = {3},
+  number    = {2},
+  pages     = {175--185},
+  note      = {arXiv:quant-ph/0205095. Ottimizzazione del circuito originale di Shor: riduce il numero di qubit da $O(n)$ a $2n+3$ tramite addizione modulare in-place}
+}
+
+% --- GITHUB IMPLEMENTAZIONE SHOR ---
+
+@misc{github_shor,
+  author       = {Graychii},
+  title        = {Shor Algorithm Implementation},
+  year         = {2023},
+  howpublished = {\url{https://github.com/Graychii/Shor-Algorithm-Implementation}},
+  note         = {Implementazione Python dell'algoritmo di Shor su Qiskit}
+}
+
+@article{zurek2003,
+  author  = {Zurek, Wojciech Hubert},
+  title   = {Decoherence, einselection, and the quantum origins of the classical},
+  journal = {Reviews of Modern Physics},
+  volume  = {75},
+  number  = {3},
+  pages   = {715--775},
+  year    = {2003},
+  doi     = {10.1103/RevModPhys.75.715}
+}
+
+@inproceedings{tannu2019,
+  author    = {Tannu, Swamit S. and Qureshi, Moinuddin K.},
+  title     = {Not All Qubits Are Created Equal: A Case for Variability-Aware Policies for {NISQ}-Era Quantum Computers},
+  booktitle = {Proceedings of the 24th International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS)},
+  year      = {2019},
+  pages     = {987--999},
+  doi       = {10.1145/3297858.3304007}
+}
+
+@article{sarovar2020,
+  author  = {Sarovar, Mohan and Proctor, Timothy and Rudinger, Kenneth and Young, Kevin and Nielsen, Erik and Blume-Kohout, Robin},
+  title   = {Detecting crosstalk errors in quantum information processors},
+  journal = {Quantum},
+  volume  = {4},
+  pages   = {321},
+  year    = {2020},
+  doi     = {10.22331/q-2020-09-11-321}
+}
+
+@inproceedings{murali2019,
+  author    = {Murali, Prakash and Baker, Jonathan M. and Javadi-Abhari, Ali and Chong, Frederic T. and Martonosi, Margaret},
+  title     = {Noise-Adaptive Compiler Mappings for Noisy Intermediate-Scale Quantum Computers},
+  booktitle = {Proceedings of the 24th International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS)},
+  year      = {2019},
+  pages     = {1015--1029},
+  doi       = {10.1145/3297858.3304075}
+}
+
+@article{gidney2021,
+  author  = {Gidney, Craig and Eker{\aa}, Martin},
+  title   = {How to factor 2048 bit {RSA} integers in 8 hours using 20 million noisy qubits},
+  journal = {Quantum},
+  volume  = {5},
+  pages   = {433},
+  year    = {2021},
+  doi     = {10.22331/q-2021-04-15-433}
+}
+
+@inproceedings{chevignard2025,
+  author       = {Chevignard, Cl{'e}mence and Fouque, Pierre-Alain and Schrottenloher, Andr{'e}},
+  title        = {Reducing the Number of Qubits in Quantum Factoring},
+  booktitle    = {Advances in Cryptology --- CRYPTO 2025},
+  year         = {2025},
+  publisher    = {Springer},
+  note         = {Cryptology ePrint Archive, Paper 2024/222}
+}
+
+@article{shukla2026,
+  author       = {Shukla, Alok and Vedula, Prakash},
+  title        = {A Modular, Adaptive, and Scalable Quantum Factoring Algorithm},
+  journal      = {European Physical Journal Plus},
+  volume       = {141},
+  pages        = {474},
+  year         = {2026},
+  note         = {arXiv:2509.05010}
+}
+
+@misc{gidney2025,
+  author       = {Gidney, Craig},
+  title        = {How to factor 2048 bit {RSA} integers with less than a million noisy qubits},
+  year         = {2025},
+  eprint       = {2505.15917},
+  archiveprefix = {arXiv},
+  note         = {arXiv:2505.15917}
+}
+
+@article{stim2021,
+  author  = {Gidney, Craig},
+  title   = {Stim: a fast stabilizer circuit simulator},
+  journal = {Quantum},
+  volume  = {5},
+  pages   = {497},
+  year    = {2021},
+  doi     = {10.22331/q-2021-07-06-497}
+}
+
+@misc{pymatching2021,
+  author       = {Higgott, Oscar},
+  title        = {PyMatching: A Python package for decoding quantum codes with minimum-weight perfect matching},
+  year         = {2021},
+  eprint       = {2105.13082},
+  archiveprefix = {arXiv},
+  note         = {arXiv:2105.13082}
+}
+
+@article{roffe2019,
+  author  = {Roffe, Joschka},
+  title   = {Quantum error correction: an introductory guide},
+  journal = {Contemporary Physics},
+  volume  = {60},
+  number  = {3},
+  pages   = {226--245},
+  year    = {2019},
+  doi     = {10.1080/00107514.2019.1667078}
+}
+
+@misc{plaquette2026,
+  author       = {Conchello Vendrell, Raul and D{\'i}az L{\'o}pez, Carlos and Dhand, Ish and Kapoor, Kshitij and Laureti, Davide and Massaro, Marcello and Nayak, Pranjal and Ogloblin, Ivan and Plenio, Martin B. and Prasanna Kumar, Shreya and Santandrea, Matteo and Seshadri, Varun and Sz{\'a}va, Antal and Vincent, Trevor and Weber, Raphael},
+  title        = {Plaquette: A hardware-aware design platform for fault-tolerant quantum computers},
+  year         = {2026},
+  eprint       = {2607.08767},
+  archiveprefix = {arXiv},
+  note         = {arXiv:2607.08767}
+}
+
+% --- FONDAMENTI QEC: CSS, STABILIZZATORI, SURFACE CODE (ORIGINE) ---
+
+@article{calderbankShor1996,
+  author    = {A. R. Calderbank and Peter W. Shor},
+  title     = {Good Quantum Error-Correcting Codes Exist},
+  journal   = {Physical Review A},
+  year      = {1996},
+  volume    = {54},
+  number    = {2},
+  pages     = {1098--1105},
+  doi       = {10.1103/PhysRevA.54.1098}
+}
+
+@phdthesis{gottesman1997,
+  author        = {Daniel Gottesman},
+  title         = {Stabilizer Codes and Quantum Error Correction},
+  school        = {California Institute of Technology},
+  year          = {1997},
+  eprint        = {quant-ph/9705052},
+  archiveprefix = {arXiv}
+}
+
+@article{kitaev2003,
+  author    = {A. Yu. Kitaev},
+  title     = {Fault-tolerant quantum computation by anyons},
+  journal   = {Annals of Physics},
+  year      = {2003},
+  volume    = {303},
+  number    = {1},
+  pages     = {2--30},
+  doi       = {10.1016/S0003-4916(02)00018-0}
+}
+
+% --- DECODER NEURALE (SEMINALE) ---
+
+@article{torlaiMelko2017,
+  author    = {Giacomo Torlai and Roger G. Melko},
+  title     = {Neural Decoder for Topological Codes},
+  journal   = {Physical Review Letters},
+  year      = {2017},
+  volume    = {119},
+  number    = {3},
+  pages     = {030501},
+  doi       = {10.1103/PhysRevLett.119.030501}
+}
+
+% --- ALGORITMI VARIAZIONALI NISQ (VQE, QAOA) ---
+
+@article{peruzzo2014,
+  author    = {Alberto Peruzzo and Jarrod McClean and Peter Shadbolt and Man-Hong Yung and Xiao-Qi Zhou and Peter J. Love and Al{\'a}n Aspuru-Guzik and Jeremy L. O'Brien},
+  title     = {A variational eigenvalue solver on a photonic quantum processor},
+  journal   = {Nature Communications},
+  year      = {2014},
+  volume    = {5},
+  pages     = {4213},
+  doi       = {10.1038/ncomms5213}
+}
+
+@misc{farhi2014,
+  author        = {Edward Farhi and Jeffrey Goldstone and Sam Gutmann},
+  title         = {A Quantum Approximate Optimization Algorithm},
+  year          = {2014},
+  eprint        = {1411.4028},
+  archiveprefix = {arXiv}
+}
+
+@article{panteleev2021,
+  author  = {Pavel Panteleev and Gleb Kalachev},
+  title   = {Degenerate Quantum {LDPC} Codes With Good Finite Length Performance},
+  journal = {Quantum},
+  year    = {2021},
+  volume  = {5},
+  pages   = {585},
+  doi     = {10.22331/q-2021-11-22-585}
+}
+
+@article{roffe2020,
+  author  = {Joschka Roffe and David R. White and Simon Burton and Earl Campbell},
+  title   = {Decoding Across the Quantum Low-Density Parity-Check Code Landscape},
+  journal = {Physical Review Research},
+  year    = {2020},
+  volume  = {2},
+  number  = {4},
+  pages   = {043423},
+  doi     = {10.1103/PhysRevResearch.2.043423}
+}
+
+@article{beckman1996,
+  author  = {David Beckman and Amalavoyal N. Chari and Srikrishna Devabhaktuni and John Preskill},
+  title   = {Efficient Networks for Quantum Factoring},
+  journal = {Physical Review A},
+  year    = {1996},
+  volume  = {54},
+  number  = {2},
+  pages   = {1034--1063},
+  doi     = {10.1103/PhysRevA.54.1034},
+  note    = {arXiv:quant-ph/9602016. Stima di $5K+1$ qubit e circa $72K^3$ gate elementari per fattorizzare un numero di $K$ bit}
+}
+
+@article{smolin2013,
+  author  = {John A. Smolin and Graeme Smith and Alexander Vargo},
+  title   = {Oversimplifying Quantum Factoring},
+  journal = {Nature},
+  year    = {2013},
+  volume  = {499},
+  number  = {7457},
+  pages   = {163--165},
+  doi     = {10.1038/nature12290},
+  note    = {Preprint arXiv:1301.7007, dal titolo \emph{Pretending to Factor Large Numbers on a Quantum Computer}}
+}
+
+@misc{akoramurthy2026,
+  author        = {B. Akoramurthy and B. Surendiran},
+  title         = {Phase-Fidelity-Aware Truncated Quantum {F}ourier Transform for Scalable Phase Estimation on {NISQ} Hardware},
+  year          = {2026},
+  eprint        = {2604.05456},
+  archiveprefix = {arXiv}
+}
+
+@misc{yang2026,
+  author        = {Qingxin Yang and Stefano Markidis},
+  title         = {When Noisy Quantum Order Finding Remains Recoverable for {S}hor's Algorithm},
+  year          = {2026},
+  eprint        = {2605.16074},
+  archiveprefix = {arXiv}
+}
+
+@misc{yan2026,
+  author        = {Ge Yan and Shanchuan Li and Yuxuan Du},
+  title         = {Rethink the Role of Neural Decoders in Quantum Error Correction},
+  year          = {2026},
+  eprint        = {2605.12046},
+  archiveprefix = {arXiv},
+  note          = {Accettato a ICML 2026}
+}
+
+@misc{bazayeva2026,
+  author        = {Milana Bazayeva and Kenneth Merz},
+  title         = {{I-QMapper}: Error-Aware Layout Optimization and Device Diagnostics for {NISQ} Hardware},
+  year          = {2026},
+  eprint        = {2606.27508},
+  archiveprefix = {arXiv}
+}
+
+@misc{rines2025,
+  author        = {Rich Rines and Benjamin Hall and Mariesa H. Teo and Joshua Viszlai and others},
+  title         = {Demonstration of a Logical Architecture Uniting Motion and In-Place Entanglement},
+  year          = {2025},
+  eprint        = {2509.13247},
+  archiveprefix = {arXiv},
+  note          = {Collaborazione Infleqtion; revisione 2 aprile 2026}
+}
+
+@article{bluvstein2024,
+  author  = {Dolev Bluvstein and Simon J. Evered and Alexandra A. Geim and Sophie H. Li and Hengyun Zhou and others},
+  title   = {Logical Quantum Processor Based on Reconfigurable Atom Arrays},
+  journal = {Nature},
+  year    = {2024},
+  volume  = {626},
+  pages   = {58--65},
+  doi     = {10.1038/s41586-023-06927-3},
+  note    = {Preprint arXiv:2312.03982}
+}
+
+@article{shuklaqpe2026,
+  author  = {Shukla, Alok and Vedula, Prakash},
+  title   = {Towards Practical Quantum Phase Estimation: A Modular, Scalable, and Adaptive Approach},
+  journal = {Advanced Quantum Technologies},
+  year    = {2026},
+  volume  = {9},
+  number  = {3},
+  pages   = {e00683},
+  doi     = {10.1002/qute.202500683},
+  note    = {Preprint arXiv:2507.22460}
+}
+
+@misc{alphaqubit2026,
+  author        = {Andrew W. Senior and Thomas Edlich and Francisco J. H. Heras and Johannes Bausch and others},
+  title         = {A Scalable and Real-Time Neural Decoder for Topological Quantum Codes},
+  year          = {2026},
+  eprint        = {2512.07737},
+  archiveprefix = {arXiv},
+  note          = {Google DeepMind e Google Quantum AI; sottomesso l'8 dicembre 2025, revisione 11 marzo 2026}
+}
+
+@misc{pinnacle2026,
+  author        = {Paul Webster and Lucas Berent and Omprakash Chandra and Evan T. Hockings and Nou{\'e}dyn Baspin and Felix Thomsen and Samuel C. Smith and Lawrence Z. Cohen},
+  title         = {The {P}innacle Architecture: Reducing the Cost of Breaking {RSA}-2048 to 100\,000 Physical Qubits Using Quantum {LDPC} Codes},
+  year          = {2026},
+  eprint        = {2602.11457},
+  archiveprefix = {arXiv},
+  note          = {Preprint non sottoposto a revisione paritaria alla data di consultazione}
+}
+
+@misc{cain2026,
+  author        = {Madelyn Cain and Qian Xu and Robbie King and Lewis R. B. Picard and Harry Levine and Manuel Endres and John Preskill and Hsin-Yuan Huang and Dolev Bluvstein},
+  title         = {{S}hor's Algorithm Is Possible with as Few as 10,000 Reconfigurable Atomic Qubits},
+  year          = {2026},
+  eprint        = {2603.28627},
+  archiveprefix = {arXiv},
+  note          = {Preprint non sottoposto a revisione paritaria alla data di consultazione}
+}
+
+@article{hartnett2024,
+  author  = {Gavin S. Hartnett and Aaron Barbosa and Pranav S. Mundada and Michael Hush and Michael J. Biercuk and Yuval Baum},
+  title   = {Learning to Rank Quantum Circuits for Hardware-Optimized Performance Enhancement},
+  journal = {Quantum},
+  year    = {2024},
+  volume  = {8},
+  pages   = {1542},
+  doi     = {10.22331/q-2024-11-27-1542}
+}

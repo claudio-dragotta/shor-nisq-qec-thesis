@@ -1,0 +1,238 @@
+\begin{onehalfspace}
+
+Questa sezione esamina due verifiche esterne al confronto principale M1--M2: la sensibilit\`a alla mappatura su una topologia eterogenea (M11/M11b) e il comportamento della ricerca TOP-4 nel proxy per gate (M13). Entrambe sono analisi esplorative. Il loro scopo \`e verificare se una metrica disponibile prima dell'esecuzione o una regola disponibile dopo la misura conservino potere informativo; non dimostrare prestazioni su una QPU reale. Il Capitolo~\ref{chap:integrazione} ne riporta la sintesi.
+
+% -----------------------------------------------
+\section{Previsione e selezione non sono la stessa domanda}
+\label{sec:app_comp_previsione}
+
+M11 usa la snapshot offline \texttt{FakeSherbrooke} distribuita con Qiskit IBM Runtime. Le propriet\`a \texttt{target.error} sono interpretate come \emph{average gate infidelity} (AGI) complessiva e convertite in un canale depolarizzante con la stessa AGI. Il readout, esposto dalla snapshot come un solo errore medio, viene modellato simmetricamente. Le direzioni native ECR sono conservate e ogni ECR compilato deve avere una calibrazione esplicita; \texttt{rz} \`e virtuale.
+
+Non viene aggiunto un secondo canale $T_1/T_2$. L'AGI del gate \`e gi\`a una misura complessiva della sua non idealit\`a e sommarvi il rilassamento ricavato dalla stessa snapshot produrrebbe un doppio conteggio non quantificato. Di conseguenza M11 non separa il contributo della decoerenza: studia l'eterogeneit\`a della snapshot attraverso AGI e readout.
+
+Il punteggio di calibrazione di un circuito compilato \`e
+\begin{equation}
+    s = 1-\prod_{g\in C}(1-e_g),
+\end{equation}
+dove $e_g$ \`e l'errore target dell'istruzione fisica o della misura. Un punteggio minore indica una fedelt\`a nominale maggiore. La correlazione fra $s$ e successo risponde alla domanda \emph{predittiva}; scegliere il layout con $s$ minimo e valutarlo su dati non usati per la scelta risponde alla domanda \emph{decisionale}. Le due non vanno confuse.
+
+% -----------------------------------------------
+\section{M11: pilota sui layout}
+\label{sec:app_comp_pilota}
+
+Si campionano 60 sottografi connessi di 12 qubit mediante crescita casuale. Il campionamento non \`e uniforme sullo spazio dei sottografi: l'esperimento resta quindi esplorativo e le incertezze non descrivono l'intera topologia Sherbrooke. Su ciascun sottografo il circuito $N=15$, $a=7$ viene compilato in \texttt{sx/rz/x/ecr} con direzioni ECR native, livello di ottimizzazione 3 e seed 42.
+
+Gli 8192 shot per layout sono divisi in otto batch con seed comuni. Quattro batch costituiscono la partizione di selezione e quattro l'holdout. Si confrontano due regole: layout con punteggio $s$ minimo e layout con successo massimo sulla partizione di selezione; entrambe sono valutate soltanto sull'holdout. Questo evita di chiamare ``migliore'' il massimo osservato sugli stessi dati usati per stimarne la prestazione.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{Voce} & \textbf{Contratto M11} \\
+\midrule
+backend & snapshot offline \texttt{FakeSherbrooke}, 127 qubit \\
+layout richiesti & 60 sottografi connessi, random-growth non uniforme \\
+circuito & $N=15$, $a=7$, 8 qubit di conteggio \\
+base / ottimizzazione & \texttt{sx/rz/x/ecr}, livello 3, seed 42 \\
+campionamento & 8192 shot, 8 batch, split 4/4 \\
+inferenza & Spearman + bootstrap 2000 sui layout \\
+\bottomrule
+\end{tabular}
+\caption[Disegno del pilota sui layout]{Contratto preregistrato di M11. La snapshot \`e riproducibile tramite hash di calibrazione; non \`e una misura live di un dispositivo al momento dell'esecuzione.}
+\label{tab:app_comp_pilota}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{0.30\textwidth}p{0.55\textwidth}}
+\toprule
+\textbf{Stima} & \textbf{Interpretazione ammessa} \\
+\midrule
+Spearman $s$--$P_{\rm holdout}$ & associazione di rango sul campione random-growth \\
+$P_{\rm holdout}$, minimo $s$ & resa della regola basata solo sulla calibrazione \\
+$P_{\rm holdout}$, massimo train & resa di una selezione empirica su dati separati \\
+differenza holdout & confronto esplorativo tra le due regole, non oracolo globale \\
+\bottomrule
+\end{tabular}
+\caption[Stimandi del pilota M11]{La correlazione valuta capacit\`a predittiva; il confronto holdout valuta una decisione. Nessuna riga autorizza un claim causale sull'hardware.}
+\label{tab:app_comp_predittori}
+\end{table}
+
+% M11_RESULTS_BEGIN
+Dei 60 layout richiesti, 40 producono un modello di rumore valido. I 20
+fallimenti non sono simulazioni con successo nullo: la snapshot assegna ad
+almeno un gate usato un'AGI pari a 1, valore fuori dal dominio della
+conversione depolarizzante adottata, e quei layout vengono pertanto esclusi.
+Fra i layout validi, $P_{\rm holdout}$ varia da 0,297 a 0,516, con mediana
+0,431.
+
+La correlazione di rango tra punteggio di calibrazione e successo holdout è
+$\rho_s=-0,184$, con IC bootstrap al 95\% $[-0,456;0,124]$ (2000
+ricampionamenti). L'intervallo include ampiamente lo zero: sul campione
+random-growth il punteggio non mostra una capacità predittiva conclusiva. Il
+layout selezionato dal minimo punteggio (ID 35) ottiene
+$P_{\rm holdout}=0,451$; quello selezionato dal massimo successo sulla
+partizione train (ID 48) ottiene 0,516 sull'holdout. La differenza descrittiva
+è quindi $+0,065$, ma non è accompagnata da un intervallo dedicato e non va
+generalizzata oltre questo pilota.
+
+La snapshot \texttt{fake\_sherbrooke} è identificata nel JSON dal proprio hash
+SHA-256, il cui prefisso è \texttt{04b6a48f}. Il risultato completo è nel file
+\path{results_M11_pilota_v2_20260826_222137.json}.
+% M11_RESULTS_END
+
+Le Figure~\ref{fig:m11_scatter} e~\ref{fig:m11_hardware_map} riportano rispettivamente la dispersione fra partizione di selezione e holdout sui 40 layout validi e la collocazione dei due layout selezionati sulla coupling map della snapshot.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.78\textwidth]{gen_m11_scatter.pdf}
+\caption[Layout M11: selezione contro holdout]{I 40 layout validi nel piano $P_{\rm success}$ sulla partizione di selezione contro $P_{\rm success}$ sull'holdout, con barre d'errore statistiche e diagonale $y = x$ come riferimento. Sono evidenziati il layout scelto dal punteggio di calibrazione minimo (ID 35) e quello scelto dal successo massimo in selezione (ID 48). La dispersione attorno alla diagonale è lo scarto fra prestazione osservata sui dati usati per scegliere e prestazione su dati indipendenti: è la ragione dello split 4/4. Gli assi \textbf{non} rappresentano la correlazione $\rho_s$ discussa nel testo, che lega il punteggio di calibrazione al successo holdout ed è una grandezza diversa. Esito osservazionale sul campione random-growth non uniforme: nessun claim causale e nessuna generalizzazione all'intera topologia. Figura rigenerabile da \texttt{figure\_src/gen\_m11\_scatter.py} a partire da \texttt{results\_M11\_pilota\_v2\_20260826\_222137.json}.}
+\label{fig:m11_scatter}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{gen_m11_hardware_map.pdf}
+\caption[Collocazione dei layout selezionati sulla coupling map]{Sottografo di connettività della snapshot \texttt{FakeSherbrooke} attorno ai qubit impiegati: sono disegnati i qubit dei due layout selezionati e i loro primi vicini, non l'intero registro da 127 qubit. Pannello sinistro layout 35, pannello destro layout 48; in viola i qubit comuni ai due layout, in grigio quelli non impiegati. La disposizione dei nodi sul foglio è un'\textbf{incorporazione grafica} di tipo \textit{force-directed} e non riproduce la geometria \textit{heavy-hex} del processore: la figura mostra quali qubit e quali accoppiamenti i due layout occupano, non dove essi si trovino fisicamente sul chip. Serve a rendere concreta l'eterogeneità della coupling map su cui il punteggio di calibrazione è costruito; non aggiunge evidenza al confronto fra le due regole di selezione. Figura rigenerabile da \texttt{figure\_src/gen\_m11\_hardware\_map.py}.}
+\label{fig:m11_hardware_map}
+\end{figure}
+
+\paragraph{Perch\'e la correlazione va misurata e non assunta.}
+Gli strumenti di selezione del layout costruiscono un punteggio aggregando le
+grandezze di calibrazione disponibili prima dell'esecuzione. I-QMapper, per
+esempio, assegna a ogni layout un \emph{Layout-Quality Score} che riassume in
+un solo valore gli errori di readout e di gate a due qubit del
+layout~\cite{bazayeva2026}, con la stessa logica del punteggio impiegato
+qui. La grandezza che tali punteggi intendono approssimare non \`e per\`o il
+punteggio stesso, ma la prestazione osservata: quanto strettamente le due
+siano legate \`e una domanda empirica, e su questo campione la risposta
+misurata \`e debole ($\rho_s=-0,184$, con intervallo che include lo zero). Il
+contributo di M11 va letto in questa direzione: non una critica a una regola
+di selezione particolare --- il pilota non ne implementa nessuna di
+letteratura --- ma la misura, su un campione dichiaratamente non uniforme, di
+un legame che la pratica corrente tende a dare per acquisito. Un confronto
+utile \`e con i metodi che ordinano i layout apprendendo da esecuzioni
+passate: Hartnett e collaboratori addestrano un modello d'errore su misure di
+hardware \ac{IBM} e riportano una riduzione dell'errore di selezione di
+$3{,}2\times$ rispetto alla scelta casuale su un dispositivo a 16
+qubit~\cite{hartnett2024}. Il contrasto \`e istruttivo e non contraddittorio:
+un punteggio \emph{appreso da esecuzioni} mostra un guadagno misurato, mentre
+qui \`e un punteggio \emph{derivato dalla sola calibrazione} a essere valutato,
+su una snapshot e su un campione di layout non uniforme.
+
+% -----------------------------------------------
+\section{M11b: readout effettivo dopo il routing}
+\label{sec:app_comp_ruoli}
+
+Una seconda verifica genera variazione entro 12 sottografi. Per ciascuno vengono proposti cinque \emph{initial layout}: registri di conteggio inizialmente assegnati ai qubit con readout nominale basso o alto, layout scelto dal transpiler e due permutazioni casuali. Queste etichette non sono trattamenti. Il routing pu\`o spostare i qubit virtuali, perci\`o l'esposizione analizzata \`e l'errore medio di readout dei qubit \textbf{effettivamente misurati nel circuito finale}.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{0.29\textwidth}p{0.61\textwidth}}
+\toprule
+\textbf{Voce} & \textbf{Contratto M11b} \\
+\midrule
+sottografi & 12, ciascuno con cinque strategie descrittive \\
+base / ottimizzazione & \texttt{sx/rz/x/ecr}, livello 2, seed 42 \\
+shot & 8192 per strategia, otto batch, holdout 50\% \\
+esposizione & readout medio sui qubit misurati dopo routing \\
+controlli & effetti fissi di sottografo, numero ECR, profondit\`a \\
+stima primaria & Spearman parziale readout--successo \\
+incertezza & cluster bootstrap sui sottografi analizzabili, 2000 ri-campionamenti \\
+\bottomrule
+\end{tabular}
+\caption[Disegno osservazionale M11b]{L'unit\`a indipendente del bootstrap \`e il sottografo, non la singola strategia annidata.}
+\label{tab:app_comp_ruoli}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lp{0.62\textwidth}}
+\toprule
+\textbf{Etichetta iniziale} & \textbf{Uso nell'analisi} \\
+\midrule
+\texttt{init-readout-basso} & genera una permutazione iniziale; non garantisce il readout finale \\
+\texttt{init-readout-alto} & genera variazione nella direzione opposta \\
+\texttt{transpiler} & lascia la scelta iniziale al transpiler \\
+\texttt{casuale-1/2} & due permutazioni riproducibili di confronto \\
+\bottomrule
+\end{tabular}
+\caption[Strategie descrittive di M11b]{Le etichette sono strumenti per produrre variazione entro sottografo. Il predittore usato nel modello \`e sempre la propriet\`a osservata dopo il routing.}
+\label{tab:app_comp_strategie}
+\end{table}
+
+% M11B_RESULTS_BEGIN
+Dei 12 sottografi richiesti, nove risultano analizzabili per tutte le cinque
+strategie, per un totale di 45 osservazioni holdout. Nei tre sottografi esclusi
+la conversione del modello di calibrazione incontra un'AGI pari a 1, fuori dal
+dominio della parametrizzazione depolarizzante: anche in questo caso le righe
+escluse non rappresentano esecuzioni con successo nullo.
+
+Dopo la rimozione degli effetti fissi di sottografo e il controllo per numero di
+ECR e profondit\`a, la correlazione parziale di Spearman fra errore medio di
+readout effettivo e successo \`e $\rho_s=-0,605$. L'IC al 95\% ottenuto con 2000
+ricampionamenti cluster a livello di sottografo \`e $[-0,826;-0,190]$. Nel
+campione osservato, a maggiore errore di lettura corrisponde quindi un successo
+inferiore anche entro sottografo; l'intervallo non include lo zero. Il risultato
+resta associativo, non causale, sia per il numero ridotto di cluster sia per la
+possibile presenza di propriet\`a topologiche non misurate correlate con readout,
+conteggio ECR e profondit\`a.
+
+Il risultato canonico \`e
+\path{results_M11b_ruoli_v2_20260827_115109.json}; l'analisi indipendente
+\`e \path{analysis_M11b_v2_20260827_115119.json} e vincola il sorgente
+all'hash SHA-256 \texttt{1c4b5b4fad1e2289\ldots f41c196b42152215}.
+% M11B_RESULTS_END
+
+% -----------------------------------------------
+\section{M13: TOP-4 sotto il proxy per gate}
+\label{sec:app_comp_topk}
+
+M13 usa lo stesso circuito, lo stesso manifest e la stessa definizione di $p_L$ di M8. Per ciascun punto esegue 200 repliche da 1024 shot e riusa ogni istogramma per tre endpoint: massa di successo per singola misura, TOP-1 e TOP-4. Il successo TOP-K \`e binario per replica: almeno uno dei candidati selezionati conduce ai fattori.
+
+Un pareggio al confine del quarto posto rende la selezione non identificata. Il runner salva quindi: (i) una scelta pseudo-casuale riproducibile; (ii) un limite inferiore, vero solo quando ogni scelta ammissibile contiene un esito utile; (iii) un limite superiore, vero quando almeno una scelta ammissibile pu\`o contenerlo. Il contrasto primario fra $p_L=0$ e il massimo preregistrato usa un intervallo Newcombe; l'equivalenza richiede che l'intero intervallo cada entro $\pm0,10$. Una seconda verifica usa un inviluppo Wilson simultaneo su tutte le risoluzioni dei pareggi.
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{rcccc}
+\toprule
+$p_L$ & per misura & TOP-1 & TOP-4 seeded & identificato \\
+\midrule
+$0$ & $0{,}7512$ & $0{,}805$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$10^{-4}$ & $0{,}7459$ & $0{,}730$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$5\times10^{-4}$ & $0{,}7377$ & $0{,}690$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$10^{-3}$ & $0{,}7229$ & $0{,}620$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$1{,}7\times10^{-3}$ & $0{,}7080$ & $0{,}620$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$2\times10^{-3}$ & $0{,}7003$ & $0{,}650$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$5\times10^{-3}$ & $0{,}6396$ & $0{,}505$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$10^{-2}$ & $0{,}5652$ & $0{,}645$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$2\times10^{-2}$ & $0{,}4528$ & $0{,}695$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$5\times10^{-2}$ & $0{,}2979$ & $0{,}760$ & $1{,}000$ & $[1{,}000;1{,}000]$ \\
+$10^{-1}$ & $0{,}2506$ & $0{,}535$ & $0{,}915$ & $[0{,}855;0{,}940]$ \\
+$2\times10^{-1}$ & $0{,}2469$ & $0{,}245$ & $0{,}670$ & $[0{,}535;0{,}860]$ \\
+\bottomrule
+\end{tabular}
+\caption[Endpoint preregistrati di M13]{Endpoint estratti dall'artefatto M13 schema~2 del 26 agosto 2026. La colonna ``identificato'' riporta i limiti inferiore e superiore generati dai pareggi al confine del TOP-4.}
+\label{tab:app_comp_topk}
+\end{table}
+
+% M13_APPENDIX_RESULTS_BEGIN
+Il contrasto primario preregistrato confronta il TOP-4 seeded a $p_L=0$ con quello al massimo valore della griglia, $p_L=0,2$. La differenza stimata \`e 0,330 e l'IC Newcombe 95\% \`e $[0,266;0,398]$. La regola di equivalenza richiedeva l'intero intervallo entro $\pm0,10$; la regola di discriminazione richiedeva invece che il limite inferiore della diminuzione superasse 0,10. L'esito preregistrato \`e una diminuzione discriminante: il TOP-4 non \`e equivalente sul dominio completo della griglia.
+
+Le analisi di sensibilit\`a confermano che la gestione dei pareggi \`e materiale. Se tutti i pareggi sono risolti nel senso pi\`u sfavorevole, la diminuzione stimata \`e 0,465 con IC $[0,395;0,534]$; nel senso pi\`u favorevole \`e 0,140 con IC $[0,095;0,195]$, non sufficiente per superare il margine con la stessa regola di discriminazione. L'inviluppo simultaneo Bonferroni-Wilson su tutte le risoluzioni ammissibili \`e $[0,059;0,553]$ e non supporta equivalenza per tutte le risoluzioni dei pareggi. Il risultato va quindi letto cos\`i: TOP-4 \`e estremamente efficace fino a $p_L=0,05$ su $N=15$, ma degrada in modo statisticamente visibile agli errori pi\`u alti della griglia.
+% M13_APPENDIX_RESULTS_END
+
+% -----------------------------------------------
+\section{Conclusione e limiti}
+\label{sec:app_comp_conclusione}
+
+M11 e M11b non sono un benchmark su hardware. Il simulatore e il punteggio derivano dalla stessa snapshot; questa coerenza rende il confronto controllato, ma pu\`o favorire la metrica nominale e non include deriva, crosstalk, leakage o errori coerenti. Il campionamento random-growth non \`e uniforme. M11b aumenta il controllo confrontando strategie entro lo stesso sottografo, ma resta osservazionale: readout, numero ECR e profondit\`a possono essere correlati con variabili topologiche non misurate.
+
+M13 risponde a una domanda diversa. Una strategia TOP-4 pu\`o restare efficace anche quando la massa utile per misura \`e fortemente degradata, soprattutto nell'istanza $N=15$ con pochi picchi strutturali. Perci\`o TOP-4 deve essere riportato insieme alla metrica per misura e all'incertezza dei pareggi; da solo non misura la fedelt\`a dello stato quantistico e non pu\`o essere estrapolato a moduli maggiori.
+
+\end{onehalfspace}
