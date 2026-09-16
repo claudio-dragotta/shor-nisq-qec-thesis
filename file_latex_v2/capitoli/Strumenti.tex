@@ -10,15 +10,7 @@ gli estratti del codice sono raccolti, rispettivamente, nelle
 Sezioni~\ref{app:strumenti} e~\ref{app:codice}; i risultati sono nel
 Capitolo~\ref{chap:risultati}.
 
-L'architettura operativa è articolata in quattro livelli. Il livello circuitale costruisce
-Shor e produce una netlist compilata una sola volta per ogni configurazione; il livello di
-simulazione associa a quella netlist il preset di rumore e genera i campioni; il livello
-decisionale applica post-processing, classificatore o decoder; il livello di analisi salva
-metriche e metadati prima di generare tabelle e figure. La separazione impedisce che una
-modifica al classificatore alteri il circuito o che una differenza di compilazione venga
-scambiata per un effetto del metodo. Nella prima fase l'oggetto condiviso è l'istogramma
-delle misure; nella seconda è la sequenza dei detection event. Cambia quindi il dato su cui
-si decide, non la regola generale di confronto su campioni comuni.
+L'architettura ha quattro livelli. Il primo costruisce e compila il circuito, una volta per configurazione. Il secondo applica il rumore e genera i campioni. Il terzo esegue il post-processing, il classificatore o il decoder. Il quarto salva metriche e metadati e produce tabelle e figure. Così, cambiare il classificatore non modifica il circuito e una compilazione diversa non viene scambiata per un beneficio del metodo. Nella prima fase le strategie condividono l'istogramma delle misure; nella seconda, la sequenza dei detection event. In entrambi i casi il confronto usa gli stessi campioni.
 
 \section{Strumenti e configurazione dell'ambiente}
 \label{chap:strumenti}
@@ -26,15 +18,7 @@ si decide, non la regola generale di confronto su campioni comuni.
 \subsection{Strumenti e ambiente di simulazione}
 \label{sec:strumenti_ambiente}
 
-La toolchain segue la natura dei circuiti. \textbf{Qiskit}~\cite{qiskit2023} e
-\textbf{Qiskit Aer} costruiscono, compilano e simulano lo Shor generale di piccola
-taglia; il classificatore della prima fase usa \textbf{scikit-learn}~\cite{scikit_learn}.
-Per i milioni di campioni stabilizer richiesti dal surface code si impiegano invece
-\textbf{Stim}~\cite{stim2021} e \textbf{PyMatching}~\cite{pymatching2021}. Questa
-separazione evita di attribuire a un simulatore statevector un regime che cresce come
-$2^n$, ma non rende Shor simulabile con Stim perché le sue rotazioni di fase non sono
-Clifford. Confronto dei framework, metodi di Aer e ragioni della scelta sono sviluppati
-nella Sezione~\ref{app:strumenti}.
+Gli strumenti sono scelti in base ai circuiti. \textbf{Qiskit}~\cite{qiskit2023} e \textbf{Qiskit Aer} costruiscono, compilano e simulano Shor sulle piccole istanze. Il classificatore usa \textbf{scikit-learn}~\cite{scikit_learn}. Per i milioni di campioni del surface code si usano \textbf{Stim}~\cite{stim2021} e \textbf{PyMatching}~\cite{pymatching2021}. Stim è efficiente sui circuiti stabilizer, mentre una simulazione statevector richiede uno spazio che cresce come $2^n$. Questa efficienza non si estende a Shor, che contiene rotazioni non-Clifford. Il confronto fra framework e metodi di Aer è nella Sezione~\ref{app:strumenti}.
 
 La campagna rumorosa principale usa
 \texttt{AerSimulator(method='statevector')} per il circuito didattico a 12 qubit di

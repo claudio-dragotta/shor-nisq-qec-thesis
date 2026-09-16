@@ -1,25 +1,27 @@
 \section{Introduzione}
 
-L'algoritmo di Shor~\cite{shor1994} fattorizza un intero composto in tempo polinomiale,
-$O\!\left((\log N)^{3}\right)$, contro il tempo sub-esponenziale del \emph{general number field
-sieve}~\cite{lenstra1993gnfs}, il miglior algoritmo classico noto.
-È questo divario a minacciare RSA~\cite{rsa1978}, ma è asintotico e i dispositivi \emph{Noisy
-Intermediate-Scale Quantum}~\cite{preskill2018} non lo realizzano: il rumore distrugge la struttura
-periodica su cui l'algoritmo si fonda, le dimostrazioni restano confinate a moduli
-didattici~\cite{skosana2021} e la stima delle risorse per RSA-2048, pur scendendo di circa un ordine di
-grandezza all'anno --- venti milioni di qubit fisici nel 2019~\cite{gidney2021}, meno di un
-milione nel 2025~\cite{gidney2025} ---, resta lontana dai dispositivi disponibili. Restano due rimedi, la mitigazione a valle e la
-correzione d'errore durante il calcolo, ai quali un numero crescente di lavori applica modelli
-appresi, spesso senza un termine di confronto che isoli il contributo del modello da quello della
-regola decisionale.
+L'algoritmo di Shor~\cite{shor1994} permette a un computer quantistico di
+scomporre un numero nei suoi fattori, come $15=3\times5$.
+In teoria, per numeri molto grandi richiede meno risorse di calcolo del
+miglior metodo classico noto~\cite{lenstra1993gnfs}.
 
-Il lavoro riprende un progetto preesistente --- Shor in Qiskit e una prima campagna rumorosa su
-$N=15$ --- e lo rigenera dopo che una verifica per truth table ne ha invalidato il moltiplicatore
-modulare controllato, il blocco che realizza $\lvert y\rangle\mapsto\lvert ay\bmod N\rangle$. Chiede quindi \emph{in quale punto della pipeline
-un modello appreso migliori davvero la resa di Shor in ambiente rumoroso}, e con la stessa
-tecnologia e lo stesso impianto statistico ne confronta due: un classificatore dell'istogramma di
-output e un decoder addestrato sulle sindromi di un codice correttore. La risposta ha due facce, negativa a valle e positiva ma solo residuale sulla
-sindrome. Il contributo è metodologico: disegno appaiato con \emph{ablazione} --- un braccio di
-controllo che esegue la sola regola decisionale, senza il modello ---, separazione fra metriche
-di correzione d'errore e successo di Shor, artefatti riproducibili (seed, manifest e hash del
-circuito).
+Questa possibilità mette a rischio sistemi crittografici come RSA,
+la cui sicurezza si basa sulla difficoltà di trovare quei fattori~\cite{rsa1978}.
+Nei dispositivi quantistici attuali, però, gli errori fisici possono
+compromettere il calcolo: qui sono indicati come \emph{rumore}~\cite{preskill2018}.
+
+Le dimostrazioni di Shor restano limitate a piccoli numeri~\cite{skosana2021}.
+Questa tesi usa simulazioni per studiare come scegliere meglio i risultati
+delle misure, correggere gli errori e semplificare il circuito.
+Un modello di apprendimento automatico valuta i risultati delle misure
+per scegliere quali analizzare. Il confronto senza il modello,
+chiamato \emph{ablazione}, mostra se questo offre un vantaggio.
+Esperimenti separati studiano come proteggere l'informazione quantistica
+dagli errori. Una rete neurale cerca di riconoscerli e scegliere la correzione.
+Si semplifica anche la trasformata di Fourier quantistica (QFT), che
+aiuta a ricavare i fattori. Eliminare alcune operazioni riduce il
+circuito, ma può rendere il risultato meno preciso.
+
+Le prove iniziali hanno rivelato un errore nel circuito simulato.
+Il circuito è stato corretto e verificato prima di ripetere gli esperimenti.
+La verifica controlla anche l'operazione realizzata, perché i soli picchi corretti non bastano a dimostrare la correttezza del circuito.

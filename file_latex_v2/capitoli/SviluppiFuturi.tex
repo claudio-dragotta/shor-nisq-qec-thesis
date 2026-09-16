@@ -19,10 +19,7 @@ corretta, ancille pulite, coerenza di fase e QPE ideale vicina alla teoria; il
 solo conteggio dei gate non dimostra la correttezza. La Sezione~\ref{sec:qft_topologia}
 fornisce già il primo protocollo quantitativo per scegliere il troncamento.
 
-La scalabilità va stratificata anche per ordine moltiplicativo $r$. Infatti
-$N=35$, $a=6$ ha ordine 2 e non costituisce una progressione monotona rispetto
-a $N=21$, $a=2$, che ha ordine 6. Larghezza e ordine devono quindi essere
-variati e dichiarati separatamente.
+La scalabilità va studiata variando anche l'ordine moltiplicativo $r$. $N=35$, $a=6$ ha ordine 2, mentre $N=21$, $a=2$ ha ordine 6. Un numero più grande non rende quindi automaticamente più difficile la ricerca del periodo. Dimensione del registro e ordine devono essere variati e dichiarati separatamente.
 
 % -----------------------------------------------
 \section{Validazione su Hardware Quantistico Reale}
@@ -67,10 +64,7 @@ tipo, conteggi logici, costo della magic-state distillation, decoder e latenza
 di feed-forward, correlazioni e propagazione degli intervalli di confidenza.
 Fino ad allora il modello resta una sensibilità, non una stima hardware.
 
-Per la decodifica appresa sono promettenti modelli a grafo o convoluzionali
-coerenti con la località del reticolo, storia temporale dei cicli e soft
-information analogica. Queste direzioni introducono struttura o informazione,
-anziché ingrandire una rete densa sul medesimo vettore di sindrome.
+Per la decodifica appresa, modelli a grafo o convoluzionali potrebbero usare meglio la disposizione locale dei qubit. Altre possibilità sono includere la storia dei cicli di misura e i segnali analogici, oltre agli esiti binari. Queste estensioni aggiungono relazioni o informazione al problema. Il loro beneficio va confrontato con quello ottenuto semplicemente ingrandendo una rete densa sullo stesso vettore di sindrome.
 
 % -----------------------------------------------
 \section{Evoluzione del Classificatore ML}

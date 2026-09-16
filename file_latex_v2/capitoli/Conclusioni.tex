@@ -1,12 +1,6 @@
 \begin{onehalfspace}
 
-Questo lavoro ha affrontato una domanda operativa: quanta informazione
-dell'output rumoroso di Shor può essere recuperata a valle e quando diventa
-necessario correggere l'errore durante il calcolo? La risposta delimita i due
-regimi. Su $N=15$ una ricerca multi-candidato sfrutta meglio l'informazione già
-misurata, mentre un classificatore applicato allo stesso output non aggiunge
-valore. Oltre questo margine occorre intervenire sulle sindromi e sulla
-correzione d'errore.
+La tesi ha studiato quanta informazione si possa recuperare dall'output rumoroso di Shor e quando serva correggere gli errori durante il calcolo. Su $N=15$, cercare più candidati migliora l'uso dei risultati già misurati. Il classificatore applicato allo stesso output non dà un beneficio aggiuntivo. La seconda fase studia quindi la protezione dello stato e l'uso delle sindromi per scegliere le correzioni.
 
 % -----------------------------------------------
 \section{Le Domande di Ricerca}
@@ -84,7 +78,8 @@ non l'utilità operativa. \\
 \addlinespace
 Il vantaggio si mantiene crescendo $N$
 & non verificata
-& $N=21/35$ sono validati idealmente ma esclusi dal rumore per costo; va
+& $N=21/35$ sono validati idealmente ma esclusi dalla campagna rumorosa
+M1--M2 per costo; va
 controllato anche l'ordine $r$. \\
 \addlinespace
 Soppressione quadratica a distanza 3
@@ -147,8 +142,10 @@ citazione nella Sezione~\ref{subsec:discussione_logico}.
 La campagna Shor usa rumore uniforme, indipendente e stazionario, senza
 topologia, routing, crosstalk, leakage o deriva. $N=15$ è didattico, TOP-K ha
 una verifica classica permissiva, gli sweep impiegano 30 repliche e i test non
-sono corretti globalmente fra otto famiglie; $N=21/35$ non sono simulati sotto
-rumore. Nella QEC, Steane non ha estrazione fault-tolerant, memoria e proxy per
+sono corretti globalmente fra otto famiglie. $N=21/35$ non partecipano
+alla campagna rumorosa principale; su $N=21$ sono state eseguite soltanto
+prove AQFT esplorative a budget ridotto (Sezione~\ref{sec:app_aqft}).
+Nella QEC, Steane non ha estrazione fault-tolerant, memoria e proxy per
 gate non condividono lo stesso $p_L$, e il decoder denso non mantiene il
 vantaggio alle maggiori distanze. Le stime crittografiche richiedono dunque
 architetture fault-tolerant complete, non estrapolazioni dalle curve di $N=15$.
@@ -156,28 +153,9 @@ architetture fault-tolerant complete, non estrapolazioni dalle curve di $N=15$.
 % -----------------------------------------------
 \section{Il Criterio che Unifica il Lavoro}
 
-Un complemento semplice è utile quando sfrutta informazione trascurata dal
-metodo base senza alterarne la generazione: TOP-4 verifica candidati già
-nell'istogramma e il decoder residuale interviene dove il matching ha una
-debolezza rappresentazionale. La complessità non crea valore se replica una
-regola semplice, usa etichette degeneri o costa più del beneficio. Ne segue il
-confine fra mitigazione e correzione: TOP-K recupera un picco già misurato, ma
-non ricostruisce informazione distrutta; la scalabilità richiede operazioni
-logiche fault-tolerant e l'apprendimento è utile solo se dispone di struttura
-assente nel decoder analitico.
+Nei test, un metodo aggiuntivo è utile quando sfrutta informazione trascurata dal riferimento. TOP-4 prova candidati già presenti nell'istogramma. Il decoder ibrido riconosce alcuni errori che il grafo del matching non rappresenta. Aggiungere complessità non basta: occorre misurare un beneficio rispetto alla regola più semplice e al costo richiesto. TOP-K migliora la ricerca sugli esiti misurati, ma non protegge lo stato durante il circuito. Per la scalabilità servono operazioni logiche fault-tolerant; l'apprendimento può assisterne la decodifica quando resta informazione utile che il metodo analitico non usa.
 
-L'AQFT applica lo stesso criterio a monte. Troncare le rotazioni interne agli
-addizionatori dimezza le porte a due qubit ($49\,661\rightarrow23\,178$), ma su
-$N=21$ riduce la resa ideale di circa $6.5$ punti; il vantaggio massimo, circa
-tre punti, richiederebbe porte quasi duecento volte più accurate, mentre il
-circuito resta circa 150 volte più lungo della coerenza disponibile. Nella
-stima di fase, molto più corta, la variante troncata vince invece tutti i nove
-confronti e raggiunge $+0.126$ a dieci qubit. Il grado ottimo resta due o tre,
-il risparmio cresce con il registro e le fasi esattamente rappresentabili
-beneficiano di più: ciò spiega la differenza fra $r=4$ per $N=15$ e $r=6$ per
-$N=21$. Conteggi compilati e calibrazione permettono quindi di scegliere il
-troncamento prima dell'esecuzione. Dati, limite teorico e perimetro di
-generalizzazione sono nella Sezione~\ref{sec:qft_topologia}.
+L'AQFT interviene sul circuito prima dell'esecuzione. Su $N=21$, troncare le rotazioni degli addizionatori quasi dimezza le porte a due qubit ($49\,661\rightarrow23\,178$), ma riduce il successo ideale di circa $6.5$ punti. Il possibile margine di tre punti viene dal modello ausiliario a miscela e non è osservato nei test rumorosi. Nel modello richiederebbe errori quasi duecento volte inferiori a quelli della calibrazione considerata; il circuito dura circa 150 volte il tempo di coerenza. La sola stima di fase è molto più corta: qui la variante troncata ha un risultato migliore nei nove confronti e arriva a $+0.126$ su dieci qubit. Il grado migliore resta due o tre alle taglie provate e il risparmio cresce con il registro. Le fasi esatte beneficiano di più, aiutando a spiegare la differenza fra $r=4$ per $N=15$ e $r=6$ per $N=21$. Conteggi e calibrazione suggeriscono i gradi candidati, ma la scelta viene verificata su dati separati da quelli di selezione. Dati, limite teorico e limiti di generalizzazione sono nella Sezione~\ref{sec:qft_topologia}.
 
 Questa riduzione delle porte è complementare, ma non automaticamente additiva,
 alla riduzione dei qubit di lavoro ottenuta con aritmetica approssimata

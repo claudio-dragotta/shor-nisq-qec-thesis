@@ -13,11 +13,7 @@ la sola moda (TOP-1), TOP-4 i primi quattro candidati, M2 usa un classificatore
 per decidere se attivare la stessa ricerca TOP-4. Quest'ultima è l'ablazione che
 separa il contributo del modello da quello della ricerca multi-candidato.
 
-Le campagne rumorose usano $N=15$, $a=7$, con i due preset uniformi della
-Tabella~\ref{tab:contratto_n15}, che non simulano la calibrazione di una QPU
-specifica. Le istanze ulteriori sono validate soltanto in condizioni ideali;
-scelte aritmetiche, costi e perimetro completo sono nella
-Sezione~\ref{app:shor_perimetro_esteso}.
+Il confronto principale usa $N=15$, $a=7$, e i due preset uniformi della Tabella~\ref{tab:contratto_n15}. Questi non riproducono la calibrazione di una QPU specifica. Le altre istanze servono a verificare l'aritmetica ideale e i costi; i test AQFT rumorosi su $N=21$ sono una campagna esplorativa separata. Scelte aritmetiche e perimetro completo sono nella Sezione~\ref{app:shor_perimetro_esteso}.
 
 \begin{table}[!htbp]
 \centering
@@ -119,14 +115,7 @@ confronto \ac{ZNE} sono nella Sezione~\ref{app:parametrica}.
 \label{sec:metodo1}
 \label{sec:metodo2}
 
-M1 prova un candidato, TOP-4 fino a quattro e M2 gli stessi quattro soltanto se
-il classificatore accetta l'istogramma. Dataset, modello TOP-1 e audit TOP-16
-sono documentati nella Sezione~\ref{app:classificatore}. Ogni scenario usa 30
-repliche, al massimo 50 iterazioni e sentinella 51 per i fallimenti. I confronti
-M1$>$TOP-4 e M1$>$M2 impiegano Wilcoxon appaiato unilaterale con
-\texttt{zero\_method='pratt'}; TOP-4--M2 è bilaterale. Le correzioni multiple
-sono applicate entro la famiglia dichiarata; medie e tassi sono descrittivi,
-l'inferenza usa i vettori appaiati completi.
+M1 prova un candidato; TOP-4 ne prova fino a quattro. M2 prova gli stessi quattro solo se il classificatore accetta l'istogramma. Dataset, modello TOP-1 e controllo TOP-16 sono nella Sezione~\ref{app:classificatore}. Ogni scenario comprende 30 repliche, con un massimo di 50 iterazioni. Ai fallimenti si assegna il valore 51, per conservarli nel confronto. I test M1$>$TOP-4 e M1$>$M2 sono Wilcoxon appaiati unilaterali, con \texttt{zero\_method='pratt'}; il confronto TOP-4--M2 è bilaterale. Le correzioni per confronti multipli si applicano alla famiglia dichiarata. Medie e tassi descrivono i risultati, mentre i test usano tutte le repliche appaiate.
 
 \section{Matrice di verifica dell'intero disegno}
 

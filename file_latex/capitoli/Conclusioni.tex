@@ -92,7 +92,8 @@ misura TOP-1, non l'utilità operativa. \\
 \addlinespace
 Il vantaggio si mantiene crescendo $N$
 & non verificata
-& $N=21/35$ sono validati idealmente, ma esclusi dal rumore per costo;
+& $N=21/35$ sono validati idealmente ma esclusi dalla campagna rumorosa
+M1--M2 per costo;
 l'ordine $r$ deve essere controllato insieme a $N$. \\
 \addlinespace
 Soppressione quadratica nei codici di distanza 3
@@ -166,7 +167,9 @@ stazionario; non include topologia, routing, crosstalk, leakage o deriva
 di calibrazione. N=15 è un'istanza didattica e TOP-K beneficia di una
 post-elaborazione particolarmente permissiva. Gli sweep hanno 30
 repliche e i test non sono corretti globalmente fra le otto famiglie.
-N=21/35 non sono simulati sotto rumore.
+$N=21/35$ non partecipano alla campagna rumorosa principale; su $N=21$
+sono state eseguite soltanto prove AQFT esplorative a budget ridotto
+(Sezione~\ref{sec:app_aqft}).
 
 Nella parte QEC, Steane non usa un'estrazione fault-tolerant; i memory
 experiment e il modello per-gate di Shor non condividono la stessa
@@ -203,10 +206,11 @@ CX. Troncarle sotto una soglia d'angolo dimezza le porte a due qubit, da 49\,661
 sotto una certa qualità delle porte conviene approssimare, sopra conviene la trasformata
 intera.
 
-La misura di quell'incrocio è però il contributo più utile, perché è quantitativa. Su
-questa istanza il vantaggio massimo vale circa tre punti percentuali e richiederebbe porte
-a due qubit due ordini di grandezza più accurate di quelle attuali; nel regime oggi
-accessibile nessuna variante supera il pavimento dell'istanza, e il circuito di $N=21$ è
+La stima ausiliaria a miscela quantifica un possibile incrocio. Nel proxy
+il margine massimo vale circa tre punti percentuali e richiederebbe errori
+a due qubit due ordini di grandezza inferiori a quelli della snapshot;
+non risulta osservato nelle prove rumorose. Nel regime nominale
+nessuna variante supera il pavimento dell'istanza, e il circuito di $N=21$ è
 comunque centocinquanta volte più lungo del tempo di coerenza disponibile. Il limite
 appartiene tuttavia all'istanza, non al metodo: ripetendo la misura sulla \textbf{stima
 di fase} --- che della trasformata è l'uso canonico, e che costa decine di porte a due
@@ -220,9 +224,9 @@ esatte in due bit, l'approssimazione risultasse gratuita, e su $N=21$ no.
 Poiché la trasformata di Fourier è il nucleo condiviso da un'intera famiglia di algoritmi ---
 stima di fase, amplitude estimation, e ogni procedura che estragga informazione spettrale
 --- il risultato si legge come regola di progetto e non come proprietà della
-fattorizzazione: il grado di troncamento conveniente è \textbf{determinabile in anticipo}
-dai soli conteggi di porte del circuito compilato e dai dati di calibrazione del
-dispositivo, senza eseguire l'algoritmo. La verifica qui condotta impiega però un solo
+fattorizzazione: conteggi e calibrazione suggeriscono gradi candidati,
+mentre la selezione qui verificata usa batch di selezione e holdout
+disgiunti. La verifica qui condotta impiega un solo
 dispositivo e poche fasi bersaglio: estenderla ad altre topologie resta il passo successivo
 (Sezione~\ref{sec:qft_topologia}).
 

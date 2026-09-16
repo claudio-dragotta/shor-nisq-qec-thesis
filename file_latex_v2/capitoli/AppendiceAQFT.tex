@@ -1,0 +1,182 @@
+% Fonti: artefatti M15/M15b schema 2 elencati in coda.
+\section{QFT approssimata: protocolli, controlli ed esiti completi}
+\label{sec:app_aqft}
+
+Questa sezione approfondisce la Sezione~\ref{sec:qft_topologia}.
+Distingue il pilota $N=15$, la compilazione strutturale $N=21$, le prove
+rumorose a budget ridotto e il benchmark QPE. Sono esperimenti diversi:
+la campagna principale M1--M4 resta limitata a $N=15$.
+
+\subsection{Protocollo e controllo degli SWAP}
+
+$k_{\mathrm{QPE}}$ limita la distanza fra qubit delle rotazioni
+controllate nella QFT inversa finale; $k_{\mathrm{arith}}$ applica lo
+stesso criterio agli addizionatori modulari di Beauregard.
+Quest'ultimo non si applica al moltiplicatore specializzato per $N=15$.
+Il rumore deriva da AGI e readout della snapshot \texttt{FakeSherbrooke},
+con RZ virtuali e senza aggiunta separata di $T_1/T_2$. Il seed principale
+è 42; i JSON registrano layout, schedule dei seed, batch, versioni e hash
+della calibrazione. La scelta usa i batch di selezione e la valutazione
+primaria usa batch holdout disgiunti.
+
+La prima implementazione senza SWAP era errata perché invertiva soltanto
+l'associazione dei bit alla misura. Poiché gli SWAP precedono la cascata,
+occorre coniugare anche quest'ultima con l'inversione degli indici.
+Gli output errati in \path{artifacts/_superseded_swap_bug/} non sono
+evidenza corrente. Con la variante corretta, i bracci con e senza SWAP
+del pilota $N=15$ hanno gli stessi conteggi di gate, profondità e
+conteggi di successo: il transpiler assorbe già la permutazione nel layout.
+
+\subsection{Pilota su \texorpdfstring{$N=15$}{N=15}}
+
+Ogni configurazione usa 8192 shot in otto batch, quattro per selezione
+e quattro per holdout. La tabella include tutti i gradi; le righe
+duplicate senza SWAP sono omesse.
+
+\begin{table}[!htbp]
+\centering
+\small
+\caption{M15 su $N=15$: griglia completa dei gradi QPE.}
+\label{tab:aqft_n15_completa}
+\begin{tabular}{rrrr}
+\toprule
+$k_{\mathrm{QPE}}$ & ECR & profondità & $P_{\mathrm{holdout}}$ \\
+\midrule
+1 & 279 & 1141 & 0.6279 \\
+2 & 305 & 1242 & 0.5422 \\
+3 & 328 & 1330 & 0.5210 \\
+4 & 360 & 1414 & 0.4771 \\
+5 & 365 & 1391 & 0.4607 \\
+6 & 360 & 1306 & 0.4749 \\
+7 (piena) & 362 & 1351 & 0.4792 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Il grado scelto sulla selezione è 1; il contrasto holdout è $+0.1487$,
+IC Newcombe 95\% $[+0.1273;+0.1699]$, con 83 ECR risparmiate.
+Il caso è favorevole perché $r=4$ produce fasi esatte in due bit:
+non va generalizzato all'aritmetica per $N=21$.
+
+\subsection{Struttura e prove rumorose su \texorpdfstring{$N=21$}{N=21}}
+
+La ricognizione iniziale contiene 84 configurazioni di sola compilazione,
+non 84 simulazioni rumorose. A QFT finale piena, il conteggio ECR iniziale
+passa da 46\,940 per aritmetica piena a 22\,631 per
+$k_{\mathrm{arith}}=1$. I circuiti ricompilati per la sensibilità
+rumorosa hanno invece 49\,661 e 23\,178 ECR: conteggi ottenuti da
+compilazioni differenti non vanno mescolati.
+
+Il pilota nominale esegue soltanto il braccio troncato con 256 shot,
+due batch e 128 shot holdout, ottenendo $0.2813$. Mancando il riferimento
+pieno nello stesso pilota, non permette un contrasto completo.
+I tre livelli successivi usano 256 shot per braccio in quattro batch,
+con 128 shot holdout. La tabella confronta sempre la variante
+aritmetica troncata con quella piena, anche quando la selezione
+preferisce quest'ultima.
+
+\begin{table}[!htbp]
+\centering
+\small
+\caption{M15 su $N=21$: sensibilità al fattore di rumore.
+Differenza troncata meno piena, QFT finale piena e
+$k_{\mathrm{arith}}=1$ nel braccio troncato.}
+\label{tab:aqft_n21_sensibilita}
+\begin{tabular}{rcccl}
+\toprule
+fattore & piena & troncata & differenza & IC 95\% \\
+\midrule
+0.03  & 0.2813 & 0.2891 & $+0.0078$ & $[-0.1020;+0.1174]$ \\
+0.01  & 0.2734 & 0.2734 & $0.0000$ & $[-0.1084;+0.1084]$ \\
+0.003 & 0.3828 & 0.2734 & $-0.1094$ & $[-0.2205;+0.0056]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Al fattore 0.003 la selezione sceglie la QFT piena. Per questo il
+contrasto primario fra configurazione scelta e riferimento pieno
+nel JSON vale zero: non è il contrasto fra troncata e piena della
+tabella, ricalcolato dai conteggi holdout con lo stesso metodo Newcombe.
+Tutti e tre gli intervalli includono lo zero; nessun confronto dimostra
+un vantaggio della variante troncata. Il campione ridotto limita la
+discriminazione di effetti piccoli. Questi test esplorativi non
+estendono a $N=21$ il confronto M1--M2.
+
+\paragraph{Il margine a miscela è una stima condizionata.}
+La stima di circa tre punti percentuali usa un modello ausiliario
+\begin{equation}
+ P_{\mathrm{mix}}(G,e)=P_{\mathrm{floor}}+
+ (P_{\mathrm{ideal}}-P_{\mathrm{floor}})(1-e)^G,
+ \label{eq:aqft_miscela}
+\end{equation}
+con $P_{\mathrm{ideal}}=0.4667/0.4013$ per piena/troncata e
+$G=49\,661/23\,178$. Assume che ogni evento d'errore conduca al
+pavimento uniforme; l'AGI usata per $e$ è un proxy e non identifica la
+probabilità fisica di tale evento. Il margine dipende da questa ipotesi:
+non è una misura di fedeltà, una curva rumorosa simulata o un limite
+superiore dimostrato per ogni canale. Rese ideali e stima a miscela
+sono riportate nel README sperimentale; conteggi e prove rumorose
+sono registrati nei JSON.
+
+\subsection{Benchmark QPE: tutti i nove contrasti}
+
+Il successo è la misura della migliore approssimazione della fase a
+$n$ bit, definita da
+\begin{equation}
+ y_{\mathrm{target}}=\operatorname{round}(\phi 2^n)\bmod 2^n.
+ \label{eq:aqft_qpe_target}
+\end{equation}
+Ogni grado usa 4096 shot in otto batch, quattro di selezione e quattro
+holdout; il grado è scelto sulla selezione. Il confronto mantiene lo
+stesso layout e la stessa schedule dei seed tra i bracci.
+
+\begin{table}[!htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\caption{M15b: gradi scelti e contrasti holdout completi.
+IC Newcombe al 95\%; i nove punti sono esplorativi e non
+ricevono una correzione simultanea.}
+\label{tab:aqft_qpe_completa}
+\begin{tabular}{rlrcccl}
+\toprule
+$n$ & fase & $k$ & scelta & piena & $\Delta$ & IC 95\% \\
+\midrule
+6 & $1/6$ & 2 & 0.3755 & 0.3599 & $+0.0156$ & $[-0.0139;+0.0451]$ \\
+6 & $21/2^6$ & 2 & 0.5576 & 0.5059 & $+0.0518$ & $[+0.0212;+0.0822]$ \\
+6 & $1/3$ & 2 & 0.3564 & 0.3418 & $+0.0146$ & $[-0.0145;+0.0438]$ \\
+8 & $1/6$ & 3 & 0.2861 & 0.2598 & $+0.0264$ & $[-0.0009;+0.0536]$ \\
+8 & $85/2^8$ & 3 & 0.4014 & 0.3545 & $+0.0469$ & $[+0.0172;+0.0765]$ \\
+8 & $1/3$ & 3 & 0.2930 & 0.2500 & $+0.0430$ & $[+0.0157;+0.0701]$ \\
+10 & $1/6$ & 2 & 0.2354 & 0.1641 & $+0.0713$ & $[+0.0469;+0.0956]$ \\
+10 & $341/2^{10}$ & 2 & 0.3564 & 0.2310 & $+0.1255$ & $[+0.0977;+0.1530]$ \\
+10 & $1/3$ & 2 & 0.2280 & 0.1733 & $+0.0547$ & $[+0.0302;+0.0791]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+I nove contrasti hanno stime positive, sei intervalli escludono zero.
+I risparmi ECR sono 25, 28 e 78 per $n=6,8,10$.
+Il grado più favorevole fra quelli provati è 2 o 3; un layout per taglia,
+una snapshot e tre fasi non dimostrano generalizzazione ad altri dispositivi.
+La scelta del grado resta empirica sui batch di selezione: i conteggi e
+la calibrazione possono suggerire candidati, ma questa campagna non valida
+un selettore che prescinda dalle esecuzioni.
+
+\subsection{Provenienza e stato degli artefatti}
+
+La radice è \path{Extra/experiments/M15_qft_topologia/artifacts/}.
+Le fonti correnti, tutte schema 2, sono:
+\begin{itemize}
+ \item \path{v1_20260830/results_M15_qft_N15_v1_20260830_151350.json};
+ \item \path{v1_20260830/results_M15_qft_N21_v1_20260830_152226.json}
+       (sola struttura);
+ \item \path{pilota/results_M15_qft_N21_v1_20260831_120126.json};
+ \item \path{sensibilita/results_M15_qft_N21_v1_20260831_135104.json};
+ \item \path{sensibilita/results_M15_qft_N21_v1_20260831_144129.json};
+ \item \path{sensibilita/results_M15_qft_N21_v1_20260831_152704.json};
+ \item \path{benchmark/results_M15b_qpe_v1_20260831_163523.json}.
+\end{itemize}
+Checkpoint e log documentano avanzamento e controlli accessori;
+non sono campagne indipendenti. Gli output della variante SWAP errata
+restano esclusi.

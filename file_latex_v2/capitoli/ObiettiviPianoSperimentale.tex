@@ -4,7 +4,7 @@ Il Capitolo~\ref{chap:introduzione} ha individuato il divario fra la rilevanza t
 
 \section{Obiettivi generali}
 
-L'obiettivo generale è analizzare l'algoritmo di Shor e stabilire come il rumore limiti la sua esecuzione, distinguendo il potenziale computazionale asintotico dalle condizioni necessarie per ottenerlo. Il lavoro non assume che una tecnica sia utile per definizione: ne misura il contributo rispetto a baseline esplicite e sotto unità coerenti.
+L'obiettivo generale è studiare come il rumore limiti l'esecuzione dell'algoritmo di Shor. Si distingue il vantaggio teorico dalle condizioni necessarie per realizzarlo. L'utilità di ogni tecnica viene misurata rispetto a una baseline esplicita, cioè un metodo di riferimento, usando metriche con la stessa unità.
 
 Il disegno segue due fasi. La prima verifica se un classificatore applicato a valle dell'esecuzione riduca il costo rispetto alla baseline TOP-1 e alla sola ricerca TOP-4. La seconda studia la protezione durante l'esecuzione mediante codici a ripetizione, Steane e surface code, quindi confronta decoder analitici e appresi sulla sindrome. Un'analisi separata misura la sensibilità di Shor a un proxy Pauli per gate compilato senza identificarlo con il tasso logico per ciclo o per memoria dei benchmark \ac{QEC}.
 
@@ -46,9 +46,14 @@ dell'apprendimento automatico.
     \rho=\frac{\bar{M}_1}{\bar{M}_2}\gg1,
     \label{eq:fattore_riduzione}
 \end{equation}
-mentre l'inferenza riguarda le differenze appaiate fra repliche. \textbf{Ipotesi secondaria~1:} il classificatore distingue esecuzioni corrette ed errate con F1$>0.85$ e AUC$>0.90$ sul test indipendente. \textbf{Ipotesi secondaria~2:} l'eventuale vantaggio si mantiene dal preset di riferimento a quello di stress sul medesimo circuito $N=15$; $N=21$ resta una validazione ideale dell'aritmetica e delle risorse e non entra nella verifica inferenziale.
+Il test statistico confronta invece le differenze fra repliche appaiate.
+\textbf{Ipotesi secondaria~1:} il classificatore distingue esecuzioni corrette ed errate con F1$>0.85$ e AUC$>0.90$ sul test indipendente.
+\textbf{Ipotesi secondaria~2:} l'eventuale vantaggio si mantiene passando dal preset di riferimento a quello di stress, sullo stesso circuito $N=15$. $N=21$ non entra in questo confronto statistico: qui serve a validare l'aritmetica ideale e a misurare le risorse.
 
-La fase QEC verifica tre ulteriori ipotesi. \textbf{QEC~1, soppressione:} per i codici di distanza $d=3$, $p_L\propto p^2$ a piccolo $p$ ed esiste un regime $p_L<p$. \textbf{QEC~2, soglia:} per il surface code le curve $p_L(p)$ a distanze crescenti si incrociano in prossimità di $p_{th}$; sotto tale valore aumentare $d$ riduce $p_L$. \textbf{QEC~3, sensibilità:} nel proxy M8 il successo di Shor è compatibile con una funzione non crescente del parametro Pauli per gate e le ripetizioni indipendenti possono superare una soglia cumulativa non raggiunta dal singolo run ideale. Quest'ultima ipotesi non converte direttamente i benchmark Steane o surface code.
+La fase QEC verifica tre ulteriori ipotesi.
+\textbf{QEC~1, soppressione:} per i codici di distanza $d=3$, a piccolo $p$ si ha $p_L\propto p^2$. Esiste quindi un intervallo in cui $p_L<p$ e la codifica rende il qubit più affidabile.
+\textbf{QEC~2, soglia:} le curve $p_L(p)$ del surface code, ottenute a distanze diverse, si incrociano vicino a $p_{th}$. Sotto questa soglia, aumentare $d$ riduce $p_L$.
+\textbf{QEC~3, sensibilità:} nel modello M8 il successo di Shor è compatibile con una funzione non crescente dell'errore Pauli per gate. Ripetizioni indipendenti possono superare una soglia di successo cumulativa che il singolo run ideale non raggiunge. M8 resta un'analisi separata e non converte direttamente i risultati di Steane o del surface code.
 
 Test, trattamento dei fallimenti, pareggi, correzioni per confronti multipli e criteri di accettazione sono specificati nella Sezione~\ref{app:obiettivi:protocollo}.
 
@@ -69,7 +74,7 @@ I requisiti verificabili e gli input/output che rendono operativi questi contrib
 \section{Perimetro sperimentale}
 \label{sec:use_case}
 
-Il corpo si concentra su due istanze con ruoli distinti. $N=15$, $a=7$ alimenta le due campagne rumorose uniformi, \emph{riferimento} e \emph{stress}, sulle quali vengono confrontati M1, TOP-4 e M2. $N=21$, $a=2$ è invece usata soltanto per validare idealmente l'aritmetica reversibile di Beauregard, il ripristino degli ancilla, la QPE e il costo compilato; non le vengono attribuiti risultati rumorosi. I preset numerici, il razionale completo delle istanze e gli audit ulteriori sono trasferiti nelle Sezioni~\ref{app:obiettivi:usecase} e~\ref{subsec:razionale_istanze}.
+Le istanze hanno ruoli distinti. $N=15$, $a=7$ è usata per confrontare M1, TOP-4 e M2 nelle due configurazioni rumorose, \emph{riferimento} e \emph{stress}. $N=21$, $a=2$ serve a verificare l'aritmetica reversibile di Beauregard, l'azzeramento delle ancille, la QPE ideale e il costo compilato. Non partecipa alla campagna rumorosa principale; le prove AQFT con rumore su questa istanza sono esplorative e vengono discusse separatamente. I parametri, le ragioni della scelta e gli altri controlli sono nelle Sezioni~\ref{app:obiettivi:usecase} e~\ref{subsec:razionale_istanze}.
 
 \section{Metriche e criteri di valutazione}
 \label{sec:metriche}
@@ -92,7 +97,7 @@ Shor M8 & livelli del proxy Pauli & $P_{\mathrm{success}}(p_L)$ e $P(k)$ & sensi
 \label{tab:contratto_sintesi}
 \end{table}
 
-Per M1 e M2, $\bar{M}$ è accompagnata dal tasso di successo e dalla dispersione; il test usa vettori appaiati completi e conserva i fallimenti entro il budget. Accuratezza, F1 e AUC valutano il classificatore ma non sostituiscono la metrica operativa. Il readout error è incluso nel noise model, senza correzione post-hoc; la ricerca TOP-4 costituisce l'ablazione che isola il contributo del classificatore. Definizioni, preset, seed, gestione dei pareggi e protocollo statistico completo sono nella Sezione~\ref{app:obiettivi:protocollo}.
+Per M1 e M2 si riportano il numero medio di iterazioni $\bar{M}$, la dispersione e il tasso di successo. Il test confronta tutte le repliche appaiate, comprese quelle che falliscono entro il budget. Accuratezza, F1 e AUC descrivono il classificatore; per capire se sia utile occorre però misurare il costo della fattorizzazione. Il modello include gli errori di lettura, senza correggerli dopo la misura. Il confronto con TOP-4 senza filtro isola il contributo del classificatore. Definizioni, parametri, seed, gestione dei pareggi e test completi sono nella Sezione~\ref{app:obiettivi:protocollo}.
 
 \subsection{Metriche della parte QEC}
 \label{subsec:metriche_qec}
