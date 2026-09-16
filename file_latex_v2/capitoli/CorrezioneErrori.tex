@@ -24,13 +24,7 @@ fra copia e codifica è sviluppata nella Sezione~\ref{app:qec_richiami}.
 \section{Il Ciclo della Correzione: Stabilizzatori, Sindrome, Decoder}
 \label{sec:ciclo_qec}
 
-Ogni codice segue il ciclo codifica--rumore--estrazione della
-sindrome--decodifica--correzione. Gli stabilizzatori commutano con
-l'informazione logica e segnalano l'uscita dal sottospazio valido; il
-decoder traduce la sindrome in una correzione fisica o in un aggiornamento
-del \emph{Pauli frame}. La distanza $d$ determina quanti errori il codice
-può correggere secondo l'Eq.~\ref{eq:distanza_t}; definizioni e
-dimostrazione operativa sono nell'Appendice~\ref{app:fase2}.
+La correzione procede in cinque passi: codifica, rumore, misura della sindrome, decodifica e correzione. Gli stabilizzatori rilevano se lo stato è uscito dallo spazio del codice, senza leggere l'informazione logica. Il decoder usa la sindrome per scegliere una correzione fisica oppure aggiorna il \emph{Pauli frame}, cioè il registro classico delle correzioni da considerare. La distanza $d$ stabilisce quanti errori si possono correggere secondo l'Eq.~\ref{eq:distanza_t}. Definizioni e spiegazione completa sono nell'Appendice~\ref{app:fase2}.
 
 % -----------------------------------------------
 \section{Il Panorama dei Codici e la Scelta Metodologica}
@@ -72,7 +66,7 @@ qubit subiscono un errore, quindi
 \label{fig:qec_repetition}
 \end{figure}
 
-L'accordo con l'Eq.~\ref{eq:pL_repetition} è quantitativo su tutto l'intervallo: ad esempio, per $p = 0.10$ si osserva $p_L = 0.0288 \pm 0.0012$ contro il valore teorico $0.0280$, e per $p = 0.20$ si ha $p_L = 0.1026 \pm 0.0021$ contro $0.1040$. Il messaggio operativo è quello che l'intera parte \ac{QEC} svilupperà su codici più potenti: sotto una soglia di errore fisico, la codifica \emph{sopprime} l'errore --- qui da $p$ a $\mathcal{O}(p^2)$ --- mentre sopra la soglia lo \emph{amplifica}. Il codice a ripetizione paga però un limite strutturale già discusso: protegge da un solo tipo di errore per volta. Un errore $Z$ sul codice bit-flip commuta con entrambi gli stabilizzatori, non produce sindrome e resta invisibile --- ragione per cui il passo successivo richiede un codice, come quello di Steane, capace di correggere \emph{qualunque} errore su un qubit.
+I dati concordano con l'Eq.~\ref{eq:pL_repetition} su tutto l'intervallo. Per $p = 0.10$ si osserva $p_L = 0.0288 \pm 0.0012$, contro il valore teorico $0.0280$. Per $p = 0.20$ si ottiene $p_L = 0.1026 \pm 0.0021$, contro $0.1040$. Sotto soglia, la codifica riduce quindi l'errore da $p$ a $\mathcal{O}(p^2)$; sopra soglia lo amplifica. Questo è il comportamento che la parte \ac{QEC} studierà con codici più completi. Il codice a ripetizione protegge però da un solo tipo di errore per volta. Un errore $Z$ sul codice bit-flip non altera gli stabilizzatori e resta invisibile. Il passo successivo richiede perciò un codice, come Steane, che corregga qualunque errore su un qubit.
 
 % -----------------------------------------------
 \section{Laboratorio II: il Codice di Steane
@@ -106,7 +100,7 @@ Z e Y su sette qubit e conferma la biiettività della
 Tabella~\ref{tab:steane_sindrome}.
 
 \paragraph{Il qubit logico batte il fisico: soppressione quadratica.}
-Il terzo controllo misura il beneficio della correzione. Sotto un canale depolarizzante di intensità $p$ per qubit, si stima la probabilità di errore logico $p_L$ con una simulazione Monte Carlo nel formalismo di Pauli ($200\,000$ campioni per punto, seed $=42$): per ogni campione si estrae la sindrome, si applica la correzione a peso minimo dalla Tabella~\ref{tab:steane_sindrome} e si verifica se il residuo contiene un operatore logico non banale. La Figura~\ref{fig:qec_steane} mostra il risultato in scala doppio-logaritmica: i punti seguono un andamento $p_L \propto p^2$, con pendenza log-log misurata $1.94$ --- la firma di un codice di distanza $d=3$, che corregge ogni errore singolo e fallisce solo a partire da due errori. Poiché gli eventi di peso due, il cui numero di coppie di qubit scala come $\binom{7}{2}$, forniscono il contributo dominante al fallimento, l'errore logico è soppresso da $\mathcal{O}(p)$ a $\mathcal{O}(p^2)$.
+Il terzo controllo misura il beneficio della correzione sotto un canale depolarizzante di intensità $p$ per qubit. La simulazione Monte Carlo usa il formalismo di Pauli, con $200\,000$ campioni per punto e seed $=42$. Per ogni campione si estrae la sindrome e si applica la correzione a peso minimo della Tabella~\ref{tab:steane_sindrome}. Si verifica poi se l'errore residuo modifica l'informazione logica. La Figura~\ref{fig:qec_steane} mostra $p_L \propto p^2$, con pendenza log-log $1.94$. È il comportamento atteso a distanza $d=3$: ogni errore singolo è correggibile e i fallimenti iniziano con due errori. Le coppie possibili sono $\binom{7}{2}$ e danno il contributo dominante. L'errore passa così da $\mathcal{O}(p)$ a $\mathcal{O}(p^2)$.
 
 \begin{figure}[H]
 \centering
@@ -118,6 +112,6 @@ Il terzo controllo misura il beneficio della correzione. Sotto un canale depolar
 Il regime di convenienza è netto: per $p = 0.01$ si ha $p_L = 1.67 \times 10^{-3}$ (già un ordine di grandezza sotto $p$), per $p = 0.05$ si ha $p_L = 3.4 \times 10^{-2} < p$, mentre a $p = 0.10$ si ha $p_L = 0.116 > p$. La pseudo-soglia --- l'intersezione tra la curva e la bisettrice $p_L = p$ --- cade attorno a $p \approx 0.08$: al di sotto, codificare conviene.
 
 \paragraph{Confronto con il repetition e assunzioni.}
-Rispetto al repetition code (Sezione~\ref{sec:repetition}), che pure esibisce una soppressione $\propto p^2$, lo Steane paga sette qubit fisici invece di tre ma ottiene un vantaggio qualitativo decisivo: protegge simultaneamente da errori $X$, $Z$ e $Y$, mentre il repetition è cieco a un intero tipo di errore. Va infine ribadita l'assunzione dichiarata nella Sezione~\ref{sec:steane}: l'estrazione di sindrome qui implementata \emph{non è fault-tolerant}. Il modello Monte Carlo inietta errori solo sui qubit dati e assume una lettura di sindrome ideale; un errore sulle ancilla durante l'estrazione può corrompere la sindrome e indurre una correzione errata. La quantificazione di questo effetto --- e le tecniche fault-tolerant che lo mitigano --- appartiene al terreno del surface code, oggetto del Capitolo~\ref{chap:surface}, dove il decoder opera su cicli ripetuti di misura proprio per distinguere gli errori di dato da quelli di misura.
+Il repetition code (Sezione~\ref{sec:repetition}) e Steane hanno entrambi una soppressione $\propto p^2$. Steane usa però sette qubit fisici invece di tre e protegge insieme da errori $X$, $Z$ e $Y$. Il codice a ripetizione protegge da un solo tipo di errore. Resta il limite dichiarato nella Sezione~\ref{sec:steane}: l'estrazione della sindrome \emph{non è fault-tolerant}. La simulazione introduce errori solo sui dati e assume una lettura ideale della sindrome. Un errore sulle ancille potrebbe invece alterare i segnali e causare una correzione sbagliata. Il surface code, studiato nel Capitolo~\ref{chap:surface}, include cicli ripetuti di misura per distinguere gli errori dei dati da quelli della lettura.
 
 \end{onehalfspace}

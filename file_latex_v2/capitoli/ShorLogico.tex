@@ -1,15 +1,6 @@
 \begin{onehalfspace}
 
-Le sezioni precedenti misurano la correzione d'errore su circuiti dedicati,
-mentre le prime analisi del capitolo descrivono la degradazione di Shor sotto
-rumore fisico. Collegare direttamente i due insiemi richiederebbe una
-compilazione fault-tolerant completa, con registri codificati, cicli di
-sindrome, decoder e risorse non-Clifford. Poich\'e questa architettura non viene
-simulata, qui si adotta un esperimento di \textbf{sensibilit\`a fenomenologica}:
-si applica al circuito compilato un errore Pauli indipendente per gate, indicato
-con $p_L$, e si osserva la probabilit\`a di fattorizzazione. Il pedice ``L'' ne
-segnala il ruolo concettuale, ma non rende il parametro intercambiabile con le
-metriche logiche aggregate ottenute dai codici correttori.
+Le sezioni precedenti studiano la QEC su circuiti dedicati e Shor sotto rumore fisico. Per collegare direttamente i risultati servirebbe un'intera esecuzione fault-tolerant: registri codificati, cicli di sindrome, decoder e operazioni non-Clifford protette. Questa architettura non viene simulata. Si studia invece la \textbf{sensibilit\`a} di Shor a un modello semplificato: dopo ogni gate si applica un errore Pauli indipendente, di probabilit\`a $p_L$, e si misura il successo della fattorizzazione. Il pedice ``L'' indica il ruolo concettuale del parametro. Non lo rende equivalente al tasso di errore logico misurato nei test dei codici.
 
 % -----------------------------------------------
 \section{L'architettura a quattro livelli}
@@ -109,12 +100,7 @@ dal JSON schema 2 con \texttt{figure\_src/gen\_shor\_logico.py}.}
 \label{fig:qec_shor_logico}
 \end{figure}
 
-La curva \`e compatibile con una funzione non crescente al livello simultaneo
-prefissato, ma non ogni diminuzione adiacente \`e significativa: l'affermazione
-supportata \`e ``nessun aumento significativo''. Il successo passa da 0,7489 a
-0,4518 tra $p_L=0$ e $0,02$, poi raggiunge un plateau empirico vicino a 0,245
-oltre $p_L=0,1$. Il plateau dipende dagli esiti che il post-processing di
-$N=15$ riconosce come utili e non \`e universale.
+Il controllo statistico non rileva aumenti significativi del successo al crescere del rumore, tenendo conto dei confronti multipli. La curva \`e quindi compatibile con una funzione non crescente, anche se non tutte le diminuzioni fra punti adiacenti sono significative. Il successo passa da 0,7489 a 0,4518 tra $p_L=0$ e $0,02$. Oltre $p_L=0,1$ si stabilizza vicino a 0,245. Questo livello dipende dagli esiti che la verifica classica di $N=15$ accetta come utili; non \`e un valore universale.
 
 \subsection*{Ripetizioni indipendenti}
 
@@ -185,5 +171,17 @@ altri esperimenti su atomi riconfigurabili sono documentate nella
 Sezione~\ref{app:shor_metriche}. Perci\`o $N=15$ resta un'istanza didattica: la
 fattibilit\`a crittografica \`e una domanda architetturale separata, dominata
 dall'overhead fault-tolerant.
+
+\section{Layout e readout: risultati delle verifiche M11 e M11b}
+\label{sec:layout_risultati}
+
+Le due verifiche usano i dati di calibrazione offline di \texttt{FakeSherbrooke} e si svolgono in simulazione. In M11 sono validi 40 dei 60 layout richiesti. Gli altri 20 hanno calibrazioni fuori dal dominio del modello e vengono esclusi, senza contarli come fallimenti di Shor. La correlazione fra punteggio aggregato di calibrazione e successo sui dati di verifica è $\rho_s=-0.184$, con IC bootstrap 95\% $[-0.456;0.124]$. Il campione non mostra quindi una capacità predittiva conclusiva del punteggio. Scegliere il layout con il punteggio minimo dà $P_{\mathrm{holdout}}=0.451$; scegliere quello con il massimo successo nei dati di selezione dà $0.516$. La differenza $+0.065$ è descrittiva e non ha un intervallo dedicato (Sezione~\ref{sec:app_comp_pilota}).
+
+M11b considera nove dei dodici sottografi richiesti, con cinque strategie iniziali per ciascuno: in totale 45 osservazioni di verifica. Si misura l'errore di lettura dei qubit effettivamente misurati dopo il routing. Tenendo conto di sottografo, numero di ECR e profondità, la correlazione parziale con il successo è $\rho_s=-0.605$, con IC cluster bootstrap 95\% $[-0.826;-0.190]$. A un errore di lettura maggiore si associa quindi un successo minore. È un'associazione osservata in soli nove cluster: non dimostra che assegnare inizialmente i registri ai qubit con readout migliore causi un aumento del successo. Protocollo, esclusioni, figure e analisi completa sono nella Sezione~\ref{sec:app_comp_ruoli} dell'Appendice~\ref{app:fase2}.
+
+Questi controlli rispondono alla domanda di prevedibilità: nel campione
+una metrica aggregata non basta a ordinare il successo, mentre una
+proprietà del circuito finale conserva un'associazione misurabile.
+Nessuna delle due prove addestra un selettore ML di layout.
 
 \end{onehalfspace}

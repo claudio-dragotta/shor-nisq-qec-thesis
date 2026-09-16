@@ -7,14 +7,7 @@ Sezione~\ref{app:strategie_estese} dell'Appendice~\ref{app:teoria}.
 
 \section{Le Quattro Strategie: Panoramica e Scelta}
 
-La \textbf{soppressione} riduce fisicamente l'accoppiamento con l'ambiente; la
-\textbf{mitigazione} stima a posteriori l'output ideale mediante campionamento
-aggiuntivo; la \textbf{fault tolerance} codifica qubit logici in molti qubit
-fisici e, sotto soglia, sopprime l'errore aumentando la distanza
-\cite{aharonov1997fault}; i \textbf{metodi appresi} svolgono infine compiti
-classici di classificazione o decodifica. Queste categorie non coincidono: in
-particolare, il machine learning può assistere una fase della \ac{QEC}, ma non
-la sostituisce.
+La \textbf{soppressione} riduce l'interazione con l'ambiente. La \textbf{mitigazione} usa campioni aggiuntivi per stimare l'output ideale dopo il calcolo. La \textbf{fault tolerance} protegge i qubit logici usando molti qubit fisici: sotto soglia, aumentare la distanza del codice riduce l'errore~\cite{aharonov1997fault}. I \textbf{metodi appresi} svolgono invece compiti classici, come classificare gli output o decodificare le sindromi. Il machine learning può quindi assistere la \ac{QEC}, ma non realizza da solo la protezione dello stato.
 
 \begin{table}[H]
 \centering
@@ -33,10 +26,7 @@ Metodi appresi & post-processing/decoder & dati e calcolo classico & valutati \\
 \label{tab:strategie_confronto}
 \end{table}
 
-Nel regime studiato non si assume un vantaggio del modello appreso: la prima
-fase lo confronta con TOP-1 e con l'ablazione TOP-4 sullo stesso istogramma; la
-seconda lo colloca soltanto nella decodifica delle sindromi. La ac{ZNE} resta
-un controllo secondario, non la strategia principale.
+L'utilità del modello appreso viene verificata in entrambe le fasi. Nella prima, il confronto con TOP-1 e TOP-4 usa lo stesso istogramma. Nella seconda, la rete interviene nella decodifica delle sindromi. La \ac{ZNE} fornisce un confronto aggiuntivo.
 
 \section{Machine Learning Classico per la Robustezza al Rumore}
 \label{sec:qml_overview}
@@ -78,12 +68,7 @@ simulato.
 \section{Motivazione Pratica: il Contributo di questa Tesi}
 \label{sec:motivazione_ml}
 
-Nella prima fase M1 prova la moda, TOP-4 i primi quattro candidati e M2 usa un
-classificatore per decidere se attivare la stessa ricerca TOP-4. La riduzione
-rispetto a M1 esiste, ma l'ablazione la attribuisce alla ricerca
-multi-candidato: il filtro appreso non aggiunge informazione alla regola
-semplice. Questo esito negativo motiva lo spostamento del focus dalla sola
-lettura dell'output alla correzione durante il calcolo.
+Nella prima fase, M1 prova l'esito più frequente e TOP-4 prova i primi quattro. M2 usa un classificatore per decidere se attivare la stessa TOP-4. Confrontare M2 con TOP-4 senza filtro chiarisce l'origine del miglioramento: cercare più candidati è utile, mentre il classificatore non aggiunge un beneficio. Questo risultato motiva lo studio della correzione durante il calcolo.
 
 \section{Una Strategia sul Circuito: la Trasformata di Fourier Approssimata}
 \label{sec:aqft_strategia}

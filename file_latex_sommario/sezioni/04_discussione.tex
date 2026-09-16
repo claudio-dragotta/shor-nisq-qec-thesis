@@ -1,41 +1,30 @@
 \section{Discussione e Conclusioni}
 
-La domanda di localizzazione ha una risposta a due facce. A valle dell'esecuzione l'ipotesi
-principale, $\rho\gg1$, è \emph{smentita} dai suoi stessi dati: il classificatore raggiunge le
-soglie di F1 e AUC fissate a priori e resta inutile, perché scarta istogrammi che $\pi_4$ avrebbe
-risolto. Sulla sindrome, dove il dato conserva una struttura locale più ricca del solo istogramma
-finale, la stessa tecnologia guadagna, ma solo nella forma ibrida --- la rete affianca il matching
-invece di sostituirlo --- e solo finché il rumore contiene correlazioni che il decoder analitico non
-rappresenta. Il criterio unificante è verificabile entro il perimetro misurato: un
-modello appreso aggiunge valore quando sfrutta informazione che il metodo di riferimento
-lascia inutilizzata, non quando ne replica la regola decisionale. Il braccio negativo dice
-che cosa non si ottiene con le risorse di questo lavoro, e non si estende ai decoder
-appresi in generale.
+L'ablazione mostra che la riduzione dei cicli dipende dalla ricerca TOP-4.
+Il classificatore può scartare dati utili.
+TOP-4 è efficace nel caso studiato, ma non è una scelta ottima per ogni istanza.
 
-L'autovalutazione riguarda il metodo: senza il braccio $\pi_4$ la riduzione da $1{,}37$ a $1{,}00$
-sarebbe stata attribuita al classificatore, un falso positivo del tutto presentabile; l'audit
-dell'etichetta e la verifica per truth table del moltiplicatore, che ha imposto la rigenerazione
-dell'intera campagna, sono stati più informativi delle metriche di accuratezza.
+Nella correzione d'errore, la rete aiuta il matching quando sono presenti
+interferenze fra qubit. Il beneficio diminuisce con la distanza del codice.
 
-I limiti delimitano ogni conclusione: il rumore della campagna su Shor è uniforme, indipendente e
-stazionario, senza topologia, crosstalk, leakage o deriva; $N=15$ è un'istanza didattica con
-post-processing permissivo; le stime
-QEC valgono entro il modello Clifford--Pauli, indicato come potenzialmente
-ottimistico~\cite{plaquette2026}; l'analisi di sensibilità è un proxy per gate, non una simulazione
-fault-tolerant. Rispetto al piano, $N=21$ e $N=35$ restano validati solo idealmente ed esclusi per
-costo dalle campagne rumorose, l'accelerazione GPU prevista non è stata impiegata e nessun esperimento è stato eseguito su
-hardware reale: l'accesso a una macchina è stato valutato e scartato d'accordo con il
-relatore, sicché tutta la validazione poggia su modelli di rumore e snapshot di
-calibrazione.
-Sul fronte delle risorse la letteratura recente percorre l'asse opposto: approssimando
-l'aritmetica modulare si scende per RSA-2048 a 1730 qubit logici contro 6144, ma pagando
-$2^{40{,}9}$ porte Toffoli contro $2^{31{,}3}$~\cite{chevignard2025}. Qui si ottimizzano invece
-le porte, perché nel regime NISQ il vincolo dominante è la profondità rispetto al tempo
-di coerenza e non il numero di qubit.
+Tutti gli esperimenti sono simulazioni. Lo studio del classificatore usa
+solo $N=15$, con rumore uniforme e invariato nel tempo.
+Per il classificatore, gli errori di operazioni diverse sono indipendenti; non si considerano
+interferenze fra qubit né operazioni aggiuntive richieste dalle loro connessioni.
 
+La correzione considera soltanto alcune operazioni e alcuni tipi di errore:
+le stime possono quindi essere favorevoli~\cite{plaquette2026}.
+Non viene simulato un circuito completo di Shor protetto dai codici.
 
-Gli sviluppi futuri discendono dai limiti --- mappatura per operazione logica, rumore
-\emph{channel-first}, decoder ricorrenti o a grafo~\cite{alphaqubit2024} --- ma la ricaduta più
-immediata è metodologica: ablazione appaiata, contratto interpretativo fra
-unità diverse e artefatti versionati formano un protocollo riutilizzabile per valutare qualunque
-mitigazione appresa del rumore quantistico.
+Il vantaggio della QFT approssimata nella stima di fase non si estende
+automaticamente a Shor. Le prove rumorose su $N=21$ confrontano varianti
+della QFT; $N=35$ è verificato senza rumore.
+La stima di fase usa una disposizione dei qubit per dimensione,
+tre fasi e un solo insieme di dati di calibrazione.
+
+Occorre collegare gli errori dopo la correzione alle operazioni di Shor
+ed estendere i modelli di rumore.
+Per i decoder, si potranno usare reti che considerino disposizione dei
+qubit ed evoluzione dei controlli~\cite{alphaqubit2024}.
+La QFT approssimata andrà combinata con metodi aritmetici che riducono
+i qubit necessari~\cite{chevignard2025}, confrontando porte, qubit e profondità.

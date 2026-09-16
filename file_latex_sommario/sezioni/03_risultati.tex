@@ -1,38 +1,54 @@
 \section{Risultati}
 
-\textbf{Fase 1.} Sul circuito verificato ($N=15$, $a=7$, profondità 412, 224 CX, hash registrato)
-i classificatori raggiungono le prestazioni ipotizzate a priori (F1 $=0{,}919$ e
-$0{,}923$; AUC $=0{,}965$ e $0{,}958$), ma l'ablazione appaiata mostra che il guadagno non è loro.
-Su 30 repliche per scenario, con successo $30/30$ in ogni braccio, la sola ricerca $\pi_4$ porta le
-iterazioni al minimo ($\bar{\mathcal{M}}=1{,}00$ contro $1{,}37$ in UC1 e $1{,}50$ in UC2;
-$p_{\mathrm{Holm}}=0{,}0024$ e $0{,}0015$), mentre il Metodo~2 non migliora la baseline ($1{,}50$ e
-$1{,}37$; $p_{\mathrm{Holm}}=0{,}7314$ e $0{,}0874$) e peggiora la propria ablazione
-($p_{\mathrm{Holm}}=0{,}0033$ e $0{,}0096$). Nemmeno la zero-noise extrapolation migliora la
-baseline, e triplica il costo di campionamento.
+\textbf{Classificazione.} Il circuito verificato ha profondità 412, cioè 412 strati
+di porte in sequenza. Contiene 224 porte CX, che invertono un qubit in base al valore di un altro.
+Nei due scenari UC1/UC2, le SVM raggiungono F1 $=0{,}919/0{,}923$ e AUC $=0{,}965/0{,}958$.
+Su 30 repliche per scenario, tutte le strategie fattorizzano entro il limite previsto.
 
-\textbf{Fase 2.} I codici riproducono le previsioni a priori, con la stima
-di $p_{\mathrm{th}}$ dall'Eq.~\eqref{eq:scaling} concorde con l'incrocio delle curve: la ripetizione a
-$d=3$ accorda con $p_L=3p^{2}-2p^{3}$ entro l'errore statistico; Steane $[[7,1,3]]$
-dà $\gamma=1{,}94$ e pseudo-soglia (il rumore oltre il quale, a distanza fissata, codificare non
-conviene) $p\simeq0{,}08$; il surface code per $d=3$--$9$ dà
-$p_{\mathrm{th}}=0{,}86\%$ ($Z$) e $0{,}81\%$ ($X$), prefattore $A=3{,}5\times10^{-2}$ e residui di
-RMS $0{,}08$ in $\ln p_L$; la decodifica appresa, nelle quattordici configurazioni testate ($d=3,5$), non supera
-mai il matching come sostituto e, come correttore ibrido, riduce $p_L$ del $18$--$21\%$ a $d=3$ \emph{soltanto in presenza di errori
-correlati} --- crosstalk fra qubit dati adiacenti, non rappresentabile nel grafo di matching ---,
-dell'$1$--$3\%$ a $d=5$ e per nulla a $d=7$.
+La sola ricerca TOP-4 porta i cicli medi a $1{,}00$, contro $1{,}37/1{,}50$ del Metodo~1.
+Il confronto è significativo ($p_{\mathrm{Holm}}=0{,}0024/0{,}0015$).
 
-\textbf{Chiusura quantitativa.} Nel proxy della Sez.~2.5 --- in unità di $p_g$, non del $p_L$
-appena riportato --- gli estremi della curva di sensibilità coincidono con le costanti
-dell'Eq.~\eqref{eq:limiti}: il punto senza rumore ($p_g=0$) vale $0{,}7489$ [$0{,}7459$;
-$0{,}7518$] e stima $P_{\mathrm{id}}=3/4$; il plateau è già raggiunto a $p_g\simeq0{,}1$ e vale
-$0{,}2459$ a $p_g=0{,}5$, cioè il pavimento uniforme
-$P_{\mathrm{unif}}=63/256=0{,}2461$. La
-curva non descrive un algoritmo che fallisce, ma uno che degrada verso l'estrazione casuale, con
-entrambi gli asintoti fissati in anticipo dalla teoria.
-\textbf{Trasformata approssimata.} Una verifica esplorativa condotta a chiusura del lavoro
-mostra che troncare le rotazioni della QFT sotto una soglia d'angolo dimezza le porte
-a due qubit del circuito per $N=21$ (da 49\,661 a 23\,178) e, sulla stima di fase, supera la
-trasformata piena in tutti e nove i confronti eseguiti su tre dimensioni di registro, fino a
-$+0{,}126$ su dieci qubit di conteggio. Il grado ottimo di troncamento non cresce con il
-registro, mentre il risparmio sì.
+Il Metodo~2 richiede $1{,}50/1{,}37$ cicli e non migliora significativamente il Metodo~1
+($p_{\mathrm{Holm}}=0{,}7314/0{,}0874$). Richiede più cicli di TOP-4
+($p_{\mathrm{Holm}}=0{,}0033/0{,}0096$).
+Buone metriche di classificazione non garantiscono quindi una riduzione del costo necessario a trovare i fattori.
 
+La zero-noise extrapolation non migliora il riferimento.
+La variante su tre livelli triplica il costo di campionamento.
+
+\textbf{Correzione d'errore.} Il codice a ripetizione a $d=3$ riproduce i valori previsti dalla teoria.
+Per Steane, l'errore dopo la correzione cresce circa con il quadrato dell'errore fisico (esponente stimato $1{,}94$).
+La pseudo-soglia di Steane è $p\simeq0{,}08$: qui gli errori dopo la
+correzione eguagliano quelli del qubit non protetto.
+Riguarda un codice a distanza fissata.
+
+Per il surface code, le soglie stimate sono $0{,}86\%$ ($Z$) e $0{,}81\%$ ($X$).
+$Z$ e $X$ indicano due modi di preparare e misurare il qubit.
+
+La rete usata da sola non supera il matching nelle quattordici configurazioni iniziali ($d=3,5$).
+
+Con crosstalk (interferenza fra qubit), la rete affiancata al matching riduce $p_L$ del $18$--$21\%$ a $d=3$ e dell'$1$--$3\%$ a $d=5$.
+A $d=7$ non emerge un miglioramento significativo.
+In questi test, alcune correlazioni non sono rappresentate dal grafo del matching e lasciano un margine per la rete.
+
+\textbf{Sensibilità di Shor.} Il successo senza rumore è $74{,}89\%$, con intervallo al 95\%
+$[74{,}59\%;\ 75{,}18\%]$, coerente con il $75\%$ teorico.
+
+Il successo si stabilizza intorno a $p_g=0{,}1$; a $p_g=0{,}5$ vale $24{,}59\%$.
+È vicino al pavimento uniforme del $24{,}61\%$, dovuto agli esiti accettati anche senza informazione utile.
+
+\textbf{QFT approssimata.} Su $N=21$ eliminare le piccole rotazioni durante
+i calcoli aritmetici riduce le porte a due qubit da $49\,661$ a $23\,178$.
+Il successo senza rumore scende però dal $46{,}67\%$ al $40{,}13\%$.
+Nelle simulazioni rumorose eseguite non emerge un vantaggio misurabile.
+
+Un modello semplificato stima un guadagno massimo di circa tre punti percentuali.
+Richiede errori delle porte a due qubit circa duecento volte inferiori alla calibrazione considerata.
+
+Nella stima di fase, tutti i nove confronti favoriscono la QFT troncata.
+In sei confronti, l'intervallo al 95\% del miglioramento è interamente positivo.
+Un intervallo interamente positivo distingue il guadagno da zero nel singolo confronto.
+Il maggior aumento è di 12,6 punti percentuali su dieci qubit
+(intervallo al 95\%: 9,8--15,3 punti).
+La scelta migliore conserva le rotazioni con gli angoli più grandi,
+limitandoli a due o tre valori nelle dimensioni esaminate.

@@ -3,14 +3,7 @@
 \section{Discussione complessiva dei risultati}
 \label{sec:discussione_complessiva}
 
-Letti congiuntamente, i risultati descrivono tre livelli distinti di intervento sul calcolo
-quantistico: il recupero dell'informazione dall'istogramma finale, la protezione dello stato
-mediante correzione d'errore e la riduzione preventiva del costo circuitale. Il confronto è
-significativo soltanto mantenendo separate le rispettive metriche: il numero di iterazioni
-della campagna NISQ, l'errore logico dei benchmark QEC e il proxy Pauli per gate dell'analisi
-di Shor non sono quantità direttamente sostituibili l'una all'altra. Proprio questa
-separazione permette però di ricavare un criterio comune su dove ciascun metodo produca
-valore.
+I risultati riguardano tre modi di intervenire: cercare candidati nell'istogramma finale, proteggere lo stato con la QEC e ridurre le porte del circuito. Ogni intervento ha una metrica diversa. Nella campagna NISQ si misurano le iterazioni; nei test QEC, i fallimenti logici; nell'analisi di Shor, la sensibilità a un errore Pauli per gate. Queste quantità non si convertono direttamente fra loro. Permettono però di capire quale problema risolva ciascun metodo.
 
 Nel regime NISQ il risultato più netto non appartiene al classificatore, ma alla regola di
 ricerca. Nei due scenari appaiati, TOP-4 porta il numero medio di iterazioni da $1.37$ e
@@ -35,15 +28,7 @@ scende da $1.94\times10^{-3}$ a distanza 3 a $2.01\times10^{-5}$ a distanza 9
 Pauli circuit-level; non sono ancora una previsione calibrata di un'esecuzione
 fault-tolerant di Shor.
 
-La campagna sulla decodifica precisa anche quando l'apprendimento sia giustificato. La
-sostituzione diretta di MWPM non vince in nessuna delle quattordici configurazioni considerate
-e richiede $10^5$--$10^6$ campioni per arrivare al pareggio a distanza 3. Quando però il
-rumore correlato viola la decomponibilità in archi assunta dal matching, il decoder ibrido
-riduce l'errore logico fino al $21\%$; il vantaggio si restringe a distanza 5 e si annulla a
-distanza 7 (Tabella~\ref{tab:sintesi_decodifica}). Il confronto con BP+OSD delimita
-ulteriormente il risultato: un decoder analitico più espressivo ottiene a distanza 5 guadagni
-del $17$--$27\%$, contro l'$1$--$3\%$ dell'ibrido. Il valore del modello appreso emerge quindi
-da una cecità strutturale del metodo analitico, non dalla sola imprecisione dei suoi parametri.
+La campagna sulla decodifica chiarisce quando l'apprendimento aiuta. Sostituire MWPM con una rete non dà vittorie nelle quattordici configurazioni provate. Per pareggiare a distanza 3 servono $10^5$--$10^6$ campioni. Quando il rumore contiene correlazioni che il grafo del matching non rappresenta, l'ibrido riduce invece l'errore fino al $21\%$. Il vantaggio diminuisce a distanza 5 e si annulla a distanza 7 (Tabella~\ref{tab:sintesi_decodifica}). A distanza 5, BP+OSD recupera già il $17$--$27\%$, contro l'$1$--$3\%$ dell'ibrido. Il modello appreso aiuta quindi a riconoscere correlazioni assenti dal metodo di riferimento. Una calibrazione imprecisa, da sola, non spiega il beneficio.
 
 L'analisi di sensibilità di Shor collega questi risultati senza forzare una conversione tra
 metriche. Nel proxy uniforme per gate, il successo per singola misura passa da $0.7489$ in
@@ -55,15 +40,7 @@ formalizzato nella Tabella~\ref{tab:decoder_su_shor}, trasformare le curve QEC i
 di fattorizzazione richiederebbe ancora un gate set logico, cicli di sindrome, operazioni
 non-Clifford e un modello delle correlazioni residue.
 
-Infine, l'ottimizzazione della QFT mostra che ridurre le porte è utile solo se il rumore evitato
-compensa l'approssimazione introdotta. Su Shor per $N=21$, il troncamento porta le operazioni
-a due qubit da $49\,661$ a $23\,178$, ma riduce la resa ideale da $0.4667$ a $0.4013$ e offre
-al massimo circa tre punti percentuali di vantaggio, in un regime che richiede porte a due
-qubit circa duecento volte più accurate di quelle considerate realistiche. Sulla stima di
-fase, invece, la variante troncata vince in tutti e nove i confronti e raggiunge $+0.126$ su
-dieci qubit; il grado ottimo resta due o tre (Sezione~\ref{sec:qft_topologia}). La stessa
-trasformazione può dunque essere sfavorevole dentro un circuito troppo profondo e vantaggiosa
-nel sottoproblema per cui il suo costo è dominante.
+Infine, la QFT approssimata è utile quando il rumore evitato compensa la precisione persa. Su Shor per $N=21$, le porte a due qubit scendono da $49\,661$ a $23\,178$, ma il successo ideale cala da $0.4667$ a $0.4013$. I circa tre punti percentuali di possibile vantaggio sono una stima del modello ausiliario, che richiede errori a due qubit circa duecento volte inferiori a quelli della calibrazione considerata. Nei test rumorosi questo beneficio non è osservato. Sulla sola stima di fase, la variante troncata ha invece un risultato migliore in tutti e nove i confronti e raggiunge $+0.126$ su dieci qubit. Il grado migliore resta due o tre alle taglie provate (Sezione~\ref{sec:qft_topologia}). Il costo del circuito determina quindi se la stessa approssimazione sia conveniente.
 
 Nel complesso emerge una regola unitaria: la complessità è giustificata solo quando agisce sul
 collo di bottiglia osservato. TOP-K sfrutta informazione residua; la QEC sopprime l'errore sotto

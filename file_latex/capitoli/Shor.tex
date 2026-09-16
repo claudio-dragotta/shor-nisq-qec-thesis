@@ -9,11 +9,11 @@ La \textbf{fattorizzazione intera} consiste nel trovare i fattori primi di un nu
     \label{eq:gnfs_complexity}
 \end{equation}
 
-Nella sua formulazione decisionale il problema appartiene a NP, e più precisamente a $\text{NP} \cap \text{co-NP}$: sia l'esistenza sia l'assenza di un fattore in un dato intervallo ammettono un certificato verificabile in tempo polinomiale. È questa collocazione a rendere improbabile che la fattorizzazione sia NP-completa --- lo fosse, ne seguirebbe $\text{NP} = \text{co-NP}$, contro l'opinione prevalente. Non è però noto se appartenga a P: nessun algoritmo classico polinomiale è \emph{conosciuto}, e si congettura che non esista, ma una dimostrazione di questa impossibilità manca.
+Nella formulazione decisionale, il problema appartiene a $\text{NP} \cap \text{co-NP}$. Questo significa che sia l'esistenza sia l'assenza di un fattore in un dato intervallo hanno certificati verificabili in tempo polinomiale. Per questa ragione, si ritiene improbabile che la fattorizzazione sia NP-completa: se lo fosse, si avrebbe $\text{NP} = \text{co-NP}$. Non è invece noto se appartenga a P. Nessun algoritmo classico polinomiale è \emph{conosciuto}, ma non è stata dimostrata l'impossibilità di trovarne uno.
 
 \subsection{Perché la Fattorizzazione Conta}
 
-La difficoltà di fattorizzare interi non è una curiosità matematica: è il fondamento su cui poggia \ac{RSA}, e con esso buona parte della sicurezza delle comunicazioni odierne. Un algoritmo polinomiale per la fattorizzazione compromette \ac{RSA} in modo irrecuperabile, e non per una debolezza implementativa ma perché ne viola l'assunzione di sicurezza. La trattazione estesa --- il confronto fra la complessità sub-esponenziale del \ac{GNFS} e quella polinomiale di Shor, la risposta della crittografia post-quantistica con gli standard \ac{NIST} del 2024, e lo scenario \emph{harvest now, decrypt later} --- è nella Sezione~\ref{app:obiettivi} dell'Appendice~\ref{app:contesto}. Fra l'algoritmo teorico e un'applicazione crittografica restano scala, compilazione fault-tolerant, overhead QEC e qualità dell'hardware; questa tesi isola soprattutto il ruolo del rumore.
+La difficoltà della fattorizzazione è alla base della sicurezza di \ac{RSA}. Un algoritmo polinomiale comprometterebbe questa assunzione, anche con un'implementazione corretta del sistema crittografico. Il confronto fra \ac{GNFS} e Shor, gli standard post-quantistici \ac{NIST} del 2024 e il rischio \emph{harvest now, decrypt later} sono approfonditi nella Sezione~\ref{app:obiettivi} dell'Appendice~\ref{app:contesto}. Per passare dalla teoria a un attacco concreto servono però circuiti molto più grandi, protezione fault-tolerant e hardware adeguato. Questa tesi studia soprattutto il ruolo del rumore.
 
 \section{Riduzione alla Ricerca del Periodo}
 
@@ -83,7 +83,7 @@ dove $\hat{\alpha}_k = \frac{1}{\sqrt{2^n}}\sum_j \alpha_j e^{2\pi i jk/2^n}$ so
 
 La DFT classica su $N = 2^n$ elementi richiede $O(N \log N)$ operazioni (con il Fast Fourier Transform), mentre la QFT si realizza con $O(n^2) = O((\log N)^2)$ porte quantistiche: un conteggio esponenzialmente inferiore.
 
-Questo confronto va però interpretato correttamente, perché la formulazione ingenua --- ``la QFT calcola la trasformata di Fourier esponenzialmente più in fretta'' --- è fuorviante. La QFT non restituisce i coefficienti $\hat{\alpha}_k$: li lascia \emph{codificati nelle ampiezze} di uno stato quantistico, e la misura ne estrae un solo valore per esecuzione, con probabilità $|\hat{\alpha}_k|^2$. Non esiste quindi alcun modo di leggere lo spettro completo, e la QFT non sostituisce la FFT come strumento di calcolo generale. Il vantaggio è utilizzabile soltanto quando l'informazione cercata è una \emph{proprietà globale} dello spettro che una singola misura è sufficiente a rivelare --- ed è esattamente il caso della periodicità nell'algoritmo di Shor, dove i picchi della distribuzione trasformata cadono sui multipli di $2^n/r$ e una manciata di misure basta a ricostruire $r$.
+La QFT e la FFT producono risultati diversi. La QFT lascia i coefficienti $\hat{\alpha}_k$ nelle ampiezze dello stato quantistico. Ogni misura estrae un solo valore, con probabilità $|\hat{\alpha}_k|^2$; leggere l'intero spettro richiederebbe molte esecuzioni. La QFT non sostituisce quindi la FFT nel calcolo generale. È utile quando poche misure permettono di ricavare la proprietà cercata. In Shor, i picchi cadono sui multipli di $2^n/r$ e forniscono l'informazione necessaria a ricostruire il periodo $r$.
 
 Il circuito della QFT è costruito ricorsivamente tramite porte di Hadamard e porte di fase controllate $CR_k$ dove:
 \begin{equation}
@@ -268,9 +268,9 @@ Se a questo punto si misurasse il registro di lavoro e si ottenesse un valore $v
 \end{equation}
 La correlazione tra i due registri è \textbf{bidirezionale}: conoscere il valore del registro di lavoro vincola il registro di controllo a una sovrapposizione periodica di passo esattamente $r$. Questa è la ``versione inversa'' propria dell'entanglement: misurare uno dei due sottosistemi determina (o in questo caso, restringe) lo stato dell'altro.
 
-In pratica il circuito di Shor non misura esplicitamente il registro di lavoro: la sola creazione dell'entanglement è sufficiente. Applicando la QFT$^{-1}$ al registro di controllo prima della misura, si trasforma la periodicità nascosta dell'equazione~\eqref{eq:collasso_periodico} in picchi netti alle frequenze $k/r$, con $k \in \{0,\ldots,r-1\}$. La misura finale del registro di controllo restituisce allora, con alta probabilità, un valore da cui le frazioni continue estraggono $r$.
+Nel circuito di Shor non serve misurare esplicitamente il registro di lavoro: basta l'entanglement fra i due registri. La QFT$^{-1}$, applicata al controllo, trasforma la periodicit\`a dell'equazione~\eqref{eq:collasso_periodico} in picchi alle frequenze $k/r$, con $k \in \{0,\ldots,r-1\}$. La misura finale restituisce un valore da cui le frazioni continue possono ricavare $r$.
 
-In sintesi: l'entanglement tra i due registri è il meccanismo che \textit{trasferisce} la periodicità della funzione $f(x) = a^x \bmod N$ --- che esiste nel registro di lavoro --- verso il registro di controllo, dove la QFT la rende misurabile. Senza entanglement, questa trasmissione di informazione tra i due registri sarebbe impossibile, e l'intero speedup esponenziale di Shor verrebbe meno.
+L'entanglement lega quindi la periodicit\`a di $f(x) = a^x \bmod N$ al registro di controllo. La QFT la rende visibile nella distribuzione delle misure. In questa costruzione, il legame fra i registri è essenziale per ottenere l'informazione sul periodo.
 
 \clearpage
 \section{Analisi della Complessità}
@@ -293,6 +293,6 @@ a fronte della complessità sub-esponenziale dell'Equazione~\eqref{eq:gnfs_compl
 
 Le realizzazioni sperimentali di Shor su hardware reale, i miglioramenti algoritmici più recenti --- fra cui la variante di Regev del 2023 --- e la roadmap dei costruttori verso il calcolo fault-tolerant sono discussi nella Sezione~\ref{app:shor_esteso} dell'Appendice~\ref{app:teoria}, insieme al confronto con l'algoritmo di Grover. Due elementi di quel quadro vanno però anticipati qui, perché delimitano il perimetro della parte sperimentale.
 
-Il primo è che \textbf{nessuna implementazione ha finora fattorizzato un numero non banale senza semplificazioni}: le dimostrazioni note sfruttano la conoscenza preventiva del risultato per ridurre il circuito, e questo colloca il presente lavoro --- che esegue il circuito completo su simulatore rumoroso --- in un regime diverso da quello delle dimostrazioni su hardware. Il secondo è che il divario fra Shor dimostrativo e Shor crittograficamente rilevante non è di scala ma di natura: le stime di risorse per moduli a 2048 bit derivano da analisi architetturali complete, non da estrapolazioni di istanze piccole, e il Capitolo~\ref{chap:integrazione} riprende esplicitamente questo punto.
+Le dimostrazioni hardware discusse in appendice usano circuiti semplificati, spesso sfruttando la conoscenza del risultato per ridurre le operazioni. Qui si esegue invece su simulatore rumoroso il circuito previsto per l'istanza didattica, verificandone l'operatore. Questo non rende i test una dimostrazione di fattibilità crittografica. Per moduli a 2048 bit, le stime di risorse richiedono un'architettura fault-tolerant completa e non si ricavano estrapolando le piccole istanze. Il Capitolo~\ref{chap:integrazione} riprende questa distinzione.
 
 \end{onehalfspace}

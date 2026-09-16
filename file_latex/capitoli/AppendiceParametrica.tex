@@ -1,7 +1,8 @@
 \begin{onehalfspace}
 
 Questa appendice riporta la campagna parametrica schema~2 sulla
-strategia TOP-K, di cui il Capitolo~ef{chap:risultati} riporta la sintesi. Il protocollo usa $N=15$, $a=7$,
+strategia TOP-K, di cui il Capitolo~
+ef{chap:risultati} riporta la sintesi. Il protocollo usa $N=15$, $a=7$,
 $n_{\mathrm{count}}=8$, 30 repliche, budget massimo 50 e, salvo diversa
 indicazione, $1\,024$ shot. Il preset di riferimento è
 $\lambda_{1q}=10^{-3}$, $\lambda_{2q}=10^{-2}$,
@@ -213,7 +214,7 @@ livello & CX & profondità & $\bar M_1$ & $\bar M_{\mathrm{TOP4}}$ & $\rho$ \\
 \label{subsec:diagnostiche_qpe}
 
 La sola iterazione di successo non descrive quanta struttura periodica
-resti nell'istogramma. La Figura~\ref{fig:istogrammi_qpe} mostra, fra le
+resti nell'istogramma. La Figura~\ref{fig:app_istogrammi_qpe} mostra, fra le
 30 repliche nominali UC1, i casi con massa massima e minima sui quattro
 picchi teorici $\{0,64,128,192\}$.
 
@@ -222,23 +223,23 @@ picchi teorici $\{0,64,128,192\}$.
     \includegraphics[width=0.88\textwidth]{fig_istogrammi_qpe.pdf}
     \caption{Repliche UC1 con massa massima e minima sui quattro picchi
     QPE teorici.}
-    \label{fig:istogrammi_qpe}
+    \label{fig:app_istogrammi_qpe}
 \end{figure}
 
 La massa media $m$ sui picchi è convertita nell'indice descrittivo
 \begin{equation}
     f=\frac{m-4/256}{1-4/256},
-    \label{eq:miscela_coerente}
+    \label{eq:app_miscela_coerente}
 \end{equation}
 che vale zero per il fondo uniforme e uno per una distribuzione
 concentrata sui picchi. Non è una fedeltà. La Tabella
-\ref{tab:frazione_coerente} la confronta con il proxy
+\ref{tab:app_frazione_coerente} la confronta con il proxy
 $P_0=(1-15\lambda_{2q}/16)^{224}$.
 
 \begin{table}[!htbp]
 \centering
 \caption{Massa efficace sui picchi e proxy di nessun evento 2Q.}
-\label{tab:frazione_coerente}
+\label{tab:app_frazione_coerente}
 \begin{tabular}{ccc}
 \toprule
 $\lambda_{2q}$ & $f$ efficace & $P_0$ proxy \\
@@ -260,7 +261,7 @@ $3\times10^{-1}$ & 0.0015 & $7.47\times10^{-33}$ \\
     \includegraphics[width=0.76\textwidth]{frazione_coerente.pdf}
     \caption{Il proxy di nessun evento decade più rapidamente della massa
     strutturata osservata sui picchi.}
-    \label{fig:frazione_coerente}
+    \label{fig:app_frazione_coerente}
 \end{figure}
 
 % -----------------------------------------------

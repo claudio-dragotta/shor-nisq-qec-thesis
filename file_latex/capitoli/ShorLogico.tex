@@ -179,4 +179,16 @@ La direzione qualitativa che il proxy assume --- che portare l'esecuzione al liv
 
 Infine, $N=15$ resta un'istanza didattica. Le conclusioni supportate riguardano la sensibilit\`a del circuito corretto e riproducibile a canali d'errore controllati. La fattibilit\`a di Shor su scala crittografica rimane una domanda architetturale distinta, dominata dall'overhead fault-tolerant e non risolta da questa simulazione.
 
+\section{Layout e readout: risultati delle verifiche M11 e M11b}
+\label{sec:layout_risultati}
+
+Le due verifiche usano i dati di calibrazione offline di \texttt{FakeSherbrooke} e si svolgono in simulazione. In M11 sono validi 40 dei 60 layout richiesti. Gli altri 20 hanno calibrazioni fuori dal dominio del modello e vengono esclusi, senza contarli come fallimenti di Shor. La correlazione fra punteggio aggregato di calibrazione e successo sui dati di verifica è $\rho_s=-0.184$, con IC bootstrap 95\% $[-0.456;0.124]$. Il campione non mostra quindi una capacità predittiva conclusiva del punteggio. Scegliere il layout con il punteggio minimo dà $P_{\mathrm{holdout}}=0.451$; scegliere quello con il massimo successo nei dati di selezione dà $0.516$. La differenza $+0.065$ è descrittiva e non ha un intervallo dedicato (Sezione~\ref{sec:app_comp_pilota}).
+
+M11b considera nove dei dodici sottografi richiesti, con cinque strategie iniziali per ciascuno: in totale 45 osservazioni di verifica. Si misura l'errore di lettura dei qubit effettivamente misurati dopo il routing. Tenendo conto di sottografo, numero di ECR e profondità, la correlazione parziale con il successo è $\rho_s=-0.605$, con IC cluster bootstrap 95\% $[-0.826;-0.190]$. A un errore di lettura maggiore si associa quindi un successo minore. È un'associazione osservata in soli nove cluster: non dimostra che assegnare inizialmente i registri ai qubit con readout migliore causi un aumento del successo. Protocollo, esclusioni, figure e analisi completa sono nella Sezione~\ref{sec:app_comp_ruoli} dell'Appendice~\ref{app:fase2}.
+
+Questi controlli rispondono alla domanda di prevedibilità: nel campione
+una metrica aggregata non basta a ordinare il successo, mentre una
+proprietà del circuito finale conserva un'associazione misurabile.
+Nessuna delle due prove addestra un selettore ML di layout.
+
 \end{onehalfspace}

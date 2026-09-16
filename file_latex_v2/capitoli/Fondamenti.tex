@@ -1,11 +1,6 @@
 \begin{onehalfspace}
 
-Questa sezione richiama soltanto gli elementi di calcolo quantistico necessari a
-seguire Shor, il modello di rumore e i codici correttori: stato del qubit,
-rappresentazione di Bloch, porte essenziali, algebra di Pauli, misura e
-interferenza. La costruzione assiomatica completa, il prodotto tensoriale,
-l'insieme esteso delle porte e il modello di complessit\`a sono raccolti nella
-Sezione~\ref{app:fondamenti} dell'Appendice~\ref{app:teoria}.
+Per seguire Shor, il rumore e i codici correttori servono alcuni concetti di base: stato del qubit, sfera di Bloch, porte, operatori di Pauli, misura e interferenza. Questa sezione li presenta in forma essenziale. La teoria completa, il prodotto tensoriale, le altre porte e il modello di complessit\`a sono nella Sezione~\ref{app:fondamenti} dell'Appendice~\ref{app:teoria}.
 
 \section{Richiami di Calcolo Quantistico}
 \label{chap:fondamenti}
@@ -127,10 +122,6 @@ spiegano il criterio di sindrome: un errore \`e rilevato quando anticommuta con
 almeno uno stabilizzatore misurato. Nei codici \ac{CSS}, stabilizzatori di tipo
 $X$ e $Z$ diagnosticano separatamente le due componenti.
 
-La misura di $\ket{\psi}=\sum_x\alpha_x\ket{x}$ restituisce $x$ con
-probabilit\`a $|\alpha_x|^2$ ed \`e irreversibile. Prima della misura, un
-algoritmo utile orchestra l'\textbf{interferenza}: cancella le ampiezze degli
-esiti errati e rinforza quelle corrette. In Shor \`e la \ac{QFT} a rendere
-osservabile, mediante questo meccanismo, la periodicit\`a cercata.
+La misura di $\ket{\psi}=\sum_x\alpha_x\ket{x}$ restituisce $x$ con probabilit\`a $|\alpha_x|^2$ ed \`e irreversibile. Prima della misura, l'\textbf{interferenza} permette di ridurre alcune ampiezze e rafforzarne altre. In Shor, la \ac{QFT} usa questo meccanismo per far emergere i picchi legati alla periodicit\`a cercata.
 
 \end{onehalfspace}

@@ -14,26 +14,12 @@ sulla pipeline di Shor.
 \section{La Macchina Fisica: i Tre Fatti che Contano}
 \label{sec:anatomia_qpu}
 
-Per l'analisi bastano tre vincoli. Le porte sono impulsi analogici generati
-dall'elettronica esterna e quindi accumulano imprecisioni; il rapporto tra
-durata dei gate e tempi $T_1,T_2$ impone un budget finito di profondità; la
-topologia richiede routing per qubit non adiacenti e condiziona crosstalk e costo
-delle porte a due qubit. Architettura criogenica, tecnologie, lettura fisica e
-``bordo di coerenza'' sono sviluppati nella Sezione~\ref{app:anatomia}
-dell'Appendice~\ref{app:teoria}.
+Per l'analisi contano tre vincoli. Le porte sono realizzate con impulsi analogici, che possono essere imprecisi. Il rapporto fra la loro durata e i tempi $T_1,T_2$ limita la profondità utile del circuito. Infine, qubit non adiacenti richiedono operazioni aggiuntive di collegamento, dette routing. La disposizione dei qubit condiziona quindi il costo delle porte a due qubit e il crosstalk. Architettura criogenica, tecnologie, lettura fisica e ``bordo di coerenza'' sono approfonditi nella Sezione~\ref{app:anatomia} dell'Appendice~\ref{app:teoria}.
 
 \section{Le Quattro Fonti Fisiche di Rumore}
 \label{sec:fonti_fisiche}
 
-Le quattro sorgenti rilevanti sono riassunte nella
-Tabella~\ref{tab:fonti_rumore}. $T_1$ descrive il decadimento
-$\ket{1}\rightarrow\ket{0}$, mentre $T_2$ include sia tale rilassamento sia la
-perdita pura di fase; gli errori di gate derivano da controllo imperfetto,
-accoppiamenti residui e leakage; il readout scambia gli esiti con probabilità
-calibrabili; il crosstalk introduce correlazioni spaziali difficili da
-rappresentare con un modello indipendente. Formule, valori tecnologici e
-matrici di calibrazione sono conservati nella
-Sezione~\ref{app:fonti_fisiche_estese}.
+La Tabella~\ref{tab:fonti_rumore} riassume quattro sorgenti di rumore. $T_1$ descrive il decadimento $\ket{1}\rightarrow\ket{0}$; $T_2$ comprende questo rilassamento e la perdita di fase. Gli errori di gate possono derivare da impulsi imprecisi, accoppiamenti residui o leakage, cioè uscita dai livelli usati come qubit. Il readout può scambiare gli esiti della misura. Il crosstalk introduce invece errori correlati fra qubit vicini. Formule, valori tecnologici e matrici di calibrazione sono nella Sezione~\ref{app:fonti_fisiche_estese}.
 
 \begin{table}[H]
 \centering
@@ -202,14 +188,7 @@ di gate, readout e crosstalk colpiscono stadi differenti della pipeline.}
 \label{fig:errori_shor}
 \end{figure}
 
-Nella \ac{QFT}, rotazioni sempre più piccole rendono critica la precisione di
-fase; nella \ac{QPE}, il registro di controllo deve restare coerente lungo il
-cammino causale dell'esponenziazione; nell'aritmetica modulare, l'elevato numero
-di gate a due qubit accumula eventi. Sotto la sola ipotesi illustrativa di $L$
-eventi indipendenti, il proxy di nessun evento è $(1-\epsilon)^L$: non è una
-probabilità di successo algoritmico. Derivazione, esempio numerico e
-Figura~\ref{fig:psuccess_vs_n} sono trasferiti nella
-Sezione~\ref{app:shor_rumore_esteso}.
+La \ac{QFT} richiede precisione nelle rotazioni di fase, soprattutto in quelle più piccole. Nella \ac{QPE}, il controllo deve conservare la coerenza durante l'esponenziazione modulare. L'aritmetica aggiunge poi molte porte a due qubit, e con esse occasioni di errore. Se si assumono $L$ eventi indipendenti di probabilità $\epsilon$, la probabilità che non ne avvenga nessuno è $(1-\epsilon)^L$. È un indicatore semplificato, non la probabilità di successo di Shor. Derivazione, esempio e Figura~\ref{fig:psuccess_vs_n} sono nella Sezione~\ref{app:shor_rumore_esteso}.
 
 \section{Sfide Pratiche su Hardware NISQ}
 

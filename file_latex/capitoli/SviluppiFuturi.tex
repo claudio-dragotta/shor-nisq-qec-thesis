@@ -42,49 +42,27 @@ Una campagna esplorativa condotta a chiusura del lavoro ne ha misurato il margin
 risultato merita di essere riportato perché delimita l'intera famiglia di ottimizzazioni
 di questo tipo.
 
-Il punto di partenza è che nell'aritmetica di Beauregard il costo non si concentra nella
-trasformata finale del period finding, ma nelle QFT interne agli addizionatori modulari:
-per $N=21$ la compilazione conta 11\,436 porte \texttt{cp} contro 3\,406 \texttt{cx}, e la
-trasformata conclusiva vale 28 rotazioni sulle circa 47\,000 porte complessive. Troncare
-le rotazioni sotto una soglia d'angolo negli addizionatori porta le porte a due qubit da
-49\,661 a 23\,178, cioè le dimezza; troncare quella finale non sposta l'ordine di
-grandezza. Il primo dato utile è dunque \emph{dove} agire.
+\paragraph{Controllo su $N=15$ ed eliminazione degli SWAP.}
+Nel pilota su $N=15$, la configurazione $k_{\mathrm{QPE}}=1$, scelta sui
+batch di selezione, ottiene sull'holdout $0.6279$ contro $0.4792$ della
+QFT piena: differenza $+0.1487$, IC Newcombe 95\%
+$[+0.1273;+0.1699]$, con 279 ECR invece di 362. Il beneficio riguarda
+un caso favorevole e degenere, con fasi esatte in due bit, e non dimostra
+lo stesso effetto per ordini più lunghi. L'eliminazione degli SWAP di
+inversione dei bit produce invece conteggi compilati e risultati
+identici: il transpiler ne assorbe già la permutazione nel layout.
+Griglia, controllo della variante corretta e risultati completi sono
+nella Sezione~\ref{sec:app_aqft} dell'Appendice~\ref{app:fase2}.
 
-Il risparmio non è però gratuito. Sulla stessa istanza la resa ideale scende da $0{,}4667$
-a $0{,}4013$: circa sei punti e mezzo pagati in precisione algoritmica. Ne segue in linea
-di principio un incrocio, perché le due quantità scalano diversamente con la qualità
-delle porte: sotto una certa soglia di errore conviene approssimare, sopra conviene la
-trasformata intera.
+Nell'aritmetica di Beauregard, gran parte del costo viene dalle QFT interne agli addizionatori modulari. Per $N=21$ si contano 11\,436 porte \texttt{cp} e 3\,406 \texttt{cx}; la QFT finale richiede invece solo 28 rotazioni, su circa 47\,000 porte complessive. Eliminare le rotazioni più piccole negli addizionatori porta le porte a due qubit da 49\,661 a 23\,178. Agire sulla sola trasformata finale non cambia l'ordine di grandezza. Il primo controllo identifica quindi la parte del circuito su cui conviene intervenire.
 
-La misura colloca quell'incrocio e ne quantifica l'ampiezza. Su questa istanza il
-vantaggio massimo ottenibile dalla variante troncata è di circa \textbf{tre punti
-percentuali}, e si realizza soltanto con porte a due qubit circa \textbf{duecento volte
-più accurate} di quelle oggi disponibili. Nel regime accessibile alla simulazione con
-calibrazione realistica nessuna delle configurazioni esaminate supera il pavimento
-uniforme dell'istanza, e nel solo punto in cui un segnale emerge è la trasformata
-\emph{piena} a prevalere. Su $N=21$ il circuito è del resto centocinquanta volte più
-lungo del tempo di coerenza tipico, quindi il confronto non discrimina né in simulazione
-né su hardware.
+Ridurre le porte comporta una perdita di precisione. Su $N=21$, il successo ideale scende da $0{,}4667$ a $0{,}4013$, cioè di circa sei punti e mezzo. In presenza di rumore, la variante troncata può recuperare questa perdita solo se il risparmio di porte evita abbastanza errori. Il bilancio dipende quindi dalla qualità delle porte e va verificato.
 
-Questo limite appartiene però all'istanza, non al metodo. Ripetendo la misura sulla
-\textbf{stima di fase} --- che della trasformata è l'uso canonico, e che con un unitario
-di fase costa decine di porte a due qubit invece di decine di migliaia --- il quadro si
-rovescia. Su nove confronti, distribuiti su tre dimensioni di registro e su fasi bersaglio
-sia rappresentabili sia non rappresentabili in $n$ bit, la trasformata troncata batte
-quella piena in \textbf{tutti e nove}, con intervallo di confidenza interamente positivo
-in sei. Su registro da dieci qubit il vantaggio raggiunge $+0{,}126$, con intervallo di
-Newcombe al 95\% $[+0{,}098;\ +0{,}153]$.
+Un modello semplificato combina il successo ideale con quello di una distribuzione uniforme. In questo modello, il vantaggio massimo stimato della variante troncata è circa \textbf{tre punti percentuali}. Richiederebbe errori a due qubit circa \textbf{duecento volte inferiori} a quelli dei dati di calibrazione considerati. È una stima del modello, non un vantaggio misurato né un limite universale. Nei test rumorosi non emerge un beneficio statisticamente significativo del troncamento. Al rumore nominale, le configurazioni provate restano vicine al livello uniforme; nel punto in cui compare un segnale, è la QFT \emph{piena} ad avere il risultato migliore. Il circuito di $N=21$ dura circa centocinquanta volte il tempo di coerenza tipico. Questa profondità limita la possibilità di distinguere le varianti nel regime considerato.
 
-Tre regolarità rendono il risultato utilizzabile in fase di progetto. Il grado ottimo di
-troncamento \textbf{non cresce con la dimensione del registro}: resta due o tre a tutte le
-taglie esaminate, mentre la trasformata piena ne impiega $n-1$; il risparmio cresce quindi
-con $n$, da venticinque porte a due qubit su sei a settantotto su dieci. Di conseguenza
-\textbf{il vantaggio aumenta con la dimensione}, da circa due punti percentuali a sei
-qubit fino a tredici a dieci. E le fasi esattamente rappresentabili guadagnano più di
-quelle che non lo sono: è il meccanismo che \textbf{spiega la differenza fra le istanze di
-Shor}, perché per $N=15$ l'ordine $r=4$ produce fasi $0$, $1/4$, $1/2$, $3/4$, esatte in
-due bit, mentre per $N=21$ l'ordine $r=6$ dà fasi $j/6$, dove le rotazioni fini
-trasportano ancora informazione.
+Per capire se il limite dipenda dal costo di Shor, si ripete il confronto sulla sola \textbf{stima di fase}. Con un unitario di fase, il circuito richiede decine di porte a due qubit, anziché decine di migliaia. I nove confronti usano tre dimensioni di registro e fasi sia esattamente rappresentabili sia non rappresentabili in $n$ bit. La variante troncata ha un risultato migliore in \textbf{tutti e nove}; in sei, l'intervallo di confidenza è interamente positivo. Su dieci qubit il vantaggio raggiunge $+0{,}126$, con IC Newcombe 95\% $[+0{,}098;\ +0{,}153]$.
+
+Nei test sulla stima di fase emergono tre regolarità. Il grado migliore di troncamento resta \textbf{due o tre} alle taglie provate, mentre la QFT piena usa $n-1$. Il risparmio cresce così da venticinque porte a due qubit su sei qubit a settantotto su dieci. Cresce anche il vantaggio, da circa due a tredici punti percentuali. Infine, le fasi esattamente rappresentabili beneficiano più delle altre. Questo aiuta a interpretare la differenza fra le istanze di Shor: per $N=15$, l'ordine $r=4$ dà fasi $0$, $1/4$, $1/2$, $3/4$, esatte in due bit. Per $N=21$, l'ordine $r=6$ dà invece fasi $j/6$, per le quali le rotazioni fini conservano informazione utile.
 
 La prima di queste regolarità --- quella che a prima vista sorprende di più, perché un
 registro più lungo sembrerebbe richiedere più rotazioni fini --- ha una spiegazione
@@ -99,9 +77,10 @@ troncata~\cite{akoramurthy2026}:
 \end{equation}
 %
 dove $m$ è la dimensione del registro e $d$ il grado di troncamento. Il numeratore cresce
-linearmente in $m$, il denominatore esponenzialmente in $d$: un $d$ piccolo e
-\emph{costante} basta quindi a schiacciare il termine d'errore anche al crescere del
-registro, ed è esattamente il comportamento osservato qui per via empirica. Gli autori
+linearmente in $m$, il denominatore esponenzialmente in $d$: per mantenere
+fisso il limite al crescere del registro occorre far crescere $d$ circa
+logaritmicamente. Il grado piccolo osservato alle tre taglie provate
+non dimostra dunque che un grado costante basti a qualunque dimensione. Gli autori
 riportano inoltre una riduzione del $31{,}3$--$43{,}7\%$ nel conteggio di porte e un
 passaggio di complessità da $O(m^2)$ a $O(m \log m)$ per $d = O(\log m)$. Il loro impianto
 sperimentale si ferma però alla stima di fase e non affronta la fattorizzazione: la
@@ -110,56 +89,28 @@ percentuali, e solo con porte a due qubit molto più accurate delle attuali --- 
 propria di questo lavoro, così come la selezione del grado su dati disgiunti da quelli di
 verifica.
 
-Ne segue che il grado di troncamento conveniente è \textbf{determinabile in anticipo}, dai
-soli conteggi di porte del circuito compilato e dai dati di calibrazione del dispositivo,
-senza eseguire l'algoritmo. È questa la forma in cui il contributo si generalizza: non una
-proprietà della fattorizzazione, ma una regola di progetto per la trasformata di Fourier
-quantistica e quindi per la famiglia di algoritmi che la contiene.
+Conteggi di porte e calibrazione permettono di proporre gradi candidati
+prima dell'esecuzione. In questa campagna, però, il grado viene scelto
+empiricamente sui batch di selezione e verificato su holdout disgiunti:
+non è stata validata una scelta ottima dai soli conteggi. Il contributo
+è quindi un criterio di progetto e un protocollo di verifica per la
+trasformata, da controllare quando cambia l'algoritmo o il dispositivo.
 
-Tre direzioni indipendenti convergono qui, e il passo successivo più promettente è
-\textbf{comporle}. La prima è quella misurata in questo lavoro: approssimare la
-trasformata per ridurre le \emph{porte}, e con esse la profondità rispetto al tempo di
-coerenza. La seconda approssima l'aritmetica modulare per ridurre i \emph{qubit}
-logici~\cite{chevignard2025}, ed è alla base della discesa nelle stime di risorsa
-degli ultimi anni~\cite{gidney2025}, di cui la Tabella~\ref{tab:traiettoria_risorse}
-riporta la traiettoria e i relativi caveat.
-La terza riorganizza la stima di fase in blocchi indipendenti, riducendo il \emph{registro}
-di conteggio a pochi qubit~\cite{shukla2026}.
+Un'estensione consiste nel combinare tre riduzioni. La prima, misurata qui, approssima la QFT per usare meno \emph{porte}. La seconda approssima l'aritmetica modulare per usare meno \emph{qubit di lavoro}~\cite{chevignard2025} e contribuisce alle recenti stime di risorse~\cite{gidney2025}. La Tabella~\ref{tab:traiettoria_risorse} ne riporta l'evoluzione e le assunzioni. La terza divide la stima di fase in blocchi indipendenti per ridurre i \emph{qubit di conteggio}~\cite{shukla2026}.
 
-Agiscono su tre grandezze distinte --- porte, qubit di lavoro, qubit di conteggio --- ma
-sarebbe un errore darle per semplicemente additive. La riduzione dei qubit di lavoro si
-ottiene infatti \emph{spendendo} porte: per RSA-2048 il conteggio Toffoli complessivo
-passa da $2^{31{,}3}$ a $2^{40{,}9}$ a fronte del calo da 6144 a 1730 qubit
-logici~\cite{chevignard2025}, e un lavoro successivo ne recupera buona parte con
-ottimizzazioni aritmetiche~\cite{gidney2025}. Comporre quella leva con un troncamento
-della trasformata significa quindi agire due volte, in versi opposti, sulla stessa
-grandezza.
+I tre risparmi non si sommano automaticamente. Ridurre i qubit di lavoro può richiedere più porte: per RSA-2048, una proposta passa da 6144 a 1730 qubit logici, ma porta i Toffoli da $2^{31{,}3}$ a $2^{40{,}9}$~\cite{chevignard2025}. Ottimizzazioni aritmetiche successive recuperano parte di questo costo~\cite{gidney2025}. Combinare la riduzione dei qubit con il troncamento della QFT richiede quindi di misurare il bilancio finale delle porte.
 
-La terza direzione è invece dichiarata complementare dagli autori stessi, che la
-presentano come rivolta allo strato di stima di fase anziché a quello
-aritmetico~\cite{shukla2026}: il registro di conteggio scende da $2n+1$ a tre o quattro
-qubit lasciando invariato il registro di lavoro. Il meccanismo è descritto per esteso
-nella loro proposta per la stima di fase, dove blocchi indipendenti di più qubit di
-controllo stimano più bit di fase entro una finestra, con una risoluzione esplicita
-dell'ambiguità dal bit meno significativo verso il più significativo~\cite{shuklaqpe2026}. Determinare se i tre guadagni si sommino
-davvero, e a quale prezzo in profondità, richiede un disegno che li vari congiuntamente ed
-è la domanda che questo lavoro lascia aperta con maggiore fiducia, perché le tre riduzioni
-sono ciascuna già documentata e quantificata.
+La riduzione del registro di conteggio agisce invece sulla stima di fase e lascia invariato il registro di lavoro~\cite{shukla2026}. La proposta passa da $2n+1$ a tre o quattro qubit di conteggio. Blocchi indipendenti stimano più bit di fase, poi un procedimento dal bit meno significativo al più significativo risolve le ambiguità~\cite{shuklaqpe2026}. Per verificare se questa riduzione sia compatibile con le altre, occorre un esperimento che le combini e misuri anche la profondità. Le singole proposte sono quantificate; il loro beneficio congiunto resta da dimostrare.
 
-Va infine osservato che la trasformata di Fourier quantistica non è una particolarità
-della fattorizzazione. Compare nella stima di fase, nell'amplitude estimation e nel
-conteggio quantistico, nella risoluzione di sistemi lineari, nel problema del sottogruppo
-nascosto di cui Shor è un caso particolare, e nelle simulazioni che alternano dominio
-delle posizioni e dei momenti. In tutti questi casi il costo si concentra nelle stesse
-rotazioni controllate di piccolo angolo, e la regola di progetto ricavata qui --- scegliere
-il grado di troncamento dai conteggi di porte e dai dati di calibrazione, prima di
-eseguire --- si applicherebbe senza modifiche sostanziali. È il motivo per cui il
-contributo va letto come metodologico e non come risultato sulla fattorizzazione.
+La QFT compare anche nella stima di fase, nell'amplitude estimation, nel conteggio quantistico, nella risoluzione di sistemi lineari e nel problema del sottogruppo nascosto, di cui Shor è un caso particolare. Si usa inoltre nelle simulazioni che alternano rappresentazioni in posizione e in momento. Questi algoritmi impiegano le stesse rotazioni controllate di piccolo angolo. Il protocollo seguito qui può suggerire verifiche analoghe: proporre gradi di troncamento dai conteggi, sceglierli su dati di selezione e valutarli su dati indipendenti. Queste verifiche restano da eseguire. Il contributo è quindi un metodo di valutazione, con risultati limitati ai circuiti provati.
 
-I limiti della verifica vanno però dichiarati. Le misure usano un layout per ciascuna
-dimensione, una sola snapshot di calibrazione e tre fasi bersaglio; il confronto è
-appaiato, sugli stessi batch e con gli stessi semi, quindi il contrasto interno è pulito,
-ma la generalizzazione ad altri dispositivi e ad altre topologie non è dimostrata.
+Il pilota incompleto su $N=21$, i tre livelli di sensibilità al rumore,
+la distinzione fra configurazione scelta e variante troncata, e i nove
+contrasti QPE sono documentati nelle Tabelle~\ref{tab:aqft_n21_sensibilita}
+e~\ref{tab:aqft_qpe_completa}. Sono riportati anche gli esiti negativi
+e i contrasti i cui intervalli includono lo zero.
+
+La verifica usa un layout per dimensione, una sola calibrazione e tre fasi bersaglio. Le varianti condividono batch e semi, quindi il confronto interno usa gli stessi campioni. Il risultato non dimostra però che il beneficio si mantenga su altri dispositivi o topologie.
 
 Il precedente più vicino è la compilazione \emph{noise-adaptive}, che ordina o vincola il
 collocamento del circuito usando i dati di calibrazione~\cite{murali2019, tannu2019}. La

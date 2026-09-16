@@ -13,14 +13,7 @@ beneficio rispetto alla stessa ricerca priva di filtro.
 \label{sec:setup_m1}
 \label{sec:setup_m2}
 
-Il confronto rumoroso usa un'unica istanza controllata, $N=15$, $a=7$,
-e due preset uniformi illustrativi. Le tre strategie ricevono, replica per
-replica, gli stessi istogrammi: il disegno isola così la regola di
-post-processing senza confonderla con una diversa realizzazione Monte
-Carlo. Il modello combina depolarizzazione, rilassamento/dephasing e
-readout, ma non riproduce la calibrazione o la topologia di una QPU
-specifica. Ogni confronto principale comprende 30 repliche da $1\,024$
-shot per iterazione e usa Wilcoxon--Pratt con correzione di Holm.
+Il confronto usa $N=15$, $a=7$, con due preset di rumore uniformi e illustrativi. In ogni replica, le tre strategie ricevono gli stessi istogrammi. Le differenze dipendono quindi dalla regola di post-processing e non da campioni casuali diversi. Il modello include depolarizzazione, rilassamento, perdita di fase ed errori di lettura; non riproduce la calibrazione o la topologia di una QPU specifica. Ogni confronto principale comprende 30 repliche da $1\,024$ shot per iterazione. Si usa il test Wilcoxon--Pratt con correzione di Holm per i confronti multipli.
 
 Il contratto completo --- circuito e versioni, seed, manifest, gestione
 dei pareggi e della censura, insieme al resoconto della campagna storica
@@ -32,14 +25,7 @@ Sezione~\ref{app:fase1_contratto} dell'Appendice~\ref{app:fase1}.
 \label{sec:circuito_m1}
 \label{sec:scalabilita}
 
-La verifica di scala resta distinta dalla campagna rumorosa. Per $N=21$,
-$a=2$, la truth table, la pulizia delle ancille e la legge QPE ideale
-confermano l'aritmetica; la compilazione globale raggiunge però 21\,036 CX
-e profondità 23\,081, rendendo la simulazione rumorosa completa estranea
-al confronto principale. L'ulteriore controllo ideale su $N=35$, le
-distanze di variazione totale, il proxy di nessun evento e la tabella del
-perimetro sono riportati nella Sezione~\ref{app:fase1_contratto}. Nel
-seguito, i risultati rumorosi riguardano esclusivamente $N=15$.
+Le istanze maggiori servono prima di tutto a verificare la correttezza ideale. Per $N=21$, $a=2$, si controllano la tabella dell'operatore, l'azzeramento delle ancille e la distribuzione QPE. La compilazione raggiunge però 21\,036 CX e profondità 23\,081: questa istanza resta fuori dalla campagna rumorosa principale. Anche $N=35$, $a=6$, $r=2$ supera i controlli ideali. La distanza di variazione totale dalla distribuzione QPE teorica è $1.38\times10^{-9}$ per $N=21$ e $2.50\times10^{-13}$ per $N=35$. In entrambi i casi le ancille tornano a zero. Il proxy di nessun evento e la tabella del perimetro sono nella Sezione~\ref{app:fase1_contratto}. I confronti M1, TOP-4 e M2 che seguono riguardano $N=15$.
 
 % -----------------------------------------------
 \section{La Baseline: Metodo 1 (TOP-1)}
@@ -54,7 +40,7 @@ sempre almeno un candidato utile. L'instabilità di TOP-1 deriva quindi da
 quale dei quattro picchi teorici risulta dominante, non dalla completa
 scomparsa del segnale. Gli istogrammi estremi, selezionati con criterio
 prefissato e seed registrati, sono mostrati nella
-Figura~\ref{fig:istogrammi_qpe} dell'Appendice~\ref{app:fase1}.
+Figura~\ref{fig:istogrammi_qpe} del presente capitolo.
 
 % -----------------------------------------------
 \section{L'Ipotesi ML e il Verdetto dell'Ablazione}
@@ -62,13 +48,19 @@ Figura~\ref{fig:istogrammi_qpe} dell'Appendice~\ref{app:fase1}.
 \label{sec:uc1_m2}
 \label{sec:uc2_m2}
 
-I classificatori TOP-1 sono stati rigenerati su $2\,000$ istogrammi per
-scenario; TOP-16 ha prodotto $2\,000/2\,000$ positivi in entrambi gli
-scenari e viene registrato come audit a classe unica. Le metriche e il
-protocollo train/validation/test sono riportati nella
-Sezione~\ref{sec:valutazione_clf}. La Tabella~\ref{tab:riepilogo_rho}
-riporta invece la misura operativa, calcolata sui medesimi istogrammi per
-tutte le strategie.
+I classificatori TOP-1 sono stati rigenerati su $2\,000$ istogrammi per scenario. Con TOP-16, tutti i $2\,000/2\,000$ campioni di entrambi gli scenari sono positivi: il controllo produce quindi una sola classe. Fra Random Forest, SVM e MLP viene scelta la SVM. Sul test indipendente di 400 istogrammi per scenario ottiene F1 $0.919/0.923$, accuratezza $0.895/0.888$ e AUC $0.965/0.958$ (UC1/UC2). La SVM predice bene se TOP-1 avrà successo. Per stabilire se sia utile, occorre però confrontare il costo di M2 con quello della ricerca senza filtro.
+
+L'audit combinatorio spiega inoltre perché TOP-16 sia poco discriminante:
+63 dei 256 esiti sono riconosciuti come utili dalla verifica classica
+adottata. Se si scelgono candidati senza informazione, la probabilità di
+includerne almeno uno è già circa il $99.07\%$ con 16 candidati e il
+$67.94\%$ con quattro. Il successo TOP-K va quindi interpretato insieme
+alla massa sui picchi, non come misura della fedeltà quantistica.
+Metriche complete, protocollo train/validation/test e derivazione del
+controllo combinatorio sono nelle Sezioni~\ref{sec:valutazione_clf}
+e~\ref{subsec:soglia_classe_negativa}. La
+Tabella~\ref{tab:riepilogo_rho} riporta invece la misura operativa,
+calcolata sui medesimi istogrammi per tutte le strategie.
 
 \begin{table}[H]
 \centering
@@ -99,22 +91,7 @@ $p=0.0033$ (UC1) e $p=0.0096$ (UC2). Il filtro scarta dunque istogrammi
 che la ricerca TOP-4 avrebbe risolto; il guadagno appartiene alla ricerca
 multi-candidato, non al classificatore.
 
-Il confronto con la letteratura recente chiarisce perché l'ablazione sia
-il risultato portante e non un dettaglio di metodo. Yang e Markidis
-addestrano alberi e foreste casuali su $680$ distribuzioni raccolte da
-sistemi \ac{IBM} reali per prevedere se il post-processing a frazioni
-continue recupererà l'ordine vero, usando quattro caratteristiche della
-distribuzione, fra cui la frazione di massa verificata dominante, che
-risulta la più informativa~\cite{yang2026}. Il loro impianto ha un
-vantaggio che questo lavoro non possiede --- i dati provengono da
-hardware, non da un modello di rumore --- ma pone una domanda diversa:
-quanto valga il classificatore \emph{rispetto a una regola semplice}
-disponibile sugli stessi istogrammi resta fuori dal confronto. È
-precisamente la quantità che l'ablazione qui misura, e il suo esito è
-negativo. Un risultato negativo di questo tipo non contraddice quei
-lavori: ne delimita la portata, indicando che il valore incrementale del
-filtro appreso va misurato contro la ricerca multi-candidato prima di
-essere attribuito all'apprendimento.
+Il confronto con la letteratura chiarisce il ruolo dell'ablazione. Yang e Markidis addestrano alberi e foreste casuali su $680$ distribuzioni raccolte da sistemi \ac{IBM} reali. Il modello predice se le frazioni continue recupereranno l'ordine vero. Usa quattro caratteristiche dell'istogramma, fra cui la frazione di massa verificata dominante, che risulta la più informativa~\cite{yang2026}. Quei dati provengono da hardware, mentre qui si usa un modello di rumore. Resta però una domanda diversa: il classificatore migliora una regola semplice applicata agli stessi istogrammi? L'ablazione di questa tesi misura proprio questo contributo e non trova un beneficio. Il risultato non smentisce la capacità di classificare gli output. Mostra che buone predizioni non bastano a dimostrare un vantaggio rispetto alla ricerca di più candidati.
 
 \begin{figure}[H]
     \centering
@@ -157,6 +134,8 @@ ottimizzazione & livelli 0--3 & $\bar M=1.00$ \\
 \bottomrule
 \end{tabularx}
 \end{table}
+
+Variando $K$, si raggiunge già una sola iterazione con $K=2$. I valori $K=3,4,6,8$ non migliorano questo risultato. TOP-4 funziona bene ed è coerente con i quattro picchi dell'istanza, ma non è un ottimo universale. Nei test non è nemmeno il numero minimo di candidati sufficiente a raggiungere una sola iterazione (Tabella~\ref{tab:sweep_k}).
 
 Il livello di ottimizzazione modifica il circuito: livello 0 produce 242
 CX e profondità 427, livello 1 produce 236/421, mentre i livelli 2 e 3
