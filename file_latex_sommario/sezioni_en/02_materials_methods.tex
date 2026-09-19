@@ -1,0 +1,87 @@
+\section{Materials and methods}
+
+\subsection{Implementation, validation, and definition of
+success}\label{sec:implementation-en}
+
+For a base \(a\) coprime to the number \(N\), the sequence \(a^{x} \bmod N\) is
+periodic; its order \(r\) is the smallest positive integer satisfying
+\(a^{r} \equiv 1 \pmod{N}\). The quantum part estimates it by phase estimation and
+inverse QFT; the classical part derives and verifies the factors through rational
+approximation and greatest common divisors.
+
+The main instance is \(N = 15\), \(a = 7\), with eight control and four work qubits. Its
+order is \(r = 4\), and the ideal control-register outcomes are 0, 64, 128, and 192. Each
+measured execution, or \emph{shot}, returns one outcome; multiple shots form the
+post-processing histogram. Success means recovering non-trivial factors, not reconstructing
+the exact order. Three ideal peaks yield the factors, for 75\% overall probability.
+Classical verification is permissive, however: it accepts 63 of 256 values, so uniform
+outcomes still succeed with probability \(63/256 \simeq 24.61\%\). This instance- and
+post-processing-specific reference is not quantum-state fidelity; it shows that correct
+factorizations can survive after the distribution loses much of its structure.
+
+Circuit correctness is validated independently of factorization success by checking
+modular operators, restored ancillas, and theoretical distributions. The ideally
+validated instances \(N = 21\), \(a = 2\) and \(N = 35\), \(a = 6\) use Beauregard's
+reversible arithmetic \cite{en-beauregard2002}; only \(N = 21\) enters the exploratory
+noisy AQFT tests. Qiskit/Aer, scikit-learn, Stim, and PyMatching are used
+\cite{en-qiskit2023,en-scikit_learn,en-stim2021,en-pymatching2021}, recording versions,
+parameters, random seeds, and circuit identifiers.
+
+\subsection{Post-processing, classification, and mitigation}
+
+Three strategies share the same factor extractor, tie-breaking rule, and 1,024-shot
+histograms, one per quantum iteration. TOP-1 (Method 1) checks only the most frequent
+outcome; TOP-4 checks up to four frequency-ranked candidates; Method 2 applies TOP-4 only
+when a classifier predicts success for the dominant candidate. Comparing Method 2 with
+unfiltered TOP-4 ablates the classifier and separates its contribution from that of
+testing more candidates.
+
+Two illustrative scenarios, reference UC1 and stress case UC2, include depolarization,
+thermal relaxation, and readout errors. For each, 2,000 histograms with parameters varied
+within \(\pm50\%\) of nominal are split 60\%/20\%/20\% into training, selection, and test
+sets. Random forests, support vector machines (SVMs), and multilayer perceptrons are
+compared on F1; the selected model is tested on 400 independent histograms per scenario.
+The primary metric is iterations to obtain the factors, not classifier accuracy or
+runtime. Thirty paired replicates per scenario run for at most 50 iterations; failures
+receive the conventional value 51. The analysis uses Wilcoxon--Pratt tests with Holm
+correction. Two- and three-level zero-noise extrapolation (ZNE) scales only depolarizing
+parameters in simulation.
+
+\subsection{Quantum error correction and syndrome decoding}
+
+Quantum error correction distributes one logical qubit across several physical qubits.
+Parity checks, called syndromes, reveal errors without reading the logical information;
+a decoder selects the correction. Repetition, Steane \([[7,1,3]]\), and surface codes
+\cite{en-steane1996,en-fowler2012} are studied in memory circuits through the logical
+failure probability \(p_{L}\), the probability that information remains wrong after
+decoding.
+
+The rotated surface code uses distances \(d = 3,5,7,9\) (the number of errors the code can
+tolerate), \(X\)- and \(Z\)-basis memories, and \(d\) syndrome rounds, with noise on
+gates, preparation, and measurement. On the same detection events, reference
+minimum-weight perfect matching (MWPM) is compared with a stand-alone neural network and
+a hybrid decoder. The hybrid learns when to flip a likely-wrong matching decision, with
+an intervention threshold chosen in validation and fixed for testing. Crosstalk between
+adjacent qubits is added to nominal noise; model calibration, network input size, and the
+analytical BP+OSD decoder (belief propagation and ordered statistics decoding) are also
+examined \cite{en-roffe2020}.
+
+\subsection{Sensitivity of Shor's algorithm to gate errors}
+
+A separate experiment applies independent Pauli errors after compiled gates, excluding
+virtual RZ rotations, using 20 replicates of 4,096 shots per value. The total non-identity
+error probability \(p_{g}\) is a per-gate proxy; without complete fault-tolerant
+compilation, it cannot be converted into the memory circuits' logical failure
+probability \(p_{L}\).
+
+\subsection{Optimization through the approximate QFT}
+
+The AQFT removes small-angle controlled rotations, trading precision for fewer gates,
+lower depth, and fewer opportunities for noise. Truncation of Shor's final inverse QFT
+for \(N = 15\) is distinguished from truncation of transforms inside the modular
+arithmetic for \(N = 21\). Separate phase-estimation benchmarks use six-, eight-, and
+ten-qubit registers with three phases per size. The noise model uses gate infidelities
+and readout errors from an offline FakeSherbrooke calibration, without additional
+\(T_{1}/T_{2}\) contributions and with common layouts and random seeds. The truncation
+degree is chosen on selection samples and assessed on disjoint test samples (in the
+\(N = 15\) pilot, 8,192 shots per configuration, split equally).

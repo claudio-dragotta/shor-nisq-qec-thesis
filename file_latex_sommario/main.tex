@@ -10,8 +10,9 @@
 %    - sezioni Introduzione / Materiali e Metodi / Risultati /
 %      Discussione e Conclusioni / Bibliografia;
 %  Contenuto derivato da "abstract 1.docx" (19/09/2026), rivisto e
-%  compresso per le 5 pagine mantenendone tutti i concetti e i numeri;
-%  riferimenti numerati in ordine di prima citazione.
+%  compresso in due versioni, italiana e inglese, di 5 pagine ciascuna,
+%  mantenendone tutti i concetti e i numeri; riferimenti numerati in
+%  ordine di prima citazione in ciascuna versione.
 %
 %  Compilazione:  pdflatex main.tex  (due passate per i riferimenti)
 % =====================================================================
@@ -91,6 +92,10 @@
 \newcommand{\relatore}{Prof. Paolo Soda}
 \newcommand{\correlatore}{Ing. Floriano Caprio}
 \newcommand{\sessione}{Ottobre --- A.A. 2025/2026}
+\newcommand{\intestazioneIT}{Sommario del Lavoro di Tesi, Laurea Magistrale in Ingegneria dei
+  Sistemi Intelligenti, Universit\`a Campus Bio-Medico di Roma}
+\newcommand{\intestazioneEN}{Thesis Summary, Master's Degree in Intelligent Systems Engineering,
+  Universit\`a Campus Bio-Medico di Roma}
 
 % --- blocco identificativo, riutilizzabile per le due versioni ------
 \newcommand{\bloccoTitolo}[6]{%
@@ -123,5 +128,24 @@
 \input{sezioni/03_risultati}
 \input{sezioni/04_discussione}
 \input{sezioni/05_bibliografia}
+
+% =====================================================================
+%  ENGLISH VERSION -- faithful translation of the Italian summary above
+% =====================================================================
+\clearpage
+\selectlanguage{english}
+\setcounter{section}{0}
+% Mantiene la numerazione 1--5 anche in inglese, con destinazioni PDF univoche.
+\renewcommand{\theHsection}{en.\arabic{section}}
+\renewcommand{\theHsubsection}{en.\arabic{section}.\arabic{subsection}}
+\fancyhead[R]{\parbox[c]{11.0cm}{\raggedleft\footnotesize\itshape
+  \intestazioneEN}}
+\bloccoTitolo{\titoloIT}{}{Candidate}{Supervisor}{Co-supervisor}{Graduation Session}
+
+\input{sezioni_en/01_introduction}
+\input{sezioni_en/02_materials_methods}
+\input{sezioni_en/03_results}
+\input{sezioni_en/04_discussion}
+\input{sezioni_en/05_references}
 
 \end{document}
