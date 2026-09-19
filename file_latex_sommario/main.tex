@@ -2,16 +2,18 @@
 %  Sommario del Lavoro di Tesi -- Laurea Magistrale in Ingegneria dei
 %  Sistemi Intelligenti, Universita' Campus Bio-Medico di Roma.
 %
-%  Conforme al template ufficiale
+%  Impostazione grafica del template ufficiale
 %  "Extra/template_ABSTRACT LM ISI_rev1 (003).docx":
 %    - Times New Roman 12 pt, interlinea 1,15;
 %    - margini 3 cm sopra/sotto/destro, 3,5 cm sinistro;
-%    - sommario italiano entro 5 pagine;
+%    - il template prevede un sommario italiano entro 5 pagine;
 %    - sezioni Introduzione / Materiali e Metodi / Risultati /
 %      Discussione e Conclusioni / Bibliografia;
-%    - riferimenti numerati nell'ordine di apparizione nel testo.
+%  Contenuto derivato da "abstract 1.docx" (19/09/2026), rivisto e
+%  compresso per le 5 pagine mantenendone tutti i concetti e i numeri;
+%  riferimenti numerati in ordine di prima citazione.
 %
-%  Compilazione:  latexmk -pdf main.tex      (backend Biber)
+%  Compilazione:  pdflatex main.tex  (due passate per i riferimenti)
 % =====================================================================
 \documentclass[a4paper,12pt]{article}
 
@@ -33,6 +35,8 @@
 \usepackage{fancyhdr}
 \usepackage{enumitem}
 \usepackage{multicol}
+\usepackage{cite}
+\usepackage{etoolbox}
 \usepackage[autostyle=true]{csquotes}
 \usepackage[expansion=alltext,stretch=25,shrink=25,tracking=true]{microtype}
 \usepackage[hidelinks]{hyperref}
@@ -40,14 +44,9 @@
 \Urlmuskip=0mu plus 1mu\relax
 \def\UrlBreaks{\do\/\do\-\do\.\do\_\do\?\do\=\do\&}
 
-\usepackage[backend=biber,citestyle=numeric,bibstyle=numeric,sorting=none,
-            maxbibnames=1,minbibnames=1,giveninits=true,
-            doi=false,isbn=false,url=false,eprint=false]{biblatex}
-\addbibresource{Bibliografia.bib}
-% Riferimenti compatti: il limite di 5 pagine del template include la bibliografia.
-% Si omette il titolo dove la voce resta identificabile da autore + rivista/atti/DOI/arXiv + anno;
-% i libri lo conservano, perche' e' il loro unico identificativo.
-\AtEveryBibitem{\ifentrytype{book}{}{\clearfield{title}}}
+% Bibliografia trascritta integralmente dal Word, con sezione numerata.
+\patchcmd{\thebibliography}{\section*{\refname}}{\section{\refname}}{}%
+  {\PackageError{sommario}{Impossibile numerare la bibliografia}{}}
 
 % --- interlinea 1,15 come da template -------------------------------
 \setstretch{1.15}
@@ -68,14 +67,14 @@
 \setlength{\abovedisplayshortskip}{2pt plus 1pt}
 \setlength{\belowdisplayshortskip}{3pt plus 1pt}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{4pt plus 0.5pt minus 0.5pt}
+\setlength{\parskip}{3pt plus 0.5pt minus 0.5pt}
 \setlist{nosep,leftmargin=*,topsep=2pt,itemsep=1pt}
 \makeatletter
 \renewcommand\section{\@startsection{section}{1}{\z@}%
-  {-2.0ex \@plus -.8ex \@minus -.2ex}{0.8ex \@plus .2ex}%
+  {-1.4ex \@plus -.4ex \@minus -.2ex}{0.4ex \@plus .1ex}%
   {\normalfont\large\bfseries}}
 \renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
-  {-1.6ex \@plus -.6ex \@minus -.2ex}{0.4ex \@plus .2ex}%
+  {-1.0ex \@plus -.3ex \@minus -.2ex}{0.1ex \@plus .1ex}%
   {\normalfont\normalsize\bfseries}}
 \makeatother
 
@@ -115,7 +114,7 @@
 \begin{document}
 
 % =====================================================================
-%  SOMMARIO IN ITALIANO (entro 5 pagine)
+%  SOMMARIO IN ITALIANO -- testo integrale del documento Word
 % =====================================================================
 \bloccoTitolo{\titoloIT}{}{Laureando}{Relatore}{Correlatore}{Sessione di Laurea}
 

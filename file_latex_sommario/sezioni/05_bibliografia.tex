@@ -1,13 +1,48 @@
-% L'interlinea 1,15 del template vale per il corpo del testo; i riferimenti,
-% gia' in corpo minore, tornano a interlinea singola per rientrare nelle 5 pagine.
-\renewcommand*{\bibfont}{\scriptsize\setstretch{1}}
-\setlength{\bibitemsep}{0pt}
-\setlength{\bibhang}{1em}
-\section{Bibliografia}
-\setlength{\premulticols}{0pt}
-\setlength{\multicolsep}{0pt}
+% Testo dei riferimenti da "abstract 1.docx"; numerazione in ordine di prima citazione.
+\par
+% Il titolo va stampato fuori dalle due colonne, altrimenti viene sillabato;
+% dentro il gruppo \section e' neutralizzata per non ripeterlo.
+\section{Riferimenti bibliografici essenziali}
+\begingroup
+\scriptsize
+\setstretch{1}
 \setlength{\columnsep}{10pt}
 \begin{multicols}{2}
 \raggedcolumns
-\printbibliography[heading=none]
+\raggedright % in colonna stretta la giustificazione apre spazi enormi fra le parole
+\renewcommand{\section}[1]{}%
+\begin{thebibliography}{10}
+\setlength{\itemsep}{0pt}
+\bibitem{shor1994} P. W. Shor, ``Algorithms for Quantum Computation: Discrete Logarithms and
+Factoring'', \emph{Proc. 35th Annual Symposium on Foundations of Computer Science (FOCS)},
+pp.~124--134, 1994.
+
+\bibitem{preskill2018} J. Preskill, ``Quantum Computing in the NISQ Era and Beyond'', \emph{Quantum},
+2, 79, 2018.
+
+\bibitem{beauregard2002} S. Beauregard, ``Circuit for Shor's Algorithm Using \(2n+3\) Qubits'',
+\emph{Quantum Information and Computation}, 3(2), pp.~175--185, 2003.
+
+\bibitem{qiskit2023} Qiskit contributors, \emph{Qiskit: An Open-source Framework for Quantum
+Computing}, Zenodo, doi:10.5281/zenodo.2573505, 2023.
+
+\bibitem{scikit_learn} F. Pedregosa et al., ``Scikit-learn: Machine Learning in Python'', \emph{Journal
+of Machine Learning Research}, 12, pp.~2825--2830, 2011.
+
+\bibitem{stim2021} C. Gidney, ``Stim: A Fast Stabilizer Circuit Simulator'', \emph{Quantum}, 5,
+497, 2021.
+
+\bibitem{pymatching2021} O. Higgott, ``PyMatching: A Python package for decoding quantum codes with
+minimum-weight perfect matching'', arXiv:2105.13082, 2021.
+
+\bibitem{steane1996} A. M. Steane, ``Error Correcting Codes in Quantum Theory'', \emph{Physical
+Review Letters}, 77(5), pp.~793--797, 1996.
+
+\bibitem{fowler2012} A. G. Fowler et al., ``Surface Codes: Towards Practical Large-Scale Quantum
+Computation'', \emph{Physical Review A}, 86(3), 032324, 2012.
+
+\bibitem{roffe2020} J. Roffe et al., ``Decoding Across the Quantum Low-Density Parity-Check Code
+Landscape'', \emph{Physical Review Research}, 2(4), 043423, 2020.
+\end{thebibliography}
 \end{multicols}
+\endgroup

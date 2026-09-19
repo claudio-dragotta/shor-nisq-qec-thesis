@@ -1,27 +1,25 @@
-\section{Introduzione}
+\section{Introduzione e obiettivi}
 
-L'algoritmo di Shor~\cite{shor1994} permette a un computer quantistico di
-scomporre un numero nei suoi fattori, come $15=3\times5$.
-In teoria, per numeri molto grandi richiede meno risorse di calcolo del
-miglior metodo classico noto~\cite{lenstra1993gnfs}.
+L'algoritmo di Shor consente di fattorizzare numeri interi in tempo polinomiale rispetto
+alla lunghezza binaria dell'input, con implicazioni per la sicurezza dei sistemi
+crittografici fondati sulla difficoltà della fattorizzazione \cite{shor1994}. La
+realizzazione di questo vantaggio teorico richiede tuttavia un controllo degli errori
+compatibile con la profondità dei circuiti. Errori nelle operazioni, decoerenza e
+lettura imperfetta possono alterare la distribuzione delle misure e compromettere
+l'informazione necessaria alla ricerca dell'ordine moltiplicativo \cite{preskill2018}.
 
-Questa possibilità mette a rischio sistemi crittografici come RSA,
-la cui sicurezza si basa sulla difficoltà di trovare quei fattori~\cite{rsa1978}.
-Nei dispositivi quantistici attuali, però, gli errori fisici possono
-compromettere il calcolo: qui sono indicati come \emph{rumore}~\cite{preskill2018}.
+La tesi sviluppa uno studio simulativo volto a stabilire quali interventi migliorino
+effettivamente l'affidabilità della computazione e rispetto a quali riferimenti. Il
+percorso comprende due fasi principali: la valutazione del post-processing classico
+degli esiti di Shor, con uno studio di ablazione del contributo del machine learning, e
+la caratterizzazione di codici di correzione quantistica e decoder delle sindromi.
+Completano il lavoro un'analisi separata della sensibilità di Shor agli errori di porta
+e una campagna sull'ottimizzazione circuitale mediante trasformata di Fourier
+quantistica approssimata, o AQFT.
 
-Le dimostrazioni di Shor restano limitate a piccoli numeri~\cite{skosana2021}.
-Questa tesi usa simulazioni per studiare come scegliere meglio i risultati
-delle misure, correggere gli errori e semplificare il circuito.
-Un modello di apprendimento automatico valuta i risultati delle misure
-per scegliere quali analizzare. Il confronto senza il modello,
-chiamato \emph{ablazione}, mostra se questo offre un vantaggio.
-Esperimenti separati studiano come proteggere l'informazione quantistica
-dagli errori. Una rete neurale cerca di riconoscerli e scegliere la correzione.
-Si semplifica anche la trasformata di Fourier quantistica (QFT), che
-aiuta a ricavare i fattori. Eliminare alcune operazioni riduce il
-circuito, ma può rendere il risultato meno preciso.
-
-Le prove iniziali hanno rivelato un errore nel circuito simulato.
-Il circuito è stato corretto e verificato prima di ripetere gli esperimenti.
-La verifica controlla anche l'operazione realizzata, perché i soli picchi corretti non bastano a dimostrare la correttezza del circuito.
+I tre ambiti di intervento --- selezione degli esiti, protezione dell'informazione e
+riduzione del costo circuitale --- sono collegati da un criterio comune: confrontare
+ogni soluzione con un riferimento esplicito, isolare il contributo dei singoli
+componenti e misurare il beneficio mediante indicatori coerenti con il compito. Le
+campagne rimangono distinte: non costituiscono un'esecuzione integrata di Shor protetta
+da correzione d'errore.

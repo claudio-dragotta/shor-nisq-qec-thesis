@@ -1,30 +1,33 @@
-\section{Discussione e Conclusioni}
+\section{Discussione e conclusioni}
 
-L'ablazione mostra che la riduzione dei cicli dipende dalla ricerca TOP-4.
-Il classificatore può scartare dati utili.
-TOP-4 è efficace nel caso studiato, ma non è una scelta ottima per ogni istanza.
+Il post-processing usa meglio l'informazione delle misure, ma non modifica lo stato
+quantistico. L'ablazione del classificatore è un risultato metodologico: metriche
+predittive elevate non garantiscono un minor costo di fattorizzazione. Nella
+decodifica accade il contrario, perché la sindrome contiene informazione strutturata
+sugli errori e l'approccio ibrido funziona proprio dove il decoder analitico non
+rappresenta alcune correlazioni del rumore, benché il beneficio vada confrontato con
+altri decoder analitici. Il valore di un modello appreso dipende dunque dall'informazione che
+riceve e da ciò che la baseline lascia inutilizzato; poiché i due impieghi riguardano
+compiti e dati diversi, la differenza non è attribuibile alla sola fase in cui
+interviene il machine learning.
 
-Nella correzione d'errore, la rete aiuta il matching quando sono presenti
-interferenze fra qubit. Il beneficio diminuisce con la distanza del codice.
+Per \(N = 15\) l'AQFT dà un risultato positivo distinto, con meno porte
+associate a un maggior successo. L'ordine \(r = 4\) produce fasi rappresentabili
+esattamente con due bit del registro di controllo, perciò le rotazioni eliminate non
+veicolano informazione utile e il troncamento costa poco in precisione. Per \(N = 21\),
+con \(r = 6\), le fasi non sono esattamente rappresentabili e l'aritmetica è più
+complessa, per cui il beneficio non si trasferisce automaticamente. Il grado di
+approssimazione va scelto secondo istanza e regime di rumore, e verificato
+su dati distinti da quelli usati per sceglierlo.
 
-Tutti gli esperimenti sono simulazioni. Lo studio del classificatore usa
-solo $N=15$, con rumore uniforme e invariato nel tempo.
-Per il classificatore, gli errori di operazioni diverse sono indipendenti; non si considerano
-interferenze fra qubit né operazioni aggiuntive richieste dalle loro connessioni.
-
-La correzione considera soltanto alcune operazioni e alcuni tipi di errore:
-le stime possono quindi essere favorevoli~\cite{plaquette2026}.
-Non viene simulato un circuito completo di Shor protetto dai codici.
-
-Il vantaggio della QFT approssimata nella stima di fase non si estende
-automaticamente a Shor. Le prove rumorose su $N=21$ confrontano varianti
-della QFT; $N=35$ è verificato senza rumore.
-La stima di fase usa una disposizione dei qubit per dimensione,
-tre fasi e un solo insieme di dati di calibrazione.
-
-Occorre collegare gli errori dopo la correzione alle operazioni di Shor
-ed estendere i modelli di rumore.
-Per i decoder, si potranno usare reti che considerino disposizione dei
-qubit ed evoluzione dei controlli~\cite{alphaqubit2024}.
-La QFT approssimata andrà combinata con metodi aritmetici che riducono
-i qubit necessari~\cite{chevignard2025}, confrontando porte, qubit e profondità.
+Le conclusioni restano circoscritte alle simulazioni. Il post-processing riguarda
+\(N = 15\) con rumore uniforme e stazionario, la QEC circuiti di memoria separati, le
+prove AQFT una sola calibrazione offline e poche istanze e fasi. Non si dimostra
+un'esecuzione fault-tolerant completa di Shor, né si prevedono le risorse per la
+fattorizzazione su scala crittografica. Il contributo è una caratterizzazione
+quantitativa e riproducibile delle condizioni di utilità dei componenti studiati, da
+estendere con verifica su hardware, variazione indipendente di \(N\) e dell'ordine
+\(r\) e integrazione fra operazioni logiche protette, decodifica e ottimizzazione
+aritmetica. Nel perimetro studiato emerge una regola comune: aggiungere complessità ha
+senso solo se permette di sfruttare informazione che la baseline non usa, o se riduce
+un costo del circuito maggiore della perdita introdotta.
