@@ -1,33 +1,137 @@
 \begin{onehalfspace}
 
-\section{Il limite del calcolo classico}
+\section{Dal vantaggio teorico al problema del
+rumore}
 
-Per decenni, la crescita dell'hardware classico descritta dalla Legge di Moore ha aumentato la potenza di calcolo. Questo progresso incontra però due limiti. Da un lato, i transistor si avvicinano alle dimensioni atomiche. Dall'altro, alcuni problemi richiedono risorse che crescono troppo rapidamente con la dimensione dell'input. È il caso della fattorizzazione di grandi interi, della ricerca non strutturata e della simulazione di sistemi quantistici: processori più potenti non bastano a cambiare questa crescita.
+La fattorizzazione di grandi numeri interi è un esempio di problema per il quale
+l'aumento della potenza di calcolo classica non modifica la natura della difficoltà
+computazionale: il miglior algoritmo classico generale noto, il General Number Field
+Sieve, ha complessità sub-esponenziale ma non polinomiale nella lunghezza dell'input.
+Nel 1994 Peter Shor ha mostrato che, nel modello ideale di calcolo quantistico, la
+fattorizzazione e il logaritmo discreto possono invece essere risolti in tempo
+polinomiale \cite{shor1994}. Il risultato ha una conseguenza immediata per la sicurezza
+informatica, perché sistemi a chiave pubblica come RSA fondano la propria sicurezza
+pratica proprio sulla difficoltà di fattorizzare interi di grandi dimensioni \cite{rsa1978}.
 
-Il calcolo quantistico usa sovrapposizione, entanglement e interferenza per elaborare l'informazione. Feynman osservò che la simulazione di sistemi quantistici generici può richiedere risorse classiche esponenziali~\cite{feynman1982}. Deutsch definì poi il modello di calcolatore quantistico universale~\cite{deutsch1985}. Negli anni Novanta, Shor mostrò che una macchina quantistica ideale può risolvere la fattorizzazione e il logaritmo discreto in tempo polinomiale~\cite{shor1994}. Questi algoritmi mettono a rischio \ac{RSA} e altri sistemi a chiave pubblica. Un attacco concreto richiede però circuiti affidabili, molti qubit protetti e risorse per correggere gli errori.
+Il vantaggio algoritmico, tuttavia, non coincide con la possibilità di eseguire oggi
+Shor su istanze crittograficamente rilevanti. I processori quantistici disponibili
+operano in un regime nel quale errori di gate, decoerenza, readout imperfetto,
+connettività limitata e crosstalk riducono la profondità dei circuiti eseguibili con
+affidabilità \cite{preskill2018}. Shor è particolarmente sensibile a questi effetti: la ricerca del
+periodo richiede di preservare informazione di fase lungo l'esponenziazione modulare e
+di renderla osservabile attraverso la Quantum Phase Estimation (QPE) e la Quantum
+Fourier Transform (QFT). Se il rumore disperde la probabilità che dovrebbe concentrarsi
+intorno agli esiti legati al periodo, la successiva elaborazione classica può non
+ricostruire i fattori corretti.
 
-Il rischio riguarda anche i dati cifrati oggi. Un avversario può conservarli e tentare di decifrarli in futuro. Sostituire i sistemi vulnerabili richiede inoltre anni di inventario, aggiornamento e verifica della compatibilità. Gli standard post-quantistici affrontano questo rischio sul piano crittografico. Sul piano del calcolo, occorre capire quali risorse servano a eseguire circuiti affidabili. Nell'era \ac{NISQ}, il numero di qubit da solo non basta: contano anche qualità delle porte, collegamenti fra qubit e accumulo degli errori.
+Questa distanza tra vantaggio teorico e realizzabilità costituisce il punto di partenza
+della tesi. Il problema non viene affrontato cercando una singola tecnica ``migliore''
+in assoluto, ma studiando tre livelli diversi di intervento: usare meglio l'informazione
+rimasta nelle misure; proteggere l'informazione durante il calcolo; ridurre il numero di
+operazioni che espongono il circuito al rumore. A questi tre livelli si affianca
+un'analisi di sensibilità che misura come degrada una specifica implementazione di Shor
+al crescere di un errore per gate controllato. L'obiettivo è distinguere ciò che
+migliora realmente la metrica di interesse da ciò che aggiunge complessità senza un
+beneficio misurabile.
 
-Questa distanza fra potenziale algoritmico e realizzabilità costituisce il punto di partenza della tesi. Il contesto storico e fisico, dai qubit superconduttori alla rivoluzione algoritmica, è approfondito nelle Sezioni~\ref{app:intro:origini}--\ref{app:intro:algoritmi}; RSA, la transizione post-quantistica e il passaggio dall'era \ac{NISQ} ai sistemi fault-tolerant sono trattati nelle Sezioni~\ref{app:intro:rsa}--\ref{app:intro:nisq}. I fondamenti formali necessari all'analisi sono invece raccolti nella Sezione~\ref{chap:fondamenti}.
+\section{Obiettivi e contributo del lavoro}
 
-% -----------------------------------------------
-\section{Motivazione e contributo del presente lavoro}
+Il lavoro adotta un principio metodologico comune a tutte le campagne: ogni tecnica
+viene confrontata con una baseline esplicita, sugli stessi dati quando il confronto lo
+consente, e con metriche coerenti con il problema osservato. Questa scelta è centrale
+perché, in presenza di rumore, un risultato apparentemente positivo può dipendere dal
+post-processing, dalla struttura particolare dell'istanza o da una metrica intermedia
+che non coincide con l'obiettivo finale. Tutti gli esperimenti della tesi sono
+simulativi; non vengono quindi presentati come una dimostrazione di fattibilità su
+hardware quantistico reale né come una previsione delle risorse necessarie per rompere
+chiavi crittografiche di dimensione reale.
 
-L'algoritmo di Shor è quindi un banco di prova particolarmente esigente: la sua complessità asintotica minaccia la crittografia moderna, mentre i circuiti profondi che ne realizzano il \textit{period finding} sono sensibili a decoerenza, errori di gate e misura. Il problema affrontato è comprendere quali interventi conservino informazione utile in presenza di rumore e, in particolare, \emph{dove} un modello appreso possa aggiungere valore rispetto a una regola analitica trasparente.
+La prima linea di ricerca riguarda il post-processing degli output rumorosi di Shor.
+Sull'istanza principale \(N = 15\), \(a = 7\), vengono confrontate tre strategie applicate agli
+stessi istogrammi: TOP-1, che verifica il solo esito più frequente; TOP-4, che verifica
+i quattro candidati più frequenti; e un metodo che usa un classificatore di machine
+learning per decidere quando attivare la stessa ricerca TOP-4. Il confronto tra il
+metodo appreso e TOP-4 senza filtro costituisce l'ablazione del classificatore. La SVM
+selezionata raggiunge elevate metriche predittive, ma non riduce il numero di iterazioni
+necessarie alla fattorizzazione rispetto alla baseline; TOP-4, invece, raggiunge
+mediamente il successo al primo tentativo nei due scenari considerati. Il risultato
+mostra che, in questo caso, il beneficio deriva dalla ricerca multi-candidato e non dal
+filtro appreso. Un confronto con la Zero-Noise Extrapolation (ZNE) completa la
+valutazione delle strategie a valle dell'esecuzione.
 
-La tesi confronta due modi di intervenire. Il post-processing cerca candidati utili tra gli esiti già misurati, senza modificare lo stato durante il circuito. La correzione quantistica agisce invece durante il calcolo: usa più qubit e misura la sindrome, cioè un insieme di segnali che rivela gli errori senza leggere l'informazione logica. Questo richiede qubit, porte e calcolo classico aggiuntivi. Per valutare il beneficio, ogni tecnica viene confrontata con una regola di riferimento usando gli stessi dati e metriche coerenti.
+La seconda linea studia la Quantum Error Correction (QEC), cioè la protezione
+dell'informazione mentre il calcolo è in corso. Il percorso parte dal codice a
+ripetizione, prosegue con il codice di Steane \([[7,1,3]]\) e arriva al surface code
+\cite{steane1996,fowler2012}. Nei circuiti di memoria viene misurato il tasso di errore logico al variare
+dell'errore fisico e, per il surface code, della distanza del codice. Le simulazioni
+riproducono la soppressione quadratica attesa per i codici a distanza tre e mostrano,
+nel surface code, il comportamento di soglia: sotto la soglia stimata aumentare la
+distanza riduce l'errore logico, mentre sopra soglia lo amplifica. Questi valori
+appartengono ai circuiti di memoria, al modello di rumore e ai decoder adottati e non
+vengono trasferiti direttamente alle porte logiche di Shor.
 
-Il lavoro procede in \textbf{due fasi}. La prima studia l'output di Shor su simulatore, con due configurazioni di rumore uniformi e illustrative. Queste non rappresentano la calibrazione di una specifica \ac{QPU}. Sugli stessi istogrammi si confrontano TOP-1 (Metodo~1), TOP-4 e il Metodo~2, che usa un classificatore \ac{ML} per decidere se applicare TOP-4. Riutilizzare gli stessi istogrammi evita che differenze casuali nella simulazione favoriscano una strategia. Il confronto con TOP-4 senza filtro, detto ablazione, isola poi il contributo del classificatore. Nei test il filtro non migliora significativamente la baseline ed è peggiore della sola TOP-4. Il beneficio viene quindi dalla ricerca di più candidati. Il protocollo e l'origine dei valori anticipati qui sono nella Sezione~\ref{app:intro:filo}; la verifica completa è nel Capitolo~\ref{chap:risultati}.
+All'interno della QEC viene inoltre studiato un secondo impiego del machine learning.
+Invece di classificare l'istogramma finale, la rete riceve la sindrome di errore. Quando
+il modello di rumore corrisponde alle assunzioni del decoder analitico, una rete usata
+come sostituto non mostra un vantaggio stabile rispetto al Minimum Weight Perfect
+Matching (MWPM). In presenza di correlazioni non ben rappresentate dal grafo del
+matching, una strategia ibrida può invece migliorare la decisione analitica
+correggendone alcuni errori residui. Il confronto successivo con BP+OSD mostra però che
+una parte del margine può dipendere dalla qualità del decoder di riferimento. Il
+risultato non è quindi una superiorità generale del machine learning, ma individua il
+regime nel quale un modello appreso può essere utile: quando osserva struttura
+informativa che il metodo analitico non rappresenta adeguatamente.
 
-La \textbf{seconda fase}, nucleo della tesi, studia la correzione durante il calcolo. Si simulano tre codici di \ac{QEC}: ripetizione, Steane $[[7,1,3]]$ e surface code con decoder \ac{MWPM}. Per ciascuno si misura il tasso di errore logico $p_L$ al variare dell'errore fisico $p$ e della distanza $d$. Un'analisi separata introduce errori Pauli dopo le porte del circuito compilato di Shor. Questo modello serve a misurarne la sensibilità al rumore; il suo parametro per gate resta distinto dal tasso di fallimento della memoria misurato nei test QEC.
+La terza linea interviene direttamente sulla complessità del circuito mediante una QFT
+approssimata (AQFT), che elimina rotazioni controllate di piccolo angolo.
+L'approssimazione riduce porte e profondità, ma introduce una perdita di precisione: il
+problema consiste quindi nel verificare se il rumore evitato compensi l'errore
+algoritmico aggiunto. Nel pilota su Shor con \(N = 15\), il grado di troncamento scelto sui
+dati di selezione e valutato su dati indipendenti aumenta il successo da 0,4792 a
+0,6279, mentre le porte ECR a due qubit scendono da 362 a 279. Il miglioramento è
+favorito dall'ordine \(r = 4\), che produce fasi esattamente rappresentabili con due bit, e
+non viene generalizzato automaticamente a istanze differenti. Per \(N = 21\) il troncamento
+dell'aritmetica riduce invece le porte a due qubit da \(49\,661\) a \(23\,178\), ma diminuisce il
+successo ideale e nei test rumorosi a budget ridotto non emerge un beneficio
+statisticamente dimostrato. Nei benchmark separati di QPE, al contrario, la variante
+troncata risulta migliore in tutti i nove confronti effettuati, con sei intervalli di
+confidenza individuali interamente positivi. Questi risultati mostrano che l'efficacia
+dell'AQFT dipende dal compromesso tra precisione di fase, costo circuitale e regime di
+rumore \cite{akoramurthy2026}.
 
-L'apprendimento automatico viene infine applicato alla \textbf{sindrome}, che contiene segnali diretti sugli errori. Sostituire \ac{MWPM} con una rete non dà un vantaggio stabile quando il modello di rumore è corretto. Affiancargli un decoder \textbf{ibrido} è invece utile in alcuni casi: la rete impara quando invertire la decisione del matching. Nei test con correlazioni assenti dal grafo del decoder analitico, l'errore logico si riduce fino al $21\%$. Quando il modello è adeguato, l'ibrido non mostra peggioramenti statisticamente rilevabili. Il risultato indica dove l'\ac{ML} può aiutare: nei casi in cui i dati contengono relazioni utili che il metodo di riferimento non rappresenta.
+Un'analisi distinta misura infine la sensibilità di Shor a un errore Pauli uniforme
+applicato dopo le porte compilate. Il parametro di questo esperimento è un proxy per
+gate e non coincide con il tasso di errore logico per round o per memoria misurato nelle
+campagne QEC. Mantenere separate queste grandezze evita una conclusione non supportata:
+la tesi non simula un'esecuzione end-to-end di Shor fault-tolerant, ma caratterizza
+separatamente la robustezza dell'algoritmo, la capacità dei codici di sopprimere gli
+errori e il comportamento dei decoder.
 
-Il problema di ricerca, le sei domande, le ipotesi e il contratto sperimentale sono definiti nel Capitolo~\ref{chap:obiettivi}. Codice, sorgenti \LaTeX{}, seed e artefatti sono disponibili nel repository pubblico \url{https://github.com/claudio-dragotta/shor-nisq-qec-thesis}; la demo interattiva di Shor è all'indirizzo \url{https://shor-demo-6knp.onrender.com} (sorgenti: \url{https://github.com/claudio-dragotta/shor-demo}).
+Nel complesso, il contributo del lavoro è quindi soprattutto metodologico e
+sperimentale: costruire confronti appaiati e riproducibili, isolare mediante ablazione
+il contributo dei componenti, distinguere metriche che descrivono fenomeni diversi e
+verificare su dati indipendenti quando una maggiore complessità produce un beneficio
+reale. Il criterio che emerge è semplice: una tecnica aggiuntiva è utile quando sfrutta
+informazione che la baseline trascura oppure quando elimina un costo maggiore della
+perdita che introduce.
 
-% -----------------------------------------------
 \section{Struttura della tesi}
 
-L'elaborato comprende sei capitoli e cinque appendici: dopo questa introduzione, il Capitolo~\ref{chap:obiettivi} formula problema e criteri; il Capitolo~\ref{chap:quadro} presenta teoria e metodologia; il Capitolo~\ref{chap:implementazione} descrive l'implementazione; il Capitolo~\ref{chap:risultati} espone e discute le due campagne, l'analisi di sensibilità e la QFT approssimata; il Capitolo~\ref{chap:conclusioni} risponde alle domande di ricerca. Le Appendici~\ref{app:teoria}--\ref{app:fase2} raccolgono, rispettivamente, teoria estesa, strumenti e codice, contesto e obiettivi, dettagli della fase classica e della fase QEC. La roadmap completa, con il contenuto referenziabile di ciascun capitolo e appendice, è trasferita nella Sezione~\ref{app:intro:struttura}.
+La tesi è organizzata in sei capitoli. Il Capitolo~\ref{chap:obiettivi} formalizza il problema di ricerca,
+gli obiettivi, le domande sperimentali, le ipotesi e i criteri di valutazione. Il
+Capitolo~\ref{chap:quadro} presenta i fondamenti di calcolo quantistico necessari alla lettura del
+lavoro, descrive l'algoritmo di Shor, i principali modelli di rumore e la metodologia
+sperimentale, limitando la teoria a ciò che serve per interpretare gli esperimenti. Il
+Capitolo~\ref{chap:implementazione} descrive l'implementazione, gli strumenti software, la costruzione e
+validazione dei circuiti, la generazione dei dati e il contratto di riproducibilità.
+
+Il Capitolo~\ref{chap:risultati} raccoglie i risultati: confronto TOP-1/TOP-4/machine learning e ZNE,
+codici a ripetizione e di Steane, surface code, decodifica analitica e appresa, analisi
+di sensibilità di Shor e studio della QFT approssimata. I risultati vengono discussi
+mantenendo separate le metriche dei diversi esperimenti e indicando per ciascuno il
+relativo perimetro di validità. Il Capitolo~\ref{chap:conclusioni} sintetizza le evidenze, risponde alle
+domande di ricerca, esplicita i limiti del lavoro e individua gli sviluppi necessari per
+passare dalle simulazioni controllate a una validazione su hardware e, in prospettiva, a
+un'analisi fault-tolerant integrata.
 
 \end{onehalfspace}
