@@ -44,6 +44,9 @@ file_latex_v2/main.pdf
 # Render temporanei usati per il controllo visivo del PDF.
 file_latex_v2/tmp/
 
+# Render e file di verifica temporanei prodotti alla radice del progetto.
+tmp/
+
 # Artefatti build LaTeX -- sommario (stesse regole di file_latex/)
 file_latex_sommario/*.aux
 file_latex_sommario/*.log

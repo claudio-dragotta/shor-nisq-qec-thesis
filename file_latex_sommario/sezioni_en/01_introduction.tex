@@ -1,0 +1,21 @@
+\section{Introduction and objectives}
+
+Shor's algorithm factors integers in time polynomial in the input bit length, with
+implications for cryptographic systems whose security relies on the difficulty of
+factorization \cite{en-shor1994}. Realizing this advantage requires error control
+compatible with circuit depth: gate errors, decoherence, and imperfect readout can alter
+the measurement distribution and compromise multiplicative-order finding
+\cite{en-preskill2018}.
+
+This simulation study determines which interventions improve computational reliability
+and relative to which baselines. Its two main phases evaluate classical post-processing
+of Shor's outcomes, including an ablation of the machine-learning contribution, and
+characterize quantum error-correction codes and syndrome decoders. A separate analysis
+examines Shor's sensitivity to gate errors and circuit optimization through the
+approximate quantum Fourier transform (AQFT).
+
+The three areas---outcome selection, information protection, and circuit cost
+reduction---share one criterion: compare each solution with an explicit baseline,
+isolate each component's contribution, and use task-relevant benefit metrics. The
+campaigns remain separate; they are not an integrated, error-corrected execution of
+Shor's algorithm.
