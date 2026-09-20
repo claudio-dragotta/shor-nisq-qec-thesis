@@ -1,0 +1,978 @@
+% Generato dalla versione Word revisionata e dalla bozza auditata.
+% Le citazioni numeriche originali sono state convertite in chiavi BibLaTeX.
+
+Questo capitolo raccoglie soltanto i concetti teorici necessari a comprendere gli esperimenti e, soprattutto, formalizza il metodo con cui vengono valutate le cinque domande di ricerca definite nel Capitolo 2. La separazione tra teoria, modello di rumore e protocollo sperimentale è essenziale: una proprietà dell'algoritmo ideale non va confusa con una prestazione di simulazione, così come il tasso di errore logico di un memory experiment non può essere trasferito direttamente a una porta logica di Shor. L'obiettivo è quindi costruire un lessico e un contratto metodologico sufficienti a interpretare i risultati del Capitolo 5, senza trasformare il capitolo in una trattazione generale del calcolo quantistico.
+
+\section{Fondamenti quantistici necessari all'analisi}\label{sec:finale_3_1}
+
+\subsection{Stato, misura, interferenza ed entanglement}\label{sec:finale_3_1_1}
+
+Un qubit è descritto da un vettore unitario in uno spazio di Hilbert bidimensionale. Nella base computazionale, lo stato puro più generale può essere scritto come
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbar ψ⟩ = α\textbar0⟩ + β\textbar1⟩, \textbar α\textbar² + \textbar β\textbar² = 1.
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+(3.1)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+La misura nella base computazionale restituisce 0 con probabilità \textbar α\textbar² e 1 con probabilità \textbar β\textbar². Prima della misura, le ampiezze complesse possono interferire costruttivamente o distruttivamente. Questo è il meccanismo che la Quantum Fourier Transform utilizza per concentrare probabilità in corrispondenza delle frequenze associate alla periodicità cercata da Shor \cite{nielsenChuang2000}.
+
+Per un registro di m qubit lo spazio degli stati ha dimensione 2\^{}m. Uno stato è entangled quando non può essere scritto come prodotto degli stati dei singoli qubit. Nell'order finding di Shor, il registro di controllo e quello di lavoro diventano correlati attraverso la moltiplicazione modulare controllata: l'informazione sulla periodicità è così codificata nelle fasi del registro di controllo e può essere resa osservabile dalla QFT inversa. Non è necessario misurare esplicitamente il registro di lavoro nell'implementazione utilizzata; ciò che conta è la distribuzione marginale ottenuta sul registro di controllo.
+
+\subsection{Porte, operatori di Pauli e collegamento con la QEC}\label{sec:finale_3_1_2}
+
+Le porte quantistiche sono trasformazioni unitarie. Per questa tesi bastano poche primitive: le matrici di Pauli descrivono gli errori elementari, Hadamard e rotazioni di fase compongono QPE e QFT, mentre le porte a due qubit realizzano l'accoppiamento tra registri e dominano il costo circuitale dopo la compilazione. La Tabella~\ref{tab:finale_3_1} riassume il ruolo delle operazioni effettivamente richiamate nel seguito.
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Primitive quantistiche utilizzate nel lavoro e loro funzione metodologica.}\label{tab:finale_3_1}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Operatore}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Ruolo essenziale}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Uso nella tesi}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Primitive quantistiche utilizzate nel lavoro e loro funzione metodologica. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Operatore}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Ruolo essenziale}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Uso nella tesi}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+X & bit flip & modello di errore; codici CSS \\
+Z & phase flip & modello di errore; codici CSS \\
+Y & combinazione di X e Z & canali di Pauli/depolarizzazione \\
+H & crea e ricombina sovrapposizioni & QPE, QFT, cambi di base \\
+Rφ / CP & rotazioni di fase & QFT e AQFT \\
+CX / ECR & interazione a due qubit & aritmetica, QEC, costo e rumore \\
+\end{longtable}
+\endgroup
+
+Gli operatori di Pauli anticommutano a coppie e, insieme all'identità, generano una base naturale per descrivere gli errori su un qubit. Nei codici stabilizer, una sindrome nasce proprio dal fatto che un errore anticommuta con alcuni stabilizzatori e ne cambia l'esito di misura. Questa osservazione collega direttamente il formalismo elementare alla correzione d'errore discussa nella Sezione 3.4 \cite{steane1996,aharonov1997fault}.
+
+\subsection{Matrice densità, stati misti e descrizione del rumore}\label{sec:finale_3_1_3}
+
+Per descrivere il rumore non basta il vettore di stato puro. Quando il sistema quantistico interagisce con gradi di libertà non osservati, o quando l\textquotesingle esperimento rappresenta una miscela statistica di stati, la descrizione naturale è la matrice densità ρ. Per uno stato puro vale ρ=\textbar ψ⟩⟨ψ\textbar; più in generale, se lo stato \textbar ψ\_i⟩ si presenta con probabilità q\_i, allora ρ=Σ\_i q\_i\textbar ψ\_i⟩⟨ψ\_i\textbar. La matrice densità ha traccia unitaria, è positiva semidefinita e permette di distinguere uno stato puro da una miscela tramite Tr(ρ²).
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+ρ = Σᵢ qᵢ \textbar ψᵢ⟩⟨ψᵢ\textbar, qᵢ ≥ 0, Σᵢ qᵢ = 1.
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+(3.2a)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Un canale quantistico fisicamente ammissibile è una mappa completamente positiva e preservante la traccia. Nella rappresentazione di Kraus può essere scritto come E(ρ)=Σ\_k K\_kρK\_k†, con Σ\_k K\_k†K\_k=I \cite{nielsenChuang2000}. Questo formalismo è utile perché mette sullo stesso piano evoluzione rumorosa, rilassamento, errori di fase e processi stocastici di Pauli. Nella parte sperimentale non si tenta di ricostruire ogni meccanismo microscopico della QPU: si utilizzano canali controllati il cui significato e le cui limitazioni sono dichiarati esplicitamente.
+
+La distinzione tra errore coerente e incoerente è importante per interpretare i risultati. Una sovrarotazione sistematica può accumularsi in ampiezza e dipendere dalla sequenza di gate, mentre un canale stocastico di Pauli descrive un processo probabilistico che perde informazione di fase in modo diverso. Per questo la tesi utilizza i modelli di Pauli come baseline controllabile e tratta crosstalk, errori coerenti e snapshot hardware come controlli separati, evitando di considerarli intercambiabili.
+
+Per i sistemi multi-qubit, la matrice densità consente inoltre di definire stati ridotti mediante traccia parziale. Questo passaggio è concettualmente utile per Shor: il registro di controllo può essere descritto anche senza misurare il registro di lavoro, tracciando quest\textquotesingle ultimo. La periodicità resta codificata nelle correlazioni e la QFT inversa agisce sul controllo; il fatto che la misura intermedia del registro di lavoro sia omessa nell\textquotesingle implementazione non elimina il meccanismo di order finding.
+
+La tesi non usa la fedeltà di stato come metrica primaria delle campagne Shor. La ragione è metodologica: l\textquotesingle obiettivo operativo è ottenere fattori validi, mentre l\textquotesingle accesso alla matrice densità completa non sarebbe disponibile nello stesso modo su hardware reale. Per alcune diagnostiche viene invece utilizzata la massa sui picchi teorici come indicatore descrittivo. Tale massa è utile per visualizzare la sopravvivenza della struttura QPE, ma non coincide né con una fedeltà quantistica né con la probabilità di fattorizzazione.
+
+\section{Algoritmo di Shor e definizione operativa del successo}\label{sec:finale_3_2}
+
+\subsection{Dalla fattorizzazione alla ricerca dell'ordine}\label{sec:finale_3_2_1}
+
+Sia N l'intero da fattorizzare e sia a un intero coprimo con N. L'algoritmo di Shor riconduce la fattorizzazione alla ricerca dell'ordine moltiplicativo r di a modulo N, cioè al minimo intero positivo per cui
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+aʳ ≡ 1 (mod N).
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+(3.2)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Se r è pari e a\^{}(r/2) non è congruo a -1 modulo N, i massimi comuni divisori gcd(a\^{}(r/2)-1,N) e gcd(a\^{}(r/2)+1,N) producono con elevata probabilità un fattore non banale. La parte quantistica serve a ricavare informazione su r; la verifica finale dei fattori rimane classica \cite{shor1994,nielsenChuang2000}.
+
+La riduzione non garantisce il successo a ogni scelta di a. Se gcd(a,N)\textgreater1, il fattore è già trovato classicamente; se l\textquotesingle ordine è dispari o se a\^{}(r/2)≡-1 (mod N), la scelta non conduce alla fattorizzazione e occorre ripetere con un\textquotesingle altra base. Questa componente probabilistica appartiene all\textquotesingle algoritmo anche in assenza di rumore. Nelle campagne di questa tesi, invece, a viene fissato per isolare il comportamento del circuito e delle strategie di trattamento dell\textquotesingle output: il confronto tra metodi non deve essere confuso con la probabilità globale di successo di una procedura completa che estrae casualmente nuove basi.
+
+Nell'istanza principale della tesi, N=15 e a=7. La successione 7\^{}x mod 15 assume i valori 1, 7, 4, 13 e poi si ripete: l'ordine è quindi r=4. Da r si ottengono gcd(7²-1,15)=3 e gcd(7²+1,15)=5. Questa istanza è deliberatamente piccola: serve a costruire confronti rumorosi riproducibili, non a stimare la fattibilità della fattorizzazione crittografica.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_3_1_periodicita_n15.png}
+\caption{Periodicità di 7\^{}x mod 15. La sequenza si ripete ogni quattro valori, quindi r = 4.}
+\label{fig:finale_3_1}
+\end{figure}
+
+\subsection{Quantum Phase Estimation e Quantum Fourier Transform}\label{sec:finale_3_2_2}
+
+Il nucleo quantistico dell'order finding può essere letto come una Quantum Phase Estimation (QPE) sull'operatore di moltiplicazione modulare U\_a,N, definito da U\_a,N\textbar x⟩=\textbar ax mod N⟩. Gli autovalori dell'operatore hanno fasi legate a frazioni s/r; il registro di controllo accumula tali fasi tramite applicazioni controllate delle potenze di U\_a,N e la QFT inversa le converte in una distribuzione misurabile.
+
+Per un autostato \textbar u\_s⟩ dell\textquotesingle operatore modulare vale \ensuremath{U_{a,N}\lvert u_s\rangle=\exp(2\pi i s/r)\lvert u_s\rangle}. La QPE prepara m qubit di controllo in sovrapposizione uniforme e applica U\^{}(2\^{}j) controllata dal j-esimo qubit. Dopo questa sequenza, l\textquotesingle informazione sulla fase s/r è codificata nelle fasi relative del registro di controllo. La QFT inversa trasforma tali fasi in un valore intero y concentrato vicino a 2\^{}m s/r. Quando s/r non è esattamente rappresentabile con m bit, la probabilità si distribuisce su più valori vicini: questo fatto è centrale per comprendere perché il troncamento AQFT possa comportarsi diversamente per r=4 e r=6.
+
+Nel circuito completo il costo della QPE non è dato soltanto dalla QFT. Le potenze controllate U\^{}(2\^{}j) incorporano l\textquotesingle aritmetica modulare e possono dominare largamente il numero di porte. Per questa ragione, nel caso Beauregard di N=21 la campagna AQFT interviene anche sulle trasformate usate dagli addizionatori modulari, non soltanto sulla QFT inversa finale.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+QFTₘ \textbar j⟩ = 1/√(2ᵐ) Σₖ₌₀\^{}\{2ᵐ-1\} exp(2π i j k / 2ᵐ) \textbar k⟩.
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+(3.3)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Una QFT su m qubit richiede O(m²) rotazioni controllate nella forma diretta standard. Questo conteggio non va interpretato come una sostituzione della FFT classica: la QFT lascia i coefficienti nelle ampiezze e una misura estrae un solo campione. La sua utilità in Shor deriva dal fatto che non occorre leggere l'intero spettro; bastano campioni sufficientemente vicini alle frazioni s/r per ricostruire un denominatore candidato mediante frazioni continue.
+
+La QFT approssimata (AQFT) sfrutta il fatto che le rotazioni controllate diventano progressivamente più piccole al crescere della distanza tra i qubit. Eliminare le rotazioni sotto una soglia riduce porte e profondità, ma modifica la distribuzione di fase. L'efficacia non può quindi essere dedotta dal solo numero di porte: deve essere misurato il compromesso tra errore algoritmico introdotto e rumore evitato \cite{barencoAQFT1996,akoramurthy2026}.
+
+Il parametro di troncamento non può essere assunto costante per registri arbitrariamente grandi. Nel riferimento adottato per la discussione AQFT, la distanza di variazione totale tra la distribuzione QPE esatta e quella troncata è limitata da una quantità che cresce linearmente con la dimensione del registro e decresce esponenzialmente con il grado di troncamento \cite{barencoAQFT1996,akoramurthy2026}. Ne segue che un grado piccolo può essere sufficiente sulle taglie provate senza costituire una legge di scala generale. Il protocollo sperimentale mantiene perciò separati scelta del grado e verifica finale.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_3_2_pipeline_shor.png}
+\caption{Pipeline concettuale di Shor: pre-processing classico, period finding quantistico, QFT inversa e post-processing classico.}
+\label{fig:finale_3_2}
+\end{figure}
+
+\subsection{Misura, shot e criterio di successo adottato}\label{sec:finale_3_2_3}
+
+Con m=8 qubit di controllo sono possibili 2\^{}8=256 esiti di misura. Per N=15, a=7 e r=4, la distribuzione ideale è concentrata sui multipli di 2\^{}8/r=64, cioè 0, 64, 128 e 192. Un singolo shot restituisce un solo esito; l'istogramma nasce dalla ripetizione del circuito.
+
+Nella tesi il successo non è definito come ricostruzione esatta dell'ordine, ma come capacità della procedura classica implementata di restituire fattori non banali. L'estrattore converte y/2\^{}m in una frazione razionale con denominatore limitato da N, richiede un denominatore pari e prova i due gcd. Con questa regola, tre dei quattro picchi ideali conducono a fattori validi. Di conseguenza, il successo ideale per singolo shot della specifica pipeline è 3/4=75\%. L'esito y=128 può produrre un denominatore candidato pari a 2 e condurre comunque al fattore 3: il 75\% non deve pertanto essere descritto come probabilità di ricostruire esattamente r=4.
+
+Il post-processing usa l\textquotesingle approssimazione razionale di y/2\^{}m tramite frazioni continue, con denominatore limitato da N. Nel textbook di Shor il denominatore candidato viene normalmente verificato come ordine prima di essere usato nel calcolo dei fattori. L\textquotesingle implementazione studiata adotta invece un criterio operativo più permissivo: se il denominatore è pari, prova direttamente i due gcd e accetta il risultato quando produce un fattore non banale. Questa scelta spiega perché un denominatore che non coincide con l\textquotesingle ordine vero possa ancora portare alla fattorizzazione.
+
+La distinzione tra \textquotesingle recuperare il periodo\textquotesingle{} e \textquotesingle ottenere i fattori\textquotesingle{} è quindi sostanziale. Le metriche del Capitolo 5 sono costruite sul secondo evento, perché è quello effettivamente implementato e verificato. Quando il testo discute la struttura QPE o la qualità della stima di fase, invece, la nozione rilevante è la vicinanza a s/r. Mantenere separati i due livelli evita di attribuire alla componente quantistica un successo che può essere favorito dalla tolleranza del post-processing classico.
+
+La stessa funzione di estrazione accetta 63 dei 256 possibili valori del registro. Se la distribuzione fosse uniforme, il successo medio per singolo shot sarebbe quindi
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+P\_floor = 63 / 256 ≃ 0,2461.
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+(3.4)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Questo valore è una baseline della pipeline classica per questa specifica istanza; non è una proprietà generale di Shor e non misura la fedeltà dello stato quantistico. Analogamente, aumentando il numero K di candidati esaminati, la probabilità puramente combinatoria di includere almeno un esito accettabile può diventare elevata anche in assenza di struttura quantistica. Per questo TOP-K viene valutato insieme alle metriche per singolo shot e non viene interpretato come misura di fedeltà.
+
+\subsection{Costo circuitale e ruolo delle istanze}\label{sec:finale_3_2_4}
+
+Nel modello ideale Shor ha complessità polinomiale nella lunghezza n=⌈log₂N⌉ dell'input; nella costruzione textbook con aritmetica elementare il costo è comunemente riassunto come O(n³) \cite{shor1994}. La QFT non domina necessariamente il circuito: l'esponenziazione modulare e il routing possono produrre un numero molto maggiore di operazioni a due qubit. L'architettura di Beauregard riduce il numero di qubit logici usando aritmetica reversibile in-place e richiede 2n+3 qubit per il blocco aritmetico \cite{beauregard2002}.
+
+Nella tesi le istanze svolgono ruoli diversi. N=15, a=7 è usata per le campagne rumorose principali perché il circuito resta simulabile con molte repliche. N=21, a=2 e N=35, a=6 sono impiegate per validare idealmente l'aritmetica reversibile, la pulizia delle ancille e la QPE; N=21 entra inoltre nella campagna AQFT esplorativa. Questa separazione evita di trasformare un limite della simulazione classica in un limite dell'algoritmo quantistico.
+
+La stessa cautela vale per le stime su scala crittografica. Il numero di qubit logici e il numero di operazioni del circuito algoritmico non coincidono con le risorse fisiche di una macchina fault-tolerant. Routing, cicli di sindrome, distillazione di magic state, latenza del decoder e schedulazione possono introdurre overhead dominanti \cite{chevignard2025,gidney2021,aharonov1997fault}. Le piccole istanze simulate qui sono quindi banchi di prova metodologici: permettono di verificare circuiti, metriche e confronti, ma non autorizzano una estrapolazione diretta a RSA-2048.
+
+\section{Rumore quantistico e modelli utilizzati}\label{sec:finale_3_3}
+
+\subsection{Sorgenti fisiche rilevanti}\label{sec:finale_3_3_1}\label{sec:fonti_fisiche}
+
+L'esecuzione su una QPU reale è influenzata da fenomeni diversi che agiscono in momenti differenti del circuito. I tempi T1 e T2 descrivono rispettivamente rilassamento energetico e perdita di coerenza di fase; le imperfezioni di controllo producono errori di gate; il readout può confondere 0 e 1; crosstalk e leakage introducono infine meccanismi non riducibili a un singolo errore indipendente. Nei dispositivi NISQ, connettività e routing aumentano inoltre il numero di operazioni a due qubit e quindi l'esposizione al rumore \cite{preskill2018,sarovar2020,zurek2003,murali2019,tannu2019}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_3_3_sorgenti_rumore.png}
+\caption{Collocazione concettuale delle principali sorgenti di rumore nella pipeline di Shor.}
+\label{fig:finale_3_3}
+\end{figure}
+
+Il rilassamento T1 e la perdita di coerenza T2 hanno effetti diversi. T1 descrive il decadimento della popolazione dello stato eccitato verso \textbar0⟩; T2 descrive la perdita della fase relativa. Se Tφ denota il puro dephasing, i tempi soddisfano 1/T2 = 1/(2T1) + 1/Tφ. Il confronto fisicamente pertinente non è quindi tra il numero totale di gate e T2, ma tra la durata del cammino critico del circuito e i tempi di coerenza. Parallelismo, idle e routing modificano la durata senza cambiare necessariamente il conteggio totale delle operazioni.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+1/T₂ = 1/(2T₁) + 1/Tφ, con T₂ ≤ 2T₁.
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+(3.4a)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Anche il readout è modellato separatamente dal rumore di evoluzione. Per un singolo qubit la matrice di confusione contiene la probabilità di leggere 1 dato \textbar0⟩ e 0 dato \textbar1⟩; nella baseline uniforme della campagna N=15 la matrice è simmetrica e applicata indipendentemente ai qubit misurati. Questa scelta rende il parametro controllabile, ma non rappresenta errori di lettura correlati. Nel controllo hardware-aware su FakeSherbrooke, invece, il readout viene preso dalla snapshot per i qubit effettivamente misurati dopo il routing.
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Dal fenomeno fisico al modello sperimentale adottato.}\label{tab:finale_3_2}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Fenomeno}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Rappresentazione usata}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Limite esplicito}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Dal fenomeno fisico al modello sperimentale adottato. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Fenomeno}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Rappresentazione usata}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Limite esplicito}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Rilassamento/dephasing & T1, T2 e durata dei gate in Aer & modello Markoviano; nessuna deriva temporale \\
+Errore di gate & canale depolarizzante o Pauli & non rappresenta leakage/coerenza arbitraria \\
+Readout & matrice di confusione & baseline indipendente tra qubit \\
+Crosstalk & canale correlato nei test surface-code & modello controllato, non calibrazione hardware completa \\
+AQFT/FakeSherbrooke & infedeltà media di gate + readout da snapshot & snapshot offline; nessun doppio conteggio T1/T2 \\
+\end{longtable}
+\endgroup
+
+\subsection{Canali elementari e convenzione depolarizzante}\label{sec:finale_3_3_2}
+
+Quattro canali elementari sono sufficienti a interpretare la maggior parte dei modelli impiegati. Il bit flip applica X con probabilità p; il phase flip applica Z e sopprime le coerenze; l\textquotesingle amplitude damping descrive il rilassamento energetico con parametro γ=1-exp(-t/T1); il canale depolarizzante sposta lo stato verso il massimamente misto. In forma di Kraus o di miscela di Pauli, questi modelli permettono di isolare cause differenti pur senza coincidere uno a uno con i meccanismi microscopici della QPU.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+E\_bit(ρ) = (1-p)ρ + p XρX, E\_phase(ρ) = (1-p)ρ + p ZρZ.
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+(3.4b)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+E\_dep(ρ) = (1-p)ρ + (p/3)(XρX + YρY + ZρZ).
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+(3.4c)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Nel canale depolarizzante a un qubit la parametrizzazione p dell\textquotesingle Equazione (3.4c) non coincide con la λ utilizzata da Aer nella forma E(ρ)=(1-λ)ρ+λI/2. Questa distinzione, apparentemente formale, è necessaria perché il proxy di sensibilità M8 è definito direttamente come probabilità totale di una Pauli non identità, mentre la campagna N=15 usa λ come parametro del costruttore depolarizing\_error.
+
+L\textquotesingle amplitude damping è invece non unital: non contrae lo stato verso il centro della sfera di Bloch, ma verso \textbar0⟩. Con γ=1-exp(-t/T1), una possibile rappresentazione di Kraus usa K0=diag(1,√(1-γ)) e K1 con unico elemento non nullo √γ nella transizione \textbar1⟩→\textbar0⟩. Il puro dephasing preserva le popolazioni e riduce le coerenze. In Aer il thermal\_relaxation\_error combina rilassamento e dephasing a partire da T1, T2 e durata del gate, evitando di trattare i due tempi come semplici probabilità indipendenti.
+
+Per il readout, la probabilità di osservare i dato j è rappresentata da una matrice A\_ij=P(i letto \textbar{} j preparato). La baseline della campagna principale usa la stessa matrice simmetrica su tutti i qubit. Questa scelta è deliberatamente semplice: permette sweep controllati e confronti appaiati. Nelle snapshot hardware-aware, al contrario, i qubit hanno errori diversi e il routing modifica quali misure entrano effettivamente nel circuito; per questo M11b considera il readout dei qubit misurati dopo la compilazione e non soltanto quello del layout iniziale.
+
+\subsection{Modello di rumore della campagna Shor N=15}\label{sec:finale_3_3_3}
+
+La campagna principale su N=15 utilizza Qiskit Aer \cite{qiskit2023} con un modello uniforme e illustrativo, non calibrato su una QPU specifica. Il circuito viene compilato nella base rz/sx/x/cx. Le rotazioni rz sono trattate come cambi di frame virtuali; sx/x e cx ricevono la composizione di depolarizzazione e rilassamento termico, con durate rispettivamente di 50 ns e 300 ns. La misura è affetta da una matrice di readout simmetrica. Il modello consente di controllare separatamente intensità depolarizzante, T1/T2 e readout, ma non include automaticamente crosstalk, leakage, deriva o errori coerenti.
+
+Qiskit Aer parametrizza il canale depolarizzante su q qubit come \ensuremath{\mathcal{E}(\rho)=(1-\lambda)\rho+\lambda I/2^q}. La probabilità totale associata alle componenti di Pauli non identità è quindi 3λ/4 per un qubit e 15λ/16 per due qubit. Questa convenzione viene mantenuta esplicita perché λ non coincide, in generale, con la probabilità aggregata di un Pauli non identità.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+P(no Pauli 2Q sulle 224 CX) = (1 - 15λ₂q/16)²²⁴.
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+(3.5)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+L'Equazione (3.5) viene utilizzata soltanto come proxy diagnostico di accumulo di eventi. Non comprende errori 1Q, rilassamento o readout e, soprattutto, non è una probabilità di successo di Shor.
+
+\subsection{Tre grandezze d'errore che non vanno confuse}\label{sec:finale_3_3_4}
+
+La revisione della tesi adotta una notazione distinta per impedire confronti numerici non commensurabili. Nei memory experiment QEC si usa p per l'intensità dell'errore fisico del modello e p\_L per la probabilità di fallimento logico dopo la decodifica. Nell'analisi di sensibilità di Shor si usa invece p\_g per la probabilità totale di applicare un Pauli non identità dopo ciascun gate compilato incluso nel proxy. La Tabella~\ref{tab:finale_3_3} fissa questa convenzione.
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\caption{Convenzione delle grandezze d'errore usata nella versione revisionata.}\label{tab:finale_3_3}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Simbolo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Significato}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Dove compare}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Non equivale a}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Convenzione delle grandezze d'errore usata nella versione revisionata. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Simbolo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Significato}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Dove compare}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Non equivale a}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+p & errore fisico del modello QEC & repetition, Steane, surface code & errore di una porta logica di Shor \\
+p\_L & logical error rate del memory experiment & QEC e decoder & probabilità per gate del circuito di Shor \\
+p\_g & proxy Pauli non-identità per gate compilato & sensibilità M8/M13 & logical error rate per round/ciclo QEC \\
+λ₁q, λ₂q & parametro Aer di depolarizzazione & campagna Shor N=15 & p, p\_L o p\_g senza conversione \\
+\end{longtable}
+\endgroup
+
+Collegare p\_L a p\_g richiederebbe una compilazione fault-tolerant completa: registri codificati, operazioni logiche protette, cicli di sindrome, decoder, latenza di feed-forward e trattamento delle operazioni non-Clifford. Tale architettura non è simulata in questa tesi; le campagne QEC e l'analisi di Shor restano quindi livelli sperimentali distinti.
+
+\section{Strategie di intervento considerate}\label{sec:finale_3_4}
+
+\subsection{Post-processing e mitigazione a valle della misura}\label{sec:finale_3_4_1}
+
+Il primo livello di intervento non modifica il circuito già eseguito: cerca di utilizzare meglio gli esiti misurati. TOP-1 verifica soltanto il candidato più frequente; TOP-4 estende la verifica ai quattro candidati più frequenti. Il Metodo 2 (M2) inserisce un classificatore classico che decide se attivare la stessa ricerca TOP-4. Il confronto M2 versus TOP-4 costituisce l'ablazione necessaria a separare l'effetto del modello appreso da quello della ricerca multi-candidato.
+
+Come controllo di mitigazione viene valutata anche una forma simulativa di zero-noise extrapolation (ZNE): vengono scalati i parametri depolarizzanti mentre coerenza e readout restano fissi, utilizzando due o tre livelli di rumore. Non si tratta di gate folding su hardware; il confronto misura quindi l'utilità della specifica estrapolazione digitale nel modello di simulazione adottato.
+
+La ricerca TOP-K richiede inoltre un controllo combinatorio. Poiché 63 celle su 256 conducono a fattori con l\textquotesingle estrattore adottato, un ranking casuale può includere un candidato utile con probabilità non trascurabile. Se si scelgono K celle distinte senza informazione, la probabilità di non includerne alcuna è C(193,K)/C(256,K). Questo valore scende rapidamente con K e spiega perché etichette basate su TOP-16 diventano quasi sempre positive. Tale proprietà viene usata come controllo metodologico del dataset del classificatore, non come evidenza di segnale quantistico.
+
+La ZNE parte da un\textquotesingle idea diversa: osservare una quantità a livelli di rumore artificialmente aumentati e stimarne il valore al limite di rumore nullo. Per essere interpretabile, occorre dichiarare quale parte del rumore viene scalata e quale resta invariata. Qui vengono scalati soltanto i parametri depolarizzanti; T1/T2 e readout non vengono moltiplicati. Di conseguenza l\textquotesingle estrapolazione non rappresenta un fattore globale sul canale fisico, ma un esperimento controllato sulla componente depolarizzante del modello.
+
+\subsection{Quantum Error Correction: sindrome, distanza e soglia}\label{sec:finale_3_4_2}
+
+La QEC interviene prima della misura finale, distribuendo l'informazione di un qubit logico su più qubit fisici. Il teorema del no-cloning impedisce di proteggere uno stato ignoto copiandolo, ma non di codificarlo in uno spazio ridondante \cite{wootters1982}. Gli stabilizzatori vengono misurati tramite ancille e producono una sindrome che rivela la presenza di errori senza leggere direttamente l'informazione logica \cite{steane1996,shorcorrection1995,aharonov1997fault,calderbankShor1996,gottesman1997}.
+
+Il percorso sperimentale usa tre livelli di complessità crescente. Il codice a ripetizione introduce il concetto di sindrome e corregge un solo tipo di errore alla volta. Il codice di Steane \ensuremath{[[7,1,3]]} corregge un errore arbitrario su un qubit, ma nel laboratorio di questa tesi l'estrazione della sindrome è assunta ideale. Il surface code ruotato introduce una distanza d scalabile e circuiti di memoria con errori anche su preparazione e misura \cite{steane1996,fowler2012,googleQECBelowThreshold2025,googleSurfaceCode2023,dennis2002topological,calderbankShor1996,gottesman1997}
+
+Nel formalismo stabilizer, lo spazio del codice è il sottospazio che ha autovalore +1 per un insieme di operatori di Pauli mutuamente commutanti. Un errore che anticommuta con uno stabilizzatore ne cambia il segno e genera una sindrome non nulla. La sindrome identifica una classe di errori, non necessariamente un errore fisico unico: errori differenti possono essere degeneri e avere lo stesso effetto logico. Il decoder deve quindi scegliere una correzione plausibile tenendo conto del modello di rumore.
+
+Per il repetition code a tre qubit, gli stabilizzatori Z1Z2 e Z2Z3 localizzano un singolo X senza misurare l\textquotesingle informazione logica; la versione duale in base di Hadamard protegge da Z. Nel codice di Steane, la struttura CSS permette di trattare separatamente le componenti X e Z mediante due codici classici di Hamming correlati. Il parametro \ensuremath{[[7,1,3]]} indica sette qubit fisici, un qubit logico e distanza tre. Questi due laboratori hanno soprattutto funzione di validazione concettuale prima di passare al surface code.
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\caption{Ruolo dei sistemi QEC nel disegno sperimentale.}\label{tab:finale_3_4}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Sistema}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Scopo nel lavoro}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Metrica primaria}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Assunzione chiave}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Ruolo dei sistemi QEC nel disegno sperimentale. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Sistema}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Scopo nel lavoro}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Metrica primaria}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Assunzione chiave}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Repetition d=3 & verifica didattica della sindrome & p\_L e confronto con 3p²-2p³ & protegge X oppure Z, non entrambi \\
+Steane \ensuremath{[[7,1,3]]} & soppressione di errore arbitrario a distanza 3 & p\_L, pendenza, pseudo-soglia & sindrome ideale nel Monte Carlo \\
+Surface code d=3,5,7,9 & soglia e scaling con la distanza & p\_L(p,d), p\_th & rumore circuit-level stabilizer \\
+Decoder appreso/ibrido & uso della struttura della sindrome & Δp\_L sugli stessi shot & confronto condizionato al decoder di riferimento \\
+\end{longtable}
+\endgroup
+
+Per il surface code, sotto soglia si attende una diminuzione dell'errore logico all'aumentare di d. Il fit utilizzato nel lavoro è
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+p\_L(d,p) = A · (p / p\_th)\^{}\{⌊(d+1)/2⌋\}.
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+(3.6)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Il parametro p\_th è una soglia del circuito, del modello di rumore e del decoder adottati: non viene presentato come costante universale della tecnologia.
+
+La distanza d di un codice è il peso minimo di un operatore logico non rilevabile come errore. In un modello ideale, un codice di distanza d può correggere fino a ⌊(d-1)/2⌋ errori arbitrari. Nei circuiti reali, tuttavia, anche misura degli stabilizzatori e preparazione possono fallire: per questo il surface code usa più round di sindrome e il decoder lavora sulle variazioni temporali, i detection events, anziché su una sola sindrome statica.
+
+Nel surface code ruotato i qubit dati e quelli di misura sono disposti su una griglia locale. Gli stabilizzatori di tipo X e Z rilevano rispettivamente componenti di fase e bit flip; l\textquotesingle osservabile logico attraversa il patch. La località rende il codice compatibile con connettività bidimensionale, ma trasferisce una parte rilevante della complessità al decoder, che deve ricostruire la causa più plausibile a partire da eventi distribuiti nello spazio e nel tempo.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_3_4_ciclo_qec_decoder.png}
+\caption{Ciclo concettuale della QEC e posizione dei decoder analitici o appresi.}
+\label{fig:finale_3_4}
+\end{figure}
+
+Nel surface code i controlli locali vengono ripetuti nel tempo. Un detection event segnala una variazione inattesa dell\textquotesingle esito di uno stabilizzatore tra round consecutivi. Un errore sui dati può generare coppie di eventi separati nello spazio, mentre un errore di misura può produrre separazione soprattutto nel tempo. Il decoder lavora quindi su un grafo spazio-temporale. Il logical error rate p\_L è la frequenza con cui errore fisico e correzione differiscono per un operatore logico non rilevabile.
+
+Questa struttura spiega perché il decoder faccia parte della definizione operativa della soglia. Lo stesso codice fisico può mostrare prestazioni differenti con decoder diversi o con detector error model diversi. Nella tesi MWPM costituisce la baseline principale perché è standard, riproducibile e direttamente supportato da PyMatching; BP+OSD e modelli appresi vengono usati per verificare quanto del margine residuo dipenda dalla rappresentazione del rumore e quanto dalla regola di decodifica.
+
+\subsection{Decoder analitici, appresi e ibridi}\label{sec:finale_3_4_3}
+
+Il decoder trasforma la sindrome in una decisione correttiva. Il riferimento principale è il Minimum-Weight Perfect Matching (MWPM), implementato con PyMatching \cite{fowler2012,pymatching2021,dennis2002topological}, che associa detection events tramite un grafo pesato. Il suo punto di forza è l'efficienza; il limite è strutturale: meccanismi che coinvolgono più detector possono richiedere una decomposizione in archi che perde informazione \cite{fowler2012,dennis2002topological}.
+
+La rete neurale viene valutata in due ruoli distinti. Nel primo tenta di sostituire il decoder analitico e predice direttamente l'osservabile logico. Nel secondo opera come correttore residuale: riceve la sindrome e la decisione MWPM e stima la probabilità che il matching abbia sbagliato. La soglia di intervento viene scelta sui dati di validazione; se nessuna soglia migliora il riferimento, l'ibrido può astenersi e coincidere con MWPM. Questo disegno evita di valutare una soglia scelta sul test set.
+
+Per distinguere un vantaggio dell'apprendimento dal costo di un decoder analitico subottimale, la campagna include inoltre BP+OSD (belief propagation + ordered statistics decoding), che opera sul detector error model senza lo stesso vincolo di decomposizione del matching \cite{roffe2020,panteleev2021}.
+
+È utile distinguere tre domande che spesso vengono confuse. La prima è se il modello appreso sappia ordinare correttamente i casi difficili, misurata ad esempio mediante AUC. La seconda è se una soglia operativa consenta di trasformare tale ordinamento in meno errori logici. La terza è se lo stesso beneficio resti dopo aver sostituito il decoder analitico di riferimento con un metodo più forte. Le campagne E3, E4 ed E7 della versione originaria vengono ricondotte qui a questi tre livelli, così il Capitolo 5 può discutere i risultati senza attribuire al machine learning un guadagno che appartiene in realtà alla scelta della baseline.
+
+AUC, precision e recall hanno quindi ruoli diagnostici distinti. L\textquotesingle AUC misura la capacità di ordinare i fallimenti di MWPM indipendentemente dalla soglia. La precision indica quale frazione degli shot segnalati dalla rete corrisponde realmente a un errore del matching; la recall indica quale frazione di tutti i fallimenti viene intercettata. Un flag molto preciso ma con recall bassa può essere utile come correttore selettivo, purché le correzioni sbagliate introdotte non superino quelle corrette. La metrica finale rimane comunque p\_L dell\textquotesingle intero decoder, non una metrica di classificazione isolata.
+
+\subsection{AQFT come ottimizzazione algoritmica}\label{sec:finale_3_4_4}
+
+L'AQFT agisce su un asse diverso: riduce il circuito prima che il rumore venga applicato. Il parametro di troncamento limita le rotazioni controllate mantenute nella QFT inversa finale (k\_QPE) e, per l'aritmetica di Beauregard, nelle QFT interne agli addizionatori (k\_arith). Ridurre k diminuisce il costo a due qubit, ma può degradare la precisione di fase. La valutazione richiede quindi due misure congiunte: prestazione algoritmica sul campione di verifica e costo circuitale dopo compilazione.
+
+Il troncamento viene definito per distanza delle interazioni nella cascata di rotazioni: mantenere soltanto le rotazioni di ordine più grande equivale a scartare angoli progressivamente più piccoli. Su una QFT isolata questo riduce direttamente le porte controllate; nell\textquotesingle aritmetica di Beauregard l\textquotesingle effetto si moltiplica perché la stessa struttura compare ripetutamente negli addizionatori modulari. Per contro, proprio quelle rotazioni possono contenere informazione utile quando la fase non è rappresentabile esattamente con pochi bit. Questa è la ragione per cui il protocollo separa N=15, N=21 e benchmark QPE invece di produrre un unico giudizio sull\textquotesingle AQFT.
+
+\section{Disegno sperimentale e criteri di inferenza}\label{sec:finale_3_5}
+
+Il disegno complessivo segue un principio comune: baseline esplicita, appaiamento dei campioni quando possibile, separazione tra selezione e test e uso di metriche coerenti con il compito. La Figura~\ref{fig:finale_3_5} riassume le cinque linee corrispondenti alle domande DR1--DR5 del Capitolo 2. I dettagli implementativi --- organizzazione del codice, versioni software e struttura degli artefatti --- sono descritti nel Capitolo 4; qui restano le scelte che determinano la validità dell'inferenza.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_3_5_disegno_sperimentale.png}
+\caption{Disegno sperimentale unificato. Le cinque campagne condividono il criterio di confronto, ma non la stessa unità di misura.}
+\label{fig:finale_3_5}
+\end{figure}
+
+La riproducibilità viene trattata come parte del metodo e non come proprietà accessoria del codice. Ogni campagna registra i parametri di input, il seed, la numerosità, le versioni software e gli identificativi della compilazione. Quando più strategie devono essere confrontate, esse ricevono gli stessi campioni oppure una schedule di seed comune. Questa scelta riduce la varianza del confronto e impedisce che una realizzazione casuale favorevole venga scambiata per un vantaggio del metodo.
+
+La separazione selection/validation/holdout è applicata quando il metodo contiene una scelta adattiva. Il classificatore viene selezionato sulla validation e valutato sul test indipendente; la soglia del decoder ibrido viene scelta prima del test; il grado AQFT viene selezionato su batch dedicati e misurato su holdout disgiunti. Il principio è identico nei tre casi: il dato usato per scegliere una configurazione non può essere riutilizzato come prova della sua prestazione.
+
+L\textquotesingle appaiamento viene preferito quando due metodi possono essere applicati allo stesso campione. In DR1 le strategie leggono lo stesso istogramma; in DR3 i decoder ricevono gli stessi detection events; nei confronti AQFT i bracci condividono layout e schedule dei seed. L\textquotesingle appaiamento elimina dal confronto una parte della variabilità Monte Carlo e rende il test sensibile alla differenza fra metodi, non alla differenza fra campioni casuali. Quando il confronto non può essere appaiato in senso stretto, l\textquotesingle incertezza viene riportata esplicitamente tramite intervalli binomiali o bootstrap.
+
+Le correzioni per confronti multipli vengono applicate alla famiglia inferenziale dichiarata, non indiscriminatamente a tutte le analisi esplorative della tesi. Questo permette di distinguere gli endpoint principali, per i quali il controllo dell\textquotesingle errore di I tipo è parte del contratto, dagli sweep esplorativi usati per generare ipotesi. Nel Capitolo 5 le due categorie vengono indicate separatamente.
+
+\subsection{Perimetro delle istanze e validazione funzionale}\label{sec:finale_3_5_1}
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Ruolo delle istanze e separazione dei livelli sperimentali.}\label{tab:finale_3_5}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Oggetto}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Ruolo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Validazione/uso}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Ruolo delle istanze e separazione dei livelli sperimentali. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Oggetto}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Ruolo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Validazione/uso}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+N=15, a=7, r=4 & campagna Shor rumorosa principale & truth table, picchi ideali, fattori 3 e 5; TOP-K/ML; M8/M13; AQFT pilota \\
+N=21, a=2, r=6 & aritmetica reversibile e AQFT esplorativa & azione modulare, ancille a zero, QPE ideale; compilazioni e test AQFT a budget ridotto \\
+N=35, a=6, r=2 & controllo ideale aggiuntivo & correttezza dell'aritmetica e distribuzione QPE; nessuna campagna rumorosa principale \\
+memory experiment QEC & caratterizzazione separata della protezione & repetition, Steane, surface code e decoder; nessun trasferimento diretto a Shor \\
+\end{longtable}
+\endgroup
+
+La validazione dell'aritmetica precede l'uso del successo finale come metrica. Per N=21 e N=35 vengono controllati l'operatore modulare sui vettori validi, l'uncomputation delle ancille e la distribuzione QPE ideale. Questo controllo è necessario perché un post-processing permissivo può restituire occasionalmente fattori anche da un circuito non corretto.
+
+Per N=15 viene applicato lo stesso principio al moltiplicatore ×7 mod 15: la truth table e il periodo atteso vengono verificati prima delle campagne rumorose. Il manifest della netlist compilata conserva conteggi, profondità, base di gate, livello di ottimizzazione e hash della sequenza. In questo modo training del classificatore, baseline e sweep non possono riferirsi accidentalmente a revisioni differenti del circuito.
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Numerosità principali. Le unità statistiche differiscono tra campagne e non vengono aggregate tra loro.}\label{tab:finale_3_6}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Campagna}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Campionamento principale}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Unità di analisi}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Numerosità principali. Le unità statistiche differiscono tra campagne e non vengono aggregate tra loro. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Campagna}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Campionamento principale}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Unità di analisi}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+DR1 confronto M1/TOP-4/M2 & 30 repliche; 1024 shot per iterazione; max 50 iterazioni & replica appaiata \\
+Classifier DR1 & 2000 istogrammi per scenario; split 60/20/20 & istogramma \\
+Repetition & 20.000 campioni per punto & shot logico \\
+Steane & 200.000 campioni per punto & shot logico \\
+Surface code & 2×10⁵ -- 4×10⁷ shot per punto & shot logico / detection events \\
+Decoder appreso & 4×10⁵ o 8×10⁵ campioni per punto & shot appaiato \\
+M8 sensibilità Shor & 20×4096 shot per punto & shot; replica per dispersione \\
+AQFT N=15 & 8192 shot per grado, split 4/4 batch & batch selection/holdout \\
+QPE AQFT & 4096 shot per grado, 3 fasi × 3 taglie & batch selection/holdout \\
+\end{longtable}
+\endgroup
+
+Gli artefatti sperimentali sono versionati e accompagnati da manifest. Per i circuiti di Shor il manifest registra almeno N, a, numero di qubit di conteggio, base di gate, optimization level, seed del transpiler, profondità, conteggio delle operazioni e hash della netlist. Per le campagne statistiche vengono salvati anche seed del simulatore, vettori appaiati, parametri del noise model, definizione delle etichette e versione dello schema dati. Questo consente di distinguere un cambio del metodo da un cambio del circuito o dell\textquotesingle ambiente.
+
+Gli output di implementazioni successivamente riconosciute come errate non vengono mantenuti come evidenza corrente. In particolare, le campagne sono state rigenerate dopo la correzione del moltiplicatore ×7 mod 15 e, nell\textquotesingle AQFT, gli output della prima variante senza SWAP sono esclusi dopo la correzione della permutazione. Questa politica evita un problema frequente nei lavori sperimentali iterativi: utilizzare risultati numericamente plausibili prodotti da una revisione del codice che non implementa più il contratto dichiarato.
+
+\subsection{DR1 --- Post-processing, classificatore e ablazione}\label{sec:finale_3_5_2}
+
+Il confronto principale usa il circuito N=15, a=7 compilato una sola volta nella base rz/sx/x/cx, optimization level 2 e seed di transpiler fissato. La netlist di riferimento contiene 224 CX e ha profondità 412. Ogni iterazione genera un singolo istogramma da 1024 shot, consegnato senza ricampionamento a TOP-1, TOP-4 e M2. Le differenze tra strategie dipendono quindi dalla regola decisionale e non da realizzazioni Monte Carlo diverse.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_3_6_pipeline_dr1.png}
+\caption{Pipeline appaiata della campagna DR1: una sola simulazione alimenta TOP-1, TOP-4 e M2.}
+\label{fig:finale_3_6}
+\end{figure}
+
+Oltre ai due preset principali, la robustezza della regola TOP-K viene esplorata variando un fattore alla volta. Lo scopo degli sweep non è stimare una legge causale generale, ma verificare se il comportamento osservato sia fragile rispetto a scelte ragionevoli del contratto. Le famiglie considerate sono riassunte nella Tabella~\ref{tab:finale_3_7}. Poiché gli sweep appartengono a famiglie esplorative differenti, i loro p-value non vengono corretti globalmente come se costituissero un unico test preregistrato.
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Sweep esplorativi della campagna DR1 e domanda associata.}\label{tab:finale_3_7}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Famiglia di sweep}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Variabile controllata}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Domanda metodologica}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Sweep esplorativi della campagna DR1 e domanda associata. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Famiglia di sweep}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Variabile controllata}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Domanda metodologica}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Numero di candidati & K = 1,2,3,4,6,8 & quanto beneficio deriva dall'allargare la ricerca \\
+Errore 2Q & λ₂q da 10⁻³ a 10⁻¹ & robustezza alla componente dominante sui gate entangling \\
+Shot & 128--2048 & dipendenza dalla risoluzione dell'istogramma \\
+K × λ₂q & griglia congiunta & interazione tra rumore e ampiezza della ricerca \\
+Coerenza & T1/T2 da 20/16 a 500/400 μs & sensibilità al rilassamento/dephasing \\
+Errore 1Q & λ₁q da 10⁻⁴ a 2×10⁻² & ruolo dei gate a singolo qubit \\
+Readout & 0--20\% & effetto della misura imperfetta \\
+Compilazione & optimization level 0--3 & dipendenza dalla netlist prodotta \\
+\end{longtable}
+\endgroup
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Preset uniformi della campagna Shor N=15. Sono scenari controllati, non snapshot di una QPU.}\label{tab:finale_3_8}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Parametro}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Scenario di riferimento}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Scenario di stress}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Preset uniformi della campagna Shor N=15. Sono scenari controllati, non snapshot di una QPU. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Parametro}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Scenario di riferimento}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Scenario di stress}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+a / r & 7 / 4 & 7 / 4 \\
+qubit di controllo / shot & 8 / 1024 & 8 / 1024 \\
+λ₁q / λ₂q & 10⁻³ / 10⁻² & 5×10⁻³ / 5×10⁻² \\
+T1 / T2 & 100 / 80 μs & 50 / 30 μs \\
+readout simmetrico & 0,02 & 0,05 \\
+\end{longtable}
+\endgroup
+
+Per ciascuno scenario vengono eseguite 30 repliche appaiate, con un massimo di 50 iterazioni. Un fallimento entro il budget è codificato con il valore 51 in modo da non scomparire dai vettori inferenziali. I pareggi di frequenza sono risolti con una priorità deterministica dipendente dal seed e dalla bitstring, così il ranking non dipende dall'ordine del dizionario o dal valore numerico dell'esito.
+
+Il dataset del classificatore è costruito separatamente: 2000 istogrammi per scenario, ciascuno da 1024 shot. I cinque parametri del rumore uniforme (λ₁q, λ₂q, T1, T2 e readout) sono campionati indipendentemente entro ±50\% del preset. I dati sono separati in train, validation e test nelle proporzioni 60/20/20. Random Forest, SVM RBF calibrata e MLP vengono confrontati sulla validation; il modello selezionato viene rifittato su train+validation e valutato una sola volta sul test indipendente. F1 e AUC descrivono la capacità predittiva, ma la metrica operativa primaria resta il numero di iterazioni necessarie a fattorizzare.
+
+L\textquotesingle etichetta operativa principale del dataset è TOP-1: vale uno quando il candidato dominante conduce a fattori. Una seconda etichetta TOP-16 è mantenuta come audit, non come target finale. Se tutti i campioni risultano positivi per una regola, il runner interrompe l\textquotesingle addestramento invece di forzare un classificatore costante. Questo controllo impedisce di confondere una classe quasi sempre positiva per ragioni combinatorie con un compito predittivo informativo.
+
+Il vettore di ingresso è l\textquotesingle istogramma normalizzato sui 256 esiti. Di conseguenza, il classificatore osserva l\textquotesingle intera distribuzione già campionata: non decide se eseguire o meno il circuito e non risparmia gli shot necessari a costruire l\textquotesingle istogramma. L\textquotesingle eventuale vantaggio deve quindi emergere dalla riduzione delle iterazioni future, non dall\textquotesingle accuratezza di classificazione presa isolatamente.
+
+I confronti M1\textgreater TOP-4 e M1\textgreater M2 usano il test di Wilcoxon appaiato con zero\_method=\textquotesingle pratt\textquotesingle{} e alternativa unilaterale; TOP-4 versus M2 è bilaterale. I p-value appartenenti alla stessa famiglia vengono corretti con Holm. Questa struttura rende l'ablazione parte integrante dell'ipotesi: un classificatore è utile solo se migliora la stessa ricerca multi-candidato senza filtro.
+
+Il ricorso al Wilcoxon è coerente con la natura discreta e fortemente asimmetrica della metrica: il numero di iterazioni è piccolo, molti confronti producono differenza zero e i fallimenti vengono conservati come sentinella. La variante Pratt mantiene le coppie con differenza zero nel calcolo dei ranghi in modo appropriato al disegno. Medie e rapporti ρ vengono riportati come descrittivi, ma la decisione inferenziale usa l\textquotesingle intero vettore appaiato.
+
+Le metriche del classificatore vengono calcolate sul test indipendente, mentre l\textquotesingle utilità operativa viene misurata nelle 30 repliche del confronto M1/TOP-4/M2. I due livelli non sono equivalenti: F1 e AUC rispondono alla domanda \textquotesingle il modello predice l\textquotesingle etichetta?\textquotesingle, il numero di iterazioni risponde alla domanda \textquotesingle il modello riduce il costo della fattorizzazione?\textquotesingle. Questa separazione è centrale per evitare che una buona accuratezza venga presentata come prova di un beneficio che non è stato misurato.
+
+Il confronto ZNE usa due o tre livelli di rumore depolarizzante. Poiché ogni livello richiede nuove esecuzioni, il costo viene riportato anche in shot complessivi; il confronto non usa il solo tasso di successo.
+
+\subsection{DR2 --- Protocolli QEC e stima della soglia}\label{sec:finale_3_5_3}
+
+Il codice a ripetizione a tre qubit è verificato sia tramite iniezioni deterministiche, sia con 20.000 campioni per punto. Il riferimento analitico è p\_L=3p²-2p³: la concordanza serve come controllo della pipeline di sindrome e decodifica. Il laboratorio distingue la variante bit-flip dalla variante phase-flip, perché il codice protegge un solo tipo di errore per volta.
+
+Per Steane \ensuremath{[[7,1,3]]} vengono verificati i 21 casi di errore singolo X, Y e Z sui sette qubit e la preparazione del code space. Lo sweep quantitativo usa un modello di Pauli e 200.000 campioni per punto. L'estrazione della sindrome è idealizzata: p\_L misura quindi la capacità del codice e della lookup table nel modello adottato, non una procedura fault-tolerant completa. La pendenza log-log a piccolo p e la regione p\_L\textless p sono le metriche principali.
+
+Il surface code ruotato viene simulato con Stim \cite{stim2021} e decodificato con PyMatching \cite{pymatching2021}. La campagna copre d=3,5,7,9, memorie in base X e Z, rounds=d e p tra 2×10⁻³ e 10⁻². Il campionamento è adattivo, da 2×10⁵ a 4×10⁷ shot per punto, per raccogliere un numero sufficiente di fallimenti logici. La soglia viene valutata sia dall'inversione dell'ordine delle curve sia dal fit dell'Equazione (3.6) nel regime sotto soglia. Gli intervalli riportati sono binomiali e la seconda esecuzione indipendente funge da controllo di riproducibilità. La scelta delle distanze e l\textquotesingle interpretazione sotto-soglia sono coerenti con la letteratura del surface code e con le recenti dimostrazioni sperimentali di scaling logico \cite{fowler2012,googleQECBelowThreshold2025,googleSurfaceCode2023,dennis2002topological}.
+
+Nel circuito surface-code il parametro p viene applicato a più punti del ciclo: depolarizzazione dopo gate Clifford, flip dopo reset e prima della misura. Il detector error model viene ricavato dal circuito e fornito a PyMatching. L\textquotesingle errore logico è stimato confrontando la predizione del decoder con l\textquotesingle osservabile logico restituito dal campionatore. Il numero di round pari a d permette di includere la dimensione temporale della sindrome invece di valutare soltanto un singolo snapshot.
+
+La stima della soglia viene mantenuta separata dalla pseudo-soglia di Steane. Nel codice a distanza fissa, il punto p\_L=p indica un break-even del laboratorio considerato; nel surface code la soglia è una proprietà emergente dal confronto tra più distanze. Usare lo stesso termine per i due oggetti renderebbe ambiguo il significato fisico delle curve.
+
+Nei punti in cui p\_L è molto piccolo, un numero fisso di shot produrrebbe pochi o nessun fallimento osservato e quindi intervalli poco informativi. Il campionamento adattivo del surface code aumenta perciò la numerosità fino a raccogliere circa duecento eventi logici per punto, entro il budget massimo. Questa scelta non cambia la definizione dell\textquotesingle estimando, ma rende confrontabili punti che differiscono di ordini di grandezza nel logical error rate.
+
+L\textquotesingle estrapolazione del fit verso distanze non simulate viene utilizzata soltanto per discutere l\textquotesingle ordine di grandezza del costo di memoria, non come osservazione sperimentale. Quando il Capitolo 5 riporta qubit richiesti a p\_L target molto piccoli, tali valori derivano dall\textquotesingle inversione del modello di scala e devono essere letti con l\textquotesingle incertezza e le assunzioni del fit, non come configurazioni effettivamente simulate.
+
+\subsection{DR3 --- Confronto tra decoder analitici e appresi}\label{sec:finale_3_5_4}
+
+Il dataset del decoder coincide con l'output del campionatore Stim: la matrice dei detection events costituisce l'ingresso e l'esito dell'osservabile logico l'etichetta. MWPM e modello appreso ricevono quindi gli stessi campioni. La rete di riferimento è un MLP con due strati nascosti (128,64), attivazione ReLU, ottimizzatore Adam ed early stopping su validation interna.
+
+L\textquotesingle apprendimento è supervisionato: l\textquotesingle etichetta deriva dall\textquotesingle osservabile logico del campionatore, non dalla decisione di MWPM. Nel confronto di sostituzione la rete predice direttamente il flip logico; nel correttore residuale il bersaglio è invece l\textquotesingle evento \textquotesingle MWPM ha sbagliato\textquotesingle. Cambiare il bersaglio cambia il problema di apprendimento e consente alla rete ibrida di concentrarsi sui casi residuali invece di ricostruire da zero la decodifica completa.
+
+La scelta della soglia del residuo è formulata in termini di costo simmetrico: ribaltare uno shot che MWPM aveva corretto introduce un errore, mentre ribaltare un errore di MWPM ne elimina uno. Per produrre un guadagno netto, la precisione fra gli shot ribaltati deve quindi superare il 50\%. Questa condizione rende evidente perché una AUC superiore a 0,5 non sia, da sola, sufficiente a migliorare p\_L.
+
+La prima prova valuta la sostituzione di MWPM con la rete in condizioni in cui il detector error model fornito al matching è coerente con il rumore simulato. La seconda introduce un crosstalk Pauli correlato tra qubit dati adiacenti, con intensità p\_ct ∈ \{0,005; 0,01; 0,02; 0,04\}, mantenendo p=3×10⁻³. Il modello nominale usato da MWPM non include tale meccanismo, così il confronto misura una mancanza strutturale del decoder e non una semplice variazione di parametro.
+
+Nel decoder ibrido la rete non predice direttamente la correzione: stima se la decisione di MWPM sia errata. La soglia τ è scelta sui dati di validazione e poi congelata sul test; tra le opzioni ammissibili è inclusa l'astensione, equivalente a non ribaltare mai la decisione del matching. Le differenze tra MWPM e ibrido sono valutate con il test di McNemar appaiato sugli stessi shot. Campagne di controllo confrontano inoltre MWPM con BP+OSD sul medesimo detector error model nominale, per verificare se un decoder analitico più espressivo assorba il margine attribuito alla rete.
+
+Le campagne principali usano 4×10⁵ campioni per punto nei confronti di sostituzione e 8×10⁵ per punto nell'ibrido, con partizioni separate per addestramento, validazione e test. Le analisi sulla dimensione dell'ingresso e sulla trasferibilità sono interpretate come controlli di scala, non come prove di universalità del decoder.
+
+Un controllo addizionale varia il numero di round a distanza fissata per separare due fattori che altrimenti crescono insieme: distanza del codice e numero di detector in ingresso alla rete. Questo esperimento è metodologicamente importante perché impedisce di attribuire automaticamente alla distanza una perdita di efficacia che potrebbe dipendere dalla larghezza del vettore di sindrome. Un secondo controllo confronta la soglia scelta onestamente in validation con una soglia oracolo scelta sul test: l\textquotesingle oracolo non è utilizzabile in pratica, ma stabilisce se il limite osservato appartenga alla calibrazione della soglia o alla capacità stessa del modello.
+
+\subsection{DR4 --- Sensibilità di Shor a un proxy per gate}\label{sec:finale_3_5_5}
+
+L'esperimento M8 applica dopo ciascun gate sx/x e cx della netlist compilata un canale di Pauli indipendente con probabilità totale p\_g. Le rz restano virtuali. Per rispettare la parametrizzazione di Aer, lo script usa
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+λ₁ = (4/3) p\_g; λ₂ = (16/15) p\_g.
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+(3.7)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Il circuito resta N=15, a=7. Ogni punto della griglia aggrega 20 repliche indipendenti da 4096 shot, per un totale di 81.920 misure. Un singolo shot è dichiarato riuscito quando il post-processing restituisce fattori non banali. Gli intervalli sul successo sono Wilson al 95\%. La curva misura quindi la sensibilità della specifica implementazione a un residuo Pauli uniforme per gate; non identifica quale codice QEC produrrebbe un determinato p\_g.
+
+Per k tentativi indipendenti, la probabilità cumulativa di almeno un successo viene calcolata come
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+P(k) = 1 - (1 - P\_s)\^{}k.
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+(3.8)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Una campagna separata (M13) applica TOP-4 agli stessi livelli di proxy con regole esplicite per i pareggi, per distinguere la robustezza del post-processing dalla massa utile per singola misura.
+
+La griglia di p\_g comprende 0, 10⁻⁴, 5×10⁻⁴, 10⁻³, 1,7×10⁻³, 2×10⁻³, 5×10⁻³, 10⁻², 2×10⁻², 5×10⁻², 10⁻¹, 2×10⁻¹ e 5×10⁻¹. La scelta copre il regime quasi ideale, la zona di degrado e il limite in cui la distribuzione si avvicina al pavimento imposto dal post-processing. Il controllo di monotonia non richiede che ogni differenza tra punti adiacenti sia significativa: verifica che non emergano aumenti incompatibili con l\textquotesingle andamento atteso una volta considerata l\textquotesingle incertezza.
+
+Due controlli hardware-aware, M11 e M11b, utilizzano la snapshot offline FakeSherbrooke. M11 campiona 60 sottografi connessi di 12 qubit e divide 8192 shot per layout in quattro batch di selezione e quattro di holdout; confronta una regola basata sul punteggio di calibrazione con una selezione empirica, usando correlazione di Spearman e bootstrap. M11b studia invece l\textquotesingle associazione tra readout effettivo dopo il routing e successo, controllando per sottografo, numero di ECR e profondità. Entrambi sono studi osservazionali: non addestrano un selettore ML di layout e non autorizzano un claim causale sull\textquotesingle hardware.
+
+M13 affronta un problema specifico del TOP-4 quando più celle hanno lo stesso conteggio al confine del ranking. La regola seeded produce un valore deterministico, ma l\textquotesingle analisi di sensibilità calcola anche scenari favorevoli e sfavorevoli per i pareggi. L\textquotesingle obiettivo non è scegliere a posteriori il risultato più conveniente, bensì quantificare quanto l\textquotesingle endpoint dipenda da una decisione discreta che diventa materiale quando l\textquotesingle istogramma si avvicina all\textquotesingle uniforme.
+
+\subsection{DR5 --- Protocollo AQFT e separazione selection/holdout}\label{sec:finale_3_5_6}
+
+La campagna AQFT utilizza una snapshot offline FakeSherbrooke per derivare infedeltà medie di gate e readout. Le rotazioni rz sono virtuali e T1/T2 non vengono aggiunti separatamente nel noise model, evitando un doppio conteggio rispetto all'infedeltà utilizzata. Layout, seed, batch e hash della calibrazione vengono mantenuti nel contratto sperimentale.
+
+Nel pilota Shor N=15, k\_QPE viene variato da 1 a 7, dove 7 corrisponde alla QFT piena. Ogni configurazione usa 8192 shot in otto batch: quattro batch per la selezione del grado e quattro, disgiunti, per l'holdout. La prestazione dichiarata del grado scelto è quindi misurata soltanto sull'holdout. Il confronto registra contemporaneamente successo, porte ECR e profondità compilata.
+
+Per N=21 il troncamento viene applicato alle QFT interne agli addizionatori modulari di Beauregard, lasciando piena la trasformata finale nel confronto primario. Le prove rumorose sono esplorative e hanno budget ridotto: 256 shot per braccio, con 128 shot holdout. I conteggi di porte utilizzati per interpretare il risultato devono provenire dalla stessa compilazione del confronto; conteggi ottenuti da compilazioni differenti non vengono mescolati.
+
+Il benchmark QPE isola infine la sola stima di fase, molto più corta del circuito completo. Sono usati registri da 6, 8 e 10 qubit e tre fasi per dimensione. Ogni grado usa 4096 shot in otto batch, con split 4/4 tra selezione e holdout. Il successo è definito come misura del valore intero più vicino alla fase target alla risoluzione disponibile. Le differenze di proporzione sono accompagnate da intervalli Newcombe al 95\%; i nove confronti sono trattati come esplorativi e non ricevono una correzione simultanea.
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\caption{Tre livelli della campagna AQFT. Gli endpoint non vengono aggregati in un'unica metrica.}\label{tab:finale_3_9}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Braccio AQFT}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Parametro variato}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Campionamento}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Endpoint}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Tre livelli della campagna AQFT. Gli endpoint non vengono aggregati in un'unica metrica. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Braccio AQFT}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Parametro variato}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Campionamento}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Endpoint}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Shor N=15 & k\_QPE = 1\ldots7 & 8192 shot per grado; 4 batch selection + 4 holdout & successo holdout, ECR, profondità \\
+Shor N=21 & k\_arith nelle QFT degli addizionatori & 256 shot per braccio; 128 holdout & differenza troncata-piena, stesso layout \\
+QPE isolata & grado su n=6,8,10; 3 fasi per n & 4096 shot per grado; 4/4 batch & migliore approssimazione della fase, Δ e IC Newcombe \\
+\end{longtable}
+\endgroup
+
+Nel pilota N=15 viene inoltre verificata la rimozione degli SWAP finali. Una prima implementazione che invertiva soltanto l\textquotesingle associazione dei bit alla misura era errata; nella variante corretta la permutazione viene propagata coerentemente nella cascata QFT. Gli output della versione errata sono esclusi dagli artefatti correnti. Questo controllo è mantenuto nel metodo perché mostra un principio generale: un apparente risparmio di porte non è un risultato se cambia l\textquotesingle operatore implementato.
+
+Per N=21 la campagna distingue compilazione strutturale e simulazioni rumorose. I conteggi ECR riportati a supporto di un confronto provengono dalla medesima ricompilazione del braccio pieno e di quello troncato. La stima ausiliaria a miscela, che combina successo ideale e pavimento uniforme, è trattata esclusivamente come modello interpretativo: non sostituisce una simulazione rumorosa né costituisce un limite universale.
+
+\subsection{Minacce alla validità e limiti del disegno}\label{sec:finale_3_5_7}
+
+La validità interna è protetta soprattutto dall\textquotesingle appaiamento, dalla separazione dei dati e dalla validazione funzionale dei circuiti. Restano tuttavia minacce specifiche. Nella campagna Shor N=15 il noise model è uniforme e stazionario e non contiene topologia, crosstalk o deriva; nel surface code il modello principale è stabilizer/Pauli; nelle snapshot FakeSherbrooke la calibrazione è offline e non evolve durante l\textquotesingle esperimento. I risultati devono quindi essere letti come proprietà dei modelli simulati e non come misure di una macchina reale.
+
+La validità esterna è limitata dalle dimensioni delle istanze e dalla scelta dell\textquotesingle ordine r. N=15 ha r=4 e fasi esatte in due bit, una struttura particolarmente favorevole ad alcune forme di troncamento; N=21 ha r=6 e un\textquotesingle aritmetica molto più profonda. Il numero N, da solo, non misura la difficoltà della QPE. Per questo le conclusioni AQFT vengono formulate per istanza e per protocollo, non come proprietà generale della trasformata approssimata.
+
+Anche le conclusioni sul machine learning sono condizionate all\textquotesingle architettura e alle feature usate. Un SVM sull\textquotesingle istogramma finale e un MLP denso sulla sindrome affrontano compiti diversi e dispongono di informazioni diverse; il loro confronto non dimostra che un punto della pipeline sia intrinsecamente \textquotesingle migliore\textquotesingle{} per l\textquotesingle apprendimento. Analogamente, il fatto che BP+OSD possa superare MWPM in alcuni regimi impone di interpretare il guadagno della rete rispetto alla qualità della baseline analitica.
+
+Infine, la simulazione end-to-end di Shor fault-tolerant non viene eseguita. Le metriche dei memory experiment, il proxy p\_g e la probabilità di fattorizzazione restano collegate soltanto concettualmente. Qualunque stima di risorse crittografiche richiederebbe un gate set logico, protocolli per le operazioni non-Clifford, scheduling dei cicli di correzione e un modello delle correlazioni residue. Questa assenza è un limite dichiarato del lavoro, non un passaggio colmato mediante estrapolazione.
+
+La validità di costrutto richiede infine che le metriche corrispondano alle domande. TOP-4 misura la probabilità di trovare almeno un candidato verificabile tra i più frequenti, non la qualità dello stato; F1 misura una classificazione, non il costo di fattorizzazione; p\_L misura il fallimento di una memoria codificata, non una porta logica; il conteggio ECR misura il costo compilato, non la fedeltà. La revisione del capitolo rende esplicite queste equivalenze mancate perché molte conclusioni eccessive nascono proprio dal trasferimento implicito tra metriche diverse.
+
+\subsection{Sintesi del contratto sperimentale}\label{sec:finale_3_5_8}
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\caption{Corrispondenza operativa tra domande di ricerca, baseline, metriche e analisi.}\label{tab:finale_3_10}\label{tab:verifica_requisiti}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{DR}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Oggetto}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Baseline/controllo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Metrica primaria}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Inferenza}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Corrispondenza operativa tra domande di ricerca, baseline, metriche e analisi. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{DR}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Oggetto}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Baseline/controllo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Metrica primaria}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Inferenza}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+DR1 & TOP-K e filtro ML & TOP-1; TOP-4 senza filtro & iterazioni alla fattorizzazione & Wilcoxon appaiato + Holm \\
+DR2 & QEC & qubit fisico / distanze minori & p\_L, pendenza, p\_th & intervalli binomiali + fit \\
+DR3 & decoder & MWPM; BP+OSD & Δp\_L sugli stessi shot & McNemar; validation separata \\
+DR4 & Shor sotto p\_g & p\_g=0 e baseline uniforme & P\_s per shot, P(k) & Wilson 95\%; controlli di monotonia \\
+DR5 & AQFT & QFT piena & successo + ECR/profondità & selection/holdout; Newcombe \\
+\end{longtable}
+\endgroup
+
+Questo contratto è il vincolo interpretativo del Capitolo 5. I risultati delle cinque linee possono essere discussi insieme perché condividono il principio di confronto, ma le loro grandezze non vengono convertite automaticamente l'una nell'altra. In particolare, un miglioramento di TOP-K non equivale a una maggiore fedeltà quantistica, una soglia di memory experiment non determina il successo di Shor e una riduzione di porte AQFT non dimostra da sola un vantaggio sotto rumore. Il Capitolo 4 descrive come il contratto viene tradotto in codice, ambiente di esecuzione e artefatti riproducibili.
+
+Un secondo vincolo interpretativo riguarda l\textquotesingle assenza di risultati hardware. Le snapshot di calibrazione vengono usate per costruire modelli riproducibili e confronti controllati, ma non sono misure live della QPU al momento dell\textquotesingle esecuzione. Deriva temporale, leakage, crosstalk reale, routing dipendente dal backend e latenza classica possono alterare il comportamento. La validazione su hardware costituisce pertanto uno sviluppo successivo e non viene anticipata come evidenza sperimentale.
+
+Infine, tutte le conclusioni statistiche restano locali alla famiglia di confronti dichiarata. Dove i test sono esplorativi, questa natura viene esplicitata; dove vengono effettuati confronti multipli preregistrati, si applica la correzione prevista. L\textquotesingle obiettivo non è massimizzare il numero di differenze significative, ma rendere tracciabile quale evidenza sostiene ciascuna affermazione.
+
+\section{Sintesi metodologica}\label{sec:finale_3_6}
+
+Il capitolo ha definito un quadro unico senza rendere equivalenti esperimenti che misurano oggetti diversi. La campagna DR1 valuta l\textquotesingle uso dell\textquotesingle output già misurato; DR2 e DR3 operano sui circuiti di memoria e sulle sindromi; DR4 misura la sensibilità di una specifica implementazione di Shor a un proxy per gate; DR5 modifica il circuito attraverso il troncamento della QFT. Il denominatore comune è il confronto con una baseline esplicita e, quando possibile, l\textquotesingle uso degli stessi campioni.
+
+La separazione tra selezione e valutazione è il secondo principio comune. I modelli di machine learning vengono scelti senza utilizzare il test finale; i gradi AQFT vengono selezionati su batch distinti dall\textquotesingle holdout; le soglie del decoder ibrido sono fissate in validazione. Questa disciplina riduce il rischio che il vantaggio dichiarato sia una conseguenza della scelta a posteriori della configurazione più favorevole.
+
+Il Capitolo 4 traduce questo contratto in software, strumenti e artefatti riproducibili. Il Capitolo 5 presenta poi i risultati nello stesso ordine delle domande di ricerca. Nessun risultato successivo modifica retroattivamente la definizione delle metriche o delle baseline: quando un\textquotesingle analisi è esplorativa, tale natura viene dichiarata e mantenuta nell\textquotesingle interpretazione.

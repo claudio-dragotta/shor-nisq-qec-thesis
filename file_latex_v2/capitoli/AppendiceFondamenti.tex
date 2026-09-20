@@ -80,7 +80,8 @@ Ogni stato puro di un qubit può essere visualizzato come un punto sulla superfi
 
 I poli nord e sud corrispondono agli stati $\ket{0}$ e $\ket{1}$, mentre i punti sull'equatore rappresentano sovrapposizioni equiprobabili con fasi diverse.
 
-La figura corrispondente è riportata nel corpo (Figura~\ref{fig:bloch}).
+Questa rappresentazione geometrica completa il richiamo sintetico agli stati
+di qubit riportato nel Capitolo~\ref{chap:quadro}.
 
 \subsection{Sistemi Multi-Qubit e Prodotto Tensoriale}
 
@@ -112,9 +113,9 @@ Due qubit sono detti \textbf{entangled} quando il loro stato congiunto non può 
 
 Lo stato $\ket{\Phi^+}$ non può essere fattorizzato come $\ket{\psi_A} \otimes \ket{\psi_B}$ per nessuna scelta di $\ket{\psi_A}$ e $\ket{\psi_B}$: misurare il primo qubit come $0$ garantisce che il secondo sia $0$, indipendentemente dalla distanza fisica tra i due sistemi.
 
-Il circuito di preparazione è riportato nel corpo in
-Figura~\ref{fig:circuit_bell}; qui si conserva la base completa dei quattro
-stati e la discussione fisica della loro fragilità.
+Il circuito di preparazione si ottiene applicando Hadamard al primo qubit e
+una CNOT fra i due qubit; qui si conserva la base completa dei quattro stati e
+la discussione fisica della loro fragilità.
 
 \subsubsection{L'Entanglement come Risorsa Fisica Fragile}
 \label{sec:entanglement_fragile}

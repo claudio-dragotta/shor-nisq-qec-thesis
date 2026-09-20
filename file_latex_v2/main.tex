@@ -1,14 +1,80 @@
 \documentclass[oneside, 12pt]{report}
 
 \usepackage[a4paper, left=3cm, right=3cm, top=4cm, bottom=3cm]{geometry}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else
+  % I capitoli revisionati contengono simboli matematici Unicode provenienti
+  % dai documenti Word; LuaLaTeX/XeLaTeX li compongono senza traslitterazioni.
+  \usepackage{fontspec}
+  \defaultfontfeatures{Scale=MatchLowercase}
+\fi
 \usepackage[italian]{babel}
 \usepackage{graphicx}
 \graphicspath{{figure/}}
 \usepackage{url}
 \usepackage{subfig}
 \usepackage{amsmath, amssymb, amsfonts}
+\ifPDFTeX\else
+  % Va caricato dopo i pacchetti AMS per evitare ridefinizioni dei simboli.
+  \usepackage{unicode-math}
+  \usepackage{newunicodechar}
+  % Simboli matematici esportati da Word in modalità testo.
+  \newunicodechar{±}{\ensuremath{\pm}}
+  \newunicodechar{·}{\ensuremath{\cdot}}
+  \newunicodechar{×}{\ensuremath{\times}}
+  \newunicodechar{ʳ}{\ensuremath{{}^{r}}}
+  \newunicodechar{Δ}{\ensuremath{\Delta}}
+  \newunicodechar{Σ}{\ensuremath{\Sigma}}
+  \newunicodechar{α}{\ensuremath{\alpha}}
+  \newunicodechar{β}{\ensuremath{\beta}}
+  \newunicodechar{γ}{\ensuremath{\gamma}}
+  \newunicodechar{λ}{\ensuremath{\lambda}}
+  \newunicodechar{μ}{\ensuremath{\mu}}
+  \newunicodechar{π}{\ensuremath{\pi}}
+  \newunicodechar{ρ}{\ensuremath{\rho}}
+  \newunicodechar{τ}{\ensuremath{\tau}}
+  \newunicodechar{φ}{\ensuremath{\varphi}}
+  \newunicodechar{ψ}{\ensuremath{\psi}}
+  \newunicodechar{ᵐ}{\ensuremath{{}^{m}}}
+  \newunicodechar{ᵢ}{\ensuremath{{}_{i}}}
+  \newunicodechar{†}{\ensuremath{\dagger}}
+  \newunicodechar{⁰}{\ensuremath{{}^{0}}}
+  \newunicodechar{¹}{\ensuremath{{}^{1}}}
+  \newunicodechar{²}{\ensuremath{{}^{2}}}
+  \newunicodechar{³}{\ensuremath{{}^{3}}}
+  \newunicodechar{⁴}{\ensuremath{{}^{4}}}
+  \newunicodechar{⁵}{\ensuremath{{}^{5}}}
+  \newunicodechar{⁶}{\ensuremath{{}^{6}}}
+  \newunicodechar{⁷}{\ensuremath{{}^{7}}}
+  \newunicodechar{⁸}{\ensuremath{{}^{8}}}
+  \newunicodechar{⁹}{\ensuremath{{}^{9}}}
+  \newunicodechar{⁻}{\ensuremath{{}^{-}}}
+  \newunicodechar{₀}{\ensuremath{{}_{0}}}
+  \newunicodechar{₁}{\ensuremath{{}_{1}}}
+  \newunicodechar{₂}{\ensuremath{{}_{2}}}
+  \newunicodechar{₌}{\ensuremath{{}_{=}}}
+  \newunicodechar{ₖ}{\ensuremath{{}_{k}}}
+  \newunicodechar{ₘ}{\ensuremath{{}_{m}}}
+  \newunicodechar{→}{\ensuremath{\to}}
+  \newunicodechar{∈}{\ensuremath{\in}}
+  \newunicodechar{√}{\ensuremath{\sqrt{}}}
+  \newunicodechar{∝}{\ensuremath{\propto}}
+  \newunicodechar{≃}{\ensuremath{\simeq}}
+  \newunicodechar{≈}{\ensuremath{\approx}}
+  \newunicodechar{≡}{\ensuremath{\equiv}}
+  \newunicodechar{≤}{\ensuremath{\leq}}
+  \newunicodechar{≥}{\ensuremath{\geq}}
+  \newunicodechar{⌈}{\ensuremath{\lceil}}
+  \newunicodechar{⌉}{\ensuremath{\rceil}}
+  \newunicodechar{⌊}{\ensuremath{\lfloor}}
+  \newunicodechar{⌋}{\ensuremath{\rfloor}}
+  \newunicodechar{⟨}{\ensuremath{\langle}}
+  \newunicodechar{⟩}{\ensuremath{\rangle}}
+  \newunicodechar{✓}{\ensuremath{\checkmark}}
+\fi
 \usepackage{braket}         % Notazione di Dirac: \ket{}, \bra{}, \braket{}
 \usepackage{textcomp}
 \usepackage{xcolor}
@@ -25,8 +91,21 @@
 \usetikzlibrary{decorations.pathmorphing, decorations.pathreplacing}  % onde microonde, graffe
 \usepackage{listings}
 \usepackage{microtype}
+\usepackage{csquotes}
+\usepackage{pifont}
+\renewcommand{\checkmark}{\ding{51}}
 \usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{calc}
+\usepackage{caption}
+\captionsetup[table]{skip=6pt}
+% Pandoc usa un tipo di caption neutro per le tabelle che nel Word
+% contengono formule, senza incrementare la numerazione delle tabelle.
+\newcounter{none}
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \usepackage{setspace}
 \usepackage[bottom]{footmisc}
 \usepackage{float}
@@ -39,6 +118,7 @@
 \renewcommand{\bottomfraction}{0.80}
 \renewcommand{\textfraction}{0.08}
 \renewcommand{\floatpagefraction}{0.75}
+\setlength{\emergencystretch}{3em}
 \usepackage[backend=biber, citestyle=numeric, sorting=none]{biblatex}
 % hyperref segue footmisc e biblatex, così anche i richiami di nota ricevono
 % destinazioni PDF valide; glossaries viene caricato subito dopo per usarle.
@@ -128,15 +208,19 @@
 % romana; la numerazione araba deve iniziare realmente con il Capitolo 1.
 \clearpage
 \pagenumbering{arabic}
+% Mantiene la stessa numerazione bibliografica della bozza Word auditata.
+% La voce 33 (Kitaev) è inclusa nella bibliografia anche se non richiamata
+% direttamente nel testo dei sei capitoli.
+\nocite{shor1994,buhler1993gnfs,rsa1978,preskill2018,skosana2021,yang2026,smolin2013,nielsenChuang2000,temme2017,steane1996,fowler2012,qiskit2023,stim2021,pymatching2021,scikit_learn,beauregard2002,googleQECBelowThreshold2025,alphaqubit2024,chevignard2025,wootters1982,shorcorrection1995,googleSurfaceCode2023,torlaiMelko2017,yan2026,roffe2020,panteleev2021,sarovar2020,barencoAQFT1996,akoramurthy2026,gidney2021,aharonov1997fault,dennis2002topological,kitaev2003,liBenjamin2017,rsa250_2020,shuklaqpe2026,shukla2026,zurek2003,vandersypen2001,monz2016,calderbankShor1996,gottesman1997,murali2019,tannu2019}
 \chapter{Introduzione}
 \label{chap:introduzione}
-\input{capitoli/Introduzione}
+\input{capitoli/Capitolo1Finale}
 
 % -----------------------------------------------
 \chapter{Problema di ricerca, obiettivi e criteri di valutazione}
 \label{chap:obiettivi}
 \label{chap:specifiche}
-\input{capitoli/ObiettiviPianoSperimentale}
+\input{capitoli/Capitolo2Finale}
 
 % -----------------------------------------------
 % Il quadro teorico e il metodo sono raccolti in un unico capitolo. Le etichette
@@ -147,23 +231,15 @@
 \label{chap:rumore}
 \label{chap:strategie}
 \label{chap:metodologia}
-\section{Fondamenti del calcolo quantistico}
-\inputdemoted{capitoli/Fondamenti}
-\section{L'algoritmo di Shor}
-\inputdemoted{capitoli/Shor}
-\section{Rumore quantistico nei sistemi NISQ}
-\inputdemoted{capitoli/Rumore}
-\section{Strategie per la riduzione del rumore quantistico}
-\inputdemoted{capitoli/StrategieAntiRumore}
-\section{Disegno e metodo sperimentale}
-\inputdemoted{capitoli/Metodologia}
+\label{chap:fondamenti}
+\input{capitoli/Capitolo3Finale}
 
 % -----------------------------------------------
 \chapter{Architettura e implementazione del sistema sperimentale}
 \label{chap:implementazione}
 \label{chap:sviluppo}
-\input{capitoli/Strumenti}
-\input{capitoli/Sviluppo}
+\label{chap:strumenti}
+\input{capitoli/Capitolo4Finale}
 
 % -----------------------------------------------
 % Tutte le campagne e i relativi risultati sono presentati nello stesso capitolo.
@@ -178,25 +254,13 @@
 \label{chap:predizione}
 \label{chap:surface}
 \label{chap:integrazione}
-\section{Fase NISQ: classificatore ML e strategia TOP-K}
-\inputdemoted{capitoli/RisultatiSperimentali}
-\section{Correzione d'errore: codici a ripetizione e di Steane}
-\inputdemoted{capitoli/CorrezioneErrori}
-\section{Surface code e decodifica}
-\inputdemoted{capitoli/SurfaceCode}
-\section{Analisi di sensibilità di Shor}
-\inputdemoted{capitoli/ShorLogico}
-\input{capitoli/RisultatiAQFT}
-\input{capitoli/DiscussioneRisultati}
+\input{capitoli/Capitolo5Finale}
 
 % -----------------------------------------------
 \chapter{Conclusioni e sviluppi futuri}
 \label{chap:conclusioni}
 \label{chap:sviluppi}
-\section{Conclusioni}
-\inputdemoted{capitoli/Conclusioni}
-\section{Sviluppi futuri}
-\inputdemoted{capitoli/SviluppiFuturi}
+\input{capitoli/Capitolo6Finale}
 
 % -----------------------------------------------
 \appendix
