@@ -1,0 +1,150 @@
+% Generato dalla versione Word revisionata e dalla bozza auditata.
+% Le citazioni numeriche originali sono state convertite in chiavi BibLaTeX.
+
+\section{Problema di ricerca e principio metodologico}\label{sec:finale_2_1}
+
+L'algoritmo di Shor costituisce un caso di studio particolarmente adatto per analizzare il rapporto tra vantaggio algoritmico e affidabilità dell'esecuzione quantistica. In condizioni ideali, la fattorizzazione viene ricondotta alla ricerca dell'ordine di una funzione periodica; in presenza di rumore, invece, gli errori di gate, la decoerenza e la misura alterano progressivamente la distribuzione degli esiti e possono rendere meno affidabile il recupero del periodo e dei fattori. \cite{shor1994,preskill2018,skosana2021,smolin2013}
+
+Il problema affrontato in questa tesi non è quindi stabilire se Shor sia teoricamente efficiente, ma comprendere quali interventi producano un beneficio misurabile quando il calcolo è soggetto a rumore. L'analisi considera tre livelli distinti: il post-processing degli esiti già misurati, la protezione dell'informazione mediante Quantum Error Correction (QEC) e la riduzione del costo circuitale attraverso una Quantum Fourier Transform approssimata (AQFT). A questi si affianca un'analisi di sensibilità che misura come il successo della specifica implementazione di Shor degradi al crescere di un errore per gate controllato.
+
+Il criterio metodologico comune è il confronto con una baseline esplicita. Una tecnica aggiuntiva viene considerata utile soltanto se migliora una metrica direttamente collegata al compito, a parità di informazione osservata e, quando possibile, sugli stessi campioni. Questo criterio è particolarmente importante per i metodi basati su machine learning: una buona accuratezza predittiva non dimostra da sola un vantaggio operativo se una regola più semplice, applicata agli stessi dati, raggiunge un risultato uguale o migliore.
+
+\section{Perimetro sperimentale}\label{sec:finale_2_2}\label{sec:use_case}
+
+Tutti i risultati sperimentali della tesi derivano da simulazioni classiche di circuiti quantistici. Non vengono presentate esecuzioni su hardware quantistico reale e nessun risultato viene interpretato come una previsione diretta delle risorse necessarie per fattorizzare moduli di dimensione crittografica. \cite{preskill2018,gidney2021,aharonov1997fault}
+
+Le istanze hanno ruoli differenti. N = 15, con base a = 7, è l'istanza principale per il confronto rumoroso tra strategie di post-processing e per l'analisi di sensibilità di Shor. N = 21, con a = 2, e N = 35, con a = 6, sono utilizzate per validare idealmente l'aritmetica reversibile e la Quantum Phase Estimation; N = 21 è inoltre impiegata in una campagna AQFT esplorativa separata. Questa distinzione evita di confondere la correttezza funzionale di un circuito con la sua robustezza in presenza di rumore.
+
+Anche le grandezze d'errore vengono mantenute separate. Nei memory experiment QEC, p indica la probabilità di errore fisico nel modello adottato e p\_L il tasso di errore logico residuo dopo la decodifica. Nell'analisi di sensibilità di Shor si usa invece p\_g per indicare il proxy di errore Pauli applicato dopo le porte compilate incluse nel modello. Il valore di p\_g non viene ricavato direttamente dalle curve QEC e non deve essere interpretato come il logical error rate di una memoria o di una porta logica fault-tolerant.
+
+\section{Obiettivi del lavoro}\label{sec:finale_2_3}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  validare l'implementazione di Shor e dell'aritmetica modulare sulle istanze considerate, separando la correttezza ideale dalle prestazioni sotto rumore;
+\item
+  misurare se la ricerca di più candidati nell'istogramma riduca il costo della fattorizzazione e verificare, mediante ablazione, se un classificatore aggiunga valore rispetto alla stessa ricerca senza filtro;
+\item
+  caratterizzare la soppressione dell'errore nei codici a ripetizione, Steane e surface code, distinguendo errore fisico, errore logico, pseudo-soglia e soglia;
+\item
+  confrontare decoder analitici e appresi sulle stesse sindromi, verificando in particolare se un modello appreso possa recuperare correlazioni non rappresentate dal decoder di riferimento;
+\item
+  quantificare la sensibilità della specifica implementazione di Shor a un errore per gate controllato, senza convertire in modo improprio le metriche QEC in probabilità di successo algoritmico;
+\item
+  valutare se la riduzione di porte ottenuta mediante AQFT compensi la perdita di precisione introdotta dal troncamento, distinguendo il circuito completo di Shor dai benchmark di sola stima di fase.
+\end{enumerate}
+
+\section{Domande di ricerca e ipotesi}\label{sec:finale_2_4}
+
+Per mantenere una corrispondenza diretta con gli esperimenti del Capitolo 5, le domande di ricerca sono organizzate secondo le cinque linee sperimentali effettivamente analizzate.
+
+\textbf{DR1 --- Post-processing e machine learning.} La ricerca multi-candidato riduce il numero di iterazioni necessarie a ottenere i fattori? Un classificatore applicato all'istogramma produce un beneficio aggiuntivo rispetto alla stessa strategia TOP-K senza filtro?
+
+\begin{quote}
+\emph{H1: TOP-K migliora TOP-1 quando l'informazione utile è ancora presente tra gli esiti più frequenti; il classificatore è utile solo se riduce ulteriormente il costo operativo rispetto alla propria ablazione.}
+\end{quote}
+
+\textbf{DR2 --- Codici di correzione.} In quale regime la codifica rende l'informazione logica più affidabile del qubit fisico e come cambia l'errore al crescere della distanza del codice?
+
+\begin{quote}
+H2: per codici di distanza 3, a piccolo errore fisico, il contributo dominante al fallimento è di ordine p²; per il surface code esiste un regime sotto soglia nel quale aumentare la distanza riduce p\_L. \cite{steane1996,fowler2012,googleQECBelowThreshold2025,googleSurfaceCode2023,dennis2002topological}
+\end{quote}
+
+\textbf{DR3 --- Decodifica analitica e appresa.} Un decoder appreso può superare un decoder analitico quando il modello di rumore contiene correlazioni che quest'ultimo non rappresenta? È più efficace sostituire il decoder o correggerne gli errori residui?
+
+\begin{quote}
+H3: a modello corretto il decoder analitico resta competitivo; un vantaggio appreso può emergere in presenza di struttura informativa non rappresentata dal riferimento e può risultare più efficace in forma ibrida. \cite{alphaqubit2024,torlaiMelko2017,yan2026}
+\end{quote}
+
+\textbf{DR4 --- Sensibilità di Shor.} Come varia la probabilità di ricavare i fattori al crescere di un proxy di errore per gate p\_g e quante esecuzioni indipendenti sono necessarie per raggiungere una probabilità cumulativa prefissata?
+
+\begin{quote}
+\emph{H4: il successo per singolo shot è compatibile con una funzione non crescente di p\_g e tende, per rumore elevato, verso il livello determinato dalla procedura classica di accettazione degli esiti.}
+\end{quote}
+
+\textbf{DR5 --- QFT approssimata.} Quando la riduzione del numero di porte ottenuta troncando le rotazioni della QFT compensa la perdita di precisione algoritmica?
+
+\begin{quote}
+H5: l'AQFT può produrre un vantaggio quando il risparmio circuitale supera l'errore di approssimazione; il beneficio dipende dalla struttura delle fasi, dalla profondità del circuito e dal regime di rumore e non è quindi atteso come universale. \cite{barencoAQFT1996,akoramurthy2026}
+\end{quote}
+
+\section{Contratto sperimentale e metriche}\label{sec:finale_2_5}\label{sec:metriche}
+
+Le domande precedenti vengono associate a metriche e criteri di decisione differenti. Le grandezze non vengono convertite fra loro quando descrivono oggetti diversi. La tabella seguente costituisce il contratto sintetico tra questo capitolo e il Capitolo 5.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Linea}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Confronto}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Metrica primaria}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Criterio di evidenza}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Risultati}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+DR1 & TOP-1 / TOP-4 / ML+TOP-4 & Iterazioni fino ai fattori; successo entro Mmax & Confronto appaiato; Wilcoxon-Pratt; correzione di Holm; ablazione del classificatore & §5.1 \\
+DR2 & Repetition / Steane / surface code & p\_L(p,d), pendenza, break-even, p\_th & p\_L \textless{} p; soppressione con la distanza sotto soglia & §5.2--5.3 \\
+DR3 & MWPM / rete / ibrido / BP+OSD & Differenza di p\_L sugli stessi campioni & Confronti appaiati; McNemar; vantaggio nel regime dichiarato & §5.3 \\
+DR4 & Shor con p\_g crescente & P\_succ(p\_g); P cumulativa su k tentativi & Andamento non crescente; IC binomiali; nessuna conversione diretta da QEC & §5.4 \\
+DR5 & QFT piena / AQFT & P\_succ, ΔP, porte 2Q, profondità & Selezione e holdout separati; IC Newcombe; bilancio costo-precisione & §5.5 \\
+\end{longtable}
+}
+
+\section{Criteri specifici di valutazione}\label{sec:finale_2_6}
+
+\subsection{Post-processing e classificazione}\label{sec:finale_2_6_1}
+
+Per il confronto tra TOP-1, TOP-4 e il metodo con classificatore, la metrica principale è il numero di iterazioni necessarie a ottenere fattori validi. Accuratezza, F1 e AUC descrivono la capacità del modello di predire la riuscita della regola TOP-1, ma non costituiscono da sole evidenza di utilità operativa. Le strategie ricevono gli stessi istogrammi, con lo stesso budget di iterazioni, lo stesso post-processing e la stessa regola di gestione dei pareggi. Il confronto fra il metodo con classificatore e TOP-4 senza filtro è l'ablazione che isola il contributo del modello. \cite{yang2026}
+
+\subsection{Quantum Error Correction}\label{sec:finale_2_6_2}\label{subsec:metriche_qec}
+
+Nei test QEC la variabile centrale è p\_L, stimata su un numero dichiarato di campioni. Per i codici a distanza fissata vengono valutati la regione in cui p\_L \textless{} p, la pendenza della soppressione e l'eventuale pseudo-soglia. Per il surface code si confrontano più distanze e si stima p\_th dal regime sotto soglia, verificando che l'aumento della distanza riduca l'errore logico soltanto al di sotto della soglia. Le stime restano specifiche del circuito di memoria, del modello di rumore e del decoder adottati. \cite{fowler2012,googleQECBelowThreshold2025,googleSurfaceCode2023,aharonov1997fault,dennis2002topological,calderbankShor1996,gottesman1997}
+
+\subsection{Decoder appresi}\label{sec:finale_2_6_3}
+
+I decoder vengono confrontati sugli stessi detection events. La rete viene valutata sia come sostituto del metodo analitico sia come correttore residuale. Il criterio principale è la variazione di p\_L rispetto al decoder di riferimento; quando le decisioni sono appaiate sugli stessi shot, la significatività viene valutata con test appropriati al confronto binario. Il confronto con BP+OSD serve inoltre a distinguere il valore dell'apprendimento dal semplice uso di un decoder analitico più adatto. \cite{alphaqubit2024,torlaiMelko2017,roffe2020,panteleev2021}
+
+\subsection{Sensibilità di Shor}\label{sec:finale_2_6_4}
+
+La probabilità di successo P\_succ è la frazione di shot per i quali la procedura di post-processing restituisce fattori non banali. Il valore ideale per l'istanza principale è circa 0,75; per rumore elevato la curva può avvicinarsi al livello associato agli esiti accettati dalla procedura classica. Le ripetizioni indipendenti vengono descritte da P(k)=1-(1-P\_succ)\^{}k. Questa analisi è fenomenologica: non determina quale codice QEC o quale distanza realizzi un dato p\_g.
+
+\subsection{AQFT}\label{sec:finale_2_6_5}
+
+Per l'AQFT si misurano congiuntamente accuratezza algoritmica e costo circuitale. La probabilità di successo viene confrontata tra variante completa e variante troncata, insieme al numero di porte a due qubit e alla profondità. Il grado di troncamento viene scelto su dati di selezione e valutato su holdout disgiunti. Un miglioramento viene quindi interpretato come specifico della configurazione esaminata e non come proprietà generale di ogni istanza di Shor o di ogni dispositivo. \cite{barencoAQFT1996,akoramurthy2026}
+
+\section{Contributi e limiti dichiarati}\label{sec:finale_2_7}\label{sec:contributo_originale}
+
+Il contributo del lavoro è principalmente metodologico e sperimentale. In particolare:
+
+\begin{itemize}
+\item
+  un confronto appaiato tra TOP-1, TOP-4 e classificatore, capace di separare il beneficio della ricerca multi-candidato da quello del machine learning;
+\item
+  una progressione QEC da codici didattici a surface code, con metriche coerenti e con separazione esplicita fra errore fisico e logico;
+\item
+  un confronto tra decoder analitici, appresi e ibridi che verifica il ruolo del model mismatch e delle correlazioni non rappresentate;
+\item
+  un'analisi di sensibilità di Shor che mantiene distinto il proxy per gate dalle metriche dei memory experiment;
+\item
+  un protocollo AQFT che collega scelta del troncamento, verifica su holdout e bilancio tra riduzione delle porte e perdita di precisione.
+\end{itemize}
+
+Il perimetro resta deliberatamente limitato. La campagna rumorosa principale usa N = 15 e modelli simulati; N = 21 e N = 35 non partecipano allo stesso confronto statistico. I codici QEC sono studiati su circuiti di memoria separati e non viene simulato un circuito completo di Shor fault-tolerant. Le prove AQFT su N = 21 hanno carattere esplorativo e budget ridotto. Di conseguenza, i risultati definiscono criteri di utilità e limiti dei metodi provati, non prestazioni attese di una futura macchina crittograficamente rilevante. \cite{googleQECBelowThreshold2025,alphaqubit2024,gidney2021,aharonov1997fault}
+
+\section{Articolazione della verifica}\label{sec:finale_2_8}
+
+Il Capitolo 3 introduce i fondamenti teorici e descrive il disegno sperimentale; il Capitolo 4 traduce tale disegno nell'architettura software e nei protocolli di esecuzione. Il Capitolo 5 risponde nell'ordine alle cinque domande di ricerca definite in questo capitolo: post-processing e ablazione, codici QEC, decodifica, sensibilità di Shor e AQFT. Il Capitolo 6 ricompone i risultati, verifica le ipotesi entro il perimetro dichiarato e ne discute i limiti e gli sviluppi futuri.

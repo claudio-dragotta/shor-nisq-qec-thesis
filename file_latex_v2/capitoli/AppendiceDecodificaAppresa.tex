@@ -351,7 +351,18 @@ Resta da chiarire che cosa significhi ``agire su assi ortogonali''. L'inferenza 
 \label{subsec:neural_pavimento}
 
 \paragraph{La previsione e il suo esito.}
-L'esperimento E8 sostituisce il decoder di base della~\eqref{eq:decoder_ibrido}: il residuo appreso viene costruito sopra BP+OSD anziché sopra il matching, e i quattro bracci --- \ac{MWPM}, BP+OSD, ciascuno con e senza residuo --- sono misurati \emph{sui medesimi campioni}, il che rende ogni confronto appaiato ed elimina il disallineamento fra le campagne precedenti. Le due ipotesi in gioco erano dichiarate prima dell'esecuzione: quella \emph{moltiplicativa}, per cui il combinato approssima il prodotto; e quella di \emph{saturazione}, per cui il residuo trova sopra BP+OSD assai meno di quanto trovasse sopra il matching, perché una parte di ciò che recuperava era semplicemente il costo di un decoder analitico subottimale. La seconda è l'ipotesi sfavorevole al risultato di questa sezione, ed è quella che i dati sostengono.
+L'esperimento E8 sostituisce il decoder di base del metodo ibrido descritto
+nella Sezione~\ref{sec:decodifica_appresa}: il residuo appreso viene costruito
+sopra BP+OSD anziché sopra il matching, e i quattro bracci --- \ac{MWPM},
+BP+OSD, ciascuno con e senza residuo --- sono misurati \emph{sui medesimi
+campioni}, il che rende ogni confronto appaiato ed elimina il disallineamento
+fra le campagne precedenti. Le due ipotesi in gioco erano dichiarate prima
+dell'esecuzione: quella \emph{moltiplicativa}, per cui il combinato approssima
+il prodotto; e quella di \emph{saturazione}, per cui il residuo trova sopra
+BP+OSD assai meno di quanto trovasse sopra il matching, perché una parte di ciò
+che recuperava era semplicemente il costo di un decoder analitico subottimale.
+La seconda è l'ipotesi sfavorevole al risultato di questa sezione, ed è quella
+che i dati sostengono.
 
 \begin{table}[H]
 \centering

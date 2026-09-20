@@ -1,0 +1,279 @@
+% Generato dalla versione Word revisionata e dalla bozza auditata.
+% Le citazioni numeriche originali sono state convertite in chiavi BibLaTeX.
+
+Questo capitolo chiude il percorso sperimentale rispondendo in modo diretto alle cinque domande di ricerca definite nel Capitolo 2. Non introduce nuove evidenze: interpreta i risultati del Capitolo 5 entro i limiti metodologici dichiarati nei Capitoli 3 e 4. L\textquotesingle obiettivo è distinguere con chiarezza ciò che i dati sostengono, ciò che resta specifico del modello simulato e ciò che richiede ulteriori verifiche. La conclusione generale non è che una singola tecnica risolva il problema del rumore in Shor, ma che l\textquotesingle utilità di ogni intervento dipenda dalla posizione in cui agisce, dalla baseline con cui viene confrontato e dall\textquotesingle informazione o dal costo fisico che riesce effettivamente a modificare.
+
+\section{Risposte alle domande di ricerca}\label{sec:finale_6_1}
+
+La Tabella~\ref{tab:finale_6_1} anticipa le risposte conclusive. Le sezioni successive ne esplicitano il significato e, soprattutto, il perimetro di validità.
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\centering\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\centering\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\centering\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\caption{Risposte conclusive alle cinque domande di ricerca.}\label{tab:finale_6_1}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{DR}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Risposta sintetica}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Evidenza principale}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Limite essenziale}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Risposte conclusive alle cinque domande di ricerca. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{DR}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Risposta sintetica}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Evidenza principale}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Limite essenziale}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+DR1 & TOP-K è utile; il filtro ML considerato non aggiunge valore operativo. & TOP-4: 1.00 iterazioni nei due scenari; M2 perde contro l'ablazione. & N=15 e post-processing specifico. \\
+DR2 & La QEC sopprime l'errore sotto soglia e il beneficio cresce con la distanza. & Steane: pendenza 1.94; surface code: p\_th≈0.86\% (Z), 0.81\% (X). & Memory experiment, non Shor fault-tolerant. \\
+DR3 & Il ML aiuta come correttore residuale quando la struttura del decoder è incompleta. & A d=3, riduzione relativa 15.6--17.6\% con crosstalk; BP+OSD resta una baseline forte. & MLP denso; vantaggio non significativo a d=7. \\
+DR4 & Il successo di Shor decresce con p\_g e tende al pavimento imposto dal post-processing. & 0.7489 a p\_g=0; 0.4518 a 0.02; ≈0.245 per rumore elevato. & Proxy fenomenologico, non tasso logico QEC. \\
+DR5 & AQFT può migliorare il risultato quando il risparmio di porte supera la perdita di fase. & N=15: 0.4792→0.6279, ECR 362→279; QPE favorevole in 9/9 stime. & Beneficio non dimostrato su N=21. \\
+\end{longtable}
+\endgroup
+
+\subsection{DR1 --- Post-processing e machine learning}\label{sec:finale_6_1_1}
+
+La prima domanda chiedeva se la ricerca multi-candidato riducesse il numero di esecuzioni necessarie a ottenere i fattori e se un classificatore potesse migliorare ulteriormente la stessa strategia. I dati separano nettamente i due effetti. Nei due scenari di rumore, TOP-4 porta il numero medio di iterazioni rispettivamente da 1.37 e 1.50 a 1.00, con differenze significative rispetto a TOP-1. Il metodo M2, che applica TOP-4 soltanto quando il classificatore accetta l\textquotesingle istogramma, non migliora significativamente TOP-1 ed è invece significativamente peggiore della propria ablazione TOP-4.
+
+La SVM selezionata raggiunge F1 pari a 0.919/0.923 e AUC pari a 0.965/0.958. Queste metriche sono quindi elevate, ma descrivono la capacità di predire la riuscita di TOP-1, non la riduzione del costo della fattorizzazione. L\textquotesingle ablazione dimostra che il vantaggio operativo deriva dal controllare più candidati già presenti nell\textquotesingle istogramma, non dalla decisione appresa. L\textquotesingle audit combinatorio dei 63 esiti accettati su 256 rafforza questa lettura: un TOP-K elevato può avere successo anche quando la distribuzione ha perso gran parte della struttura quantistica, e non può essere usato da solo come misura di fedeltà.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Risposta a DR1.} Nel perimetro studiato, la ricerca multi-candidato è una baseline semplice ed efficace. Il classificatore considerato non aggiunge informazione operativamente utile rispetto alla stessa TOP-4 senza filtro. Il risultato non generalizza a ogni possibile uso del machine learning, ma mostra che una metrica predittiva elevata non basta a giustificare complessità aggiuntiva.
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+\subsection{DR2 --- Codici di correzione e soglia}\label{sec:finale_6_1_2}
+
+La seconda domanda riguardava il regime in cui la codifica rende l\textquotesingle informazione logica più affidabile del qubit fisico e il ruolo della distanza. I tre livelli della campagna forniscono una risposta coerente. Il codice a ripetizione riproduce la legge analitica p\_L=3p²-2p³, verificando la pipeline di sindrome e decodifica. Il codice di Steane \ensuremath{[[7,1,3]]} estende la protezione a un errore Pauli arbitrario su un qubit e mostra una pendenza log-log pari a 1.94, compatibile con una soppressione quadratica; la pseudo-soglia del modello si colloca intorno a p≈0.08. La lettura è coerente con la teoria della fault tolerance e con le più recenti dimostrazioni di scaling del surface code \cite{steane1996,fowler2012,googleQECBelowThreshold2025,googleSurfaceCode2023,aharonov1997fault,dennis2002topological,calderbankShor1996,gottesman1997}.
+
+Il surface code introduce la variabile necessaria alla scalabilità: la distanza. Nei memory experiment con d=3,5,7,9, l\textquotesingle aumento di d riduce p\_L sotto soglia e lo aumenta sopra soglia. Il fit del regime p≤6×10⁻³ restituisce p\_th≈0.86\% nella memoria Z e 0.81\% nella memoria X. Questi valori sono coerenti con l\textquotesingle incrocio delle curve, ma restano proprietà del circuito di memoria, del rumore circuit-level e del decoder MWPM adottati. Non vanno interpretati come soglie universali dell\textquotesingle hardware o come probabilità di errore delle porte logiche di Shor.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Risposta a DR2.} La codifica è vantaggiosa soltanto nel regime sotto soglia. In quel regime l'aumento della distanza produce una soppressione sistematica dell'errore logico; sopra soglia l'overhead diventa controproducente. Il risultato quantifica il principio della QEC nel modello studiato, ma non realizza ancora un'esecuzione fault-tolerant dell'algoritmo di Shor.
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+\subsection{DR3 --- Decoder analitici, appresi e ibridi}\label{sec:finale_6_1_3}
+
+La terza domanda è quella che richiede la maggiore cautela interpretativa. Con un modello di rumore rappresentabile dal detector error model, una rete densa utilizzata come sostituto non supera in modo stabile MWPM: a distanza 3 si avvicina al matching soltanto con 10⁵--10⁶ esempi, mentre a distanza 5 rimane nettamente peggiore. Il quadro cambia quando viene introdotto un crosstalk correlato fra qubit dati adiacenti, che attiva configurazioni di detection events non rappresentabili direttamente da un singolo arco del grafo di matching.
+
+In questo regime la rete è più utile come correttore residuale che come sostituto. A d=3, per le quattro intensità di crosstalk provate, l\textquotesingle ibrido riduce p\_L rispetto a MWPM di circa 15.6--17.6\% in termini relativi; a d=5 la riduzione è più piccola, circa 0.5--3.2\%; a d=7 non emerge un vantaggio statisticamente significativo. È importante distinguere queste percentuali dal rapporto di guadagno p\_L\^{}MWPM/p\_L\^{}ibrido, che negli artefatti originari assume valori circa 1.185--1.213 a d=3.
+
+Il confronto con BP+OSD \cite{roffe2020,panteleev2021} impedisce però una conclusione semplicistica a favore del machine learning. Quando il modello nominale è adeguato, BP+OSD sfrutta meglio l\textquotesingle informazione disponibile: a d=5 e crosstalk nullo porta p\_L da 0.00192 a 0.00143, pari a una riduzione relativa del 25.5\%. Il suo vantaggio si erode quando il crosstalk rende strutturalmente incompleto il modello, mentre quello del correttore appreso cresce. Inoltre, costruire il residuo sopra BP+OSD non moltiplica i benefici: i metodi convergono verso un livello simile di errore e il combinato tende a eguagliare il migliore dei singoli, non il loro prodotto. La conclusione è quindi da formulare rispetto al miglior riferimento analitico disponibile, non rispetto a MWPM per convenzione \cite{alphaqubit2024,torlaiMelko2017,roffe2020,panteleev2021}.
+
+I controlli di robustezza precisano ulteriormente il risultato. Una mis-calibrazione dei parametri del modello, anche ampia, non crea lo stesso margine osservato con un errore strutturalmente assente dal grafo. Il trasferimento fra differenti intensità simulate di crosstalk mantiene il vantaggio in tutte le dodici configurazioni fuori diagonale, con un costo medio modesto rispetto al modello addestrato sul profilo di test; questo suggerisce che la rete apprenda una struttura più generale del singolo valore di calibrazione. Non è tuttavia una prova di trasferibilità fra dispositivi fisici differenti.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Risposta a DR3.} Il machine learning produce valore quando dispone di informazione strutturale che il decoder analitico di riferimento non riesce a rappresentare. La forma più efficace, nel perimetro studiato, è residuale: correggere gli errori del decoder anziché sostituirlo. Il confronto deve però partire dal miglior decoder analitico plausibile, non da una baseline debole per convenzione.
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+\subsection{DR4 --- Sensibilità di Shor al proxy di errore per gate}\label{sec:finale_6_1_4}
+
+La quarta domanda chiedeva come cambi il successo della specifica implementazione di Shor al crescere del proxy Pauli per gate p\_g. La curva è compatibile con una funzione non crescente: P\_succ passa da 0.7489 in assenza di rumore a 0.6450 per p\_g=0.005, 0.5651 per 0.01 e 0.4518 per 0.02. Per valori elevati, da circa p\_g=0.1 in poi, il successo si stabilizza vicino a 0.245.
+
+Questo plateau è interpretabile soltanto ricordando la definizione operativa di successo. Nel caso N=15, a=7, la procedura classica di estrazione restituisce fattori per 63 dei 256 possibili esiti del registro; una distribuzione uniforme produce quindi un valore atteso 63/256≈0.2461. Avvicinarsi a tale livello non indica che il circuito stia ancora conservando la periodicità di Shor: indica che il post-processing continua ad accettare una frazione non nulla di risultati anche quando la distribuzione è quasi priva di struttura. Analogamente, il fatto che TOP-4 rimanga molto efficace fino a rumori moderati non è una prova di fedeltà dello stato quantistico.
+
+La notazione è mantenuta deliberatamente separata dalla QEC: p\_g è un proxy per gate applicato al circuito compilato di Shor; p\_L è il tasso di fallimento logico dei memory experiment. La tesi non costruisce una mappa numerica fra le due grandezze. Per farlo servirebbero operazioni logiche fault-tolerant, cicli di sindrome, decodifica, feed-forward e un modello dei canali residui per ciascuna operazione logica.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Risposta a DR4.} Il successo della specifica implementazione di Shor degrada regolarmente all'aumentare di p\_g e tende al pavimento imposto dalla procedura classica di accettazione. La curva misura una sensibilità locale dell'algoritmo; non determina quale codice o quale distanza di QEC realizzi un dato valore di p\_g.
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+\subsection{DR5 --- QFT approssimata}\label{sec:finale_6_1_5}
+
+La quinta domanda chiedeva quando la riduzione del costo circuitale dell\textquotesingle AQFT compensi la perdita di precisione introdotta dal troncamento. La risposta è condizionata dall\textquotesingle istanza e dalla struttura delle fasi, e i tre esperimenti del Capitolo 5 sono complementari.
+
+Nel pilota di Shor su N=15, la variante scelta sui dati di selezione porta il successo holdout da 0.4792 con QFT piena a 0.6279. L\textquotesingle incremento assoluto è 14.87 punti percentuali, con IC Newcombe 95\% {[}12.73;16.99{]} punti; le porte ECR diminuiscono da 362 a 279 e la profondità da 1351 a 1141. Si tratta quindi di un beneficio misurato direttamente sulla fattorizzazione, accompagnato da un risparmio circuitale consistente. L\textquotesingle istanza è però favorevole: r=4 genera fasi rappresentabili esattamente con due bit, per cui molte rotazioni fini risultano meno informative.
+
+Su N=21 il bilancio cambia. Troncare le QFT interne all\textquotesingle aritmetica riduce le ECR da 49 661 a 23 178, ma il successo ideale scende da 0.4667 a 0.4013. Nei test rumorosi a budget ridotto nessun intervallo dimostra un vantaggio della variante troncata. Nella QPE isolata, invece, le stime favoriscono la variante selezionata in tutti e nove i confronti e sei intervalli individuali al 95\% escludono lo zero; il massimo incremento è 12.55 punti percentuali su dieci qubit. Poiché non è stata applicata una correzione simultanea ai nove confronti, questa parte resta esplorativa.
+
+Il risultato non è quindi \textquotesingle AQFT migliore\textquotesingle{} in senso assoluto. Il criterio empirico è che il rumore evitato eliminando porte deve superare l\textquotesingle informazione di fase persa. Il limite teorico discusso in \cite{barencoAQFT1996,akoramurthy2026} è coerente con la necessità di far crescere il grado di troncamento con la dimensione del registro; il fatto che k=2 o 3 sia favorevole nelle taglie provate non autorizza a mantenerlo costante su scale arbitrarie.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Risposta a DR5.} L'AQFT è una tecnica efficace quando il risparmio di porte domina l'errore di approssimazione. La tesi ne documenta un beneficio netto su Shor per N=15 e un comportamento favorevole nella QPE isolata, ma non dimostra lo stesso vantaggio su N=21. La scelta del grado deve quindi essere verificata per istanza e per regime di rumore.
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+\section{Contributi scientifici e metodologici del lavoro}\label{sec:finale_6_2}
+
+Il valore del lavoro non risiede in una singola percentuale di miglioramento, ma nella combinazione di risultati positivi, risultati negativi e controlli che ne identificano la causa. I contributi principali possono essere sintetizzati in cinque punti.
+
+1. Ablazione come criterio di causalità operativa. Il confronto TOP-1/TOP-4/M2 dimostra che una buona prestazione predittiva non è sufficiente a provare utilità sul compito finale. L\textquotesingle ablazione isola il contributo della ricerca multi-candidato e impedisce di attribuire al classificatore un beneficio prodotto in realtà dalla baseline.
+
+2. Separazione rigorosa delle scale d\textquotesingle errore. La tesi mantiene distinti errore fisico p, errore logico p\_L dei memory experiment e proxy p\_g applicato a Shor. Questa scelta evita una delle scorciatoie interpretative più pericolose: proiettare una curva di memoria direttamente sulla probabilità di successo di un algoritmo non-Clifford fault-tolerant che non è stato simulato.
+
+3. Identificazione del regime in cui l\textquotesingle apprendimento aggiunge informazione. Il decoder residuale mostra che il ML può essere utile quando il riferimento analitico non rappresenta la geometria dell\textquotesingle errore. I controlli con mis-calibrazione, BP+OSD, non additività e trasferimento fra profili simulati rendono il risultato più informativo di un semplice confronto rete-versus-matching: indicano quando la complessità appresa è giustificata e quando non lo è.
+
+4. Valutazione dell\textquotesingle AQFT sulla metrica algoritmica finale. Il lavoro non si limita a contare le porte rimosse o a valutare la sola QPE: su N=15 misura direttamente la probabilità di ricavare i fattori su holdout indipendente, ottenendo simultaneamente un incremento del successo e una riduzione delle ECR. Il confronto con N=21 delimita poi il risultato e mostra che la stessa approssimazione non è universalmente favorevole.
+
+5. Contratto di riproducibilità. Seed, manifest, versioni, hash della netlist, partizioni selection/holdout, artefatti JSON e distinzione degli output superati da correzioni implementative costituiscono una parte sostanziale del metodo. Questo rende auditabili non soltanto i risultati positivi, ma anche le correzioni che hanno portato alla versione finale degli esperimenti.
+
+\section{Limiti dello studio}\label{sec:finale_6_3}
+
+La forza delle conclusioni dipende dalla chiarezza dei loro limiti. I principali non sono difetti nascosti, ma condizioni che definiscono correttamente il livello di evidenza raggiunto.
+
+\subsection{Validità esterna e scala delle istanze}\label{sec:finale_6_3_1}
+
+Tutte le campagne sono simulazioni. L\textquotesingle istanza rumorosa principale è N=15, con ordine r=4: è utile per esperimenti controllati, ma è favorevole sia alla ricerca TOP-K sia a forme aggressive di AQFT. N=21 e N=35 sono validati idealmente; N=21 entra soltanto in una campagna AQFT esplorativa a budget ridotto. Di conseguenza, nessun risultato può essere interpretato come previsione diretta della fattibilità di Shor su moduli crittografici.
+
+\subsection{Modelli di rumore e rappresentatività hardware}\label{sec:finale_6_3_2}
+
+Il noise model uniforme della campagna principale è stazionario e non riproduce congiuntamente topologia, routing, crosstalk, leakage, deriva temporale ed eterogeneità per qubit. Le prove hardware-aware usano una snapshot offline di FakeSherbrooke e non misure live di una QPU. Il simulation gap rimane quindi aperto. Anche i test sul crosstalk QEC utilizzano un modello Pauli correlato deliberatamente controllato, non una caratterizzazione completa di un dispositivo reale.
+
+\subsection{QEC e decodifica}\label{sec:finale_6_3_3}
+
+Il codice di Steane assume estrazione della sindrome ideale e non rappresenta un protocollo fault-tolerant completo. Il surface code è studiato come memoria, non come insieme di porte logiche necessarie a Shor. Il decoder appreso è un MLP denso: i risultati a d=7 indicano che la larghezza dell\textquotesingle ingresso e la capacità di sfruttare la località diventano limitanti. Decoder neurali moderni utilizzano architetture ricorrenti, convoluzionali o transformer e dataset più ampi \cite{alphaqubit2024,torlaiMelko2017,yan2026}; il presente risultato non ne misura il limite prestazionale.
+
+\subsection{Inferenza statistica e AQFT}\label{sec:finale_6_3_4}
+
+Alcune campagne sono confermative, altre esplorative. I confronti primari TOP-K e decoder ibrido sono appaiati e accompagnati dai test dichiarati; gli sweep multipli e i nove benchmark QPE non ricevono invece una correzione globale o simultanea. Per N=21 il budget di verifica AQFT è piccolo e gli intervalli sono ampi. Questi aspetti non invalidano i risultati, ma delimitano la forza con cui possono essere generalizzati.
+
+\section{Sviluppi futuri}\label{sec:finale_6_4}
+
+Gli sviluppi futuri più utili non consistono nell\textquotesingle aggiungere indiscriminatamente nuove tecniche, ma nel rimuovere in ordine i principali limiti sperimentali. La priorità proposta è la seguente.
+
+\subsection{Validazione su hardware e misura del simulation gap}\label{sec:finale_6_4_1}
+
+Il primo passo è ripetere il protocollo N=15 e il confronto AQFT su hardware reale, registrando backend, timestamp, calibrazione, layout iniziale e finale, conteggi post-routing e identificativo dei job. La stessa esecuzione dovrebbe essere affiancata da una simulazione costruita dalla calibrazione acquisita nello stesso intervallo temporale. Il confronto permetterebbe di misurare direttamente quanto il modello uniforme e la snapshot offline rappresentino il comportamento del dispositivo, anziché assumere tale corrispondenza.
+
+\subsection{Scalabilità: variare separatamente N, ordine r e aritmetica}\label{sec:finale_6_4_2}
+
+La seconda priorità è estendere le campagne a istanze in cui dimensione del modulo e ordine moltiplicativo non crescano insieme. N=21, a=2, ha r=6; N=35, a=6, ha r=2. Questa differenza mostra che il numero di bit di N non è, da solo, una misura della difficoltà del period finding. Una campagna scalabile dovrebbe quindi variare separatamente N, r, numero di qubit di conteggio e architettura aritmetica. Riduzioni del registro di lavoro e aritmetica più efficiente \cite{chevignard2025,gidney2021,shukla2026} possono essere combinate con AQFT e con schemi modulari di phase estimation \cite{shuklaqpe2026,shukla2026}, ma il beneficio congiunto deve essere misurato in porte, profondità, qubit e probabilità finale di successo, non assunto come somma dei singoli risparmi.
+
+\subsection{Collegare QEC e Shor in una catena fault-tolerant esplicita}\label{sec:finale_6_4_3}
+
+Il passaggio scientificamente più impegnativo è sostituire il proxy p\_g con un modello derivato da operazioni logiche reali. Ciò richiede una compilazione fault-tolerant che specifichi gate logici, numero di cicli di sindrome, decoder, latenza di feed-forward, correlazioni residue e costo delle operazioni non-Clifford, inclusa la preparazione di magic states. Solo a quel punto i tassi di errore dei memory experiment possono contribuire a una previsione end-to-end della probabilità di fattorizzazione e delle risorse. Le stime di letteratura su RSA-2048 \cite{chevignard2025,gidney2021} mostrano quanto tali risultati dipendano dall\textquotesingle architettura assunta; la tesi corrente non tenta di estrapolarle dai propri dati. \cite{chevignard2025,gidney2021,aharonov1997fault}
+
+\subsection{Decoder appresi strutturali e baseline analitiche forti}\label{sec:finale_6_4_4}
+
+Per la decodifica, il passo successivo non è semplicemente aumentare i neuroni dell\textquotesingle MLP. I controlli indicano che il limite emerge quando la sindrome cresce e la rete densa tratta i detector come variabili indipendenti. Architetture a grafo, convoluzionali o ricorrenti possono incorporare località e storia temporale dei cicli; segnali analogici, quando disponibili, aggiungerebbero informazione non presente nella sindrome binaria \cite{alphaqubit2024,torlaiMelko2017,yan2026}. Ogni miglioramento dovrebbe però continuare a essere confrontato con baseline analitiche forti, inclusi BP+OSD \cite{roffe2020,panteleev2021}, e valutato congiuntamente per accuratezza, latenza, memoria e costo di riaddestramento.
+
+\subsection{AQFT adattiva e post-processing orientato al costo}\label{sec:finale_6_4_5}
+
+L\textquotesingle AQFT suggerisce una linea di lavoro trasversale: scegliere il grado di approssimazione in funzione dell\textquotesingle istanza e del regime di rumore, invece di fissarlo a priori. Una validazione più ampia dovrebbe includere più ordini, più layout, più snapshot e correzione per confronti multipli. Analogamente, un eventuale nuovo classificatore sul post-processing non dovrebbe essere addestrato a predire semplicemente TOP-1: l\textquotesingle obiettivo dovrebbe incorporare direttamente il costo, per esempio gli shot attesi risparmiati al netto del rischio di scartare un istogramma risolvibile. In entrambi i casi il principio resta lo stesso: l\textquotesingle ottimizzazione deve agire sulla metrica finale del compito.
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Roadmap sperimentale proposta.}\label{tab:finale_6_2}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Priorità}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Domanda aperta}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Evidenza richiesta}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Roadmap sperimentale proposta. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Priorità}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Domanda aperta}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Evidenza richiesta}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1. Hardware & Quanto è ampio il simulation gap? & stessi circuiti, calibrazione coeva, layout e job tracciati \\
+2. Scala & Il risultato regge variando N e r? & campagna multi-istanza con aritmetica verificata \\
+3. Fault tolerance & Come si traduce p\_L in successo di Shor? & porte logiche, cicli QEC, non-Clifford e canali residui \\
+4. Decoder & Il vantaggio residuale scala? & GNN/CNN/RNN vs BP+OSD, latenza e sample efficiency \\
+5. AQFT/costo & Come scegliere automaticamente il grado? & selection/holdout su più dispositivi e correzione multipla \\
+\end{longtable}
+\endgroup
+
+\section{Conclusione generale}\label{sec:finale_6_5}
+
+Il risultato più importante della tesi non è l\textquotesingle affermazione che il machine learning, la QEC o l\textquotesingle AQFT siano in assoluto la soluzione al rumore. Gli esperimenti mostrano invece che il valore di una tecnica emerge soltanto quando viene confrontata con una baseline adeguata e quando modifica il vero collo di bottiglia del compito.
+
+Nel post-processing, provare più candidati utilizza meglio informazione già disponibile e rende superfluo il filtro considerato. Nella QEC, la codifica modifica effettivamente l\textquotesingle ordine dell\textquotesingle errore, ma soltanto sotto soglia e al prezzo di un overhead crescente. Nella decodifica, una rete è utile quando recupera struttura non rappresentata dal metodo analitico; quando il modello è adeguato, migliorare prima il decoder analitico può essere più efficace. Nell\textquotesingle AQFT, sacrificare precisione può aumentare la probabilità finale di successo soltanto se il risparmio di porte compensa la perdita di informazione di fase.
+
+I risultati negativi hanno quindi lo stesso ruolo dei risultati positivi: delimitano il dominio in cui una tecnica produce valore e impediscono di attribuire il miglioramento alla causa sbagliata. Questo è particolarmente rilevante nel calcolo quantistico rumoroso, dove una metrica intermedia favorevole, un minor numero di porte o una maggiore accuratezza di classificazione possono sembrare sufficienti anche quando non migliorano il compito finale.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Conclusione centrale.} La complessità aggiuntiva è scientificamente giustificata soltanto quando sfrutta informazione che la baseline non utilizza oppure quando elimina un costo fisico superiore alla perdita algoritmica introdotta. Nel perimetro simulativo di questa tesi, questo principio spiega in modo unitario il successo di TOP-K, la soppressione sotto soglia della QEC, il ruolo residuale dell'apprendimento e il comportamento dipendente dall'istanza dell'AQFT. La validazione su hardware e la compilazione fault-tolerant restano i passaggi necessari per trasformare questi criteri sperimentali in previsioni architetturali.
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}

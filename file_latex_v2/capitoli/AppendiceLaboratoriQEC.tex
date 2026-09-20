@@ -80,10 +80,10 @@ l'informazione logica.
 \toprule
 \textbf{Errore iniettato} & \textbf{Sindrome $(a_0,a_1)$} & \textbf{Qubit dedotto} & \textbf{Esito} \\
 \midrule
-nessuno & $(0,0)$ & --- & \checkmark \\
-su $q_0$ & $(1,0)$ & $q_0$ & \checkmark \\
-su $q_1$ & $(1,1)$ & $q_1$ & \checkmark \\
-su $q_2$ & $(0,1)$ & $q_2$ & \checkmark \\
+nessuno & $(0,0)$ & --- & $\surd$ \\
+su $q_0$ & $(1,0)$ & $q_0$ & $\surd$ \\
+su $q_1$ & $(1,1)$ & $q_1$ & $\surd$ \\
+su $q_2$ & $(0,1)$ & $q_2$ & $\surd$ \\
 \bottomrule
 \end{tabular}
 \caption[Verifica della sindrome del codice a ripetizione]{Lookup table
@@ -98,7 +98,7 @@ algebrico.}
 Il secondo controllo prepara lo stato logico, applica a ciascun qubit un
 errore indipendente con probabilità $p$, estrae la sindrome, corregge e
 decodifica. I $20\,000$ campioni per punto (seed 42) producono la curva
-riportata nella Figura~\ref{fig:qec_repetition}. Un errore Z resta
+discussa nella Sezione~\ref{sec:repetition}. Un errore Z resta
 invisibile al codice bit-flip, e viceversa per il duale: è il limite che
 motiva il passaggio allo Steane.
 

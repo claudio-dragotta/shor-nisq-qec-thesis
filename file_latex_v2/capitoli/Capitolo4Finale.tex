@@ -1,0 +1,360 @@
+% Generato dalla versione Word revisionata e dalla bozza auditata.
+% Le citazioni numeriche originali sono state convertite in chiavi BibLaTeX.
+
+Il Capitolo 3 ha definito il contratto metodologico delle cinque campagne sperimentali. Questo capitolo descrive come tale contratto è stato tradotto in software, circuiti, simulatori e artefatti riproducibili. Non vengono introdotte nuove ipotesi né discussi i risultati: l\textquotesingle obiettivo è rendere verificabile la catena che collega una configurazione dichiarata a un insieme di campioni, a una regola di analisi e infine a un artefatto numerico. La scelta progettuale centrale è la separazione dei livelli: costruzione e compilazione del circuito, esecuzione e rumore, analisi classica, persistenza dei risultati. In questo modo, cambiare un classificatore o un decoder non modifica il campione quantistico su cui viene valutato e una diversa compilazione non può essere confusa con un beneficio dell\textquotesingle algoritmo di analisi.
+
+\section{Ambiente software e strumenti}\label{sec:finale_4_1}
+
+\subsection{Toolchain per le diverse classi di circuito}\label{sec:finale_4_1_1}
+
+La piattaforma usa strumenti differenti in funzione della struttura del circuito. Qiskit e Qiskit Aer \cite{qiskit2023} costruiscono, compilano e simulano l\textquotesingle algoritmo di Shor e gli esperimenti che richiedono circuiti quantistici generali. La campagna rumorosa principale su N=15 usa AerSimulator in modalità statevector; l\textquotesingle analisi di sensibilità M8/M13 impiega matrix\_product\_state per contenere il costo delle molte repliche. I circuiti di Shor contengono rotazioni non-Clifford e non possono quindi essere trasferiti integralmente al formalismo stabilizer.
+
+Per i memory experiment del surface code viene invece utilizzato Stim \cite{stim2021}, che campiona in modo efficiente circuiti stabilizer anche su milioni di shot. PyMatching \cite{pymatching2021} costruisce dal detector error model il decoder Minimum Weight Perfect Matching (MWPM). scikit-learn \cite{scikit_learn} viene impiegato sia per il classificatore applicato agli istogrammi di Shor sia per i decoder appresi basati su percettroni multistrato. Questa separazione della toolchain non è un limite concettuale: riflette classi di circuito diverse e consente di usare, per ciascuna campagna, lo strumento computazionalmente più adatto.
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Toolchain adottata in funzione della classe di esperimento.}\label{tab:finale_4_1}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Componente}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Strumento principale}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Ruolo}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Toolchain adottata in funzione della classe di esperimento. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Componente}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Strumento principale}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Ruolo}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Shor N=15, sweep NISQ & Qiskit + Aer statevector & circuito generale con noise model \\
+Sensibilità M8/M13 & Qiskit + Aer MPS & molte repliche del circuito compilato \\
+Repetition e Steane & Qiskit Aer & laboratori QEC a taglia contenuta \\
+Surface code & Stim + PyMatching & campionamento e MWPM \\
+Classificatori / decoder appresi & scikit-learn & SVM, MLP e correzione residuale \\
+AQFT / topologia & Qiskit Aer & sweep di compilazione e simulazione \\
+\end{longtable}
+\endgroup
+
+\subsection{Ambiente di esecuzione e versionamento}\label{sec:finale_4_1_2}\label{sec:gpu_limit}
+
+Le esecuzioni canoniche sono state orchestrate su CPU in Windows 11 tramite WSL2 con Ubuntu 24.04, Python 3.12 e ambiente virtuale dedicato. La campagna finale registra Qiskit 2.5; Stim 1.16.0 e PyMatching 2.4.0 sono utilizzati per la parte surface-code. Il file requirements.txt prescrive le dipendenze, mentre il manifest di ogni artefatto certifica le versioni effettivamente importate di Qiskit, Aer, NumPy, SciPy e scikit-learn. Le due informazioni sono complementari: la prima descrive l\textquotesingle ambiente atteso, la seconda documenta quello realmente impiegato.
+
+Era stata valutata l\textquotesingle accelerazione GPU con una NVIDIA RTX 4070, ma il backend C++ di Aer non risultava disponibile nell\textquotesingle ambiente WSL utilizzato. L\textquotesingle accelerazione GPU non entra quindi nel contratto riproducibile e nessun risultato viene attribuito a prestazioni non misurate. Tutte le campagne riportate sono state eseguite su CPU, condizione registrata nei metadati degli artefatti.
+
+\section{Architettura della piattaforma sperimentale}\label{sec:finale_4_2}
+
+La piattaforma è organizzata in quattro livelli, mantenuti intenzionalmente separati. Il primo costruisce e compila il circuito; il secondo genera i campioni secondo il noise model e i seed dichiarati; il terzo applica la regola di analisi --- post-processing, classificatore o decoder --- senza modificare i campioni; il quarto persiste risultati e metadati e rigenera tabelle e figure. L\textquotesingle architettura impedisce che una modifica a valle alteri implicitamente il circuito o il rumore a monte.
+
+La separazione è applicata anche sul piano dei dati. Gli oggetti prodotti da un livello diventano input immutabili del livello successivo: una netlist compilata viene identificata da conteggi, profondità e hash; un\textquotesingle esecuzione produce conteggi o detection event associati al proprio seed; il post-processing produce metriche senza ricampionare; infine l\textquotesingle artefatto JSON lega risultati e metadati. Questo schema riduce due fonti di bias particolarmente rilevanti nel lavoro: confrontare metodi su campioni differenti e riutilizzare inconsapevolmente un modello addestrato su una revisione diversa del circuito.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_4_1_architettura_piattaforma.png}
+\caption{Architettura a quattro livelli della piattaforma sperimentale.}
+\label{fig:finale_4_1}
+\end{figure}
+
+I sorgenti sono separati per campagna: M1-M4 per Shor e post-processing, M5 per il codice a ripetizione, M6 per Steane, M7 per surface code, M8/M13 per il proxy di Shor e TOP-K, M10 per la decodifica appresa, M11/M12 per controlli hardware-aware e coerenti, M15 per l\textquotesingle AQFT. Le sigle identificano campagne e milestone di sviluppo, non un livello di affidabilità del risultato. README, log e artefatti rimangono associati alla stessa cartella sperimentale, riducendo il rischio di mescolare output provenienti da revisioni differenti.
+
+\subsection{Flusso dei dati e responsabilità dei moduli}\label{sec:finale_4_2_1}
+
+Il modulo di costruzione del circuito non conosce la strategia statistica che verrà applicata a valle; riceve soltanto i parametri dell\textquotesingle istanza e restituisce il circuito compilato. Il simulatore riceve circuito, noise model, shot e seed e restituisce il campione grezzo. Le funzioni di ranking, estrazione dei fattori, classificazione e decodifica operano sui campioni già prodotti. Il modulo di reporting, infine, non ricalcola gli esperimenti: legge gli artefatti persistiti e genera tabelle e figure. Questa separazione di responsabilità rende possibile rigenerare il reporting senza ripetere la simulazione e, soprattutto, impedisce che il codice di visualizzazione diventi una sorgente implicita di numeri.
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Corrispondenza fra domande di ricerca, moduli e artefatti.}\label{tab:finale_4_2}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Domanda / campagna}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Modulo eseguibile}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Artefatto primario}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Corrispondenza fra domande di ricerca, moduli e artefatti. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Domanda / campagna}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Modulo eseguibile}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Artefatto primario}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+DR1 -- TOP-1/TOP-4/M2 & campagne\_classiche\_M1-M4 & JSON schema 2 con vettori appaiati \\
+DR2 -- QEC & M5 / M6 / M7 & conteggi di fallimento e p\_L per punto \\
+DR3 -- decoder & M10\_neural\_decoder & prediction appaiate + soglie di validazione \\
+DR4 -- sensibilità Shor & M8\_shor\_logico / M13 & successo per shot + griglia p\_g \\
+DR5 -- AQFT & M15\_qft\_topologia & selection/holdout + conteggi compilati \\
+\end{longtable}
+\endgroup
+
+\section{Implementazione di Shor}\label{sec:finale_4_3}
+
+\subsection{Circuito N=15 e post-processing classico}\label{sec:finale_4_3_1}
+
+Per N=15 viene utilizzata una costruzione textbook a dodici qubit: otto qubit di controllo e quattro di lavoro. Il registro di controllo viene posto in sovrapposizione, quindi ogni qubit pilota una potenza della moltiplicazione modulare; segue la QFT inversa e la misura. La QFT inversa è decomposta esplicitamente in SWAP, rotazioni di fase controllate e Hadamard, così che la compilazione possa esporre tutte le operazioni al gate set e al modello di rumore.
+
+La moltiplicazione modulare specializzata per N=15 implementa realmente la trasformazione ×a mod 15 per le potenze richieste. La revisione corrente corregge una precedente scorciatoia basata sul solo valore power \% 4, che non rappresentava in generale U\^{}power. Gli output prodotti dalla variante precedente non alimentano le campagne correnti. Il post-processing converte il valore misurato in una fase, ne ottiene un denominatore candidato mediante frazioni continue e verifica i fattori non banali con il massimo comune divisore. Il criterio operativo è quindi \textquotesingle fattori ottenuti\textquotesingle, non \textquotesingle ordine ricostruito esattamente\textquotesingle.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+phase = measured\_value / 2**n\_count\\
+r = Fraction(phase).limit\_denominator(N).denominator\\
+if r \% 2: reject\\
+gcd(a**(r//2) - 1, N), gcd(a**(r//2) + 1, N)\strut
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+\emph{Schema 4.1 --- Passi essenziali del post-processing classico implementato.}
+
+\subsection{Istanze Beauregard e compilazione}\label{sec:finale_4_3_2}
+
+Per N=21 e N=35 viene usata l\textquotesingle aritmetica reversibile di Beauregard \cite{beauregard2002}, verificata separatamente mediante truth table, ripristino delle ancille e distribuzione ideale della QPE. Le istanze maggiori sono usate come controlli funzionali e, nel caso di N=21, come base della campagna AQFT; non partecipano alla campagna rumorosa principale M1-M4.
+
+La compilazione della pipeline N=15 è centralizzata e condivisa da training, baseline e sweep. Il contratto fissa la base rz/sx/x/cx, optimization\_level=2 e seed\_transpiler=20260819. Con Qiskit 2.5 la netlist di riferimento N=15, a=7 contiene 224 porte CX e ha profondità 412. Per N=21, a=2, la variante Beauregard compilata nella stessa base raggiunge profondità 23 081 e 21 036 CX: il dato documenta il costo della netlist e motiva la separazione tra validazione ideale e campionamento rumoroso esteso.
+
+\subsection{Controlli di correttezza prima delle campagne}\label{sec:finale_4_3_3}
+
+Prima di utilizzare una netlist come riferimento vengono eseguiti controlli funzionali indipendenti dal successo finale della fattorizzazione. Per N=15 si verifica la tabella della moltiplicazione modulare e la periodicità attesa. Per N=21 e N=35 si controllano l\textquotesingle azione sui vettori validi, il ritorno a zero delle ancille e la distribuzione ideale della QPE. La separazione è importante perché la verifica classica dei fattori è relativamente permissiva: un circuito errato può occasionalmente produrre un valore dal quale il post-processing estrae comunque fattori non banali. Solo dopo questi controlli il circuito viene ammesso alle campagne rumorose o alle analisi di costo.
+
+\section{Costruzione del modello di rumore}\label{sec:finale_4_4}
+
+\subsection{Noise model uniforme della campagna N=15}\label{sec:finale_4_4_1}
+
+Il noise model della campagna principale viene costruito con qiskit\_aer.noise ed è deliberatamente uniforme. Le porte rz sono trattate come cambi di frame virtuali. Le porte sx/x hanno durata nominale di 50 ns e le CX di 300 ns. Su sx/x e cx vengono composti un canale depolarizzante e thermal\_relaxation\_error, parametrizzato da T1, T2 e durata del gate. Il readout è modellato separatamente mediante una matrice di confusione simmetrica.
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Preset uniformi della campagna rumorosa N=15. Non rappresentano la calibrazione di una QPU reale.}\label{tab:finale_4_3}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Parametro}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Riferimento}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Stress}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Preset uniformi della campagna rumorosa N=15. Non rappresentano la calibrazione di una QPU reale. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Parametro}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Riferimento}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Stress}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+N, a, qubit di controllo & 15, 7, 8 & 15, 7, 8 \\
+λ1q & 1×10⁻³ & 5×10⁻³ \\
+λ2q & 1×10⁻² & 5×10⁻² \\
+T1 / T2 & 100 / 80 μs & 50 / 30 μs \\
+readout & 0,02 & 0,05 \\
+shot per istogramma & 1 024 & 1 024 \\
+\end{longtable}
+\endgroup
+
+I parametri λ1q e λ2q seguono la convenzione di depolarizing\_error di Aer. Per due qubit, la probabilità totale delle componenti di Pauli non identità è 15λ/16. Per questo la quantità (1-15λ2q/16)\^{}224 viene registrata soltanto come proxy diagnostico di nessun evento Pauli sulle CX, non come probabilità di successo dell\textquotesingle algoritmo.
+
+\subsection{Proxy Pauli per gate nell'analisi di sensibilità}\label{sec:finale_4_4_2}
+
+La campagna M8/M13 usa un modello diverso, già distinto metodologicamente nel Capitolo 3. Il parametro p\_g rappresenta la probabilità totale di applicare una Pauli non identità dopo ciascun gate compilato incluso nel proxy. Per realizzarlo tramite il canale depolarizzante di Aer si usa λ1=4p\_g/3 per i gate a un qubit e λ2=16p\_g/15 per quelli a due qubit; le rz restano virtuali. Il parametro non viene ricavato dal logical error rate dei memory experiment QEC e non è interpretato come errore per round o per blocco logico.
+
+\section{Pipeline TOP-1, TOP-4 e classificatore}\label{sec:finale_4_5}
+
+\subsection{Ordinamento deterministico e confronto appaiato}\label{sec:finale_4_5_1}
+
+TOP-1, TOP-4 e M2 ricevono lo stesso istogramma prodotto dalla stessa esecuzione del simulatore. L\textquotesingle ordinamento dei candidati è deterministico: prima per frequenza decrescente, poi, in caso di pareggio, mediante una priorità SHA-256 derivata da seed e bitstring. In questo modo il risultato non dipende né dall\textquotesingle ordine interno di un dizionario Python né dal valore numerico della bitstring. TOP-1 prova il solo candidato dominante; TOP-4 prova fino a quattro candidati; M2 prova gli stessi quattro soltanto quando il classificatore accetta l\textquotesingle istogramma.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_4_2_pipeline_appaiata.png}
+\caption{Pipeline appaiata: lo stesso istogramma alimenta TOP-1, TOP-4 e M2.}
+\label{fig:finale_4_2}
+\end{figure}
+
+L\textquotesingle orchestratore usa trenta repliche e un massimo di cinquanta iterazioni. Il seed del simulatore è separato tra replica e iterazione secondo seed\_simulator = rep·1 000 000 + iteration·10 000. La distanza tra i seed è stata scelta per evitare la quasi sovrapposizione degli stream osservata con semi consecutivi. La prima iterazione di successo viene registrata separatamente per ogni strategia; un fallimento entro il budget viene codificato, ai soli fini inferenziali, con la sentinella max\_iter+1.
+
+\subsection{Dataset e compatibilità del modello ML}\label{sec:finale_4_5_2}
+
+Gli istogrammi normalizzati costituiscono vettori di 256 feature. La stessa netlist genera sia l\textquotesingle etichetta TOP-1 sia l\textquotesingle audit TOP-16, mantenendo identici circuito, noise model e ranking. Random Forest, SVM RBF e MLP vengono addestrati in scikit-learn; il modello selezionato è salvato insieme a schema\_version, definizione dell\textquotesingle etichetta, revisione, preset, seed e manifest della compilazione. L\textquotesingle inferenza rifiuta un modello il cui manifest non sia compatibile con quello dell\textquotesingle esecuzione corrente, evitando che un classificatore addestrato su una revisione precedente del circuito venga applicato a una netlist differente.
+
+La generazione del dataset è separata dall\textquotesingle inferenza usata nelle repliche operative. Per ciascuno dei due scenari vengono prodotti 2 000 istogrammi da 1 024 shot variando i cinque parametri del modello uniforme entro ±50\% rispetto al preset. La partizione 60/20/20 mantiene distinti training, selezione dell\textquotesingle architettura e test finale. La pipeline salva sia l\textquotesingle etichetta effettivamente usata dal classificatore sia le etichette di audit, in modo che una successiva verifica della definizione del target non richieda di rigenerare i campioni quantistici.
+
+Il confronto operativo fra M2 e TOP-4 costituisce l\textquotesingle ablazione del classificatore: entrambi usano gli stessi quattro candidati e lo stesso post-processing, ma TOP-4 non applica il filtro appreso. La separazione architetturale rende quindi attribuibile al classificatore solo l\textquotesingle eventuale differenza tra le due strategie, non differenze dovute al simulatore o al circuito.
+
+\subsection{Orchestrazione delle repliche e gestione dei fallimenti}\label{sec:finale_4_5_3}
+
+Per ogni replica l\textquotesingle orchestratore mantiene separatamente il primo indice di successo di TOP-1, TOP-4 e M2. Un\textquotesingle unica chiamata al simulatore produce l\textquotesingle istogramma dell\textquotesingle iterazione e le tre strategie vengono valutate subito sullo stesso oggetto. Se una strategia ha già avuto successo, il suo indice non viene sovrascritto; le altre continuano fino al proprio primo successo o al raggiungimento del budget. Il valore sentinella 51 conserva i fallimenti nel vettore appaiato senza confonderli con un successo alla cinquantesima iterazione.
+
+L\textquotesingle output della campagna non contiene soltanto medie aggregate: conserva i vettori completi delle repliche, i seed di ciascuna iterazione, il test statistico applicato e la correzione per confronti multipli. In questo modo le tabelle del Capitolo 5 possono essere rigenerate dai dati elementari e non da valori trascritti manualmente. Lo stesso principio viene mantenuto nelle campagne QEC, dove vengono conservati numero di shot, errori logici osservati e parametri del circuito per ciascun punto della griglia.
+
+\section{Implementazione QEC e decoder}\label{sec:finale_4_6}
+
+\subsection{Repetition code e Steane}\label{sec:finale_4_6_1}
+
+Nel codice a ripetizione la parità dei qubit dati viene trasferita a qubit ancillari senza misurare direttamente l\textquotesingle informazione logica. Porte identità collocate nel punto di iniezione servono da aggancio al canale di rumore di Aer senza alterare lo stato ideale. Le varianti in base Z e X condividono la stessa struttura, con i cambi di base necessari a rilevare rispettivamente bit flip e phase flip.
+
+Nel codice di Steane \ensuremath{[[7,1,3]]} lo stato \textbar0\_L⟩ viene preparato mediante qubit seme posti in sovrapposizione e propagazione con CNOT. Stabilizzatori CSS di tipo X e Z alimentano una lookup table di correzione a peso minimo. La stima del logical error rate usa un modello di Pauli sui qubit dati; l\textquotesingle estrazione della sindrome è assunta ideale e l\textquotesingle implementazione non costituisce un protocollo fault-tolerant completo.
+
+\subsection{Surface code, MWPM e decoder appreso}\label{sec:finale_4_6_2}
+
+Per il surface code, Stim genera i circuiti di memoria e campiona i detection event. Il detector error model viene convertito da PyMatching in un decoder MWPM, applicato in batch agli stessi eventi usati per calcolare il logical error rate. Negli esperimenti di crosstalk il canale correlato fra qubit dati adiacenti viene inserito ricorsivamente anche nei blocchi REPEAT, in modo che l\textquotesingle errore sia presente in tutti i cicli di sindrome e non soltanto nel primo livello del circuito.
+
+Il decoder appreso riceve esattamente la stessa matrice di detection event e il corrispondente osservabile logico. L\textquotesingle MLP impiegato nella campagna principale ha due strati nascosti (128, 64), attivazione ReLU, ottimizzatore Adam e arresto anticipato. Nella variante ibrida la rete non sostituisce MWPM: apprende la probabilità che la sua decisione sia errata e, superata una soglia scelta in validazione, ne inverte il bit logico. La soglia resta fissa sul test. In controlli successivi, BP+OSD \cite{roffe2020,panteleev2021} viene utilizzato come baseline analitica alternativa sul medesimo modello disponibile al decoder. La scelta del confronto residuale è coerente con la letteratura sui decoder neurali e con l\textquotesingle esigenza di confrontare l\textquotesingle apprendimento con baseline analitiche forti \cite{alphaqubit2024,torlaiMelko2017,yan2026,roffe2020,panteleev2021}.
+
+Le campagne di decodifica mantengono separati dati di addestramento e campioni di valutazione. Il campionatore di Stim produce direttamente la coppia (detection events, osservabile logico), quindi rete e decoder analitico vedono la stessa informazione di ingresso. Nei confronti appaiati la significatività viene calcolata sugli stessi shot; per il decoder ibrido, gli shot discordanti coincidono esattamente con quelli nei quali la rete decide di ribaltare la risposta del matching. Anche i controlli con BP+OSD riutilizzano gli stessi circuiti e lo stesso modello nominale, così il confronto riguarda la regola di decodifica e non una diversa descrizione del dispositivo.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_4_3_flusso_decoder.png}
+\caption{Flusso implementativo dei decoder: stessi detection event, regole decisionali differenti.}
+\label{fig:finale_4_3}
+\end{figure}
+
+\section{Implementazione dell'AQFT}\label{sec:finale_4_7}
+
+La campagna M15 implementa il troncamento della QFT con due parametri distinti. k\_QPE limita la distanza tra qubit delle rotazioni controllate nella QFT inversa finale; k\_arith applica lo stesso criterio alle QFT interne agli addizionatori modulari di Beauregard. Quest\textquotesingle ultimo non si applica al moltiplicatore specializzato di N=15. Separare i due parametri consente di distinguere il costo relativamente piccolo della trasformata finale dal costo delle molte trasformate interne all\textquotesingle aritmetica di N=21.
+
+Il troncamento viene applicato durante la costruzione del circuito, prima della compilazione. Di conseguenza il confronto fra QFT piena e approssimata include anche l\textquotesingle effetto del transpiler sulla netlist risultante: il numero di operazioni risparmiate viene misurato dopo la compilazione, non stimato soltanto contando le rotazioni eliminate a livello astratto. Per i circuiti hardware-aware la base nativa comprende sx/rz/x/ecr e la compilazione conserva layout e direzioni ECR compatibili con la snapshot.
+
+Per i test hardware-aware il rumore viene costruito dalle infedeltà medie di gate e dagli errori di readout di una snapshot offline FakeSherbrooke. Le rotazioni RZ restano virtuali e non vengono aggiunti nuovamente T1/T2, per evitare il doppio conteggio di contributi già riassunti nell\textquotesingle infedeltà media. Il seed principale è 42 e gli artefatti registrano layout, schedule dei seed, batch, versioni e hash della calibrazione.
+
+La selezione del grado e la valutazione sono separate. Nel pilota N=15 ogni configurazione usa 8 192 shot in otto batch, quattro di selezione e quattro di holdout. Nel benchmark QPE ciascun grado usa 4 096 shot con la stessa divisione 4/4 e mantiene layout e schedule dei seed fra i bracci. I test N=21 a budget ridotto usano 256 shot per braccio nei confronti di sensibilità. Una prima variante che eliminava gli SWAP modificando soltanto l\textquotesingle associazione dei bit di misura era errata; i relativi output sono conservati in una cartella \_superseded\_swap\_bug ma sono esclusi dalle evidenze correnti.
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Implementazione e separazione selection/holdout nella campagna AQFT.}\label{tab:finale_4_4}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Campagna AQFT}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Parametro}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Campionamento / controllo}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Implementazione e separazione selection/holdout nella campagna AQFT. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Campagna AQFT}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Parametro}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Campionamento / controllo}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Shor N=15 & k\_QPE & 8192 shot; 4 batch selezione + 4 holdout \\
+Shor N=21 & k\_arith + QFT finale & ricognizione strutturale + prove rumorose a budget ridotto \\
+QPE 6/8/10 qubit & grado di troncamento & 4096 shot; 4 batch selezione + 4 holdout \\
+Controllo SWAP & con/senza permutazione corretta & output errati esplicitamente esclusi \\
+\end{longtable}
+\endgroup
+
+\section{Riproducibilità, manifest e artefatti}\label{sec:finale_4_8}
+
+La riproducibilità è trattata come proprietà dell\textquotesingle architettura e non come documentazione accessoria. Ogni campagna produce artefatti JSON schema 2 contenenti input, seed, metriche, versione dello schema e metadati dell\textquotesingle esecuzione. Il manifest della compilazione registra dimensione del circuito, profondità, conteggi completi delle operazioni, gate set, livello e seed del transpiler, versioni software e SHA-256 della sequenza compilata. Le campagne hardware-aware aggiungono layout e hash della calibrazione. Figure e tabelle vengono generate dagli artefatti, senza ricopiare manualmente i risultati nel codice di plotting.
+
+\begingroup
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\caption{Informazioni minime conservate per la tracciabilità sperimentale.}\label{tab:finale_4_5}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Oggetto registrato}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Scopo}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\caption[]{Informazioni minime conservate per la tracciabilità sperimentale. (continua)}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+\textbf{Oggetto registrato}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\textbf{Scopo}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Versioni Python/librerie/backend & ricostruire l'ambiente effettivo \\
+Seed simulatore / transpiler / tie-break & riprodurre campioni, compilazione e ranking \\
+Gate set, profondità, conteggi & identificare la netlist realmente eseguita \\
+SHA-256 circuito / hash calibrazione & impedire associazioni tra revisioni diverse \\
+Schema, revisione, preset, label & validare compatibilità dei modelli ML \\
+Batch selection / holdout & separare scelta del metodo e valutazione finale \\
+Log e stato superseded & escludere esplicitamente output non validi \\
+\end{longtable}
+\endgroup
+
+Questo contratto rende possibile l\textquotesingle audit a posteriori: dato un risultato si può risalire alla campagna, al circuito compilato, al noise model, al calendario dei seed e al codice che ha prodotto l\textquotesingle artefatto. La stessa disciplina permette di distinguere output correnti da artefatti superati e costituisce il collegamento operativo fra metodologia e risultati.
+
+\subsection{Gestione degli artefatti superati e rigenerazione}\label{sec:finale_4_8_1}
+
+Gli artefatti generati da implementazioni successivamente corrette non vengono cancellati né confusi con i risultati correnti. Sono mantenuti in percorsi esplicitamente marcati come superseded e esclusi dai generatori di tabelle e figure. Questo criterio è stato applicato, in particolare, alla precedente implementazione della moltiplicazione modulare N=15 e alla prima variante AQFT senza SWAP corretti. La conservazione degli output storici consente di documentare l\textquotesingle evoluzione del codice, mentre il filtro sullo stato dell\textquotesingle artefatto impedisce che essi rientrino accidentalmente nelle evidenze della tesi.
+
+\subsection{Reporting deterministico}\label{sec:finale_4_8_2}
+
+Le figure e le tabelle non incorporano numeri scritti a mano. I generatori leggono gli artefatti JSON correnti, applicano le stesse definizioni di metrica usate durante l\textquotesingle esecuzione e producono automaticamente output grafici e tabellari. Quando una figura richiede una selezione, per esempio il miglior grado AQFT, la scelta viene effettuata sui batch di selezione registrati nell\textquotesingle artefatto e la resa viene calcolata sul relativo holdout. Il reporting non può quindi usare implicitamente il test set per scegliere una configurazione.
+
+Questa scelta consente anche controlli di consistenza semplici: conteggi di gate, profondità e hash riportati nelle figure possono essere confrontati con il manifest; le dimensioni dei campioni con il numero di batch; le metriche aggregate con i conteggi grezzi. Il Capitolo 5 beneficia di questa separazione perché può concentrarsi sull\textquotesingle interpretazione dei risultati, lasciando qui documentata la provenienza computazionale delle evidenze.
+
+\section{Sintesi}\label{sec:finale_4_9}
+
+Il sistema sperimentale implementa il contratto del Capitolo 3 attraverso componenti separati e verificabili. Qiskit/Aer gestisce i circuiti generali di Shor e i noise model controllati; Stim e PyMatching gestiscono il surface code; scikit-learn implementa classificatori e decoder appresi. Le strategie confrontate condividono i campioni quando la domanda di ricerca lo richiede, mentre le campagne che descrivono grandezze non commensurabili --- QEC, proxy per gate e AQFT --- restano separate anche nel software. Seed, manifest, hash e artefatti JSON rendono riproducibile la catena dall\textquotesingle input alla metrica. Il Capitolo 5 utilizza questa infrastruttura per presentare i risultati senza introdurre ulteriori variazioni metodologiche.
+
+Restano espliciti alcuni confini implementativi. Tutti i risultati della tesi derivano da simulazioni classiche: la piattaforma non esegue job su hardware quantistico reale. I preset N=15 sono uniformi e non incorporano coupling map, routing eterogeneo, deriva o leakage; le campagne hardware-aware utilizzano snapshot offline e non una calibrazione live. Analogamente, Stim e PyMatching caratterizzano circuiti di memoria stabilizer, mentre Shor viene simulato con Aer come circuito generale. La piattaforma non sostituisce i qubit di Shor con blocchi logici codificati e non implementa una compilazione fault-tolerant end-to-end.
+
+Questi confini sono riflessi direttamente nell\textquotesingle organizzazione del software: le metriche dei memory experiment non vengono passate come errori per gate a Shor, gli artefatti AQFT restano distinti dalle campagne M1-M4 e le configurazioni hardware-aware conservano l\textquotesingle identificativo della snapshot usata. L\textquotesingle architettura privilegia quindi la tracciabilità rispetto all\textquotesingle integrazione forzata di modelli non commensurabili. È questa disciplina che permette al Capitolo 5 di attribuire ogni risultato alla campagna corretta e di discuterne la portata senza confondere il comportamento del simulatore con una previsione hardware.

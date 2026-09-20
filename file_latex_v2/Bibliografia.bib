@@ -55,7 +55,7 @@
   author    = {Michael A. Nielsen and Isaac L. Chuang},
   title     = {Quantum Computation and Quantum Information},
   publisher = {Cambridge University Press},
-  year      = {2000},
+  year      = {2010},
   address   = {Cambridge, UK},
   edition   = {10th Anniversary Edition},
   isbn      = {978-1107002173}
@@ -252,6 +252,18 @@
   doi       = {10.1007/BFb0091537}
 }
 
+@incollection{buhler1993gnfs,
+  author    = {Joe P. Buhler and Hendrik W. {Lenstra Jr.} and Carl Pomerance},
+  title     = {Factoring Integers with the Number Field Sieve},
+  booktitle = {The Development of the Number Field Sieve},
+  series    = {Lecture Notes in Mathematics},
+  volume    = {1554},
+  publisher = {Springer},
+  year      = {1993},
+  pages     = {50--94},
+  doi       = {10.1007/BFb0091539}
+}
+
 @article{josephson1962,
   author  = {Brian D. Josephson},
   title   = {Possible New Effects in Superconductive Tunnelling},
@@ -326,9 +338,9 @@
 @misc{qiskit2023,
   author       = {{Qiskit contributors}},
   title        = {Qiskit: An Open-source Framework for Quantum Computing},
-  year         = {2023},
-  howpublished = {\url{https://qiskit.org}},
-  doi          = {10.5281/zenodo.2573505}
+  year         = {2019},
+  howpublished = {Zenodo},
+  doi          = {10.5281/zenodo.2562111}
 }
 
 % --- TEOREMA NO-CLONING ---
@@ -471,6 +483,7 @@
   volume    = {3},
   number    = {2},
   pages     = {175--185},
+  doi       = {10.26421/QIC3.2-8},
   note      = {arXiv:quant-ph/0205095. Ottimizzazione del circuito originale di Shor: riduce il numero di qubit da $O(n)$ a $2n+3$ tramite addizione modulare in-place}
 }
 
@@ -534,11 +547,13 @@
 }
 
 @inproceedings{chevignard2025,
-  author       = {Chevignard, Cl{'e}mence and Fouque, Pierre-Alain and Schrottenloher, Andr{'e}},
+  author       = {Chevignard, Cl{\'e}mence and Fouque, Pierre-Alain and Schrottenloher, Andr{\'e}},
   title        = {Reducing the Number of Qubits in Quantum Factoring},
-  booktitle    = {Advances in Cryptology --- CRYPTO 2025},
+  booktitle    = {Advances in Cryptology --- CRYPTO 2025, Part II},
   year         = {2025},
   publisher    = {Springer},
+  pages        = {384--415},
+  doi          = {10.1007/978-3-032-01878-6_13},
   note         = {Cryptology ePrint Archive, Paper 2024/222}
 }
 
@@ -549,6 +564,7 @@
   volume       = {141},
   pages        = {474},
   year         = {2026},
+  doi          = {10.1140/epjp/s13360-026-07719-0},
   note         = {arXiv:2509.05010}
 }
 
@@ -571,13 +587,16 @@
   doi     = {10.22331/q-2021-07-06-497}
 }
 
-@misc{pymatching2021,
-  author       = {Higgott, Oscar},
-  title        = {PyMatching: A Python package for decoding quantum codes with minimum-weight perfect matching},
-  year         = {2021},
-  eprint       = {2105.13082},
-  archiveprefix = {arXiv},
-  note         = {arXiv:2105.13082}
+@article{pymatching2021,
+  author  = {Higgott, Oscar},
+  title   = {PyMatching: A Python Package for Decoding Quantum Codes with Minimum-Weight Perfect Matching},
+  journal = {ACM Transactions on Quantum Computing},
+  year    = {2022},
+  volume  = {3},
+  number  = {3},
+  pages   = {1--16},
+  doi     = {10.1145/3505637},
+  note    = {Article 16; arXiv:2105.13082}
 }
 
 @article{roffe2019,
@@ -619,7 +638,8 @@
   school        = {California Institute of Technology},
   year          = {1997},
   eprint        = {quant-ph/9705052},
-  archiveprefix = {arXiv}
+  archiveprefix = {arXiv},
+  doi           = {10.7907/rzr7-dt72}
 }
 
 @article{kitaev2003,
@@ -719,12 +739,68 @@
   archiveprefix = {arXiv}
 }
 
-@misc{yang2026,
-  author        = {Qingxin Yang and Stefano Markidis},
-  title         = {When Noisy Quantum Order Finding Remains Recoverable for {S}hor's Algorithm},
-  year          = {2026},
-  eprint        = {2605.16074},
+@inproceedings{yang2026,
+  author    = {Qingxin Yang and Stefano Markidis},
+  title     = {When Noisy Quantum Order Finding Remains Recoverable for {S}hor's Algorithm},
+  booktitle = {2026 International Conference on Supercomputing Workshops (ICS Workshops '26)},
+  publisher = {ACM},
+  year      = {2026},
+  pages     = {125--132},
+  doi       = {10.1145/3774895.3815552},
+  eprint    = {2605.16074},
   archiveprefix = {arXiv}
+}
+
+% --- RIFERIMENTI AGGIUNTI DALLA REVISIONE FINALE ---
+
+@article{googleQECBelowThreshold2025,
+  author  = {{Google Quantum AI and Collaborators}},
+  title   = {Quantum Error Correction below the Surface Code Threshold},
+  journal = {Nature},
+  year    = {2025},
+  volume  = {638},
+  pages   = {920--926},
+  doi     = {10.1038/s41586-024-08449-y}
+}
+
+@article{googleSurfaceCode2023,
+  author  = {{Google Quantum AI}},
+  title   = {Suppressing Quantum Errors by Scaling a Surface Code Logical Qubit},
+  journal = {Nature},
+  year    = {2023},
+  volume  = {614},
+  pages   = {676--681},
+  doi     = {10.1038/s41586-022-05434-1}
+}
+
+@article{barencoAQFT1996,
+  author  = {Adriano Barenco and Artur Ekert and Kalle-Antti Suominen and P{\"a}ivi T{\"o}rm{\"a}},
+  title   = {Approximate Quantum Fourier Transform and Decoherence},
+  journal = {Physical Review A},
+  year    = {1996},
+  volume  = {54},
+  pages   = {139--146},
+  doi     = {10.1103/PhysRevA.54.139}
+}
+
+@article{dennis2002topological,
+  author  = {Eric Dennis and Alexei Kitaev and Andrew Landahl and John Preskill},
+  title   = {Topological Quantum Memory},
+  journal = {Journal of Mathematical Physics},
+  year    = {2002},
+  volume  = {43},
+  pages   = {4452--4505},
+  doi     = {10.1063/1.1499754}
+}
+
+@article{liBenjamin2017,
+  author  = {Ying Li and Simon C. Benjamin},
+  title   = {Efficient Variational Quantum Simulator Incorporating Active Error Minimization},
+  journal = {Physical Review X},
+  year    = {2017},
+  volume  = {7},
+  pages   = {021050},
+  doi     = {10.1103/PhysRevX.7.021050}
 }
 
 @misc{yan2026,
