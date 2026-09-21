@@ -176,6 +176,10 @@
 
 \begin{document}
 
+% Il frontespizio, la pagina bianca e la dedica non hanno numerazione
+% stampata: disabilita qui gli ancoraggi di pagina per evitare destinazioni
+% PDF duplicate quando la numerazione riparte nelle sezioni successive.
+\hypersetup{pageanchor=false}
 \input{TITLE}
 
 \begin{titlepage}
@@ -187,6 +191,7 @@
     \end{center}
 \end{titlepage}
 
+\hypersetup{pageanchor=true}
 \pagenumbering{roman}
 
 % -----------------------------------------------
