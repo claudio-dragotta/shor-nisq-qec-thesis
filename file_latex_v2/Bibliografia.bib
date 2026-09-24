@@ -78,8 +78,7 @@
   author       = {{National Institute of Standards and Technology}},
   title        = {{Post-Quantum Cryptography Standards: FIPS 203, 204, 205}},
   year         = {2024},
-  howpublished = {\url{https://csrc.nist.gov/pubs/fips/203/final}},
-  note         = {FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA). Pubblicazione formale agosto 2024.}
+  howpublished = {\url{https://www.nist.gov/news-events/news/2024/08/announcing-approval-three-federal-information-processing-standards-fips}}
 }
 
 @misc{nist_pqc_explainer2026,
@@ -87,7 +86,7 @@
   title        = {{What Is Post-Quantum Cryptography?}},
   year         = {2026},
   howpublished = {\url{https://www.nist.gov/cybersecurity-and-privacy/what-post-quantum-cryptography}},
-  note         = {Aggiornato il 27 febbraio 2026; consultato il 26 agosto 2026}
+  urldate      = {2026-08-26}
 }
 
 @article{rsa250_2020,
@@ -95,7 +94,8 @@
   title     = {Factoring {RSA}-250},
   journal   = {Cryptology ePrint Archive},
   year      = {2020},
-  note      = {Report 2020/697, \url{https://eprint.iacr.org/2020/697}}
+  number    = {2020/697},
+  url       = {https://eprint.iacr.org/2020/697}
 }
 
 @article{vandersypen2001,
@@ -141,8 +141,7 @@
   author       = {{IBM Quantum}},
   title        = {{IBM Quantum Roadmap}},
   year         = {2026},
-  howpublished = {\url{https://www.ibm.com/roadmaps/quantum/}},
-  note         = {Roadmap aggiornata a marzo 2026; obiettivi dichiarati soggetti a modifica}
+  howpublished = {\url{https://www.ibm.com/roadmaps/quantum/}}
 }
 
 @misc{shor_challenges2025,
@@ -167,7 +166,7 @@
   booktitle = {IEEE High Performance Extreme Computing Conference (HPEC)},
   year      = {2023},
   publisher = {IEEE},
-  note      = {Available at \url{https://users.ece.cmu.edu/~franzf/papers/hpec_2023_Quantum_final.pdf}}
+  url       = {https://users.ece.cmu.edu/~franzf/papers/hpec_2023_Quantum_final.pdf}
 }
 
 % --- CORREZIONE DEGLI ERRORI QUANTISTICI ---
@@ -181,7 +180,8 @@
   number    = {4},
   pages     = {1207--1282},
   doi       = {10.1137/S0097539799359385},
-  note      = {Versione preliminare presentata a STOC 1997; preprint arXiv:quant-ph/9906129}
+  eprint    = {quant-ph/9906129},
+  archiveprefix = {arXiv}
 }
 
 
@@ -227,8 +227,7 @@
   volume    = {119},
   number    = {18},
   pages     = {180509},
-  doi       = {10.1103/PhysRevLett.119.180509},
-  note      = {Articolo fondativo della Zero-Noise Extrapolation (ZNE): propone l'amplificazione controllata del rumore seguita da estrapolazione a zero rumore per stimare l'output ideale di un circuito NISQ}
+  doi       = {10.1103/PhysRevLett.119.180509}
 }
 
 @article{bell1964,
@@ -243,17 +242,21 @@
 }
 
 @incollection{lenstra1993gnfs,
-  author    = {Arjen K. Lenstra and Hendrik W. {Lenstra Jr.}},
-  title     = {The Development of the Number Field Sieve},
-  booktitle = {Lecture Notes in Mathematics},
+  author    = {Arjen K. Lenstra and Hendrik W. {Lenstra Jr.} and Mark S. Manasse and John M. Pollard},
+  editor    = {Arjen K. Lenstra and Hendrik W. {Lenstra Jr.}},
+  title     = {The Number Field Sieve},
+  booktitle = {The Development of the Number Field Sieve},
+  series    = {Lecture Notes in Mathematics},
   volume    = {1554},
   publisher = {Springer-Verlag},
   year      = {1993},
+  pages     = {11--42},
   doi       = {10.1007/BFb0091537}
 }
 
 @incollection{buhler1993gnfs,
   author    = {Joe P. Buhler and Hendrik W. {Lenstra Jr.} and Carl Pomerance},
+  editor    = {Arjen K. Lenstra and Hendrik W. {Lenstra Jr.}},
   title     = {Factoring Integers with the Number Field Sieve},
   booktitle = {The Development of the Number Field Sieve},
   series    = {Lecture Notes in Mathematics},
@@ -361,8 +364,7 @@
   author       = {{IBM Quantum}},
   title        = {Shor's Algorithm -- IBM Quantum Documentation},
   year         = {2024},
-  howpublished = {\url{https://quantum.cloud.ibm.com/docs/en/tutorials/shors-algorithm}},
-  note         = {Tutorial ufficiale IBM per l'implementazione dell'algoritmo di Shor con Qiskit Runtime su hardware reale (\texttt{ibm\_marrakesh}). Include Dynamical Decoupling e Gate Twirling come tecniche di soppressione del rumore}
+  howpublished = {\url{https://quantum.cloud.ibm.com/docs/en/tutorials/shors-algorithm}}
 }
 
 % --- MACHINE LEARNING PER QEC E ERROR MITIGATION ---
@@ -374,8 +376,7 @@
   year      = {2024},
   volume    = {635},
   pages     = {834--840},
-  doi       = {10.1038/s41586-024-08148-8},
-  note      = {AlphaQubit: decoder neurale sviluppato da Google DeepMind e Google Quantum AI. Supera i decoder analitici classici su hardware Sycamore a 241 qubit}
+  doi       = {10.1038/s41586-024-08148-8}
 }
 
 @misc{transformer_decoder2023,
@@ -383,8 +384,7 @@
   title         = {Learning to Decode the Surface Code with a Recurrent, Transformer-Based Neural Network},
   year          = {2023},
   eprint        = {2310.05900},
-  archiveprefix = {arXiv},
-  note          = {Decoder transformer per surface code; supera i decoder state-of-the-art su hardware Google Sycamore per distanze 3--11}
+  archiveprefix = {arXiv}
 }
 
 @article{epjqt_noise2024,
@@ -394,8 +394,7 @@
   year      = {2024},
   volume    = {11},
   pages     = {71},
-  doi       = {10.1140/epjqt/s40507-024-00284-4},
-  note      = {Metodologia sistematica per la selezione e calibrazione di noise model per emulatori rispetto a backend reali IBM. Benchmark su ibm\_perth (7 qubit)}
+  doi       = {10.1140/epjqt/s40507-024-00284-4}
 }
 
 % --- LIBRERIE E STRUMENTI ---
@@ -415,15 +414,15 @@
   author       = {{Google Quantum AI}},
   title        = {Cirq: A Python Framework for Writing, Manipulating, and Running Quantum Circuits},
   year         = {2024},
-  howpublished = {\url{https://quantumai.google/cirq}},
-  note         = {Framework open-source Google per processori superconduttori Sycamore}
+  howpublished = {\url{https://quantumai.google/cirq}}
 }
 
 @misc{pennylane2022,
   author       = {Ville Bergholm and others},
   title        = {{PennyLane}: Automatic Differentiation of Hybrid Quantum-Classical Computations},
   year         = {2022},
-  note         = {arXiv:1811.04968. Framework Xanadu orientato a circuiti variazionali e quantum machine learning}
+  eprint       = {1811.04968},
+  archiveprefix = {arXiv}
 }
 
 % --- NSA CNSA 2.0 ---
@@ -432,8 +431,7 @@
   author       = {{National Security Agency}},
   title        = {{Commercial National Security Algorithm Suite 2.0 (CNSA 2.0)}},
   year         = {2022},
-  howpublished = {\url{https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF}},
-  note         = {Cybersecurity Advisory, settembre 2022. Fissa le scadenze di migrazione verso algoritmi resistenti ai computer quantistici entro il 2030--2035}
+  howpublished = {\url{https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF}}
 }
 
 % --- APPLE PQ3 ---
@@ -442,8 +440,7 @@
   author       = {{Apple Security Engineering and Architecture}},
   title        = {{iMessage with PQ3: The new state of the art in quantum-secure messaging}},
   year         = {2024},
-  howpublished = {\url{https://security.apple.com/blog/imessage-pq3/}},
-  note         = {Febbraio 2024. Primo protocollo di messaggistica con crittografia post-quantistica di livello 3, basato su ML-KEM per lo scambio di chiavi ibride}
+  howpublished = {\url{https://security.apple.com/blog/imessage-pq3/}}
 }
 
 % --- ASPETTO SPERIMENTALE DISUGUAGLIANZE DI BELL ---
@@ -469,8 +466,7 @@
   volume    = {52},
   number    = {5},
   pages     = {3457--3467},
-  doi       = {10.1103/PhysRevA.52.3457},
-  note      = {Dimostra che qualsiasi operatore unitario su $k$ qubit può essere decomposto in $O(4^k)$ porte elementari; fondamento teorico per la complessità della decomposizione UnitaryGate}
+  doi       = {10.1103/PhysRevA.52.3457}
 }
 
 % --- CIRCUITO SHOR OTTIMIZZATO (2n+3 QUBIT) ---
@@ -484,7 +480,8 @@
   number    = {2},
   pages     = {175--185},
   doi       = {10.26421/QIC3.2-8},
-  note      = {arXiv:quant-ph/0205095. Ottimizzazione del circuito originale di Shor: riduce il numero di qubit da $O(n)$ a $2n+3$ tramite addizione modulare in-place}
+  eprint    = {quant-ph/0205095},
+  archiveprefix = {arXiv}
 }
 
 % --- GITHUB IMPLEMENTAZIONE SHOR ---
@@ -493,8 +490,7 @@
   author       = {Graychii},
   title        = {Shor Algorithm Implementation},
   year         = {2023},
-  howpublished = {\url{https://github.com/Graychii/Shor-Algorithm-Implementation}},
-  note         = {Implementazione Python dell'algoritmo di Shor su Qiskit}
+  howpublished = {\url{https://github.com/Graychii/Shor-Algorithm-Implementation}}
 }
 
 @article{zurek2003,
@@ -553,8 +549,7 @@
   year         = {2025},
   publisher    = {Springer},
   pages        = {384--415},
-  doi          = {10.1007/978-3-032-01878-6_13},
-  note         = {Cryptology ePrint Archive, Paper 2024/222}
+  doi          = {10.1007/978-3-032-01878-6_13}
 }
 
 @article{shukla2026,
@@ -565,7 +560,8 @@
   pages        = {474},
   year         = {2026},
   doi          = {10.1140/epjp/s13360-026-07719-0},
-  note         = {arXiv:2509.05010}
+  eprint       = {2509.05010},
+  archiveprefix = {arXiv}
 }
 
 @misc{gidney2025,
@@ -573,8 +569,7 @@
   title        = {How to factor 2048 bit {RSA} integers with less than a million noisy qubits},
   year         = {2025},
   eprint       = {2505.15917},
-  archiveprefix = {arXiv},
-  note         = {arXiv:2505.15917}
+  archiveprefix = {arXiv}
 }
 
 @article{stim2021,
@@ -596,7 +591,8 @@
   number  = {3},
   pages   = {1--16},
   doi     = {10.1145/3505637},
-  note    = {Article 16; arXiv:2105.13082}
+  eprint  = {2105.13082},
+  archiveprefix = {arXiv}
 }
 
 @article{roffe2019,
@@ -615,8 +611,7 @@
   title        = {Plaquette: A hardware-aware design platform for fault-tolerant quantum computers},
   year         = {2026},
   eprint       = {2607.08767},
-  archiveprefix = {arXiv},
-  note         = {arXiv:2607.08767}
+  archiveprefix = {arXiv}
 }
 
 % --- FONDAMENTI QEC: CSS, STABILIZZATORI, SURFACE CODE (ORIGINE) ---
@@ -716,7 +711,8 @@
   number  = {2},
   pages   = {1034--1063},
   doi     = {10.1103/PhysRevA.54.1034},
-  note    = {arXiv:quant-ph/9602016. Stima di $5K+1$ qubit e circa $72K^3$ gate elementari per fattorizzare un numero di $K$ bit}
+  eprint  = {quant-ph/9602016},
+  archiveprefix = {arXiv}
 }
 
 @article{smolin2013,
@@ -728,7 +724,8 @@
   number  = {7457},
   pages   = {163--165},
   doi     = {10.1038/nature12290},
-  note    = {Preprint arXiv:1301.7007, dal titolo \emph{Pretending to Factor Large Numbers on a Quantum Computer}}
+  eprint  = {1301.7007},
+  archiveprefix = {arXiv}
 }
 
 @misc{akoramurthy2026,
@@ -808,8 +805,7 @@
   title         = {Rethink the Role of Neural Decoders in Quantum Error Correction},
   year          = {2026},
   eprint        = {2605.12046},
-  archiveprefix = {arXiv},
-  note          = {Accettato a ICML 2026}
+  archiveprefix = {arXiv}
 }
 
 @misc{bazayeva2026,
@@ -825,8 +821,7 @@
   title         = {Demonstration of a Logical Architecture Uniting Motion and In-Place Entanglement},
   year          = {2025},
   eprint        = {2509.13247},
-  archiveprefix = {arXiv},
-  note          = {Collaborazione Infleqtion; revisione 2 aprile 2026}
+  archiveprefix = {arXiv}
 }
 
 @article{bluvstein2024,
@@ -837,7 +832,8 @@
   volume  = {626},
   pages   = {58--65},
   doi     = {10.1038/s41586-023-06927-3},
-  note    = {Preprint arXiv:2312.03982}
+  eprint  = {2312.03982},
+  archiveprefix = {arXiv}
 }
 
 @article{shuklaqpe2026,
@@ -849,7 +845,8 @@
   number  = {3},
   pages   = {e00683},
   doi     = {10.1002/qute.202500683},
-  note    = {Preprint arXiv:2507.22460}
+  eprint  = {2507.22460},
+  archiveprefix = {arXiv}
 }
 
 @misc{alphaqubit2026,
@@ -857,8 +854,7 @@
   title         = {A Scalable and Real-Time Neural Decoder for Topological Quantum Codes},
   year          = {2026},
   eprint        = {2512.07737},
-  archiveprefix = {arXiv},
-  note          = {Google DeepMind e Google Quantum AI; sottomesso l'8 dicembre 2025, revisione 11 marzo 2026}
+  archiveprefix = {arXiv}
 }
 
 @misc{pinnacle2026,
@@ -866,8 +862,7 @@
   title         = {The {P}innacle Architecture: Reducing the Cost of Breaking {RSA}-2048 to 100\,000 Physical Qubits Using Quantum {LDPC} Codes},
   year          = {2026},
   eprint        = {2602.11457},
-  archiveprefix = {arXiv},
-  note          = {Preprint non sottoposto a revisione paritaria alla data di consultazione}
+  archiveprefix = {arXiv}
 }
 
 @misc{cain2026,
@@ -875,8 +870,7 @@
   title         = {{S}hor's Algorithm Is Possible with as Few as 10,000 Reconfigurable Atomic Qubits},
   year          = {2026},
   eprint        = {2603.28627},
-  archiveprefix = {arXiv},
-  note          = {Preprint non sottoposto a revisione paritaria alla data di consultazione}
+  archiveprefix = {arXiv}
 }
 
 @article{hartnett2024,

@@ -1,0 +1,129 @@
+% Sintesi teorica per il corpo della tesi. Le derivazioni complete restano
+% nell'Appendice A; il disegno sperimentale dettagliato segue nella Sezione 3.5.
+
+\section{Fondamenti quantistici necessari all'analisi}\label{sec:finale_3_1}
+
+\subsection{Stato, misura, interferenza ed entanglement}\label{sec:finale_3_1_1}
+
+Un qubit è descritto da uno stato normalizzato $\ket{\psi}=\alpha\ket{0}+\beta\ket{1}$, con $|\alpha|^2+|\beta|^2=1$. La misura nella base computazionale restituisce 0 o 1 con probabilità $|\alpha|^2$ e $|\beta|^2$; in un circuito con più registri, le ampiezze interferiscono prima della misura e possono produrre correlazioni non separabili. Nella tesi questi principi non sono trattati come richiamo enciclopedico, ma come prerequisiti per interpretare tre quantità osservabili: la struttura periodica degli istogrammi di Shor, le sindromi della QEC e la perdita di informazione di fase introdotta dall'AQFT. La trattazione estesa, inclusa la notazione di Dirac e la sfera di Bloch, è riportata nell'Appendice~\ref{app:fondamenti} \cite{nielsenChuang2000,wootters1982}.
+
+\subsection{Porte, operatori di Pauli e collegamento con la QEC}\label{sec:finale_3_1_2}
+
+Le trasformazioni del circuito sono unitarie. Hadamard e rotazioni controllate costruiscono QPE e QFT; gli operatori di Pauli $X$, $Y$ e $Z$ forniscono invece la base operativa per descrivere errori di bit, fase e combinati. Le porte a due qubit creano l'accoppiamento fra registri e, dopo la compilazione, costituiscono una componente dominante del costo e dell'esposizione al rumore. La Tabella~\ref{tab:finale_3_1} collega direttamente le primitive richiamate nel seguito alla funzione sperimentale.
+
+\begin{table}[!htbp]
+\centering
+\small
+\caption{Primitive quantistiche utilizzate nel lavoro e loro funzione metodologica.}\label{tab:finale_3_1}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\toprule
+\textbf{Primitiva} & \textbf{Ruolo nella tesi} \\
+\midrule
+$H$ e rotazioni di fase & Preparazione, QPE, QFT e AQFT. \\
+$X,Y,Z$ & Modelli Pauli, sindromi e definizione dei canali elementari. \\
+Porte controllate & Esponenziazione modulare, stabilizzatori e principale costo a due qubit. \\
+Misura & Istogrammi di Shor, estrazione della sindrome e metriche finali. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Matrice densità, stati misti e descrizione del rumore}\label{sec:finale_3_1_3}
+
+Per descrivere una distribuzione statistica di stati si usa la matrice densità $\rho$; un canale rumoroso è una mappa completamente positiva e preservante la traccia. Questa rappresentazione distingue la probabilità di un evento fisico dalla probabilità di fallimento del compito. Tale distinzione è essenziale: una stessa intensità di rumore può produrre esiti differenti in funzione del circuito, della codifica e della regola di post-processing. Le derivazioni dei canali e la loro azione sul vettore di Bloch sono raccolte nell'Appendice~\ref{app:canali} \cite{nielsenChuang2000,zurek2003}.
+
+\section{Algoritmo di Shor e definizione operativa del successo}\label{sec:finale_3_2}
+
+\subsection{Dalla fattorizzazione alla ricerca dell'ordine}\label{sec:finale_3_2_1}
+
+Dato un intero composto $N$ e una base $a$ coprima con $N$, Shor riconduce la fattorizzazione alla ricerca del minimo $r>0$ tale che $a^r\equiv1\pmod N$. Quando $r$ è pari e $a^{r/2}\not\equiv-1\pmod N$, i massimi comuni divisori di $a^{r/2}\pm1$ con $N$ forniscono fattori non banali. Per $N=15$ e $a=7$ si ha $r=4$, struttura usata come istanza controllata nelle campagne principali \cite{shor1994,nielsenChuang2000}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth,height=0.60\textheight,keepaspectratio]{finale_fig_3_1_periodicita_n15.png}
+\caption{Periodicità di $7^x\bmod 15$: la sequenza si ripete ogni quattro valori, quindi $r=4$.}
+\label{fig:finale_3_1}
+\end{figure}
+
+\subsection{Quantum Phase Estimation e Quantum Fourier Transform}\label{sec:finale_3_2_2}
+
+Il nucleo quantistico stima la fase dell'operatore di moltiplicazione modulare tramite QPE. Un registro di controllo prepara una sovrapposizione, applica potenze controllate dell'operatore e usa la QFT inversa per trasformare la fase in una distribuzione misurabile. Il post-processing classico ricostruisce una frazione vicina a $s/r$ e verifica i fattori candidati. L'AQFT elimina rotazioni di fase piccole: riduce porte e profondità, ma introduce un errore algoritmico che deve essere misurato sulla distribuzione e sulla probabilità finale di fattorizzazione, non soltanto sul conteggio delle porte \cite{barencoAQFT1996,akoramurthy2026}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth,height=0.60\textheight,keepaspectratio]{finale_fig_3_2_pipeline_shor.png}
+\caption{Pipeline concettuale di Shor: pre-processing classico, period finding quantistico, QFT inversa e post-processing classico.}
+\label{fig:finale_3_2}
+\end{figure}
+
+\subsection{Misura, shot e criterio di successo adottato}\label{sec:finale_3_2_3}
+
+Una singola esecuzione restituisce una bitstring; più shot stimano l'istogramma degli esiti. La tesi distingue la massa utile per singola misura, il successo TOP-$K$ ottenuto verificando i primi $K$ candidati e il numero di iterazioni indipendenti necessario a ricavare i fattori. Il successo viene registrato soltanto quando il post-processing produce fattori non banali verificati moltiplicativamente. Questa definizione rende confrontabili TOP-1, TOP-4, classificatore e AQFT, ma richiede una baseline combinatoria: per $N=15$ la procedura classica accetta 63 esiti su 256 e può quindi produrre un successo residuo anche da una distribuzione quasi uniforme.
+
+\subsection{Costo circuitale e ruolo delle istanze}\label{sec:finale_3_2_4}
+
+Il costo dipende da qubit, porte a due qubit, profondità, routing e aritmetica modulare. $N=15$ consente campagne replicate e controlli causali; $N=21$ verifica un ordine $r=6$ meno favorevole al troncamento; istanze ulteriori sono usate soltanto per controlli ideali. La tesi non estrapola da queste taglie la fattorizzazione crittografica: le implementazioni fault-tolerant richiedono aritmetica, correzione, feed-forward e operazioni non-Clifford esplicite \cite{beauregard2002,gidney2021,chevignard2025}.
+
+\section{Rumore quantistico e modelli utilizzati}\label{sec:finale_3_3}
+
+\subsection{Sorgenti fisiche rilevanti}\label{sec:finale_3_3_1}\label{sec:fonti_fisiche}
+
+Le campagne distinguono preparazione, rilassamento $T_1$, perdita di coerenza $T_2$, errori di gate, crosstalk e readout. Nei dispositivi reali questi fenomeni possono dipendere da qubit, tempo e routing; il modello uniforme di Shor li separa invece deliberatamente per identificare il contributo delle singole componenti. Gli aspetti fisici e l'anatomia di una QPU sono approfonditi nell'Appendice~\ref{app:anatomia}; il mapping operativo adottato nel corpo è illustrato nella Figura~\ref{fig:finale_3_3} \cite{preskill2018,murali2019,tannu2019}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth,height=0.60\textheight,keepaspectratio]{finale_fig_3_3_sorgenti_rumore.png}
+\caption{Collocazione concettuale delle principali sorgenti di rumore nella pipeline di Shor.}
+\label{fig:finale_3_3}
+\end{figure}
+
+\subsection{Canali elementari e convenzione depolarizzante}\label{sec:finale_3_3_2}
+
+Il rilassamento e il dephasing sono parametrizzati attraverso $T_1$, $T_2$ e la durata delle operazioni; il readout è descritto da una matrice di confusione. Per i gate, Qiskit Aer usa un canale depolarizzante parametrizzato da $\lambda$, che non coincide in generale con la probabilità aggregata di applicare un Pauli non identità. La convenzione esatta e le derivazioni complete sono riportate nell'Appendice~\ref{app:canali} e devono essere mantenute quando si confrontano campagne differenti \cite{qiskit2023,nielsenChuang2000}.
+
+\subsection{Modello di rumore della campagna Shor N=15}\label{sec:finale_3_3_3}
+
+La campagna principale usa preset uniformi e controllati per porte a uno e due qubit, rilassamento e readout. Non rappresenta la calibrazione di una QPU specifica: serve a confrontare strategie sugli stessi istogrammi, con seed e netlist condivisi. I preset, gli sweep e le numerosità sono dichiarati nella Sezione~\ref{sec:finale_3_5} e nelle Appendici~\ref{app:parametrica} e~\ref{app:obiettivi}; i controlli hardware-aware usano invece una snapshot offline separata.
+
+\subsection{Tre grandezze d'errore che non vanno confuse}\label{sec:finale_3_3_4}
+
+La Tabella~\ref{tab:finale_3_3} impedisce di sovrapporre tre livelli sperimentali distinti. Non viene costruita una conversione numerica fra $p_L$ e $p_g$: richiederebbe una compilazione fault-tolerant completa dell'algoritmo.
+
+\begin{table}[!htbp]
+\centering
+\small
+\caption{Convenzione delle grandezze d'errore usata nella versione revisionata.}\label{tab:finale_3_3}
+\begin{tabularx}{\textwidth}{@{}lXX@{}}
+\toprule
+\textbf{Simbolo} & \textbf{Significato} & \textbf{Uso} \\
+\midrule
+$p$ & Intensità dell'errore fisico del modello. & Memory experiment QEC e stima della soglia. \\
+$p_L$ & Probabilità di fallimento logico dopo decodifica. & Confronto fra distanze e decoder. \\
+$p_g$ & Proxy Pauli totale applicato dopo ciascun gate compilato. & Sensibilità locale del circuito di Shor. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Strategie di intervento considerate}\label{sec:finale_3_4}
+
+\subsection{Post-processing e mitigazione a valle della misura}\label{sec:finale_3_4_1}
+
+TOP-$K$ modifica soltanto la ricerca classica sui candidati già presenti nell'istogramma; il classificatore decide quando applicarla; la ZNE varia artificialmente il rumore per estrapolare un osservabile. Queste strategie non correggono lo stato quantistico e devono essere valutate sul costo finale della fattorizzazione. Per questo DR1 include l'ablazione TOP-4 senza classificatore e una baseline combinatoria, mentre i dettagli degli sweep e della ZNE sono conservati nell'Appendice~\ref{app:parametrica} \cite{temme2017,liBenjamin2017}.
+
+\subsection{Quantum Error Correction: sindrome, distanza e soglia}\label{sec:finale_3_4_2}
+
+La QEC codifica l'informazione logica in più qubit e misura stabilizzatori che rivelano la sindrome senza leggere direttamente lo stato logico. La distanza $d$ determina il numero di errori correggibili; nel surface code l'aumento di $d$ è utile soltanto sotto una soglia dipendente da circuito, rumore e decoder. La tesi procede per livelli: repetition code come verifica analitica, Steane $[[7,1,3]]$ come codice stabilizer e surface code ruotato come famiglia scalabile \cite{shorcorrection1995,steane1996,fowler2012,dennis2002topological,googleQECBelowThreshold2025}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth,height=0.60\textheight,keepaspectratio]{finale_fig_3_4_ciclo_qec_decoder.png}
+\caption{Ciclo concettuale della QEC e posizione dei decoder analitici o appresi.}
+\label{fig:finale_3_4}
+\end{figure}
+
+\subsection{Decoder analitici, appresi e ibridi}\label{sec:finale_3_4_3}
+
+MWPM interpreta i detection events tramite un grafo; BP+OSD combina belief propagation e una ricerca ordinata; il decoder appreso può sostituire la baseline oppure correggerne residualmente gli errori. Il confronto corretto usa gli stessi campioni e lo stesso modello nominale: una rete è scientificamente utile soltanto se recupera struttura non rappresentata dalla migliore baseline analitica plausibile. Disegno completo, controlli E1--E12 e matrici di trasferimento sono nell'Appendice~\ref{app:decodifica} \cite{pymatching2021,roffe2020,panteleev2021,alphaqubit2024,torlaiMelko2017}.
+
+\subsection{AQFT come ottimizzazione algoritmica}\label{sec:finale_3_4_4}
+
+L'AQFT riduce rotazioni controllate e costo di routing accettando una perdita controllata di precisione. Il grado non viene scelto sul test: ogni campagna separa selection e holdout e misura congiuntamente successo, porte entangling e profondità. La domanda non è quindi se l'AQFT sia sempre migliore, ma quando il rumore evitato superi l'informazione di fase persa \cite{barencoAQFT1996,akoramurthy2026}.

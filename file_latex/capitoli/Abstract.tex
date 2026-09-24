@@ -51,11 +51,17 @@ di calcolo del miglior metodo classico noto~\cite{lenstra1993gnfs}.
 Su questa differenza poggia la minaccia alla crittografia a chiave pubblica,
 perché la sicurezza di RSA si fonda sul costo di trovare quei
 fattori~\cite{rsa1978}.
+La rilevanza non è soltanto teorica: nel 2024 il NIST ha formalizzato i primi
+standard crittografici post-quantistici~\cite{nist2024pqc}, mentre una stima
+fault-tolerant per RSA-2048 quantifica l'ordine di grandezza in circa venti
+milioni di qubit rumorosi e otto ore di calcolo, sotto specifiche ipotesi
+architetturali~\cite{gidney2021}.
 
 Fra la teoria e le macchine disponibili resta però una distanza ampia: le
 operazioni fisiche sbagliano con probabilità non trascurabile --- questi errori
 sono qui indicati come \emph{rumore}~\cite{preskill2018} --- e le dimostrazioni
-sperimentali restano confinate a numeri piccoli~\cite{skosana2021}.
+sperimentali restano confinate a numeri piccoli, anche nelle realizzazioni più
+autorevoli di Shor~\cite{vandersypen2001,monz2016,skosana2021}.
 Il rumore non degrada il risultato in modo graduale: disperde l'informazione che
 il circuito dovrebbe concentrare in pochi esiti, fino a renderla indistinguibile
 da una misura casuale.
@@ -84,12 +90,15 @@ stessa procedura senza modello --- l'\emph{ablazione} --- mostra che non riduce 
 tentativi necessari, perché il guadagno viene per intero dalla ricerca dei
 quattro esiti più frequenti.
 
-Il secondo è una rete neurale per la correzione degli errori: da sola non supera
+Il secondo è una rete neurale per la correzione degli errori~\cite{alphaqubit2024}:
+da sola non supera
 il metodo analitico, e lo migliora solo affiancandolo dove il rumore contiene
 correlazioni che quel metodo non rappresenta, con un margine che si assottiglia
 al crescere del codice.
 Il terzo è la trasformata di Fourier quantistica (QFT), il passaggio che rende
-leggibili i fattori: privata delle rotazioni più piccole accorcia il circuito e
+leggibili i fattori: il fondamento dell'approssimazione e del suo possibile
+vantaggio in presenza di decoerenza risale a Barenco et
+al.~\cite{barencoAQFT1996}; privata delle rotazioni più piccole accorcia il circuito e
 migliora la stima di fase, ma il vantaggio non si trasferisce a Shor.
 Il contributo non è dunque un componente in più, bensì il confronto che permette
 di stabilire quando uno serva davvero.
@@ -174,6 +183,8 @@ Nel surface code gli errori colpiscono anche preparazione e misura, e il
 individuare gli errori più probabili.
 Confrontando le distanze $d=3,5,7,9$ si stima la soglia $p_{\mathrm{th}}$, sotto
 la quale aumentare la distanza riduce l'errore dopo la correzione.
+L'osservazione sperimentale di memorie surface code sotto soglia rende questo
+confronto particolarmente attuale~\cite{googleQECBelowThreshold2025}.
 La rete è valutata sia da sola sia come aiuto al matching: nel decoder ibrido
 interviene solo quando prevede che la decisione del matching debba essere
 invertita.
@@ -227,7 +238,8 @@ più costoso di TOP-4 ($p_{\mathrm{Holm}}=0{,}0033/0{,}0096$).
 Buone metriche di classificazione non garantiscono quindi una riduzione del costo
 necessario a trovare i fattori.
 Anche la zero-noise extrapolation non migliora il riferimento, e la variante su
-tre livelli triplica il costo di campionamento.
+tre livelli triplica il costo di campionamento, coerentemente con i limiti
+generali che legano mitigazione e overhead di campionamento~\cite{takagi2023}.
 
 \textbf{Correzione d'errore.} Il codice a ripetizione a $d=3$ riproduce i valori
 previsti dalla teoria.
@@ -308,5 +320,4 @@ porte, qubit e profondità.
 \setcounter{equation}{0}
 \setcounter{table}{0}
 \clearpage
-
 

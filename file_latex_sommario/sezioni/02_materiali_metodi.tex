@@ -19,15 +19,14 @@ classica è però permissiva e accetta 63 dei 256 valori, tanto che esiti del tu
 uniformi darebbero comunque un successo di \(63/256 \simeq 24{,}61\%\). Questo
 riferimento dipende dall'istanza e dal post-processing, non misura la fedeltà dello
 stato quantistico e ricorda che fattorizzazioni corrette sopravvivono anche a una
-distribuzione che ha perso gran parte della propria struttura.
+distribuzione che ha perso gran parte della propria struttura \cite{smolin2013}.
 
 La correttezza dei circuiti è verificata indipendentemente dal successo della fattorizzazione,
 controllando operatori modulari, ripristino dei qubit ausiliari e accordo con le
 distribuzioni teoriche. Le istanze \(N = 21\), \(a = 2\) e \(N = 35\),
 \(a = 6\), validate idealmente, usano l'aritmetica reversibile di Beauregard
 \cite{beauregard2002}; solo \(N = 21\) entra nelle prove rumorose esplorative sull'AQFT.
-Si impiegano Qiskit/Aer, scikit-learn, Stim e PyMatching
-\cite{qiskit2023,scikit_learn,stim2021,pymatching2021}, registrando versioni, parametri,
+Si impiegano Qiskit/Aer, scikit-learn, Stim e PyMatching, registrando versioni, parametri,
 semi casuali e identificativi dei circuiti.
 
 \subsection{Post-processing, classificazione e mitigazione}
@@ -50,14 +49,16 @@ iterazioni per ottenere i fattori, non l'accuratezza del classificatore né il t
 calcolo. Si usano 30 repliche appaiate per scenario e al massimo 50 iterazioni,
 con valore convenzionale 51 se i fattori non arrivano entro il limite, e
 test di Wilcoxon--Pratt con correzione di Holm. La zero-noise extrapolation (ZNE) a due
-e tre livelli scala in simulazione i soli parametri depolarizzanti.
+e tre livelli scala in simulazione i soli parametri depolarizzanti
+\cite{temme2017,takagi2023}.
 
 \subsection{Correzione quantistica e decodifica delle sindromi}
 
 Nella correzione quantistica l'informazione di un qubit logico è distribuita su più
 qubit fisici; si misurano parità, dette sindromi, che segnalano gli errori senza leggere
 l'informazione logica, e un decoder sceglie la correzione. Si studiano codice a
-ripetizione, Steane \([[7,1,3]]\) e surface code \cite{steane1996,fowler2012} in
+ripetizione, Steane \([[7,1,3]]\) e surface code
+\cite{steane1996,fowler2012,googleQECBelowThreshold2025} in
 circuiti di memoria, misurando la probabilità di fallimento logico \(p_{L}\), cioè che
 l'informazione resti errata dopo la decodifica.
 
@@ -71,7 +72,7 @@ con soglia d'intervento scelta in validazione e fissata sul test. Al rumore
 nominale si aggiunge crosstalk fra qubit adiacenti; si controllano
 calibrazione del modello, dimensione dell'ingresso della rete e confronto con il
 decoder analitico BP+OSD (belief propagation e ordered statistics decoding)
-\cite{roffe2020}.
+\cite{alphaqubit2024,roffe2020}.
 
 \subsection{Sensibilità di Shor agli errori di porta}
 
@@ -84,7 +85,8 @@ fault-tolerant completa.
 \subsection{Ottimizzazione mediante QFT approssimata}
 
 L'AQFT elimina le rotazioni controllate di piccolo angolo della QFT, perdendo precisione
-ma riducendo porte e profondità, e con esse le occasioni in cui il rumore agisce.
+ma riducendo porte e profondità, e con esse le occasioni in cui il rumore agisce
+\cite{barencoAQFT1996}.
 Si distingue il troncamento della QFT inversa finale di Shor per \(N = 15\) da quello
 delle trasformate interne all'aritmetica modulare per \(N = 21\); benchmark separati di
 stima di fase usano registri da sei, otto e dieci qubit, con tre fasi per dimensione.
