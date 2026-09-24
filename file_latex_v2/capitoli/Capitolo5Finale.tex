@@ -154,7 +154,7 @@ UC2 & M2: ML + TOP-4 & 30/30 & 1.37 & 0.0874 \\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_1_iterazioni_primo_successo.png}
+\includegraphics[width=0.85\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_1_iterazioni_primo_successo.png}
 \caption{Numero medio di iterazioni al primo successo. L'ablazione mostra che il beneficio appartiene alla ricerca multi-candidato, non al classificatore.}
 \label{fig:finale_5_1}
 \end{figure}
@@ -204,7 +204,7 @@ L\textquotesingle istanza N=15 rende necessario un secondo controllo. Con otto b
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_2_baseline_combinatoria_topk.png}
+\includegraphics[width=0.85\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_2_baseline_combinatoria_topk.png}
 \caption{Probabilità puramente combinatoria di includere almeno un esito utile fra i primi K candidati. Un elevato successo TOP-K non è, da solo, una misura di fedeltà quantistica.}
 \label{fig:finale_5_2}
 \end{figure}
@@ -258,13 +258,14 @@ Per evitare di confondere il successo della procedura classica con la qualità d
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_3_struttura_picchi_proxy_2q.png}
+\includegraphics[width=0.85\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_3_struttura_picchi_proxy_2q.png}
 \caption{Il proxy moltiplicativo decade molto più rapidamente dell'indice che misura la struttura residua sui picchi QPE.}
 \label{fig:finale_5_3}\label{fig:frazione_coerente}
 \end{figure}
 
-La Zero-Noise Extrapolation digitale, usata come confronto aggiuntivo nello scenario UC1, non riduce il numero di iterazioni e aumenta il costo di campionamento. ZNE-2 richiede in media 3 072 shot complessivi e ZNE-3 4 813, rispetto a 1 399 di TOP-1 e 1 024 di TOP-4. Poiché il protocollo scala i parametri depolarizzanti nel simulatore e non implementa gate folding su hardware, questo esito è locale al modello adottato e non costituisce una valutazione generale della ZNE. Il confronto è volutamente locale: la ZNE ha fondamenti generali consolidati, ma la sua efficacia dipende dalla realizzazione del noise scaling e dall\textquotesingle osservabile considerato \cite{temme2017,liBenjamin2017}.
+La Zero-Noise Extrapolation digitale, usata come confronto aggiuntivo nello scenario UC1, non riduce il numero di iterazioni e aumenta il costo di campionamento. ZNE-2 richiede in media 3 072 shot complessivi e ZNE-3 4 813, rispetto a 1 399 di TOP-1 e 1 024 di TOP-4. Poiché il protocollo scala i parametri depolarizzanti nel simulatore e non implementa gate folding su hardware, questo esito è locale al modello adottato e non costituisce una valutazione generale della ZNE. Il confronto è volutamente locale: la ZNE ha fondamenti generali consolidati, ma la sua efficacia dipende dalla realizzazione del noise scaling e dall\textquotesingle osservabile considerato \cite{temme2017,liBenjamin2017}. La tabella appaiata completa e il contratto della campagna sono conservati nell'Appendice~\ref{app:parametrica}.
 
+\iffalse
 \begingroup
 \small
 \begin{longtable}[]{@{}
@@ -316,9 +317,11 @@ ZNE-3 & 100\% & 1.57 & 3 072 & 4 813 & 1.000 \\
 TOP-4 & 100\% & 1.00 & 1 024 & 1 024 & 0.0024 \\
 \end{longtable}
 \endgroup
+\fi
 
-Gli sweep su K, numero di shot, T1/T2, errore 1Q/2Q, readout e livello di ottimizzazione confermano che TOP-4 rimane molto efficace nell\textquotesingle istanza N=15 lungo gli intervalli esplorati. Tale robustezza non va però generalizzata: con 63 esiti accettabili su 256 e soli quattro picchi ideali, l\textquotesingle istanza offre condizioni combinatorie particolarmente favorevoli.
+Gli sweep su K, numero di shot, T1/T2, errore 1Q/2Q, readout e livello di ottimizzazione confermano che TOP-4 rimane molto efficace nell\textquotesingle istanza N=15 lungo gli intervalli esplorati. Tale robustezza non va però generalizzata: con 63 esiti accettabili su 256 e soli quattro picchi ideali, l\textquotesingle istanza offre condizioni combinatorie particolarmente favorevoli. Intervalli, griglie ed esiti per ciascuna famiglia sono riportati nelle Tabelle D.3--D.10 dell'Appendice~\ref{app:parametrica}.
 
+\iffalse
 \begingroup
 \small
 \begin{longtable}[]{@{}
@@ -359,6 +362,7 @@ Readout simmetrico & 0--20\% & M medio 1.00 \\
 Optimization level & 0--3 & M medio 1.00 \\
 \end{longtable}
 \endgroup
+\fi
 
 La tabella va letta come mappa di stabilità locale, non come prova di insensibilità. In particolare, l\textquotesingle assenza di variazione osservata con 30 repliche non autorizza a concludere che readout, coerenza o livello di ottimizzazione siano irrilevanti in generale. Il risultato è specifico della piccola istanza N=15 e della sua struttura di picchi.
 
@@ -443,7 +447,7 @@ Il surface code introduce un parametro di scala reale: la distanza d. La campagn
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_4_surface_code_soglia.png}
+\includegraphics[width=0.85\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_4_surface_code_soglia.png}
 \caption{Errore logico del surface code ruotato al variare dell'errore fisico e della distanza. Il grafico è ripreso dalla campagna M7 della tesi e mostra l'inversione dell'ordine delle curve sopra soglia.}
 \label{fig:finale_5_4}
 \end{figure}
@@ -635,7 +639,7 @@ La situazione cambia introducendo un errore correlato fra qubit dati adiacenti, 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_5_decoder_crosstalk.png}
+\includegraphics[width=0.85\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_5_decoder_crosstalk.png}
 \caption{A distanza 3 la rete supera il matching nel regime di crosstalk simulato; il vantaggio non si trasferisce automaticamente a distanza 5.}
 \label{fig:finale_5_5}
 \end{figure}
@@ -750,18 +754,19 @@ Questa distinzione corregge un\textquotesingle ambiguità importante della formu
 
 \subsection{Perché il vantaggio si riduce con la scala}\label{sec:finale_5_3_4}
 
-A d=7 il correttore residuale tende ad astenersi anche quando il training set contiene molti fallimenti di MWPM. Il controllo E9 separa due variabili che in precedenza crescevano insieme: distanza del codice e numero di detector. Variando il numero di round a distanza fissa, il comportamento segue soprattutto la larghezza dell\textquotesingle ingresso. Con 336 detector il residuo si astiene sia a d=7 sia a d=5; con 120--144 detector interviene anche a distanza 7 quando dispone di un numero sufficiente di esempi.
+A d=7 il correttore residuale tende ad astenersi anche quando il training set contiene molti fallimenti di MWPM. Il controllo E9 separa due variabili che in precedenza crescevano insieme: distanza del codice e numero di detector. Variando il numero di round a distanza fissa, il comportamento segue soprattutto la larghezza dell\textquotesingle ingresso. Con 336 detector il residuo si astiene sia a d=7 sia a d=5; con 120--144 detector interviene anche a distanza 7 quando dispone di un numero sufficiente di esempi. La matrice completa, con round, detector ed esempi positivi, è riportata nella Tabella E.6 dell'Appendice~\ref{app:decodifica}.
 
+\iffalse
 \begingroup
 \scriptsize
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
-  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
-  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
-  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
-  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
-  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
-  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1428}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1428}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1428}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1428}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1428}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1428}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1428}}@{}}
 \caption{Controllo E9: la perdita di efficacia segue la larghezza dell'ingresso più della sola distanza del codice.}\label{tab:finale_5_14}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
@@ -808,6 +813,7 @@ A d=7 il correttore residuale tende ad astenersi anche quando il training set co
 5 & 5 & 120 & 17 235 & interviene & 96 167 & interviene \\
 \end{longtable}
 \endgroup
+\fi
 
 Un secondo controllo, E12, mostra che il problema non è soltanto la soglia di decisione. Con 336 detector l\textquotesingle AUC resta fra 0.57 e 0.77, quindi la rete conserva capacità di ranking; tuttavia persino una soglia oracolo scelta sul test produce un guadagno di circa 1.000. Perché invertire una decisione di MWPM sia vantaggioso, più della metà degli shot selezionati deve essere realmente errata: con input molto ampi la discriminazione non concentra abbastanza i fallimenti da superare questa soglia di precisione. Il limite osservato è quindi architetturale oltre che statistico.
 
@@ -875,7 +881,7 @@ Il controllo più severo consiste nel sostituire MWPM con un decoder analitico p
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_6_decoder_bposd_ibrido.png}
+\includegraphics[width=0.85\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_6_decoder_bposd_ibrido.png}
 \caption{Due sorgenti di guadagno: BP+OSD sfrutta meglio un modello rappresentabile; il residuo appreso recupera parte della struttura che il modello nominale non rappresenta.}
 \label{fig:finale_5_6}
 \end{figure}
@@ -884,8 +890,9 @@ Nel caso senza crosstalk, a d=5 BP+OSD porta p\_L da 0.00192 a 0.00143: il rappo
 
 \subsection{I guadagni sono additivi? Controlli E8--E11}\label{sec:finale_5_3_6}
 
-Se BP+OSD e il residuo appreso agissero su errori indipendenti, il loro guadagno potrebbe essere moltiplicativo. E8 mette direttamente alla prova questa ipotesi costruendo il residuo sopra BP+OSD. Il combinato non raggiunge il prodotto previsto quando entrambi i componenti possiedono un guadagno reale; a distanza 5 lo scarto dal prodotto è sempre negativo, fra -0.007 e -0.027, e il residuo migliora BP+OSD in modo significativo in una sola configurazione, di circa l\textquotesingle1\%. Il combinato tende quindi a eguagliare il migliore dei due metodi, non a moltiplicarne i benefici.
+Se BP+OSD e il residuo appreso agissero su errori indipendenti, il loro guadagno potrebbe essere moltiplicativo. E8 mette direttamente alla prova questa ipotesi costruendo il residuo sopra BP+OSD. Il combinato non raggiunge il prodotto previsto quando entrambi i componenti possiedono un guadagno reale; a distanza 5 lo scarto dal prodotto è sempre negativo, fra -0.007 e -0.027, e il residuo migliora BP+OSD in modo significativo in una sola configurazione, di circa l\textquotesingle1\%. Il combinato tende quindi a eguagliare il migliore dei due metodi, non a moltiplicarne i benefici. Le matrici complete di E8 ed E10 sono riportate nelle Tabelle E.10 ed E.11 dell'Appendice~\ref{app:decodifica}.
 
+\iffalse
 \begingroup
 \small
 \begin{longtable}[]{@{}
@@ -1002,6 +1009,7 @@ Se BP+OSD e il residuo appreso agissero su errori indipendenti, il loro guadagno
 0.040 & 0.20753 & 0.20819 & 0.17565 & 0.17413 & 0.17536 & 0.9\% \\
 \end{longtable}
 \endgroup
+\fi
 
 E10 chiarisce la ragione. In presenza di crosstalk, rete sola, MWPM+residuo e BP+OSD+residuo convergono entro circa 0.9--2.0\% l\textquotesingle uno dall\textquotesingle altro pur partendo da decoder differenti. Per crosstalk 0.01, ad esempio, i tre errori sono 0.04965, 0.04885 e 0.04982. Il risultato è compatibile con un pavimento comune determinato dall\textquotesingle informazione estraibile dalla sindrome nel modello adottato. E11 controlla che tale pavimento non sia semplicemente il limite della rete densa (128,64): una rete circa quaranta volte più grande raggiunge praticamente lo stesso livello, mentre una tabella empirica non parametrica non lo supera. Il dato non dimostra un limite informativo assoluto, ma rende poco plausibile che il risultato sia un artefatto della capacità del solo MLP utilizzato.
 
@@ -1009,8 +1017,9 @@ E10 chiarisce la ragione. In presenza di crosstalk, rete sola, MWPM+residuo e BP
 
 Due controlli delimitano ulteriormente il risultato. E6 perturba il rapporto fra errore di misura ed errore di gate nel modello fornito a MWPM. Il matching risulta robusto: errori di calibrazione anche molto ampi modificano in genere p\_L dell\textquotesingle ordine dell\textquotesingle1--3\%; soltanto a d=5 e con errore di misura sovrastimato del 900\% il costo sale di circa il 20\%. La rete non supera MWPM in nessuna delle dodici configurazioni. Ciò indica che il margine appreso non nasce da una semplice mis-calibrazione parametrica: serve un mismatch strutturale, cioè una classe di correlazioni che il decoder non rappresenta.
 
-E5 valuta invece il trasferimento fra quattro intensità simulate di crosstalk. Tutte le dodici combinazioni fuori diagonale mantengono un vantaggio su MWPM e il costo medio del trasferimento, rispetto all\textquotesingle addestramento sul profilo di test, è circa 1.6\%. Questo è un risultato interessante, ma va formulato nel suo perimetro: dimostra trasferibilità fra profili di intensità dello stesso modello simulato e della stessa geometria di codice; non dimostra ancora trasferimento fra dispositivi fisici differenti o fra famiglie di rumore diverse.
+E5 valuta invece il trasferimento fra quattro intensità simulate di crosstalk. Tutte le dodici combinazioni fuori diagonale mantengono un vantaggio su MWPM e il costo medio del trasferimento, rispetto all\textquotesingle addestramento sul profilo di test, è circa 1.6\%. Questo è un risultato interessante, ma va formulato nel suo perimetro: dimostra trasferibilità fra profili di intensità dello stesso modello simulato e della stessa geometria di codice; non dimostra ancora trasferimento fra dispositivi fisici differenti o fra famiglie di rumore diverse. La matrice completa dei sedici incroci, insieme al confronto MWPM, è riportata nella Tabella~\ref{tab:neural_trasferimento} dell\textquotesingle Appendice~\ref{app:decodifica}.
 
+\iffalse
 \begingroup
 \small
 \begin{longtable}[]{@{}
@@ -1058,6 +1067,7 @@ ct=0.040 & 0.02841 & 0.04878 & 0.09312 & 0.17643 \\
 MWPM & 0.03232 & 0.05742 & 0.11172 & 0.20853 \\
 \end{longtable}
 \endgroup
+\fi
 
 Il trasferimento non elimina il problema di generalizzazione alla scala. La stessa architettura che si trasferisce bene fra intensità di crosstalk perde infatti efficacia quando aumenta il numero di detector. I due risultati non sono contraddittori: il primo riguarda la stabilità della regola appresa rispetto all\textquotesingle intensità di un meccanismo già rappresentato nei dati; il secondo riguarda la capacità del modello di rappresentare una sindrome di dimensione crescente. Questo limite di scala è coerente con la letteratura sui decoder neurali, che ricorre a architetture strutturate e dataset molto più ampi quando cresce la distanza del codice \cite{alphaqubit2024,torlaiMelko2017,yan2026}.
 
@@ -1131,7 +1141,7 @@ Ogni punto aggrega 20 repliche da 4 096 shot, pari a 81 920 misure. In assenza d
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_7_shor_successo_proxy_gate.png}
+\includegraphics[width=0.85\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_7_shor_successo_proxy_gate.png}
 \caption{Probabilità di fattorizzazione in funzione del proxy per gate p\_g. La linea orizzontale indica la baseline uniforme 63/256.}
 \label{fig:finale_5_7}
 \end{figure}
@@ -1148,7 +1158,7 @@ Per tentativi indipendenti, la probabilità cumulativa di ottenere almeno un suc
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_8_shor_probabilita_cumulativa.png}
+\includegraphics[width=0.85\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_8_shor_probabilita_cumulativa.png}
 \caption{Probabilità cumulativa di almeno una fattorizzazione riuscita dopo k esecuzioni indipendenti.}
 \label{fig:finale_5_8}\label{fig:qec_shor_pk}
 \end{figure}
@@ -1325,7 +1335,7 @@ Per N=15, a=7, il grado di troncamento k\_QPE viene scelto sui batch di selezion
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_9_aqft_n15_holdout.png}
+\includegraphics[width=0.85\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_9_aqft_n15_holdout.png}
 \caption{Successo holdout al variare del grado di troncamento della QFT inversa finale per N=15.}
 \label{fig:finale_5_9}
 \end{figure}
@@ -1475,13 +1485,13 @@ Per separare l\textquotesingle effetto dell\textquotesingle AQFT dal costo dell\
 \begingroup
 \small
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
-  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
-  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
-  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
-  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
-  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
-  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1428}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1428}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1428}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1428}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1428}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1428}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1428}}@{}}
 \caption{Benchmark QPE: differenza holdout fra variante selezionata e QFT piena. Gli intervalli sono individuali; la campagna non applica una correzione simultanea ai nove confronti.}\label{tab:finale_5_26}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
@@ -1536,7 +1546,7 @@ Per separare l\textquotesingle effetto dell\textquotesingle AQFT dal costo dell\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_10_aqft_qpe_holdout.png}
+\includegraphics[width=0.85\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_10_aqft_qpe_holdout.png}
 \caption{Differenze di successo AQFT-QFT piena nei nove benchmark QPE, con IC Newcombe individuali al 95\%.}
 \label{fig:finale_5_10}
 \end{figure}

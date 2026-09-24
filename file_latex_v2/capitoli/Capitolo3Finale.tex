@@ -3,6 +3,8 @@
 
 Questo capitolo raccoglie soltanto i concetti teorici necessari a comprendere gli esperimenti e, soprattutto, formalizza il metodo con cui vengono valutate le cinque domande di ricerca definite nel Capitolo 2. La separazione tra teoria, modello di rumore e protocollo sperimentale è essenziale: una proprietà dell'algoritmo ideale non va confusa con una prestazione di simulazione, così come il tasso di errore logico di un memory experiment non può essere trasferito direttamente a una porta logica di Shor. L'obiettivo è quindi costruire un lessico e un contratto metodologico sufficienti a interpretare i risultati del Capitolo 5, senza trasformare il capitolo in una trattazione generale del calcolo quantistico.
 
+\input{capitoli/Capitolo3TeoriaSintesi}
+\iffalse
 \section{Fondamenti quantistici necessari all'analisi}\label{sec:finale_3_1}
 
 \subsection{Stato, misura, interferenza ed entanglement}\label{sec:finale_3_1_1}
@@ -544,6 +546,7 @@ L'AQFT agisce su un asse diverso: riduce il circuito prima che il rumore venga a
 
 Il troncamento viene definito per distanza delle interazioni nella cascata di rotazioni: mantenere soltanto le rotazioni di ordine più grande equivale a scartare angoli progressivamente più piccoli. Su una QFT isolata questo riduce direttamente le porte controllate; nell\textquotesingle aritmetica di Beauregard l\textquotesingle effetto si moltiplica perché la stessa struttura compare ripetutamente negli addizionatori modulari. Per contro, proprio quelle rotazioni possono contenere informazione utile quando la fase non è rappresentabile esattamente con pochi bit. Questa è la ragione per cui il protocollo separa N=15, N=21 e benchmark QPE invece di produrre un unico giudizio sull\textquotesingle AQFT.
 
+\fi
 \section{Disegno sperimentale e criteri di inferenza}\label{sec:finale_3_5}
 
 Il disegno complessivo segue un principio comune: baseline esplicita, appaiamento dei campioni quando possibile, separazione tra selezione e test e uso di metriche coerenti con il compito. La Figura~\ref{fig:finale_3_5} riassume le cinque linee corrispondenti alle domande DR1--DR5 del Capitolo 2. I dettagli implementativi --- organizzazione del codice, versioni software e struttura degli artefatti --- sono descritti nel Capitolo 4; qui restano le scelte che determinano la validità dell'inferenza.

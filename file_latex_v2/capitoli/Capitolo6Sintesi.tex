@@ -1,0 +1,92 @@
+% Conclusioni compatte: le evidenze numeriche complete restano nel Capitolo 5
+% e nelle appendici sperimentali.
+
+Questo capitolo risponde alle cinque domande di ricerca senza duplicare le tabelle del Capitolo~\ref{chap:risultati}. I risultati sono interpretati entro il perimetro dichiarato nei Capitoli 3 e 4: simulazioni controllate, istanze di piccola scala e separazione esplicita fra errore fisico, errore logico e proxy applicato al circuito di Shor.
+
+\section{Risposte alle domande di ricerca}\label{sec:finale_6_1}
+
+La Tabella~\ref{tab:finale_6_1} riporta per ogni domanda risposta, evidenza e limite. Numerosità, intervalli e controlli completi rimangono nelle rispettive sezioni del Capitolo~\ref{chap:risultati}.
+
+\begingroup
+\footnotesize
+\begin{spacing}{1.0}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{0.07\linewidth}
+  >{\raggedright\arraybackslash}p{0.29\linewidth}
+  >{\raggedright\arraybackslash}p{0.34\linewidth}
+  >{\raggedright\arraybackslash}p{0.215\linewidth}@{}}
+\caption{Risposte conclusive alle cinque domande di ricerca.}\label{tab:finale_6_1}\\
+\toprule
+\textbf{DR} & \textbf{Risposta} & \textbf{Evidenza principale} & \textbf{Limite} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{DR} & \textbf{Risposta} & \textbf{Evidenza principale} & \textbf{Limite} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+DR1 & TOP-$K$ è utile; il filtro ML considerato non aggiunge valore operativo. & TOP-4 raggiunge 1.00 iterazioni medie nei due scenari; M2 perde contro la propria ablazione. & $N=15$ e post-processing specifico. \\
+DR2 & La QEC sopprime l'errore sotto soglia e il beneficio cresce con la distanza. & Steane: pendenza 1.94; surface code: $p_{th}\simeq0.86\%$ (Z) e $0.81\%$ (X). & Memory experiment, non Shor fault-tolerant. \\
+DR3 & Il ML è utile come correttore residuale quando il decoder è strutturalmente incompleto. & A $d=3$ la riduzione relativa è 15.6--17.6\% con crosstalk; BP+OSD resta una baseline forte. & MLP denso; nessun vantaggio significativo a $d=7$. \\
+DR4 & Il successo di Shor decresce con $p_g$ e tende al pavimento del post-processing. & Da 0.7489 a $p_g=0$ a circa 0.245 per rumore elevato. & Proxy fenomenologico, non tasso logico QEC. \\
+DR5 & AQFT aiuta quando le porte evitate compensano la perdita di fase. & $N=15$: 0.4792$\to$0.6279 ed ECR 362$\to$279; QPE favorevole in 9/9 stime. & Beneficio non dimostrato su $N=21$. \\
+\end{longtable}
+\end{spacing}
+\endgroup
+
+\phantomsection\label{sec:finale_6_1_1}
+\textbf{DR1 --- Post-processing e machine learning.}
+TOP-4 riduce le iterazioni rispetto a TOP-1, mentre M2 non migliora significativamente TOP-1 ed è peggiore della propria ablazione. F1 e AUC elevati descrivono la predizione di TOP-1, non il costo della fattorizzazione. L'audit combinatorio mostra inoltre che TOP-$K$ non è una misura di fedeltà: il vantaggio operativo deriva dall'esaminare più candidati già disponibili, non dal classificatore.
+
+\phantomsection\label{sec:finale_6_1_2}
+\textbf{DR2 --- Codici di correzione e soglia.}
+Repetition code, Steane e surface code formano una catena coerente di verifica. Nel surface code l'aumento della distanza riduce $p_L$ soltanto sotto soglia; sopra soglia aumenta l'overhead senza proteggere l'informazione. Le soglie stimate appartengono al circuito di memoria, al modello circuit-level e a MWPM: non sono soglie universali né probabilità delle porte logiche di Shor \cite{steane1996,fowler2012,googleQECBelowThreshold2025,dennis2002topological}.
+
+\phantomsection\label{sec:finale_6_1_3}
+\textbf{DR3 --- Decoder analitici, appresi e ibridi.}
+Con un modello rappresentabile, la rete non supera stabilmente MWPM; con crosstalk non rappresentato dal grafo, il correttore residuale recupera parte degli errori. BP+OSD mostra però che il confronto deve usare la migliore baseline analitica plausibile: dove il modello è corretto conviene migliorare prima il decoder; dove è incompleto il residuo appreso può aggiungere informazione \cite{roffe2020,panteleev2021,alphaqubit2024}.
+
+\phantomsection\label{sec:finale_6_1_4}
+\textbf{DR4 --- Sensibilità di Shor.}
+La probabilità di fattorizzazione diminuisce regolarmente con $p_g$ e converge verso $63/256\simeq0.2461$, valore imposto dalla procedura classica su una distribuzione uniforme. Il plateau non indica periodicità residua e $p_g$ non viene convertito in $p_L$: tale passaggio richiederebbe operazioni logiche, cicli di sindrome e decodifica fault-tolerant espliciti.
+
+\phantomsection\label{sec:finale_6_1_5}
+\textbf{DR5 --- QFT approssimata.}
+Su $N=15$ la configurazione scelta sui dati di selezione migliora l'holdout e riduce ECR e profondità; su $N=21$ il risparmio di porte non produce un beneficio dimostrato; nella QPE isolata le stime sono favorevoli ma esplorative. Il grado AQFT deve quindi essere scelto per istanza e regime di rumore, verificando che il costo evitato superi l'informazione di fase persa \cite{barencoAQFT1996,akoramurthy2026}.
+
+\section{Contributi scientifici e metodologici del lavoro}\label{sec:finale_6_2}
+
+Il contributo è soprattutto metodologico: (i) l'ablazione separa il beneficio di TOP-4 da quello attribuibile al classificatore; (ii) $p$, $p_L$ e $p_g$ restano distinti; (iii) il decoder residuale identifica il regime in cui l'apprendimento aggiunge struttura non disponibile alla baseline; (iv) l'AQFT è valutata sulla probabilità finale e su holdout, non soltanto sul conteggio delle porte; (v) seed, manifest, hash della netlist e partizioni dei dati rendono auditabili risultati e correzioni. Risultati positivi e negativi concorrono così a definire il dominio di validità delle tecniche.
+
+\section{Limiti dello studio}\label{sec:finale_6_3}
+
+\phantomsection\label{sec:finale_6_3_1}
+\textbf{Scala e validità esterna.} Le campagne sono simulate e l'istanza principale $N=15$, con $r=4$, è favorevole a TOP-$K$ e AQFT. $N=21$ amplia il controllo ma non autorizza estrapolazioni crittografiche.
+
+\phantomsection\label{sec:finale_6_3_2}
+\textbf{Rumore e hardware.} Il modello uniforme è stazionario; i controlli hardware-aware usano una snapshot offline, non una QPU live. Topologia, leakage e deriva temporale restano solo parzialmente rappresentati.
+
+\phantomsection\label{sec:finale_6_3_3}
+\textbf{QEC e decoder.} Steane usa una sindrome ideale e il surface code è studiato come memoria. Il decoder appreso è un MLP denso; il risultato non misura il limite di architetture a grafo, ricorrenti o transformer \cite{alphaqubit2024,torlaiMelko2017,yan2026}.
+
+\phantomsection\label{sec:finale_6_3_4}
+\textbf{Inferenza.} I confronti primari sono appaiati, ma sweep e benchmark QPE sono esplorativi e non ricevono una correzione simultanea. Su $N=21$ il budget ridotto produce intervalli ampi.
+
+\section{Sviluppi futuri}\label{sec:finale_6_4}
+
+La priorità non è aggiungere tecniche indiscriminatamente, ma rimuovere i limiti in ordine verificabile:
+
+\begin{enumerate}
+\item \phantomsection\label{sec:finale_6_4_1}\textbf{Hardware:} ripetere Shor e AQFT registrando calibrazione, layout e job, confrontandoli con una simulazione coeva.
+\item \phantomsection\label{sec:finale_6_4_2}\textbf{Scala:} variare separatamente $N$, ordine $r$, qubit di conteggio e aritmetica, misurando porte, profondità e successo \cite{chevignard2025,gidney2021,shuklaqpe2026}.
+\item \phantomsection\label{sec:finale_6_4_3}\textbf{Fault tolerance:} sostituire $p_g$ con gate logici, cicli QEC, decoder, feed-forward e costo non-Clifford espliciti.
+\item \phantomsection\label{sec:finale_6_4_4}\textbf{Decoder:} confrontare modelli strutturali con BP+OSD, includendo latenza, memoria e sample efficiency.
+\item \phantomsection\label{sec:finale_6_4_5}\textbf{AQFT e costo:} scegliere il grado su selection/holdout e addestrare eventuali filtri sul costo finale, non sulla sola accuratezza TOP-1.
+\end{enumerate}
+
+\phantomsection\label{tab:finale_6_2}
+
+\section{Conclusione generale}\label{sec:finale_6_5}
+
+Nessuna tecnica risolve in assoluto il rumore. TOP-$K$ utilizza meglio informazione già disponibile; la QEC cambia l'ordine dell'errore soltanto sotto soglia; il decoder appreso è utile quando recupera struttura assente dal modello analitico; l'AQFT aiuta quando il costo fisico evitato supera la perdita algoritmica. La conclusione centrale è quindi che la complessità aggiuntiva è giustificata soltanto se agisce sul collo di bottiglia reale e supera una baseline adeguata. La validazione su hardware e una catena fault-tolerant end-to-end restano necessarie per trasformare questi criteri in previsioni architetturali.

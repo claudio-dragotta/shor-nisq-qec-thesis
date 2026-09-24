@@ -74,6 +74,8 @@
 
 \begin{document}
 
+% Le pagine iniziali non numerate non devono creare destinazioni PDF duplicate.
+\hypersetup{pageanchor=false}
 \input{TITLE}
 
 \begin{titlepage}
@@ -85,6 +87,7 @@
     \end{center}
 \end{titlepage}
 
+\hypersetup{pageanchor=true}
 \pagenumbering{roman}
 
 % -----------------------------------------------

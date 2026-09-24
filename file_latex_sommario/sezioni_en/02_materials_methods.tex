@@ -17,14 +17,14 @@ the exact order. Three ideal peaks yield the factors, for 75\% overall probabili
 Classical verification is permissive, however: it accepts 63 of 256 values, so uniform
 outcomes still succeed with probability \(63/256 \simeq 24.61\%\). This instance- and
 post-processing-specific reference is not quantum-state fidelity; it shows that correct
-factorizations can survive after the distribution loses much of its structure.
+factorizations can survive after the distribution loses much of its structure
+\cite{en-smolin2013}.
 
 Circuit correctness is validated independently of factorization success by checking
 modular operators, restored ancillas, and theoretical distributions. The ideally
 validated instances \(N = 21\), \(a = 2\) and \(N = 35\), \(a = 6\) use Beauregard's
 reversible arithmetic \cite{en-beauregard2002}; only \(N = 21\) enters the exploratory
-noisy AQFT tests. Qiskit/Aer, scikit-learn, Stim, and PyMatching are used
-\cite{en-qiskit2023,en-scikit_learn,en-stim2021,en-pymatching2021}, recording versions,
+noisy AQFT tests. Qiskit/Aer, scikit-learn, Stim, and PyMatching are used, recording versions,
 parameters, random seeds, and circuit identifiers.
 
 \subsection{Post-processing, classification, and mitigation}
@@ -45,14 +45,14 @@ The primary metric is iterations to obtain the factors, not classifier accuracy 
 runtime. Thirty paired replicates per scenario run for at most 50 iterations; failures
 receive the conventional value 51. The analysis uses Wilcoxon--Pratt tests with Holm
 correction. Two- and three-level zero-noise extrapolation (ZNE) scales only depolarizing
-parameters in simulation.
+parameters in simulation \cite{en-temme2017,en-takagi2023}.
 
 \subsection{Quantum error correction and syndrome decoding}
 
 Quantum error correction distributes one logical qubit across several physical qubits.
 Parity checks, called syndromes, reveal errors without reading the logical information;
 a decoder selects the correction. Repetition, Steane \([[7,1,3]]\), and surface codes
-\cite{en-steane1996,en-fowler2012} are studied in memory circuits through the logical
+\cite{en-steane1996,en-fowler2012,en-googleQECBelowThreshold2025} are studied in memory circuits through the logical
 failure probability \(p_{L}\), the probability that information remains wrong after
 decoding.
 
@@ -64,7 +64,7 @@ a hybrid decoder. The hybrid learns when to flip a likely-wrong matching decisio
 an intervention threshold chosen in validation and fixed for testing. Crosstalk between
 adjacent qubits is added to nominal noise; model calibration, network input size, and the
 analytical BP+OSD decoder (belief propagation and ordered statistics decoding) are also
-examined \cite{en-roffe2020}.
+examined \cite{en-alphaqubit2024,en-roffe2020}.
 
 \subsection{Sensitivity of Shor's algorithm to gate errors}
 
@@ -77,7 +77,8 @@ probability \(p_{L}\).
 \subsection{Optimization through the approximate QFT}
 
 The AQFT removes small-angle controlled rotations, trading precision for fewer gates,
-lower depth, and fewer opportunities for noise. Truncation of Shor's final inverse QFT
+lower depth, and fewer opportunities for noise \cite{en-barencoAQFT1996}.
+Truncation of Shor's final inverse QFT
 for \(N = 15\) is distinguished from truncation of transforms inside the modular
 arithmetic for \(N = 21\). Separate phase-estimation benchmarks use six-, eight-, and
 ten-qubit registers with three phases per size. The noise model uses gate infidelities
