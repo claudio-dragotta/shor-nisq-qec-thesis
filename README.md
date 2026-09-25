@@ -105,7 +105,7 @@ $PY --version
 $PY -m pip install -r Extra/experiments/requirements.txt
 ```
 
-See [`AVVIO_WSL.md`](AVVIO_WSL.md) for the complete ordered workflow.
+See [`Extra/experiments/AVVIO_WSL.md`](Extra/experiments/AVVIO_WSL.md) for the complete ordered workflow.
 
 ## Reproducible v2 pipeline
 
@@ -198,7 +198,7 @@ file_latex/           thesis sources and included figures
 file_latex_sommario/  5+5 page summary for the LM ISI template
 figure_src/           deterministic figure generators
 Extra/experiments/    code and versioned artifacts, grouped by milestone
-AVVIO_WSL.md          environment and experimental pipeline walkthrough
+Extra/experiments/AVVIO_WSL.md   environment and experimental pipeline walkthrough
 ```
 
 | Block | Directory |
