@@ -1,0 +1,137 @@
+========================================================================================
+M16 — Gross code [[144,12,12]] e surface code in code-capacity (errori X)
+    q = [0.005, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.08, 0.1]   shots max 200000   stop a 1000 fallimenti   workers 20
+    Gross: n=144 k=12 rank Hx=66 rank Hz=66 pesi righe [6]
+========================================================================================
+  gross_bposd          q=0.005  p_L=4.000e-05 (8/200000)  0.94s
+  gross_bposd          q=0.01   p_L=3.050e-04 (61/200000)  0.91s
+  gross_bposd          q=0.02   p_L=1.535e-03 (307/200000)  1.17s
+  gross_bposd          q=0.03   p_L=4.560e-03 (912/200000)  1.83s
+  gross_bposd          q=0.04   p_L=1.300e-02 (1040/80000)  0.95s
+  gross_bposd          q=0.05   p_L=3.470e-02 (1388/40000)  0.81s
+  gross_bposd          q=0.06   p_L=8.465e-02 (3386/40000)  1.33s
+  gross_bposd          q=0.08   p_L=2.820e-01 (11280/40000)  2.84s
+  gross_bposd          q=0.1    p_L=5.638e-01 (22553/40000)  5.78s
+  surface_d3_mwpm      q=0.005  p_L=4.350e-04 (87/200000)  0.04s
+  surface_d3_mwpm      q=0.01   p_L=1.660e-03 (332/200000)  0.02s
+  surface_d3_mwpm      q=0.02   p_L=6.381e-03 (1021/160000)  0.02s
+  surface_d3_mwpm      q=0.03   p_L=1.420e-02 (1136/80000)  0.01s
+  surface_d3_mwpm      q=0.04   p_L=2.524e-02 (2019/80000)  0.01s
+  surface_d3_mwpm      q=0.05   p_L=3.818e-02 (1527/40000)  0.0s
+  surface_d3_mwpm      q=0.06   p_L=5.328e-02 (2131/40000)  0.01s
+  surface_d3_mwpm      q=0.08   p_L=8.438e-02 (3375/40000)  0.01s
+  surface_d3_mwpm      q=0.1    p_L=1.158e-01 (4630/40000)  0.01s
+  surface_d3_bposd     q=0.005  p_L=4.150e-04 (83/200000)  0.08s
+  surface_d3_bposd     q=0.01   p_L=1.810e-03 (362/200000)  0.1s
+  surface_d3_bposd     q=0.02   p_L=6.819e-03 (1091/160000)  0.14s
+  surface_d3_bposd     q=0.03   p_L=1.471e-02 (1177/80000)  0.08s
+  surface_d3_bposd     q=0.04   p_L=2.526e-02 (2021/80000)  0.09s
+  surface_d3_bposd     q=0.05   p_L=3.595e-02 (1438/40000)  0.05s
+  surface_d3_bposd     q=0.06   p_L=4.942e-02 (1977/40000)  0.05s
+  surface_d3_bposd     q=0.08   p_L=8.463e-02 (3385/40000)  0.06s
+  surface_d3_bposd     q=0.1    p_L=1.202e-01 (4808/40000)  0.07s
+  surface_d5_mwpm      q=0.005  p_L=4.500e-05 (9/200000)  0.03s
+  surface_d5_mwpm      q=0.01   p_L=2.500e-04 (50/200000)  0.03s
+  surface_d5_mwpm      q=0.02   p_L=1.965e-03 (393/200000)  0.03s
+  surface_d5_mwpm      q=0.03   p_L=6.319e-03 (1011/160000)  0.03s
+  surface_d5_mwpm      q=0.04   p_L=1.342e-02 (1074/80000)  0.01s
+  surface_d5_mwpm      q=0.05   p_L=2.380e-02 (1904/80000)  0.01s
+  surface_d5_mwpm      q=0.06   p_L=3.995e-02 (1598/40000)  0.01s
+  surface_d5_mwpm      q=0.08   p_L=7.752e-02 (3101/40000)  0.01s
+  surface_d5_mwpm      q=0.1    p_L=1.237e-01 (4949/40000)  0.01s
+  surface_d5_bposd     q=0.005  p_L=3.500e-05 (7/200000)  0.2s
+  surface_d5_bposd     q=0.01   p_L=2.600e-04 (52/200000)  0.33s
+  surface_d5_bposd     q=0.02   p_L=2.030e-03 (406/200000)  0.51s
+  surface_d5_bposd     q=0.03   p_L=6.363e-03 (1018/160000)  0.53s
+  surface_d5_bposd     q=0.04   p_L=1.411e-02 (1129/80000)  0.33s
+  surface_d5_bposd     q=0.05   p_L=2.407e-02 (1926/80000)  0.4s
+  surface_d5_bposd     q=0.06   p_L=3.925e-02 (1570/40000)  0.25s
+  surface_d5_bposd     q=0.08   p_L=7.695e-02 (3078/40000)  0.27s
+  surface_d5_bposd     q=0.1    p_L=1.222e-01 (4888/40000)  0.34s
+  surface_d7_mwpm      q=0.005  p_L=1.000e-05 (2/200000)  0.05s
+  surface_d7_mwpm      q=0.01   p_L=6.500e-05 (13/200000)  0.05s
+  surface_d7_mwpm      q=0.02   p_L=6.050e-04 (121/200000)  0.05s
+  surface_d7_mwpm      q=0.03   p_L=2.630e-03 (526/200000)  0.06s
+  surface_d7_mwpm      q=0.04   p_L=7.387e-03 (1182/160000)  0.06s
+  surface_d7_mwpm      q=0.05   p_L=1.616e-02 (1293/80000)  0.03s
+  surface_d7_mwpm      q=0.06   p_L=2.730e-02 (1092/40000)  0.01s
+  surface_d7_mwpm      q=0.08   p_L=6.918e-02 (2767/40000)  0.02s
+  surface_d7_mwpm      q=0.1    p_L=1.258e-01 (5034/40000)  0.01s
+  surface_d7_bposd     q=0.005  p_L=0.000e+00 (0/200000)  0.43s
+  surface_d7_bposd     q=0.01   p_L=3.500e-05 (7/200000)  0.91s
+  surface_d7_bposd     q=0.02   p_L=5.900e-04 (118/200000)  1.89s
+  surface_d7_bposd     q=0.03   p_L=2.665e-03 (533/200000)  2.49s
+  surface_d7_bposd     q=0.04   p_L=7.450e-03 (1192/160000)  2.66s
+  surface_d7_bposd     q=0.05   p_L=1.673e-02 (1338/80000)  1.28s
+  surface_d7_bposd     q=0.06   p_L=2.870e-02 (1148/40000)  0.81s
+  surface_d7_bposd     q=0.08   p_L=7.170e-02 (2868/40000)  1.04s
+  surface_d7_bposd     q=0.1    p_L=1.270e-01 (5081/40000)  1.11s
+  surface_d9_mwpm      q=0.005  p_L=0.000e+00 (0/200000)  0.14s
+  surface_d9_mwpm      q=0.01   p_L=5.000e-06 (1/200000)  0.14s
+  surface_d9_mwpm      q=0.02   p_L=1.800e-04 (36/200000)  0.15s
+  surface_d9_mwpm      q=0.03   p_L=1.175e-03 (235/200000)  0.15s
+  surface_d9_mwpm      q=0.04   p_L=4.070e-03 (814/200000)  0.15s
+  surface_d9_mwpm      q=0.05   p_L=1.073e-02 (1287/120000)  0.09s
+  surface_d9_mwpm      q=0.06   p_L=2.211e-02 (1769/80000)  0.07s
+  surface_d9_mwpm      q=0.08   p_L=6.598e-02 (2639/40000)  0.04s
+  surface_d9_mwpm      q=0.1    p_L=1.267e-01 (5069/40000)  0.04s
+  surface_d9_bposd     q=0.005  p_L=0.000e+00 (0/200000)  1.27s
+  surface_d9_bposd     q=0.01   p_L=1.500e-05 (3/200000)  2.18s
+  surface_d9_bposd     q=0.02   p_L=1.650e-04 (33/200000)  4.34s
+  surface_d9_bposd     q=0.03   p_L=1.045e-03 (209/200000)  9.21s
+  surface_d9_bposd     q=0.04   p_L=4.000e-03 (800/200000)  7.38s
+  surface_d9_bposd     q=0.05   p_L=1.107e-02 (1329/120000)  4.91s
+  surface_d9_bposd     q=0.06   p_L=2.136e-02 (1709/80000)  3.4s
+  surface_d9_bposd     q=0.08   p_L=6.275e-02 (2510/40000)  1.96s
+  surface_d9_bposd     q=0.1    p_L=1.269e-01 (5077/40000)  1.94s
+  surface_d11_mwpm     q=0.005  p_L=0.000e+00 (0/200000)  0.42s
+  surface_d11_mwpm     q=0.01   p_L=0.000e+00 (0/200000)  0.29s
+  surface_d11_mwpm     q=0.02   p_L=6.000e-05 (12/200000)  0.26s
+  surface_d11_mwpm     q=0.03   p_L=4.750e-04 (95/200000)  0.23s
+  surface_d11_mwpm     q=0.04   p_L=2.385e-03 (477/200000)  0.24s
+  surface_d11_mwpm     q=0.05   p_L=6.919e-03 (1107/160000)  0.21s
+  surface_d11_mwpm     q=0.06   p_L=1.642e-02 (1314/80000)  0.1s
+  surface_d11_mwpm     q=0.08   p_L=5.962e-02 (2385/40000)  0.05s
+  surface_d11_mwpm     q=0.1    p_L=1.312e-01 (5249/40000)  0.06s
+  surface_d11_bposd    q=0.005  p_L=0.000e+00 (0/200000)  1.79s
+  surface_d11_bposd    q=0.01   p_L=5.000e-06 (1/200000)  3.62s
+  surface_d11_bposd    q=0.02   p_L=5.000e-05 (10/200000)  10.22s
+  surface_d11_bposd    q=0.03   p_L=6.050e-04 (121/200000)  9.32s
+  surface_d11_bposd    q=0.04   p_L=2.065e-03 (413/200000)  10.62s
+  surface_d11_bposd    q=0.05   p_L=7.006e-03 (1121/160000)  12.77s
+  surface_d11_bposd    q=0.06   p_L=1.767e-02 (1414/80000)  5.43s
+  surface_d11_bposd    q=0.08   p_L=5.885e-02 (2354/40000)  2.86s
+  surface_d11_bposd    q=0.1    p_L=1.314e-01 (5256/40000)  3.22s
+  surface_d13_mwpm     q=0.005  p_L=0.000e+00 (0/200000)  0.46s
+  surface_d13_mwpm     q=0.01   p_L=0.000e+00 (0/200000)  0.41s
+  surface_d13_mwpm     q=0.02   p_L=1.500e-05 (3/200000)  0.39s
+  surface_d13_mwpm     q=0.03   p_L=2.300e-04 (46/200000)  0.42s
+  surface_d13_mwpm     q=0.04   p_L=1.215e-03 (243/200000)  0.41s
+  surface_d13_mwpm     q=0.05   p_L=4.425e-03 (885/200000)  0.41s
+  surface_d13_mwpm     q=0.06   p_L=1.256e-02 (1005/80000)  0.19s
+  surface_d13_mwpm     q=0.08   p_L=5.260e-02 (2104/40000)  0.1s
+  surface_d13_mwpm     q=0.1    p_L=1.283e-01 (5133/40000)  0.11s
+  surface_d13_bposd    q=0.005  p_L=0.000e+00 (0/200000)  3.43s
+  surface_d13_bposd    q=0.01   p_L=5.000e-06 (1/200000)  6.08s
+  surface_d13_bposd    q=0.02   p_L=2.000e-05 (4/200000)  13.88s
+  surface_d13_bposd    q=0.03   p_L=1.800e-04 (36/200000)  14.35s
+  surface_d13_bposd    q=0.04   p_L=1.360e-03 (272/200000)  19.7s
+  surface_d13_bposd    q=0.05   p_L=4.555e-03 (911/200000)  19.14s
+  surface_d13_bposd    q=0.06   p_L=1.312e-02 (1575/120000)  15.01s
+  surface_d13_bposd    q=0.08   p_L=5.125e-02 (2050/40000)  4.25s
+  surface_d13_bposd    q=0.1    p_L=1.277e-01 (5107/40000)  4.28s
+
+Confronto a 12 qubit logici: P(almeno un logico errato)
+  q         Gross (144/288)       d=3 (108)       d=5 (300)       d=7 (588)       d=9 (972)     d=11 (1452)     d=13 (2028)
+  0.005           4.000e-05       5.208e-03       5.399e-04       1.200e-04       0.000e+00       0.000e+00       0.000e+00
+  0.01            3.050e-04       1.974e-02       2.996e-03       7.797e-04       6.000e-05       0.000e+00       0.000e+00
+  0.02            1.535e-03       7.394e-02       2.333e-02       7.236e-03       2.158e-03       7.198e-04       1.800e-04
+  0.03            4.560e-03       1.577e-01       7.324e-02       3.111e-02       1.401e-02       5.685e-03       2.757e-03
+  0.04            1.300e-02       2.642e-01       1.497e-01       8.514e-02       4.776e-02       2.825e-02       1.448e-02
+  0.05            3.470e-02       3.732e-01       2.510e-01       1.776e-01       1.214e-01       7.994e-02       5.183e-02
+  0.06            8.465e-02       4.816e-01       3.869e-01       2.826e-01       2.353e-01       1.802e-01       1.408e-01
+  0.08            2.820e-01       6.528e-01       6.203e-01       5.769e-01       5.591e-01       5.218e-01       4.771e-01
+  0.1             5.638e-01       7.715e-01       7.950e-01       8.009e-01       8.033e-01       8.151e-01       8.076e-01
+
+Tempo totale: 236s
+Risultati salvati in: artifacts/v2_20260926/results_M16_gross_code_capacity_20260926_031028.json
