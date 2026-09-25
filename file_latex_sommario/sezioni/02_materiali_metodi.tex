@@ -16,10 +16,7 @@ molti shot formano l'istogramma su cui opera il post-processing. Il successo è 
 recupero di fattori non banali, non la ricostruzione esatta dell'ordine. Vi conducono
 tre dei quattro picchi ideali, con probabilità complessiva del 75\%. La verifica
 classica è però permissiva e accetta 63 dei 256 valori, tanto che esiti del tutto
-uniformi darebbero comunque un successo di \(63/256 \simeq 24{,}61\%\). Questo
-riferimento dipende dall'istanza e dal post-processing, non misura la fedeltà dello
-stato quantistico e ricorda che fattorizzazioni corrette sopravvivono anche a una
-distribuzione che ha perso gran parte della propria struttura \cite{smolin2013}.
+uniformi darebbero comunque un successo di \(63/256 \simeq 24{,}61\%\). Questo riferimento dipende dall'istanza e dal post-processing e non misura la fedeltà dello stato quantistico. Mostra inoltre che fattorizzazioni corrette possono essere ottenute anche quando la distribuzione degli esiti di misura del registro di controllo ha perso gran parte della struttura ideale dei picchi \cite{smolin2013}.
 
 La correttezza dei circuiti è verificata indipendentemente dal successo della fattorizzazione,
 controllando operatori modulari, ripristino dei qubit ausiliari e accordo con le
@@ -29,7 +26,7 @@ distribuzioni teoriche. Le istanze \(N = 21\), \(a = 2\) e \(N = 35\),
 Si impiegano Qiskit/Aer, scikit-learn, Stim e PyMatching, registrando versioni, parametri,
 semi casuali e identificativi dei circuiti.
 
-\subsection{Post-processing, classificazione e mitigazione}
+\subsection{Post-processing e classificazione}
 
 Tre strategie, con estrattore dei fattori e regola dei pareggi comuni, operano sugli
 stessi istogrammi, uno per iterazione quantistica, da 1.024 shot ciascuno. TOP-1
@@ -40,57 +37,29 @@ studio di ablazione, che stabilisce se il vantaggio venga dal modello appreso o 
 semplice provare più candidati.
 
 Due scenari illustrativi, UC1 di riferimento e UC2 di stress, includono
-depolarizzazione, rilassamento termico ed errori di lettura; per ciascuno, 2.000
+depolarizzazione, rilassamento termico ed errori di lettura; per ciascuno scenario, 2.000
 istogrammi con parametri variati entro \(\pm50\%\) del nominale sono divisi
-60\%/20\%/20\% fra addestramento, selezione e verifica. Random forest, support vector
+60\% /20\% /20\% fra addestramento, selezione e verifica. Random forest, support vector
 machine (SVM) e perceptron multistrato sono confrontati su F1; il modello scelto è
 valutato su 400 istogrammi indipendenti per scenario. La metrica primaria è il numero di
 iterazioni per ottenere i fattori, non l'accuratezza del classificatore né il tempo di
-calcolo. Si usano 30 repliche appaiate per scenario e al massimo 50 iterazioni,
-con valore convenzionale 51 se i fattori non arrivano entro il limite, e
-test di Wilcoxon--Pratt con correzione di Holm. La zero-noise extrapolation (ZNE) a due
-e tre livelli scala in simulazione i soli parametri depolarizzanti
-\cite{temme2017,takagi2023}.
+calcolo. Si usano 30 repliche appaiate per scenario e al massimo 50 iterazioni.
 
 \subsection{Correzione quantistica e decodifica delle sindromi}
 
-Nella correzione quantistica l'informazione di un qubit logico è distribuita su più
-qubit fisici; si misurano parità, dette sindromi, che segnalano gli errori senza leggere
-l'informazione logica, e un decoder sceglie la correzione. Si studiano codice a
-ripetizione, Steane \([[7,1,3]]\) e surface code
-\cite{steane1996,fowler2012,googleQECBelowThreshold2025} in
-circuiti di memoria, misurando la probabilità di fallimento logico \(p_{L}\), cioè che
-l'informazione resti errata dopo la decodifica.
+Nella correzione quantistica degli errori, l'informazione di un qubit logico viene distribuita su più qubit fisici; le sindromi permettono di rilevare gli errori senza misurare direttamente lo stato logico e guidano il decoder nella scelta della correzione.
 
-Il surface code ruotato usa le distanze \(d = 3,5,7,9\) (la distanza
-indica quanti errori il codice tollera), memorie in base \(X\) e \(Z\) e \(d\) cicli di
-sindrome, con rumore su operazioni, preparazione e misura. Il decoder di riferimento,
-minimum-weight perfect matching (MWPM), è confrontato sugli stessi eventi di
-rilevazione con una rete neurale autonoma e un decoder ibrido, che non decodifica da
-zero ma apprende quando la decisione del matching è probabilmente errata e la inverte,
-con soglia d'intervento scelta in validazione e fissata sul test. Al rumore
-nominale si aggiunge crosstalk fra qubit adiacenti; si controllano
-calibrazione del modello, dimensione dell'ingresso della rete e confronto con il
-decoder analitico BP+OSD (belief propagation e ordered statistics decoding)
-\cite{alphaqubit2024,roffe2020}.
+Codice a ripetizione e codice di Steane sono utilizzati come verifiche preliminari, mentre l'analisi principale riguarda circuiti di memoria basati su surface code \cite{steane1996,fowler2012,googleQECBelowThreshold2025}. Sono inoltre considerati i codici quantum Low-Density Parity-Check (qLDPC), tra cui il Gross code proposto da IBM, come riferimento per architetture con overhead ridotto.
+
+Le prestazioni sono misurate attraverso la probabilità di fallimento logico \(p_L\). Il modello di rumore comprende errori nelle operazioni, nella preparazione e nella misura, con crosstalk tra qubit adiacenti in alcune configurazioni.
+
+Per il surface code, il decoder di riferimento è il \emph{minimum-weight perfect matching} (MWPM), che associa a coppie le sindromi attivate scegliendo la configurazione di errori più probabile. MWPM è confrontato con una rete neurale autonoma e con una strategia ibrida. BP+OSD (\emph{belief propagation with ordered statistics decoding}) viene considerato separatamente come ulteriore decoder di confronto, particolarmente rilevante per i codici qLDPC \cite{roffe2020}. La soglia d'intervento del decoder ibrido è selezionata sul validation set e mantenuta fissa sul test set \cite{alphaqubit2024}.
 
 \subsection{Sensibilità di Shor agli errori di porta}
 
-Un esperimento distinto applica errori di Pauli indipendenti dopo le porte compilate,
-escluse le rotazioni virtuali RZ, con 20 repliche da 4.096 shot per valore. La
-probabilità totale di errore non identità, \(p_{g}\), è un proxy per porta, non convertibile
-nel fallimento logico \(p_{L}\) dei circuiti di memoria senza compilazione
-fault-tolerant completa.
-
+Un esperimento separato valuta la sensibilità di Shor agli errori di porta applicando errori di Pauli indipendenti dopo le porte compilate, escluse le rotazioni virtuali RZ. Per ogni valore di errore si eseguono 20 repliche da 4.096 shot. La probabilità \(p_g\) descrive il rumore fisico per porta e non è direttamente confrontabile con il fallimento logico \(p_L\), poiché Shor non viene eseguito con una compilazione fault-tolerant completa.
 \subsection{Ottimizzazione mediante QFT approssimata}
 
-L'AQFT elimina le rotazioni controllate di piccolo angolo della QFT, perdendo precisione
-ma riducendo porte e profondità, e con esse le occasioni in cui il rumore agisce
-\cite{barencoAQFT1996}.
-Si distingue il troncamento della QFT inversa finale di Shor per \(N = 15\) da quello
-delle trasformate interne all'aritmetica modulare per \(N = 21\); benchmark separati di
-stima di fase usano registri da sei, otto e dieci qubit, con tre fasi per dimensione.
-Il rumore usa infedeltà delle porte ed errori di lettura della calibrazione offline
-FakeSherbrooke, senza \(T_{1}/T_{2}\) aggiuntivi, a parità di layout e semi casuali. Il
-grado di troncamento è scelto su campioni di selezione e valutato su campioni di
-verifica disgiunti (nel pilota \(N = 15\), 8.192 shot per configurazione, divisi a metà).
+L'AQFT elimina le rotazioni controllate di piccolo angolo della QFT, riducendo il numero di porte e la profondità del circuito a fronte di una perdita di precisione \cite{barencoAQFT1996}. Si analizzano separatamente il troncamento della QFT inversa finale di Shor per \(N=15\) e quello delle trasformate impiegate nell'aritmetica modulare per \(N=21\). Benchmark distinti di stima di fase utilizzano registri da sei, otto e dieci qubit, con tre valori di fase per ciascuna dimensione.
+
+Il modello di rumore è costruito a partire dalle infedeltà delle porte e dagli errori di lettura della calibrazione offline FakeSherbrooke, senza aggiungere contributi \(T_1/T_2\), mantenendo invariati layout e semi casuali. Il grado di troncamento viene selezionato su un insieme dedicato e valutato su dati di verifica indipendenti; nel pilota per \(N=15\), 8.192 shot per configurazione sono suddivisi equamente tra selezione e verifica.

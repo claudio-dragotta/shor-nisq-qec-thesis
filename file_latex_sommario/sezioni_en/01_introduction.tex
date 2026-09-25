@@ -1,22 +1,23 @@
 \section{Introduction and objectives}
 
-Shor's algorithm factors integers in time polynomial in the input bit length, with
-implications for cryptographic systems whose security relies on the difficulty of
-factorization \cite{en-shor1994,en-nist2024pqc,en-gidney2021}. Realizing this advantage
-requires error control
-compatible with circuit depth: gate errors, decoherence, and imperfect readout can alter
-the measurement distribution and compromise multiplicative-order finding
-\cite{en-preskill2018}.
+Shor's algorithm factors integers in time polynomial in the binary length of the input,
+with implications for the security of cryptographic systems based on the difficulty of
+factorization \cite{en-shor1994,en-nist2024pqc,en-gidney2021}. Realizing this theoretical
+advantage, however, requires error control compatible with circuit depth. Gate errors,
+decoherence, and imperfect readout can alter the measurement distribution and compromise
+the information needed to find the multiplicative order \cite{en-preskill2018}.
 
-This simulation study determines which interventions improve computational reliability
-and relative to which baselines. Its two main phases evaluate classical post-processing
-of Shor's outcomes, including an ablation of the machine-learning contribution, and
-characterize quantum error-correction codes and syndrome decoders. A separate analysis
-examines Shor's sensitivity to gate errors and circuit optimization through the
+The thesis develops a simulation study aimed at establishing which interventions actually
+improve the reliability of the computation, and relative to which baselines. It comprises
+two main phases: the evaluation of classical post-processing of Shor's outcomes, with an
+ablation study of the machine-learning contribution; and the characterization of quantum
+error-correction codes and syndrome decoders. The work is completed by a separate analysis
+of Shor's sensitivity to gate errors and by a campaign on circuit optimization through the
 approximate quantum Fourier transform (AQFT).
 
-The three areas---outcome selection, information protection, and circuit cost
-reduction---share one criterion: compare each solution with an explicit baseline,
-isolate each component's contribution, and use task-relevant benefit metrics. The
-campaigns remain separate; they are not an integrated, error-corrected execution of
-Shor's algorithm.
+The areas of intervention---outcome selection, information protection, and circuit cost
+reduction---are linked by a common criterion: compare each solution with an explicit
+baseline, isolate the contribution of individual components, and measure the benefit with
+task-relevant metrics. The experimental campaigns were conducted separately; in
+particular, the error-correction methods were not applied directly to the full Shor
+circuit in a single simulation.

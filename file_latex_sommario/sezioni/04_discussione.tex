@@ -1,33 +1,9 @@
 \section{Discussione e conclusioni}
 
-Il post-processing usa meglio l'informazione delle misure, ma non modifica lo stato
-quantistico. L'ablazione del classificatore è un risultato metodologico: metriche
-predittive elevate non garantiscono un minor costo di fattorizzazione. Nella
-decodifica accade il contrario, perché la sindrome contiene informazione strutturata
-sugli errori e l'approccio ibrido funziona proprio dove il decoder analitico non
-rappresenta alcune correlazioni del rumore, benché il beneficio vada confrontato con
-altri decoder analitici. Il valore di un modello appreso dipende dunque dall'informazione che
-riceve e da ciò che la baseline lascia inutilizzato; poiché i due impieghi riguardano
-compiti e dati diversi, la differenza non è attribuibile alla sola fase in cui
-interviene il machine learning.
+Il post-processing consente di sfruttare meglio l'informazione contenuta nelle misure, ma non interviene sullo stato quantistico. Lo studio di ablazione mostra che buone prestazioni del classificatore non implicano necessariamente una riduzione del costo di fattorizzazione, mentre nella decodifica il modello appreso può essere utile quando le sindromi contengono correlazioni non rappresentate adeguatamente dal decoder di riferimento.
 
-Per \(N = 15\) l'AQFT dà un risultato positivo distinto, con meno porte
-associate a un maggior successo. L'ordine \(r = 4\) produce fasi rappresentabili
-esattamente con due bit del registro di controllo, perciò le rotazioni eliminate non
-veicolano informazione utile e il troncamento costa poco in precisione. Per \(N = 21\),
-con \(r = 6\), le fasi non sono esattamente rappresentabili e l'aritmetica è più
-complessa, per cui il beneficio non si trasferisce automaticamente. Il grado di
-approssimazione va scelto secondo istanza e regime di rumore, e verificato
-su dati distinti da quelli usati per sceglierlo.
+Per \(N=15\), l'AQFT porta a una riduzione del numero di porte accompagnata da un aumento della probabilità di successo. Poiché l'ordine \(r=4\) genera fasi rappresentabili esattamente con due bit del registro di controllo, le rotazioni eliminate contribuiscono poco all'informazione utile. Per \(N=21\), con \(r=6\), le fasi non sono invece rappresentabili esattamente e l'aritmetica è più complessa; il beneficio dell'approssimazione non si trasferisce quindi automaticamente. Il grado di troncamento deve essere scelto in funzione dell'istanza e del regime di rumore e verificato su dati indipendenti.
 
-Le conclusioni restano circoscritte alle simulazioni. Il post-processing riguarda
-\(N = 15\) con rumore uniforme e stazionario, la QEC circuiti di memoria separati, le
-prove AQFT una sola calibrazione offline e poche istanze e fasi. Non si dimostra
-un'esecuzione fault-tolerant completa di Shor, né si prevedono le risorse per la
-fattorizzazione su scala crittografica. Il contributo è una caratterizzazione
-quantitativa e riproducibile delle condizioni di utilità dei componenti studiati, da
-estendere con verifica su hardware, variazione indipendente di \(N\) e dell'ordine
-\(r\) e integrazione fra operazioni logiche protette, decodifica e ottimizzazione
-aritmetica. Nel perimetro studiato emerge una regola comune: aggiungere complessità ha
-senso solo se permette di sfruttare informazione che la baseline non usa, o se riduce
-un costo del circuito maggiore della perdita introdotta.
+Le conclusioni restano limitate al contesto simulativo analizzato. Il post-processing è valutato principalmente per \(N=15\), la correzione quantistica su circuiti di memoria separati e l'AQFT su un numero limitato di istanze e con una singola calibrazione offline. Non viene realizzata un'esecuzione fault-tolerant completa di Shor né una stima delle risorse necessarie per la fattorizzazione su scala crittografica.
+
+Nel complesso, il lavoro fornisce una caratterizzazione quantitativa delle condizioni in cui post-processing, decodifica e approssimazione circuitale possono risultare utili. Sviluppi futuri potranno includere la verifica su hardware reale, ulteriori valori di \(N\) e dell'ordine \(r\), e l'integrazione tra operazioni logiche protette, decodifica e ottimizzazione del circuito.

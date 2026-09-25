@@ -2,65 +2,66 @@
 
 \subsection{Validation and contribution of post-processing}
 
-Ideal arithmetic checks yield total variation distances from theory of
-\(1.38 \times 10^{-9}\) for \(N = 21\) and \(2.50 \times 10^{-13}\) for \(N = 35\),
-establishing functional correctness, not performance under noise.
+Ideal arithmetic checks yield a total variation distance from the theoretical
+distribution of \(1.38 \times 10^{-9}\) for \(N = 21\) and \(2.50 \times 10^{-13}\) for
+\(N = 35\), confirming the correctness of the circuits in the absence of noise.
 
-In UC1/UC2, the selected SVMs achieve F1 scores of 0.919/0.923 and ROC areas of
-0.965/0.958, but do not reduce operational cost. TOP-4 averages 1.00 iterations in both
-scenarios versus 1.37/1.50 for TOP-1 (\(p_{\mathrm{Holm}} = 0.0024/0.0015\)); Method 2
-requires 1.50/1.37, does not significantly improve TOP-1, and is worse than its TOP-4
-ablation (\(p_{\mathrm{Holm}} = 0.0033/0.0096\)). The benefit therefore comes from
-multi-candidate search. Acting on already-acquired data, the filter can discard
-histograms that TOP-4 would use successfully. ZNE also fails to improve the reference
-scenario: two and three levels average 3,072 and 4,813 shots, versus 1,399 for TOP-1 and
-1,024 for TOP-4. These findings concern the tested methods, instance, and noise model;
-they do not establish the general ineffectiveness of machine learning or mitigation.
+In scenarios UC1 and UC2, the selected SVMs reach F1 scores of 0.919 and 0.923 and areas
+under the ROC curve of 0.965 and 0.958. This predictive ability, however, does not reduce
+the number of iterations required. TOP-4 needs 1.00 iterations on average in both
+scenarios, versus 1.37 and 1.50 for TOP-1, with statistically significant differences in
+paired tests; Method 2 instead needs 1.50 and 1.37 iterations, without significantly
+improving on TOP-1 and performing worse than TOP-4. The observed advantage therefore
+appears to stem mainly from the possibility of considering more candidates. These results
+nonetheless remain tied to the instance, the noise, and the methods considered.
 
-\subsection{Memory protection and hybrid decoding}
+\subsection{Memory protection and decoding}
 
-Within Monte Carlo uncertainty, the repetition code reproduces
-\(p_{L} = 3p^{2} - 2p^{3}\). Steane's physical-to-logical error relation is approximately
-quadratic (logarithmic slope 1.94), and \(p_{L}\) intersects \(p\) near 0.08. This is a
-pseudo-threshold for data-qubit errors with ideal syndromes, not the operational threshold
-of a fault-tolerant architecture. In the surface code, increasing distance reduces
-logical error below threshold and increases it above threshold; the sub-threshold fit
-yields about 0.86\% in the \(Z\) basis and 0.81\% in the \(X\) basis for the adopted
-memory circuit, noise, and decoder.
+The initial checks on the repetition and Steane codes show the expected behavior. Within
+Monte Carlo uncertainty, the repetition code reproduces the relation
+\(p_{L} = 3p^{2} - 2p^{3}\); for Steane, the dependence on the physical error is
+approximately quadratic, with a logarithmic slope of 1.94 and a pseudo-threshold around
+0.08.
 
-Under nominal noise, the stand-alone network does not significantly outperform MWPM in
-the initial fourteen configurations. With adjacent-qubit correlations poorly represented
-by the matching graph, however, the hybrid reduces logical error. At \(d = 3\),
-\(p = 0.003\), and crosstalk intensity 0.01, \(p_{L}\) falls from 0.05829 with MWPM to
-0.04851 with the hybrid: a 16.8\% relative reduction (Table 5.9 of the thesis), significant
-by paired McNemar test. With \(d\) rounds, the benefit is smaller at distance 5 and not
-significant at distance 7. In the tested distance-5 configurations, BP+OSD outperforms the
-MWPM-based hybrid; varying distance and rounds separately also reveals the role of network
-input size. The learned contribution thus depends on noise structure, analytical
-baseline, and data representation, not distance alone.
+The main analysis concerns the surface code. Below threshold, increasing the distance
+reduces the logical error, while above threshold the opposite behavior is observed; the
+fit gives values of about 0.86\% in the \(Z\) basis and 0.81\% in the \(X\) basis.
+
+Under nominal noise, the stand-alone neural network shows no significant advantage over
+MWPM. With crosstalk, however, the hybrid decoder improves performance: at \(d = 3\),
+\(p = 0.003\), and crosstalk 0.01, \(p_{L}\) falls from 0.05829 to 0.04851, a relative
+reduction of about 16.8\%, significant by paired McNemar test. The benefit shrinks at
+distance 5 and is not significant at distance 7.
+
+BP+OSD is considered as a further comparison and, in the distance-5 configurations
+analyzed, outperforms the MWPM-based hybrid. The tests also show that performance depends
+on the distance, the number of rounds, and the size of the network input.
 
 \subsection{Factorization success and the uniform reference}
 
 Without noise, single-shot success is 74.89\% (95\% confidence interval
-{[}74.59\%; 75.18\%{]}), consistent with 75\%. As \(p_{g}\) grows, the trend is
-compatible with a non-increasing function; at \(p_{g} = 0.5\), success is 24.59\%, near
-the 24.61\% uniform reference (Section~\ref{sec:implementation-en}). Correct
-factorizations alone therefore do not reveal how much quantum information remains.
+{[}74.59\%; 75.18\%{]}), consistent with the expected 75\%. As \(p_{g}\) increases,
+success decreases down to 24.59\% at \(p_{g} = 0.5\), very close to the 24.61\% uniform
+reference (Section~\ref{sec:implementation-en}). This shows that the number of correct
+factorizations alone is not sufficient to describe how much quantum structure remains in
+the circuit.
 
 \subsection{Effectiveness and limitations of the approximate QFT}
 
-\textbf{In the Shor pilot for} \(N = 15\)\textbf{, the selected AQFT raises single-shot
-success from 47.92\% to 62.79\%} (+14.87 percentage points on independent test data;
-95\% Newcombe interval {[}12.73; 16.99{]}), while two-qubit ECR gates fall from 362 to
-279 and depth from 1,351 to 1,141. The benefit concerns factorization, not only isolated
-phase estimation.
+In the Shor pilot for \(N = 15\), the selected AQFT raises the single-shot success
+probability from 47.92\% to 62.79\%, an increase of 14.87 percentage points, or 31\% in
+relative terms, on independent test data (95\% Newcombe confidence interval
+{[}12.73; 16.99{]}). At the same time, ECR gates decrease from 362 to 279 (\(-22.9\%\))
+and circuit depth from 1,351 to 1,141 (\(-15.5\%\)). The
+improvement therefore concerns factorization directly, not only phase estimation.
 
-For \(N = 21\), truncating QFTs inside the arithmetic reduces ECR gates from 49,661 to
-23,178, but ideal success falls from 46.67\% to 40.13\%; all three noisy-comparison
-intervals include zero. With 128 test shots per variant and noise level, sensitivity to
-small effects is limited, so no observed advantage does not prove ineffectiveness. All
-nine phase-estimation differences favor the selected variant and six individual 95\%
-intervals exclude zero; the largest increase is 12.55 percentage points with ten qubits
-({[}9.77; 15.30{]}). These comparisons are exploratory, without simultaneous correction
-of the nine intervals. The best tested truncation degree is two or three and need not
-remain constant for arbitrarily large registers.
+For \(N = 21\), truncating the QFTs inside the arithmetic reduces ECR gates from 49,661
+to 23,178, roughly by half (\(-53.3\%\)), but ideal success drops from 46.67\% to
+40.13\% (\(-6.54\) percentage points). In the three noisy
+comparisons, the intervals of the differences always include zero. With 128 test shots
+per variant and noise level, the ability to detect small effects remains limited. In the
+nine phase-estimation benchmarks, all differences favor the selected variant and six
+individual 95\% intervals exclude zero; the largest increase is 12.55 percentage points
+with ten qubits ({[}9.77; 15.30{]}). The comparisons remain exploratory, and the best
+truncation degree among those tested, two or three, cannot be considered valid in general
+for registers of arbitrary size.
