@@ -1,0 +1,219 @@
+{
+  "schema_version": "2.0",
+  "milestone": "M16_gross_code_capacity",
+  "stato": "esplorativo",
+  "modello_rumore": "code-capacity: errori X indipendenti con probabilita' q sui qubit di dato, sindromi perfette, un ciclo",
+  "limite_interpretativo": "confronto fra codici nello stesso modello code-capacity; non confrontabile con M7 (livello di circuito) ne' con i risultati IBM a livello di circuito",
+  "experiment_manifest": {
+    "script": "gross_code_capacity.py",
+    "script_sha256": "5c3ac77855b87952668e8229137829b5340325f1a19f84a182122aaa7292ea16",
+    "git_commit": "3269c23d4c723f4edcedb460866f675af11f57e1",
+    "argv": [
+      "gross_code_capacity.py",
+      "--seed",
+      "42",
+      "--solo-gross",
+      "--bp-method",
+      "minimum_sum",
+      "--etichetta",
+      "sens_minsum",
+      "--output-dir",
+      "artifacts/v2_20260926"
+    ],
+    "seed": 42,
+    "python": "3.12.3",
+    "interprete": "/home/claudio/quantum-env/bin/python",
+    "piattaforma": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "cpu": 22,
+    "packages": {
+      "numpy": "2.5.1",
+      "ldpc": "2.4.1",
+      "PyMatching": "2.4.0",
+      "stim": "1.16.0",
+      "scipy": "1.18.0"
+    },
+    "timestamp": "2026-09-26T03:38:17"
+  },
+  "parametri": {
+    "etichetta": "sens_minsum",
+    "solo_gross": true,
+    "q_list": [
+      0.005,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.08,
+      0.1
+    ],
+    "distances": [],
+    "shots_max": 200000,
+    "min_failures": 1000,
+    "chunk": 2000,
+    "workers": 20,
+    "bposd": {
+      "max_iter": 100,
+      "bp_method": "minimum_sum",
+      "osd_method": "osd_cs",
+      "osd_order": 10
+    },
+    "mwpm": "PyMatching, pesi uniformi ln((1-q)/q)",
+    "gross_code": {
+      "l": 12,
+      "m": 6,
+      "A": "x^3 + y + y^2",
+      "B": "y^3 + x + x^2"
+    }
+  },
+  "verifiche_codici": {
+    "gross": {
+      "n": 144,
+      "k": 12,
+      "commutano": true,
+      "righe_Hx": 72,
+      "righe_Hz": 72,
+      "rank_Hx": 66,
+      "rank_Hz": 66,
+      "peso_righe_Hz": [
+        6
+      ],
+      "peso_colonne_Hz": [
+        3
+      ],
+      "sha256_Hx": "195d5586a406f0194b89649b6a2499ec2b481edb81c91293daf1745d8b806641",
+      "sha256_Hz": "72dc3b9cefec7d45c99325c8f8d0787174e3cea207a41cd5b740a8b05f263918"
+    }
+  },
+  "risultati": [
+    {
+      "nome": "gross_bposd",
+      "codice": "gross",
+      "decoder": "bposd",
+      "n_dati": 144,
+      "k": 12,
+      "punti": [
+        {
+          "q": 0.005,
+          "shots": 200000,
+          "fallimenti": 40,
+          "p_fallimento": 0.0002,
+          "ic95_wilson": [
+            0.0001468878241664446,
+            0.0002723114182538889
+          ],
+          "sindromi_violate": 0,
+          "secondi": 0.87
+        },
+        {
+          "q": 0.01,
+          "shots": 200000,
+          "fallimenti": 9,
+          "p_fallimento": 4.5e-05,
+          "ic95_wilson": [
+            2.3675544862002473e-05,
+            8.552965170514008e-05
+          ],
+          "sindromi_violate": 0,
+          "secondi": 0.6
+        },
+        {
+          "q": 0.02,
+          "shots": 200000,
+          "fallimenti": 118,
+          "p_fallimento": 0.00059,
+          "ic95_wilson": [
+            0.0004927398544484593,
+            0.0007064444065702257
+          ],
+          "sindromi_violate": 0,
+          "secondi": 0.83
+        },
+        {
+          "q": 0.03,
+          "shots": 200000,
+          "fallimenti": 770,
+          "p_fallimento": 0.00385,
+          "ic95_wilson": [
+            0.0035879548871322903,
+            0.004131104144734154
+          ],
+          "sindromi_violate": 0,
+          "secondi": 1.49
+        },
+        {
+          "q": 0.04,
+          "shots": 40000,
+          "fallimenti": 9035,
+          "p_fallimento": 0.225875,
+          "ic95_wilson": [
+            0.2218035699438012,
+            0.22999907699513375
+          ],
+          "sindromi_violate": 0,
+          "secondi": 0.84
+        },
+        {
+          "q": 0.05,
+          "shots": 40000,
+          "fallimenti": 23886,
+          "p_fallimento": 0.59715,
+          "ic95_wilson": [
+            0.5923343644501877,
+            0.6019469774554482
+          ],
+          "sindromi_violate": 0,
+          "secondi": 4.69
+        },
+        {
+          "q": 0.06,
+          "shots": 40000,
+          "fallimenti": 22559,
+          "p_fallimento": 0.563975,
+          "ic95_wilson": [
+            0.5591094503701849,
+            0.5688282629433824
+          ],
+          "sindromi_violate": 0,
+          "secondi": 1.91
+        },
+        {
+          "q": 0.08,
+          "shots": 40000,
+          "fallimenti": 37218,
+          "p_fallimento": 0.93045,
+          "ic95_wilson": [
+            0.9279154943073183,
+            0.9329018358345346
+          ],
+          "sindromi_violate": 0,
+          "secondi": 2.74
+        },
+        {
+          "q": 0.1,
+          "shots": 40000,
+          "fallimenti": 25970,
+          "p_fallimento": 0.64925,
+          "ic95_wilson": [
+            0.6445593492384601,
+            0.6539119866278927
+          ],
+          "sindromi_violate": 0,
+          "secondi": 2.1
+        }
+      ],
+      "fit_loglog": {
+        "pendenza": 2.6974555447573967,
+        "intercetta": 4.996501329268005,
+        "q_usati": [
+          0.005,
+          0.02,
+          0.03,
+          0.04
+        ]
+      }
+    }
+  ],
+  "confronto_12_logici": []
+}

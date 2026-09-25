@@ -186,9 +186,12 @@ def decodifica_blocco(task):
         m = pymatching.Matching.from_check_matrix(Hz, weights=np.full(n, w))
         corr = m.decode_batch(synd).astype(np.uint8)
     else:
+        extra = {}
+        if bp.get('ms_scaling_factor') is not None:
+            extra['ms_scaling_factor'] = bp['ms_scaling_factor']
         dec = BpOsdDecoder(Hz, error_rate=float(q), max_iter=bp['max_iter'],
                            bp_method=bp['bp_method'], osd_method=bp['osd_method'],
-                           osd_order=bp['osd_order'])
+                           osd_order=bp['osd_order'], **extra)
         corr = np.array([dec.decode(s) for s in synd], dtype=np.uint8)
 
     res = (err ^ corr).astype(np.int32)
@@ -210,7 +213,8 @@ def wilson(k, n, z=1.959963984540054):
 def esegui_punto(pool, cfg, q, args, idx_cfg, idx_q):
     Hz, K = cfg['Hz'], cfg['K']
     bp = {'max_iter': args.bp_max_iter, 'bp_method': args.bp_method,
-          'osd_method': args.osd_method, 'osd_order': args.osd_order}
+          'osd_method': args.osd_method, 'osd_order': args.osd_order,
+          'ms_scaling_factor': args.ms_scaling_factor}
     shots = fall = viol = 0
     blocco = 0
     t0 = time.time()
@@ -293,6 +297,16 @@ def main():
     ap.add_argument('--bp-method', default='product_sum')
     ap.add_argument('--osd-method', default='osd_cs')
     ap.add_argument('--osd-order', type=int, default=10)
+    ap.add_argument('--ms-scaling-factor', type=float, default=None,
+                    help="fattore di scala del min-sum (se omesso, default di ldpc)")
+    ap.add_argument('--decoder-surface', choices=['entrambi', 'mwpm', 'bposd'],
+                    default='entrambi')
+    ap.add_argument('--senza-gross', action='store_true',
+                    help="simula solo il surface code (estensione della statistica)")
+    ap.add_argument('--solo-gross', action='store_true',
+                    help="simula solo il Gross code (prove di sensibilita' del decoder)")
+    ap.add_argument('--etichetta', default='',
+                    help="suffisso del file di output, per distinguere le corse")
     ap.add_argument('--output-dir', default=None)
     ap.add_argument('--quick', action='store_true',
                     help="prova rapida: pochi shot, niente file salvato")
@@ -302,6 +316,8 @@ def main():
         args.shots_max, args.min_failures, args.chunk = 4000, 10**9, 500
     elif not args.output_dir:
         ap.error("--output-dir e' obbligatorio fuori da --quick")
+    if args.solo_gross:
+        args.distances = []
 
     # codici e controlli strutturali
     Hx_g, Hz_g = gross_code()
@@ -314,12 +330,15 @@ def main():
     for c in codici.values():
         c['K'] = gf2_nullspace(c['Hx'])
 
-    configurazioni = [{'nome': 'gross_bposd', 'codice': 'gross', 'decoder': 'bposd'}]
+    configurazioni = [] if args.senza_gross else [
+        {'nome': 'gross_bposd', 'codice': 'gross', 'decoder': 'bposd'}]
     for d in args.distances:
-        configurazioni.append({'nome': f'surface_d{d}_mwpm', 'codice': f'surface_d{d}',
-                               'decoder': 'mwpm', 'd': d})
-        configurazioni.append({'nome': f'surface_d{d}_bposd', 'codice': f'surface_d{d}',
-                               'decoder': 'bposd', 'd': d})
+        if args.decoder_surface in ('entrambi', 'mwpm'):
+            configurazioni.append({'nome': f'surface_d{d}_mwpm', 'codice': f'surface_d{d}',
+                                   'decoder': 'mwpm', 'd': d})
+        if args.decoder_surface in ('entrambi', 'bposd'):
+            configurazioni.append({'nome': f'surface_d{d}_bposd', 'codice': f'surface_d{d}',
+                                   'decoder': 'bposd', 'd': d})
 
     print("=" * 88)
     print("M16 — Gross code [[144,12,12]] e surface code in code-capacity (errori X)")
@@ -354,9 +373,9 @@ def main():
 
     # confronto a parita' di 12 qubit logici: Gross code contro 12 patch indipendenti
     confronto = []
-    gross = next(r for r in risultati if r['nome'] == 'gross_bposd')
+    gross = next((r for r in risultati if r['nome'] == 'gross_bposd'), None)
     for r in risultati:
-        if r['codice'] == 'gross' or r['decoder'] != 'mwpm':
+        if gross is None or r['codice'] == 'gross' or r['decoder'] != 'mwpm':
             continue
         d = r['d']
         righe = []
@@ -376,14 +395,15 @@ def main():
             'righe': righe,
         })
 
-    print("\nConfronto a 12 qubit logici: P(almeno un logico errato)")
-    print(f"  {'q':<7}{'Gross (144/288)':>18}" +
-          "".join(f"{'d=' + str(c['d']) + ' (' + str(c['qubit_dati_surface']) + ')':>16}"
-                  for c in confronto))
-    for i, q in enumerate(args.q_list):
-        riga = f"  {q:<7}{gross['punti'][i]['p_fallimento']:>18.3e}"
-        riga += "".join(f"{c['righe'][i]['surface_p_blocco']:>16.3e}" for c in confronto)
-        print(riga)
+    if gross is not None:
+        print("\nConfronto a 12 qubit logici: P(almeno un logico errato)")
+        print(f"  {'q':<7}{'Gross (144/288)':>18}" +
+              "".join(f"{'d=' + str(c['d']) + ' (' + str(c['qubit_dati_surface']) + ')':>16}"
+                      for c in confronto))
+        for i, q in enumerate(args.q_list):
+            riga = f"  {q:<7}{gross['punti'][i]['p_fallimento']:>18.3e}"
+            riga += "".join(f"{c['righe'][i]['surface_p_blocco']:>16.3e}" for c in confronto)
+            print(riga)
     print(f"\nTempo totale: {time.time() - t_tot:.0f}s")
 
     if args.quick:
@@ -401,6 +421,9 @@ def main():
                                   "risultati IBM a livello di circuito"),
         'experiment_manifest': manifest(args),
         'parametri': {
+            'etichetta': args.etichetta, 'solo_gross': args.solo_gross,
+            'senza_gross': args.senza_gross, 'decoder_surface': args.decoder_surface,
+            'ms_scaling_factor': args.ms_scaling_factor,
             'q_list': args.q_list, 'distances': args.distances,
             'shots_max': args.shots_max, 'min_failures': args.min_failures,
             'chunk': args.chunk, 'workers': args.workers,
@@ -414,7 +437,8 @@ def main():
         'confronto_12_logici': confronto,
     }
     os.makedirs(args.output_dir, exist_ok=True)
-    nome = f"results_M16_gross_code_capacity_{datetime.now():%Y%m%d_%H%M%S}.json"
+    suffisso = f"_{args.etichetta}" if args.etichetta else ""
+    nome = f"results_M16_gross_code_capacity{suffisso}_{datetime.now():%Y%m%d_%H%M%S}.json"
     path = os.path.join(args.output_dir, nome)
     with open(path, 'w', encoding='utf-8') as fh:
         json.dump(out, fh, indent=2, ensure_ascii=False)

@@ -1,0 +1,41 @@
+========================================================================================
+M16 — Gross code [[144,12,12]] e surface code in code-capacity (errori X)
+    q = [0.005, 0.01, 0.02]   shots max 5000000   stop a 1000 fallimenti   workers 20
+    Gross: n=144 k=12 rank Hx=66 rank Hz=66 pesi righe [6]
+========================================================================================
+  gross_bposd          q=0.005  p_L=4.080e-05 (204/5000000)  17.81s
+  gross_bposd          q=0.01   p_L=2.828e-04 (1018/3600000)  15.74s
+  gross_bposd          q=0.02   p_L=1.678e-03 (1007/600000)  3.46s
+  surface_d7_mwpm      q=0.005  p_L=3.200e-06 (16/5000000)  1.22s
+  surface_d7_mwpm      q=0.01   p_L=4.180e-05 (209/5000000)  1.22s
+  surface_d7_mwpm      q=0.02   p_L=6.089e-04 (1096/1800000)  0.43s
+  surface_d7_bposd     q=0.005  p_L=2.000e-06 (10/5000000)  13.42s
+  surface_d7_bposd     q=0.01   p_L=4.160e-05 (208/5000000)  23.17s
+  surface_d7_bposd     q=0.02   p_L=6.178e-04 (1112/1800000)  14.08s
+  surface_d9_mwpm      q=0.005  p_L=8.000e-07 (4/5000000)  2.5s
+  surface_d9_mwpm      q=0.01   p_L=8.200e-06 (41/5000000)  2.72s
+  surface_d9_mwpm      q=0.02   p_L=1.830e-04 (915/5000000)  7.04s
+  surface_d9_bposd     q=0.005  p_L=6.000e-07 (3/5000000)  27.32s
+  surface_d9_bposd     q=0.01   p_L=5.400e-06 (27/5000000)  54.67s
+  surface_d9_bposd     q=0.02   p_L=1.638e-04 (819/5000000)  93.07s
+  surface_d11_mwpm     q=0.005  p_L=0.000e+00 (0/5000000)  5.3s
+  surface_d11_mwpm     q=0.01   p_L=4.000e-07 (2/5000000)  5.16s
+  surface_d11_mwpm     q=0.02   p_L=5.040e-05 (252/5000000)  5.37s
+  surface_d11_bposd    q=0.005  p_L=0.000e+00 (0/5000000)  55.54s
+  surface_d11_bposd    q=0.01   p_L=4.000e-07 (2/5000000)  95.13s
+  surface_d11_bposd    q=0.02   p_L=5.680e-05 (284/5000000)  170.2s
+  surface_d13_mwpm     q=0.005  p_L=0.000e+00 (0/5000000)  9.92s
+  surface_d13_mwpm     q=0.01   p_L=2.000e-07 (1/5000000)  13.35s
+  surface_d13_mwpm     q=0.02   p_L=1.580e-05 (79/5000000)  11.68s
+  surface_d13_bposd    q=0.005  p_L=0.000e+00 (0/5000000)  95.61s
+  surface_d13_bposd    q=0.01   p_L=0.000e+00 (0/5000000)  164.99s
+  surface_d13_bposd    q=0.02   p_L=1.020e-05 (51/5000000)  288.49s
+
+Confronto a 12 qubit logici: P(almeno un logico errato)
+  q         Gross (144/288)       d=7 (588)       d=9 (972)     d=11 (1452)     d=13 (2028)
+  0.005           4.080e-05       3.840e-05       9.600e-06       0.000e+00       0.000e+00
+  0.01            2.828e-04       5.015e-04       9.840e-05       4.800e-06       2.400e-06
+  0.02            1.678e-03       7.282e-03       2.194e-03       6.046e-04       1.896e-04
+
+Tempo totale: 1199s
+Risultati salvati in: artifacts/v2_20260926/results_M16_gross_code_capacity_basso_rumore_20260926_033631.json
