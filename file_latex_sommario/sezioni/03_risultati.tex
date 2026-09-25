@@ -2,75 +2,26 @@
 
 \subsection{Validazione e contributo del post-processing}
 
-Le verifiche ideali dell'aritmetica danno una distanza di variazione totale dalla
-distribuzione teorica di \(1{,}38 \times 10^{- 9}\) per \(N = 21\) e
-\(2{,}50 \times 10^{- 13}\) per \(N = 35\), e attestano la correttezza funzionale, non
-le prestazioni sotto rumore.
+Le verifiche ideali dell'aritmetica mostrano una distanza di variazione totale dalla distribuzione teorica pari a \(1{,}38 \times 10^{-9}\) per \(N=21\) e \(2{,}50 \times 10^{-13}\) per \(N=35\), confermando la correttezza dei circuiti in assenza di rumore.
 
-In UC1/UC2 le SVM selezionate raggiungono F1 pari a 0,919/0,923 e area sotto la curva
-ROC pari a 0,965/0,958, ma la capacità predittiva non riduce il costo operativo. TOP-4
-richiede in media 1,00 iterazioni in entrambi gli scenari, contro 1,37/1,50 di TOP-1
-(\(p_{\mathrm{Holm}} = 0{,}0024/0{,}0015\)); il Metodo 2 richiede 1,50/1,37
-iterazioni, non migliora significativamente TOP-1 ed è peggiore della propria ablazione
-TOP-4 (\(p_{\mathrm{Holm}} = 0{,}0033/0{,}0096\)). Il beneficio appartiene quindi alla
-ricerca multi-candidato. Il filtro interviene su dati già acquisiti e può scartare
-istogrammi che TOP-4 avrebbe utilizzato con successo. Nemmeno la ZNE migliora lo
-scenario di riferimento e, a due e tre livelli, richiede in media 3.072 e 4.813 shot,
-contro 1.399 di TOP-1 e 1.024 di TOP-4. Questi esiti valgono per metodi, istanza e
-rumore esaminati e non provano un'inefficacia generale del machine learning o della
-mitigazione.
+Negli scenari UC1 e UC2, le SVM selezionate raggiungono valori di F1 pari a 0,919 e 0,923 e area sotto la curva ROC pari a 0,965 e 0,958. Tuttavia, questa capacità predittiva non porta a una riduzione del numero di iterazioni necessarie. TOP-4 richiede in media 1,00 iterazioni in entrambi gli scenari, contro 1,37 e 1,50 di TOP-1, con differenze statisticamente significative nei test appaiati; il Metodo 2 richiede invece 1,50 e 1,37 iterazioni, senza migliorare significativamente TOP-1 e risultando peggiore di TOP-4. Il vantaggio osservato sembra quindi legato soprattutto alla possibilità di considerare più candidati. Questi risultati restano comunque legati all'istanza, al rumore e ai metodi considerati.
 
-\subsection{Protezione della memoria e decodifica ibrida}
+\subsection{Protezione della memoria e decodifica}
 
-Il codice a ripetizione riproduce, entro l'incertezza Monte Carlo, la legge
-\(p_{L} = 3p^{2} - 2p^{3}\). Per Steane la dipendenza dall'errore fisico è circa
-quadratica (pendenza logaritmica 1,94) e l'intersezione fra \(p_{L}\) e \(p\) cade
-intorno a 0,08, una pseudo-soglia del modello con errori sui dati e sindrome ideale e
-non la soglia operativa di un'architettura fault-tolerant. Nel surface code, sotto
-soglia aumentare la distanza riduce l'errore logico, sopra soglia lo aumenta; il fit
-sotto soglia dà circa 0,86\% in base \(Z\) e 0,81\% in base \(X\), per il circuito di
-memoria, il rumore e il decoder adottati.
+Le verifiche iniziali sui codici a ripetizione e di Steane mostrano il comportamento atteso. Il codice a ripetizione riproduce, entro l'incertezza Monte Carlo, la relazione \(p_L=3p^2-2p^3\); per Steane la dipendenza dall'errore fisico è circa quadratica, con pendenza logaritmica pari a 1,94 e pseudo-soglia intorno a 0,08.
 
-Con rumore nominale la rete autonoma non supera significativamente MWPM nelle
-quattordici configurazioni iniziali. Il quadro cambia con correlazioni fra qubit
-adiacenti che il grafo del matching non rappresenta adeguatamente, e in questo regime il
-decoder ibrido riduce l'errore logico. Per esempio, a \(d = 3\), \(p = 0{,}003\) e
-intensità di crosstalk 0,01,
-\(p_{L}\) passa da 0,05829 con MWPM a 0,04851 con l'ibrido, una riduzione relativa di
-circa il 16,8\% (Tabella 5.9 della tesi), significativa al test appaiato di McNemar; con
-\(d\) cicli il beneficio è più contenuto a distanza 5 e non significativo a distanza 7.
-A distanza 5, nelle configurazioni considerate, BP+OSD supera l'ibrido basato
-su MWPM, e le prove che variano separatamente distanza e cicli mostrano il ruolo della
-dimensione dell'ingresso della rete. Il contributo appreso dipende quindi da struttura
-del rumore, riferimento analitico e rappresentazione dei dati, non dalla sola distanza
-del codice.
+L'analisi principale riguarda il surface code. Sotto soglia, aumentare la distanza riduce l'errore logico, mentre sopra soglia si osserva il comportamento opposto; il fit fornisce valori di circa 0,86\% in base \(Z\) e 0,81\% in base \(X\).
+
+Con rumore nominale, la rete neurale autonoma non mostra un vantaggio significativo rispetto a MWPM. In presenza di crosstalk, invece, il decoder ibrido migliora le prestazioni: per \(d=3\), \(p=0{,}003\) e crosstalk pari a 0,01, \(p_L\) passa da 0,05829 a 0,04851, con una riduzione relativa di circa il 16,8\%, significativa al test appaiato di McNemar. Il beneficio si riduce a distanza 5 e non risulta significativo a distanza 7.
+
+BP+OSD viene considerato come ulteriore confronto e, nelle configurazioni analizzate a distanza 5, supera l'ibrido basato su MWPM. Le prove mostrano inoltre che le prestazioni dipendono dalla distanza, dal numero di cicli e dalla dimensione dell'ingresso della rete.
 
 \subsection{Successo di fattorizzazione e riferimento uniforme}
 
-Senza rumore il successo per singolo shot è 74,89\% (intervallo di confidenza al 95\%
-{[}74,59\%; 75,18\%{]}), coerente con il 75\% atteso. Al crescere di \(p_{g}\)
-l'andamento è compatibile con una funzione non crescente e, per \(p_{g} = 0{,}5\), il
-successo è 24,59\%, prossimo al riferimento uniforme del 24,61\%
-(Sezione~\ref{sec:implementazione}). Il solo numero di fattorizzazioni corrette non
-dice perciò quanta informazione quantistica resti nel circuito.
+In assenza di rumore, il successo per singolo shot è pari al 74,89\% (intervallo di confidenza al 95\% {[}74,59\%; 75,18\%{]}), in accordo con il 75\% atteso. All'aumentare di \(p_g\), il successo diminuisce fino al 24,59\% per \(p_g=0{,}5\), valore molto vicino al riferimento uniforme del 24,61\% (Sezione~\ref{sec:implementazione}). Questo mostra che il solo numero di fattorizzazioni corrette non è sufficiente per descrivere quanta struttura quantistica rimanga nel circuito.
 
 \subsection{Efficacia e limiti della QFT approssimata}
 
-\textbf{Nel pilota di Shor per} \(N = 15\)\textbf{, l'AQFT selezionata aumenta la
-probabilità di successo per shot dal 47,92\% al 62,79\%} (+14,87 punti percentuali
-sui dati indipendenti di verifica, intervallo di confidenza Newcombe al 95\% {[}12,73;
-16,99{]} punti), mentre le porte a due qubit ECR scendono da 362 a 279 e la
-profondità da 1.351 a 1.141. Il beneficio riguarda la fattorizzazione, non solo la stima
-di fase isolata.
+Nel pilota di Shor per \(N=15\), l'AQFT selezionata aumenta la probabilità di successo per shot dal 47,92\% al 62,79\%, con un incremento di 14,87 punti percentuali, pari al 31\% in termini relativi, sui dati indipendenti di verifica (intervallo di confidenza Newcombe al 95\% {[}12,73; 16,99{]}). Allo stesso tempo, le porte ECR diminuiscono da 362 a 279 (\(-22{,}9\%\)) e la profondità del circuito da 1.351 a 1.141 (\(-15{,}5\%\)). Il miglioramento riguarda quindi direttamente la fattorizzazione e non solo la stima di fase.
 
-Per \(N = 21\) il troncamento delle QFT interne all'aritmetica riduce le porte ECR da
-49.661 a 23.178, ma il successo ideale scende dal 46,67\% al 40,13\%; nei tre confronti
-rumorosi tutti gli intervalli delle differenze comprendono lo zero. Con 128 shot di
-verifica per variante e livello di rumore la capacità di rilevare effetti piccoli è
-limitata, e l'assenza di vantaggio non dimostra l'inefficacia dell'approssimazione. Nei
-nove benchmark di stima di fase le differenze sono tutte favorevoli alla variante
-selezionata e sei intervalli individuali al 95\% escludono lo zero; il massimo
-incremento è 12,55 punti percentuali su dieci qubit ({[}9,77; 15,30{]}). I confronti
-sono esplorativi, senza correzione simultanea dei nove intervalli; il grado di
-troncamento migliore fra quelli provati è due o tre, non necessariamente costante per
-registri arbitrariamente grandi.
+Per \(N=21\), il troncamento delle QFT interne all'aritmetica riduce le porte ECR da 49.661 a 23.178, circa la metà (\(-53{,}3\%\)), ma il successo ideale scende dal 46,67\% al 40,13\% (\(-6{,}54\) punti percentuali). Nei tre confronti con rumore, gli intervalli delle differenze comprendono sempre lo zero. Con 128 shot di verifica per variante e livello di rumore, la capacità di rilevare effetti piccoli resta limitata. Nei nove benchmark di stima di fase, tutte le differenze sono favorevoli alla variante selezionata e sei intervalli individuali al 95\% escludono lo zero; l'incremento massimo è pari a 12,55 punti percentuali su dieci qubit ({[}9,77; 15,30{]}). I confronti restano esplorativi e il grado di troncamento migliore tra quelli provati, pari a due o tre, non può essere considerato valido in generale per registri di dimensione arbitraria.

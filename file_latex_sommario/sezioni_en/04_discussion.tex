@@ -1,27 +1,26 @@
 \section{Discussion and conclusions}
 
-Post-processing uses measurement information more effectively but does not modify the
-quantum state. The classifier ablation gives a methodological result: strong predictive
-metrics do not guarantee lower factorization cost. Decoding differs because syndromes
-contain structured error information, and the hybrid works where the analytical decoder
-misses noise correlations, although it must also be compared with other analytical
-decoders. A learned model's value thus depends on its input and on what the baseline
-leaves unused; the two applications involve different tasks and data, so their difference
-cannot be attributed only to when machine learning intervenes.
+Post-processing makes better use of the information contained in the measurements, but
+does not act on the quantum state. The ablation study shows that good classifier
+performance does not necessarily imply a lower factorization cost, whereas in decoding
+the learned model can be useful when syndromes contain correlations that the reference
+decoder does not adequately represent.
 
-For \(N = 15\), the AQFT gives a separate positive result: fewer gates accompany higher
-success. The order \(r = 4\) yields phases exactly represented by two control-register
-bits, so removed rotations carry no useful information and cost little precision. For
-\(N = 21\), where \(r = 6\), phases are not exact and arithmetic is more complex, so the
-benefit does not transfer automatically. Approximation must be chosen for each instance
-and noise regime, then tested on data separate from selection.
+For \(N = 15\), the AQFT yields a reduction in the number of gates accompanied by an
+increase in success probability. Since the order \(r = 4\) generates phases exactly
+representable with two control-register bits, the removed rotations contribute little to
+the useful information. For \(N = 21\), with \(r = 6\), the phases are instead not
+exactly representable and the arithmetic is more complex; the benefit of the
+approximation therefore does not transfer automatically. The truncation degree must be
+chosen according to the instance and the noise regime, and verified on independent data.
 
-The conclusions remain limited to simulation: post-processing uses \(N = 15\) with
-uniform, stationary noise; QEC uses separate memory circuits; and AQFT tests use one
-offline calibration and few instances and phases. The work demonstrates neither complete
-fault-tolerant Shor nor the resources for cryptographic-scale factorization. It provides a
-quantitative, reproducible characterization of when the studied components help, to be
-extended through hardware validation, independent variation of \(N\) and \(r\), and
-integration of protected logical operations, decoding, and arithmetic optimization. A
-common rule emerges: complexity is justified only if it exploits information unused by
-the baseline or reduces circuit cost by more than the loss introduced.
+The conclusions remain limited to the simulation context analyzed. Post-processing is
+evaluated mainly for \(N = 15\), quantum error correction on separate memory circuits,
+and the AQFT on a limited number of instances with a single offline calibration. Neither
+a complete fault-tolerant execution of Shor nor an estimate of the resources required for
+cryptographic-scale factorization is carried out.
+
+Overall, the work provides a quantitative characterization of the conditions under which
+post-processing, decoding, and circuit approximation can be useful. Future developments
+may include validation on real hardware, further values of \(N\) and of the order \(r\),
+and the integration of protected logical operations, decoding, and circuit optimization.
