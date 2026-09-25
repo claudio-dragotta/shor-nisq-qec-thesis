@@ -1,0 +1,230 @@
+{
+  "schema_version": "2.0",
+  "milestone": "M16_gross_code_capacity",
+  "stato": "esplorativo",
+  "modello_rumore": "code-capacity: errori X indipendenti con probabilita' q sui qubit di dato, sindromi perfette, un ciclo",
+  "limite_interpretativo": "confronto fra codici nello stesso modello code-capacity; non confrontabile con M7 (livello di circuito) ne' con i risultati IBM a livello di circuito",
+  "experiment_manifest": {
+    "script": "gross_code_capacity.py",
+    "script_sha256": "c9fce9a3d63688f7dd27883e49971cecb1648a8541466c7818970b05edeaaf8a",
+    "git_commit": "3269c23d4c723f4edcedb460866f675af11f57e1",
+    "argv": [
+      "gross_code_capacity.py",
+      "--seed",
+      "42",
+      "--solo-gross",
+      "--bp-method",
+      "minimum_sum",
+      "--ms-scaling-factor",
+      "0.625",
+      "--bp-max-iter",
+      "1000",
+      "--osd-order",
+      "20",
+      "--etichetta",
+      "sens_minsum_iter1000_osd20",
+      "--output-dir",
+      "artifacts/v2_20260926"
+    ],
+    "seed": 42,
+    "python": "3.12.3",
+    "interprete": "/home/claudio/quantum-env/bin/python",
+    "piattaforma": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "cpu": 22,
+    "packages": {
+      "numpy": "2.5.1",
+      "ldpc": "2.4.1",
+      "PyMatching": "2.4.0",
+      "stim": "1.16.0",
+      "scipy": "1.18.0"
+    },
+    "timestamp": "2026-09-26T04:17:48"
+  },
+  "parametri": {
+    "etichetta": "sens_minsum_iter1000_osd20",
+    "solo_gross": true,
+    "senza_gross": false,
+    "decoder_surface": "entrambi",
+    "ms_scaling_factor": 0.625,
+    "q_list": [
+      0.005,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.08,
+      0.1
+    ],
+    "distances": [],
+    "shots_max": 200000,
+    "min_failures": 1000,
+    "chunk": 2000,
+    "workers": 20,
+    "bposd": {
+      "max_iter": 1000,
+      "bp_method": "minimum_sum",
+      "osd_method": "osd_cs",
+      "osd_order": 20
+    },
+    "mwpm": "PyMatching, pesi uniformi ln((1-q)/q)",
+    "gross_code": {
+      "l": 12,
+      "m": 6,
+      "A": "x^3 + y + y^2",
+      "B": "y^3 + x + x^2"
+    }
+  },
+  "verifiche_codici": {
+    "gross": {
+      "n": 144,
+      "k": 12,
+      "commutano": true,
+      "righe_Hx": 72,
+      "righe_Hz": 72,
+      "rank_Hx": 66,
+      "rank_Hz": 66,
+      "peso_righe_Hz": [
+        6
+      ],
+      "peso_colonne_Hz": [
+        3
+      ],
+      "sha256_Hx": "195d5586a406f0194b89649b6a2499ec2b481edb81c91293daf1745d8b806641",
+      "sha256_Hz": "72dc3b9cefec7d45c99325c8f8d0787174e3cea207a41cd5b740a8b05f263918"
+    }
+  },
+  "risultati": [
+    {
+      "nome": "gross_bposd",
+      "codice": "gross",
+      "decoder": "bposd",
+      "n_dati": 144,
+      "k": 12,
+      "punti": [
+        {
+          "q": 0.005,
+          "shots": 200000,
+          "fallimenti": 1,
+          "p_fallimento": 5e-06,
+          "ic95_wilson": [
+            8.826233199317763e-07,
+            2.8324109801225995e-05
+          ],
+          "sindromi_violate": 0,
+          "secondi": 0.8
+        },
+        {
+          "q": 0.01,
+          "shots": 200000,
+          "fallimenti": 10,
+          "p_fallimento": 5e-05,
+          "ic95_wilson": [
+            2.7160148887197544e-05,
+            9.204485561069311e-05
+          ],
+          "sindromi_violate": 0,
+          "secondi": 0.64
+        },
+        {
+          "q": 0.02,
+          "shots": 200000,
+          "fallimenti": 134,
+          "p_fallimento": 0.00067,
+          "ic95_wilson": [
+            0.0005657837515368133,
+            0.0007933974363738413
+          ],
+          "sindromi_violate": 0,
+          "secondi": 0.84
+        },
+        {
+          "q": 0.03,
+          "shots": 200000,
+          "fallimenti": 532,
+          "p_fallimento": 0.00266,
+          "ic95_wilson": [
+            0.00244361926636461,
+            0.0028954854779837873
+          ],
+          "sindromi_violate": 0,
+          "secondi": 1.56
+        },
+        {
+          "q": 0.04,
+          "shots": 120000,
+          "fallimenti": 1116,
+          "p_fallimento": 0.0093,
+          "ic95_wilson": [
+            0.008772401666527718,
+            0.009859014058509072
+          ],
+          "sindromi_violate": 0,
+          "secondi": 2.45
+        },
+        {
+          "q": 0.05,
+          "shots": 40000,
+          "fallimenti": 1231,
+          "p_fallimento": 0.030775,
+          "ic95_wilson": [
+            0.0291270370152307,
+            0.03251307975602966
+          ],
+          "sindromi_violate": 0,
+          "secondi": 1.38
+        },
+        {
+          "q": 0.06,
+          "shots": 40000,
+          "fallimenti": 3147,
+          "p_fallimento": 0.078675,
+          "ic95_wilson": [
+            0.07607686142588398,
+            0.0813540559349797
+          ],
+          "sindromi_violate": 0,
+          "secondi": 2.13
+        },
+        {
+          "q": 0.08,
+          "shots": 40000,
+          "fallimenti": 11136,
+          "p_fallimento": 0.2784,
+          "ic95_wilson": [
+            0.27402904819082785,
+            0.28281351108566266
+          ],
+          "sindromi_violate": 0,
+          "secondi": 7.65
+        },
+        {
+          "q": 0.1,
+          "shots": 40000,
+          "fallimenti": 22443,
+          "p_fallimento": 0.561075,
+          "ic95_wilson": [
+            0.5562061473797328,
+            0.5659321228918752
+          ],
+          "sindromi_violate": 0,
+          "secondi": 6.58
+        }
+      ],
+      "fit_loglog": {
+        "pendenza": 4.449285455157462,
+        "intercetta": 9.865953826420629,
+        "q_usati": [
+          0.02,
+          0.03,
+          0.04,
+          0.05,
+          0.06,
+          0.08
+        ]
+      }
+    }
+  ],
+  "confronto_12_logici": []
+}

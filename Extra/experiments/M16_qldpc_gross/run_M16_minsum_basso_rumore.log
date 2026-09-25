@@ -1,0 +1,17 @@
+========================================================================================
+M16 — Gross code [[144,12,12]] e surface code in code-capacity (errori X)
+    q = [0.005, 0.01, 0.02]   shots max 20000000   stop a 1000 fallimenti   workers 20
+    Gross: n=144 k=12 rank Hx=66 rank Hz=66 pesi righe [6]
+========================================================================================
+  gross_bposd          q=0.005  p_L=9.600e-06 (192/20000000)  53.95s
+  gross_bposd          q=0.01   p_L=9.817e-05 (1021/10400000)  28.67s
+  gross_bposd          q=0.02   p_L=7.643e-04 (1070/1400000)  3.89s
+
+Confronto a 12 qubit logici: P(almeno un logico errato)
+  q         Gross (144/288)
+  0.005           9.600e-06
+  0.01            9.817e-05
+  0.02            7.643e-04
+
+Tempo totale: 87s
+Risultati salvati in: artifacts/v2_20260926/results_M16_gross_code_capacity_minsum_basso_rumore_20260926_041723.json
