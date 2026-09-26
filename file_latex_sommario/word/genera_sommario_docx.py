@@ -182,16 +182,16 @@ CONTENUTO = [
         'circuito perde un po’ di precisione, ma ha meno porte e minore profondità, e '
         'quindi meno occasioni di errore [13]. La domanda è se il rumore evitato compensi '
         'la precisione persa.',
-        'Si analizzano separatamente il troncamento della QFT inversa finale di Shor per '
-        '[i]N[/i] = 15 e quello delle trasformate impiegate nell’aritmetica modulare per '
-        '[i]N[/i] = 21; benchmark distinti di stima di fase, con registri da sei a dieci qubit, '
-        'isolano l’effetto del troncamento. Il modello di rumore è costruito a partire '
-        'dalle infedeltà delle porte e dagli errori di lettura della calibrazione offline '
-        'FakeSherbrooke, senza aggiungere contributi [i]T[/i][sub]1[/sub]/[i]T[/i][sub]2[/sub], '
-        'mantenendo invariati layout e semi casuali. Il grado di troncamento viene selezionato '
-        'su un insieme dedicato e valutato su dati di verifica indipendenti; gli shot per '
-        'configurazione, 8.192 nel pilota per [i]N[/i] = 15 e 256 per [i]N[/i] = 21, sono '
-        'suddivisi equamente tra selezione e verifica.',
+        'L’AQFT si applica separatamente alla QFT inversa finale di Shor per [i]N[/i] = 15 '
+        'e alle QFT interne all’aritmetica modulare per [i]N[/i] = 21; benchmark distinti '
+        'di stima di fase, con registri da sei a dieci qubit, isolano l’effetto '
+        'dell’AQFT. Il modello di rumore è costruito a partire dalle infedeltà '
+        'delle porte e dagli errori di lettura della calibrazione offline FakeSherbrooke, senza '
+        'aggiungere contributi [i]T[/i][sub]1[/sub]/[i]T[/i][sub]2[/sub], mantenendo invariati '
+        'layout e semi casuali. Il grado di approssimazione dell’AQFT, cioè quante '
+        'rotazioni si eliminano, viene selezionato su un insieme dedicato e valutato su dati di '
+        'verifica indipendenti; gli shot per configurazione, 8.192 nel pilota per [i]N[/i] = 15 '
+        'e 256 per [i]N[/i] = 21, sono suddivisi equamente tra selezione e verifica.',
     ]),
     (1, 'Risultati', []),
     (2, 'Validazione dei circuiti e sensibilità di Shor agli errori di porta', [
@@ -255,15 +255,15 @@ CONTENUTO = [
         'le porte a due qubit ECR scendono da 362 a 279 (−22,9%) e la profondità da 1.351 '
         'a 1.141 (−15,5%). In questo caso il rumore evitato supera la precisione persa, e il '
         'miglioramento riguarda direttamente la fattorizzazione, non solo la stima di fase.',
-        'Per [i]N[/i] = 21 il troncamento delle QFT interne all’aritmetica dimezza le porte '
-        'ECR, da 49.661 a 23.178 (−53,3%), ma il successo ideale scende dal 46,67% al 40,13% '
-        '(−6,54 punti percentuali); nei tre confronti con rumore, con soli 128 shot di '
-        'verifica per variante, gli intervalli delle differenze comprendono sempre lo zero, '
-        'quindi un beneficio non è dimostrato. Nei nove benchmark di stima di fase tutte le '
-        'differenze favoriscono la variante troncata, fino a 12,55 punti percentuali '
-        '([9,77; 15,30]). I confronti restano esplorativi e il grado di troncamento migliore '
-        'fra quelli provati, due o tre, non vale in generale per registri di dimensione '
-        'arbitraria.',
+        'Per [i]N[/i] = 21 l’AQFT applicata alle QFT interne all’aritmetica dimezza le '
+        'porte ECR, da 49.661 a 23.178 (−53,3%), ma il successo ideale scende dal 46,67% al '
+        '40,13% (−6,54 punti percentuali); nei tre confronti con rumore fra AQFT e QFT '
+        'completa, con soli 128 shot di verifica per variante, gli intervalli delle differenze '
+        'comprendono sempre lo zero, quindi per [i]N[/i] = 21 un beneficio dell’AQFT non '
+        'è dimostrato. Nei nove benchmark di stima di fase tutte le differenze favoriscono '
+        'l’AQFT, fino a 12,55 punti percentuali ([9,77; 15,30]). I confronti restano '
+        'esplorativi e il grado di approssimazione dell’AQFT migliore fra quelli provati, '
+        'due o tre, non vale in generale per registri di dimensione arbitraria.',
     ]),
     (1, 'Discussione e conclusioni', []),
     (1, 'Riferimenti bibliografici essenziali', []),
