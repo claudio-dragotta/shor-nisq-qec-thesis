@@ -254,14 +254,17 @@ def pendenza_loglog(punti, min_fail=20, p_max=0.3):
 
 
 # --- manifest -----------------------------------------------------------------------------
-def manifest(args):
+def manifest(args, script=None):
+    """Metadati della corsa. `script` e' il file che lancia la corsa; se omesso, questo
+    modulo. Lo SHA-256 di questo modulo e' registrato comunque come dipendenza."""
     def pv(nome):
         try:
             return version(nome)
         except PackageNotFoundError:
             return 'not-installed'
 
-    qui = os.path.abspath(__file__)
+    qui = os.path.abspath(script or __file__)
+    modulo = os.path.abspath(__file__)
     try:
         commit = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=os.path.dirname(qui),
                                 capture_output=True, text=True, timeout=20).stdout.strip()
@@ -270,6 +273,7 @@ def manifest(args):
     return {
         'script': os.path.basename(qui),
         'script_sha256': hashlib.sha256(open(qui, 'rb').read()).hexdigest(),
+        'modulo_base_sha256': hashlib.sha256(open(modulo, 'rb').read()).hexdigest(),
         'git_commit': commit or 'non-disponibile',
         'argv': sys.argv,
         'seed': args.seed,
