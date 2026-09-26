@@ -266,40 +266,17 @@ CONTENUTO = [
         'due o tre, non vale in generale per registri di dimensione arbitraria.',
     ]),
     (1, 'Discussione e conclusioni', [
-        'Il punto di partenza mostra che l’algoritmo di Shor è molto fragile agli '
-        'errori di porta: già errori piccoli degradano il successo e, per errori elevati, i '
-        'fattori corretti che si ottengono ancora dipendono solo dalla permissività della '
-        'verifica classica. Le tre strategie intervengono in punti diversi di questa catena.',
-        'Il post-processing sfrutta meglio l’informazione contenuta nelle misure, ma non '
-        'interviene sullo stato quantistico: lo studio di ablazione mostra che buone '
-        'prestazioni del classificatore non si traducono in un minor costo di fattorizzazione, '
-        'perché il vantaggio viene dal considerare più candidati. La correzione '
-        'quantistica protegge invece l’informazione, e qui il modello appreso può essere '
-        'utile quando le sindromi contengono correlazioni che il decoder di riferimento non '
-        'rappresenta, come il crosstalk. Il confronto con il Gross code mostra inoltre che, '
-        'oltre alla distanza, contano la struttura del codice e la scelta del decoder: a '
-        'parità di qubit logici un codice qLDPC riduce molto il numero di qubit, ma solo '
-        'con un decoder adatto.',
-        'Per [i]N[/i] = 15 l’AQFT riduce le porte e aumenta il successo, perché '
-        'l’ordine [i]r[/i] = 4 genera fasi rappresentabili esattamente con due bit del '
-        'registro di controllo e le rotazioni eliminate contribuiscono poco all’informazione '
-        'utile. Per [i]N[/i] = 21, con [i]r[/i] = 6, le fasi non sono rappresentabili '
-        'esattamente e l’aritmetica è più complessa: il beneficio dell’AQFT non '
-        'si trasferisce automaticamente, e il suo grado di approssimazione va scelto in '
-        'funzione dell’istanza e del rumore e verificato su dati indipendenti.',
-        'Nel complesso, la selezione degli esiti a valle della misura riduce il costo di '
-        'fattorizzazione, ma non può recuperare l’informazione che il rumore ha già '
-        'distrutto: per proteggerla servono strategie che agiscono prima, correggendo gli '
-        'errori o riducendo il numero di porte con l’AQFT, e in entrambi i casi il beneficio '
-        'dipende dalla scelta del codice, del decoder e del grado di approssimazione.',
-        'Le conclusioni restano limitate al contesto simulativo: il post-processing è '
-        'valutato per [i]N[/i] = 15, la correzione quantistica su circuiti di memoria separati '
-        'e, per il Gross code, nel solo modello code-capacity, l’AQFT su poche istanze con '
-        'una singola calibrazione offline. Non viene realizzata un’esecuzione '
-        'fault-tolerant completa di Shor né una stima delle risorse per la fattorizzazione '
-        'su scala crittografica. Sviluppi futuri potranno includere la verifica su hardware '
-        'reale, ulteriori valori di [i]N[/i] e dell’ordine [i]r[/i], e l’integrazione fra '
-        'operazioni logiche protette, decodifica e AQFT.',
+        'Lo studio ha mostrato che l’algoritmo di Shor è molto fragile al rumore: '
+        'bastano pochi errori per degradarne il risultato. La selezione degli esiti riduce il '
+        'numero di tentativi necessari, ma il vantaggio viene dal provare più candidati e '
+        'non dal machine learning. La correzione quantistica degli errori protegge invece '
+        'l’informazione, e un codice qLDPC come il Gross code ottiene la stessa protezione '
+        'del surface code con molti meno qubit, purché si usi un decoder adatto. '
+        'L’AQFT, infine, migliora il successo di Shor per [i]N[/i] = 15 riducendo le '
+        'porte, mentre per [i]N[/i] = 21 un beneficio dell’AQFT non è dimostrato.',
+        'Questi risultati valgono nel contesto simulativo considerato e non includono '
+        'un’esecuzione fault-tolerant completa di Shor né una verifica su hardware '
+        'reale.',
     ]),
     (1, 'Riferimenti bibliografici essenziali', []),
 ]
