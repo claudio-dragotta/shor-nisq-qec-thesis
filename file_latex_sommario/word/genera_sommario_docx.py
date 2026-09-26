@@ -187,7 +187,24 @@ CONTENUTO = [
         'configurazioni, mentre la configurazione parallela usata inizialmente falliva già '
         'con tre.',
     ]),
-    (2, 'Riduzione del rumore con la AQFT', []),
+    (2, 'Riduzione del rumore con la AQFT', [
+        'La terza strategia riduce l’effetto del rumore alla fonte, diminuendo il numero di '
+        'porte su cui può agire. La QFT approssimata (AQFT) elimina le rotazioni controllate '
+        'di piccolo angolo della QFT, che contribuiscono poco all’informazione di fase: il '
+        'circuito perde un po’ di precisione, ma ha meno porte e minore profondità, e '
+        'quindi meno occasioni di errore [13]. La domanda è se il rumore evitato compensi '
+        'la precisione persa.',
+        'Si analizzano separatamente il troncamento della QFT inversa finale di Shor per '
+        '[i]N[/i] = 15 e quello delle trasformate impiegate nell’aritmetica modulare per '
+        '[i]N[/i] = 21; benchmark distinti di stima di fase, con registri da sei a dieci qubit, '
+        'isolano l’effetto del troncamento. Il modello di rumore è costruito a partire '
+        'dalle infedeltà delle porte e dagli errori di lettura della calibrazione offline '
+        'FakeSherbrooke, senza aggiungere contributi [i]T[/i][sub]1[/sub]/[i]T[/i][sub]2[/sub], '
+        'mantenendo invariati layout e semi casuali. Il grado di troncamento viene selezionato '
+        'su un insieme dedicato e valutato su dati di verifica indipendenti; gli shot per '
+        'configurazione, 8.192 nel pilota per [i]N[/i] = 15 e 256 per [i]N[/i] = 21, sono '
+        'suddivisi equamente tra selezione e verifica.',
+    ]),
     (1, 'Risultati', []),
     (2, 'Validazione dei circuiti', []),
     (2, 'Post-processing e machine learning', []),
