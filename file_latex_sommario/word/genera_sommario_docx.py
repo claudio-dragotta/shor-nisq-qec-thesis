@@ -113,12 +113,22 @@ CONTENUTO = [
         'variare su 13 valori fra 0 e 0,5.',
         'Per ciascun valore si eseguono 20 repliche indipendenti da 4.096 shot e si misura il '
         'successo per singolo shot, cioè la frazione di esiti da cui il post-processing '
-        'ricava i fattori. Il confronto con il valore ideale del 75% e con il riferimento '
-        'uniforme del 24,61% (Sezione 2.1) indica quanta informazione utile sopravvive al rumore '
-        'e da quale livello di errore la struttura dei picchi si perde. Questa curva motiva le '
-        'strategie successive: selezionare meglio gli esiti già misurati, proteggere '
-        'l’informazione con la correzione degli errori e ridurre il numero di porte su cui '
-        'il rumore può agire.',
+        'ricava i fattori. Senza errori il successo è del 74,89% (intervallo di confidenza '
+        'al 95% [74,59%; 75,18%]), in accordo con il 75% atteso. Già errori piccoli lo '
+        'riducono in modo visibile: 72,5% per [i]p[/i][sub]g[/sub] = 0,1%, 56,5% per '
+        '[i]p[/i][sub]g[/sub] = 1%, 45,2% per [i]p[/i][sub]g[/sub] = 2% e 29,5% per '
+        '[i]p[/i][sub]g[/sub] = 5%. Da [i]p[/i][sub]g[/sub] = 10% in poi il successo resta '
+        'intorno al 25% e per [i]p[/i][sub]g[/sub] = 0,5 vale il 24,59%, praticamente il '
+        'riferimento uniforme del 24,61% (Sezione 2.1): la struttura dei picchi è persa e i '
+        'fattori corretti che si ottengono ancora sono dovuti alla permissività della '
+        'verifica classica.',
+        'La fragilità dipende dal numero di porte: con 294 porte soggette a errore, già '
+        'per [i]p[/i][sub]g[/sub] = 1% si verificano in media circa tre errori per esecuzione. '
+        'Questo risultato è la premessa del lavoro e motiva le tre strategie successive: '
+        'selezionare meglio gli esiti già misurati, proteggere l’informazione con la '
+        'correzione quantistica degli errori e ridurre il numero di porte su cui il rumore può '
+        'agire. Mostra inoltre che il solo numero di fattorizzazioni corrette non basta a '
+        'descrivere quanta struttura quantistica rimanga nel circuito.',
         'Il modello è fenomenologico e uniforme, non una calibrazione di hardware reale: '
         '[i]p[/i][sub]g[/sub] è una probabilità di errore per porta e non è '
         'direttamente confrontabile con la probabilità di fallimento logico '
@@ -129,7 +139,7 @@ CONTENUTO = [
     (2, 'Correzione quantistica degli errori: surface code e codici qLDPC', []),
     (2, 'Riduzione del rumore con la AQFT', []),
     (1, 'Risultati', []),
-    (2, 'Validazione dei circuiti e sensibilità di Shor al rumore', []),
+    (2, 'Validazione dei circuiti', []),
     (2, 'Post-processing e machine learning', []),
     (2, 'Correzione quantistica degli errori', []),
     (2, 'Riduzione del rumore con la AQFT', []),
