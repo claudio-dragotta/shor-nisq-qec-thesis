@@ -17,8 +17,10 @@ Il testo si scrive in CONTENUTO con un piccolo markup:
 Uso:
     python genera_sommario_docx.py
 """
+import difflib
 import os
 import re
+import shutil
 
 from docx import Document
 from docx.enum.section import WD_SECTION
@@ -31,6 +33,10 @@ from docx.shared import Cm, Pt
 QUI = os.path.dirname(os.path.abspath(__file__))
 LOGO = os.path.join(QUI, '..', 'figure', 'ucbm-logo.png')
 USCITA = os.path.join(QUI, 'Sommario_Tesi_Dragotta.docx')
+# Copia di lavoro condivisa su OneDrive: Claudio la tiene aperta e vede le modifiche.
+# La copia nel repository resta come storico; e' anche il riferimento per capire se la
+# copia OneDrive e' stata modificata a mano dall'ultima generazione.
+ONEDRIVE = r'C:\Users\ludov\Documents\OneDrive\Documenti\Sommario_Tesi_Dragotta.docx'
 
 FONT = 'Times New Roman'
 TITOLO = ('Shor’s Algorithm under Noise: Machine-Learning Ablation, '
@@ -489,8 +495,27 @@ def main():
         for t in paragrafi:
             paragrafo(doc, t)
 
+    # Prima di sovrascrivere la copia OneDrive si controlla che nessuno l'abbia modificata
+    # dopo l'ultima generazione: in quel caso ci si ferma e si mostrano le differenze, da
+    # riportare in CONTENUTO prima di rigenerare.
+    if os.path.exists(ONEDRIVE) and os.path.exists(USCITA):
+        ultima, condivisa = _testo(USCITA), _testo(ONEDRIVE)
+        if ultima != condivisa:
+            print('STOP: la copia OneDrive e\' stata modificata dopo l\'ultima generazione.')
+            for riga in difflib.unified_diff(ultima, condivisa, 'generata', 'onedrive',
+                                             lineterm='', n=0):
+                print(riga)
+            raise SystemExit(1)
+
     doc.save(USCITA)
     print(f'Salvato: {USCITA}')
+    shutil.copyfile(USCITA, ONEDRIVE)
+    print(f'Copiato su OneDrive: {ONEDRIVE}')
+
+
+def _testo(percorso):
+    """Paragrafi del corpo del documento, per confrontare due versioni."""
+    return [p.text for p in Document(percorso).paragraphs]
 
 
 if __name__ == '__main__':
