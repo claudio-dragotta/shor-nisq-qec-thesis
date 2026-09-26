@@ -57,9 +57,9 @@ measuring the logical state, and guide the decoder in choosing the correction.
 
 Repetition and Steane codes serve as preliminary checks, while the main analysis concerns
 memory circuits based on the surface code
-\cite{en-steane1996,en-fowler2012,en-googleQECBelowThreshold2025}. Quantum low-density
-parity-check (qLDPC) codes, including the Gross code proposed by IBM, are also considered
-as a reference for architectures with reduced overhead.
+\cite{en-steane1996,en-fowler2012,en-googleQECBelowThreshold2025}. An exploratory study
+also compares the surface code with IBM's Gross code, a quantum low-density parity-check
+(qLDPC) code \cite{en-bravyi2024}, with errors on data qubits only and perfect syndromes.
 
 Performance is measured through the logical failure probability \(p_{L}\). The noise
 model includes errors in gates, preparation, and measurement, with crosstalk between
@@ -68,9 +68,8 @@ adjacent qubits in some configurations.
 For the surface code, the reference decoder is \emph{minimum-weight perfect matching}
 (MWPM), which pairs the triggered syndromes by choosing the most probable error
 configuration. MWPM is compared with a stand-alone neural network and with a hybrid strategy. BP+OSD
-(\emph{belief propagation with ordered statistics decoding}) is considered separately as
-an additional comparison decoder, particularly relevant for qLDPC codes
-\cite{en-roffe2020}. The intervention threshold of the hybrid decoder is selected on the
+(\emph{belief propagation with ordered statistics decoding}) is an additional comparison
+decoder and the decoder of the Gross code \cite{en-roffe2020}. The intervention threshold of the hybrid decoder is selected on the
 validation set and kept fixed on the test set \cite{en-alphaqubit2024}.
 
 \subsection{Sensitivity of Shor's algorithm to gate errors}
@@ -86,9 +85,7 @@ per-gate noise and is not directly comparable with the logical failure probabili
 The AQFT removes the small-angle controlled rotations of the QFT, reducing the number of
 gates and the circuit depth at the cost of some precision \cite{en-barencoAQFT1996}.
 Truncation of Shor's final inverse QFT for \(N = 15\) and truncation of the transforms
-used in the modular arithmetic for \(N = 21\) are analyzed separately. Distinct
-phase-estimation benchmarks use six-, eight-, and ten-qubit registers, with three phase
-values for each size.
+used in the modular arithmetic for \(N = 21\) are analyzed separately.
 
 The noise model is built from the gate infidelities and readout errors of the offline
 FakeSherbrooke calibration, without adding \(T_{1}/T_{2}\) contributions and keeping
