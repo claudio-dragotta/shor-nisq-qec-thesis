@@ -265,7 +265,37 @@ CONTENUTO = [
         'esplorativi e il grado di approssimazione dell’AQFT migliore fra quelli provati, '
         'due o tre, non vale in generale per registri di dimensione arbitraria.',
     ]),
-    (1, 'Discussione e conclusioni', []),
+    (1, 'Discussione e conclusioni', [
+        'Il punto di partenza mostra che l’algoritmo di Shor è molto fragile agli '
+        'errori di porta: già errori piccoli degradano il successo e, per errori elevati, i '
+        'fattori corretti che si ottengono ancora dipendono solo dalla permissività della '
+        'verifica classica. Le tre strategie intervengono in punti diversi di questa catena.',
+        'Il post-processing sfrutta meglio l’informazione contenuta nelle misure, ma non '
+        'interviene sullo stato quantistico: lo studio di ablazione mostra che buone '
+        'prestazioni del classificatore non si traducono in un minor costo di fattorizzazione, '
+        'perché il vantaggio viene dal considerare più candidati. La correzione '
+        'quantistica protegge invece l’informazione, e qui il modello appreso può essere '
+        'utile quando le sindromi contengono correlazioni che il decoder di riferimento non '
+        'rappresenta, come il crosstalk. Il confronto con il Gross code mostra inoltre che, '
+        'oltre alla distanza, contano la struttura del codice e la scelta del decoder: a '
+        'parità di qubit logici un codice qLDPC riduce molto il numero di qubit, ma solo '
+        'con un decoder adatto.',
+        'Per [i]N[/i] = 15 l’AQFT riduce le porte e aumenta il successo, perché '
+        'l’ordine [i]r[/i] = 4 genera fasi rappresentabili esattamente con due bit del '
+        'registro di controllo e le rotazioni eliminate contribuiscono poco all’informazione '
+        'utile. Per [i]N[/i] = 21, con [i]r[/i] = 6, le fasi non sono rappresentabili '
+        'esattamente e l’aritmetica è più complessa: il beneficio dell’AQFT non '
+        'si trasferisce automaticamente, e il suo grado di approssimazione va scelto in '
+        'funzione dell’istanza e del rumore e verificato su dati indipendenti.',
+        'Le conclusioni restano limitate al contesto simulativo: il post-processing è '
+        'valutato per [i]N[/i] = 15, la correzione quantistica su circuiti di memoria separati '
+        'e, per il Gross code, nel solo modello code-capacity, l’AQFT su poche istanze con '
+        'una singola calibrazione offline. Non viene realizzata un’esecuzione '
+        'fault-tolerant completa di Shor né una stima delle risorse per la fattorizzazione '
+        'su scala crittografica. Sviluppi futuri potranno includere la verifica su hardware '
+        'reale, ulteriori valori di [i]N[/i] e dell’ordine [i]r[/i], e l’integrazione fra '
+        'operazioni logiche protette, decodifica e AQFT.',
+    ]),
     (1, 'Riferimenti bibliografici essenziali', []),
 ]
 
