@@ -212,9 +212,38 @@ CONTENUTO = [
     (1, 'Riferimenti bibliografici essenziali', []),
 ]
 
-# Riferimenti, nell'ordine di prima citazione; si stampano quando la sezione
-# della bibliografia verra' trascritta.
-BIBLIOGRAFIA = []
+# Riferimenti nell'ordine di prima citazione nel testo Word (stesso testo di
+# sezioni/05_bibliografia.tex; qui AlphaQubit precede Bravyi et al. perche' e' citato prima).
+BIBLIOGRAFIA = [
+    'P. W. Shor, “Algorithms for Quantum Computation: Discrete Logarithms and '
+    'Factoring”, [i]Proc. 35th Annual Symposium on Foundations of Computer Science '
+    '(FOCS)[/i], pp. 124–134, 1994.',
+    'National Institute of Standards and Technology, [i]FIPS 203, FIPS 204 e FIPS 205[/i], '
+    '2024.',
+    'C. Gidney e M. Ekerå, “How to Factor 2048 Bit RSA Integers in 8 Hours Using '
+    '20 Million Noisy Qubits”, [i]Quantum[/i], 5, 433, 2021.',
+    'J. Preskill, “Quantum Computing in the NISQ Era and Beyond”, [i]Quantum[/i], '
+    '2, 79, 2018.',
+    'J. A. Smolin, G. Smith e A. Vargo, “Oversimplifying Quantum Factoring”, '
+    '[i]Nature[/i], 499, pp. 163–165, 2013.',
+    'S. Beauregard, “Circuit for Shor’s Algorithm Using 2[i]n[/i]+3 Qubits”, '
+    '[i]Quantum Inf. Comput.[/i], 3(2), pp. 175–185, 2003.',
+    'A. M. Steane, “Error Correcting Codes in Quantum Theory”, [i]Phys. Rev. '
+    'Lett.[/i], 77(5), pp. 793–797, 1996.',
+    'A. G. Fowler et al., “Surface Codes: Towards Practical Large-Scale Quantum '
+    'Computation”, [i]Phys. Rev. A[/i], 86, 032324, 2012.',
+    'Google Quantum AI and Collaborators, “Quantum Error Correction below the Surface '
+    'Code Threshold”, [i]Nature[/i], 638, pp. 920–926, 2025.',
+    'J. Bausch et al., “Learning High-Accuracy Error Decoding for Quantum '
+    'Processors”, [i]Nature[/i], 635, pp. 834–840, 2024.',
+    'S. Bravyi et al., “High-Threshold and Low-Overhead Fault-Tolerant Quantum '
+    'Memory”, [i]Nature[/i], 627, pp. 778–782, 2024.',
+    'J. Roffe et al., “Decoding Across the Quantum Low-Density Parity-Check Code '
+    'Landscape”, [i]Phys. Rev. Research[/i], 2, 043423, 2020.',
+    'A. Barenco, A. Ekert, K.-A. Suominen e P. Törmä, “Approximate Quantum '
+    'Fourier Transform and Decoherence”, [i]Phys. Rev. A[/i], 54, pp. 139–146, '
+    '1996.',
+]
 
 
 # ---------------------------------------------------------------------------
@@ -473,15 +502,23 @@ def main():
             n2 += 1
             numero = f'{n1}.{n2}'
         if testo_titolo.startswith('Riferimenti') and BIBLIOGRAFIA:
+            # come in 05_bibliografia.tex: titolo fuori dalle colonne, poi due colonne
+            # separate da 10 pt, corpo 6,4 pt, interlinea singola, testo a bandiera
             titolo(doc, numero, testo_titolo, livello)
             sez = doc.add_section(WD_SECTION.CONTINUOUS)
             colonne(sez, 2)
             for i, voce in enumerate(BIBLIOGRAFIA, 1):
                 p = doc.add_paragraph()
-                _spaziatura(p, dopo=0, interlinea=1.0)
-                p.paragraph_format.left_indent = Cm(0.45)
-                p.paragraph_format.first_line_indent = Cm(-0.45)
-                testo_con_markup(p, f'[{i}] {voce}', size=6.4)
+                p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                _spaziatura(p, dopo=2, interlinea=1.0)
+                p.paragraph_format.left_indent = Cm(0.6)
+                p.paragraph_format.first_line_indent = Cm(-0.5)
+                p.paragraph_format.tab_stops.add_tab_stop(Cm(0.6))
+                _senza_sillabazione(p)
+                testo_con_markup(p, f'[{i}]\t{voce}', size=6.4)
+            # sezione continua finale a una colonna: fa bilanciare le due colonne
+            sez = doc.add_section(WD_SECTION.CONTINUOUS)
+            colonne(sez, 1)
             continue
         titolo(doc, numero, testo_titolo, livello)
         for t in paragrafi:
