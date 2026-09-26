@@ -1,7 +1,6 @@
 \section{Materials and methods}
 
-\subsection{Implementation, validation, and definition of
-success}\label{sec:implementation-en}
+\subsection{Shor's algorithm, validation, and definition of success}\label{sec:implementation-en}
 
 For a base \(a\) coprime to the number \(N\) to be factored, the sequence
 \(a^{x} \bmod N\) is periodic; its period, called the order \(r\), is the smallest
@@ -22,31 +21,41 @@ that correct factorizations can be obtained even when the distribution of the
 control-register measurement outcomes has lost most of its ideal peak structure
 \cite{en-smolin2013}.
 
-A separate experiment evaluates Shor's sensitivity to gate errors by applying independent
-Pauli errors after the compiled gates, excluding virtual RZ rotations. For each error
-value, 20 replicates of 4,096 shots are run. The probability \(p_{g}\) describes physical
-per-gate noise and is not directly comparable with the logical failure probability
-\(p_{L}\), since Shor is not executed with a complete fault-tolerant compilation.
-
 Circuit correctness is verified independently of factorization success, by checking
 modular operators, restoration of the ancilla qubits, and agreement with the theoretical
-distributions. Besides the main instance \(N = 15\), the instances \(N = 21\), \(a = 2\)
-and \(N = 35\), \(a = 6\) are considered; ideally validated, they use Beauregard's
-reversible arithmetic \cite{en-beauregard2002}. Only \(N = 21\) enters the exploratory
-noisy AQFT tests, because for \(N = 35\) the available hardware resources did not allow
-the simulation of an adequate Shor circuit. Qiskit/Aer, scikit-learn, Stim, and
-PyMatching are used, recording versions, parameters, random seeds, and circuit
-identifiers.
+distributions. Besides \(N = 15\), the instances \(N = 21\), \(a = 2\) and \(N = 35\),
+\(a = 6\) are considered; ideally validated, they use Beauregard's reversible arithmetic
+\cite{en-beauregard2002}. Only \(N = 21\) enters the exploratory noisy AQFT tests, because
+for \(N = 35\) the available hardware resources did not allow the simulation of an adequate
+Shor circuit. Qiskit/Aer, scikit-learn, Stim, PyMatching, and ldpc are used, recording
+versions, parameters, random seeds, and circuit identifiers.
 
-\subsection{Post-processing and classification}
+\subsection{Sensitivity of Shor's algorithm to gate errors}
 
-Three strategies, sharing the same factor extractor and tie-breaking rule, operate on the
-same histograms, one per quantum iteration, of 1,024 shots each. TOP-1 (Method 1) checks
-only the most frequent outcome; TOP-4 checks up to four frequency-ranked candidates;
-Method 2 applies TOP-4 only if a classifier predicts success for the dominant candidate.
-The comparison between Method 2 and unfiltered TOP-4 is the ablation study, which
-establishes whether the advantage comes from the learned model or simply from testing
-more candidates.
+The starting point of the study was to measure how robust Shor's algorithm is to gate
+errors. In the circuit of the main instance, compiled into the native gates RZ, SX, X, and
+CX (depth 412, with 224 CX and 70 SX gates), independent Pauli errors are introduced after
+every gate, except for the RZ rotations, which are virtual. The noise strength is set by
+the probability \(p_{g}\) that a non-identity Pauli error occurs after a gate, varied over
+13 values between 0 and 0.5.
+
+The noise model is phenomenological and uniform and does not reproduce the calibration of
+a real device. For this reason \(p_{g}\) should be read as a per-gate error probability:
+it is not directly comparable with the logical failure probability \(p_{L}\) of the
+error-correcting codes, because Shor's algorithm is not compiled in fault-tolerant form.
+
+\subsection{Error mitigation through post-processing and machine learning}
+
+The first strategy acts after measurement: without changing the circuit, it tries to
+obtain the factors from noisy outcomes by choosing better which ones to verify, and it
+assesses whether a machine-learning model makes this choice more effective. Three
+selection strategies, sharing the same factor extractor and tie-breaking rule, operate on
+the same histograms, one per quantum iteration, of 1,024 shots each. TOP-1 (Method~1)
+checks only the most frequent outcome; TOP-4 checks up to four frequency-ranked
+candidates; Method~2 applies TOP-4 only if a classifier predicts success for the dominant
+candidate. The comparison between Method~2 and unfiltered TOP-4 is the ablation study,
+which establishes whether the advantage comes from the learned model or simply from
+testing more candidates.
 
 Two illustrative scenarios, reference UC1 and stress case UC2, include depolarization,
 thermal relaxation, and readout errors. For each scenario, 2,000 histograms with
@@ -55,38 +64,51 @@ selection, and test sets. Random forests, support vector machines (SVMs), and mu
 perceptrons are compared on F1; the selected model is evaluated on 400 independent
 histograms per scenario. The primary metric is the number of iterations needed to obtain
 the factors; accuracy was treated as a secondary element in the study of the classifier,
-while computation time was related to the available hardware resources. Thirty paired replicates per
-scenario are used, with at most 50 iterations.
+while computation time was related to the available hardware resources. Thirty paired
+replicates per scenario are used, with at most 50 iterations.
 
-\subsection{Quantum error-correction strategy}
+\subsection{Quantum error correction: surface code and qLDPC codes}
 
-In quantum error correction, the information of one logical qubit is distributed across
-several physical qubits; syndromes make it possible to detect errors without directly
-measuring the logical state, and guide the decoder in choosing the correction.
+The second strategy protects the information before noise destroys it. In quantum error
+correction, the information of one logical qubit is distributed across several physical
+qubits; syndromes make it possible to detect errors without directly measuring the logical
+state, and guide the decoder in choosing the correction. Performance is measured through
+the logical failure probability \(p_{L}\).
 
 Repetition and Steane codes serve as preliminary checks, while the main analysis concerns
 memory circuits based on the surface code
-\cite{en-steane1996,en-fowler2012,en-googleQECBelowThreshold2025}. An exploratory study
-also compares the surface code with IBM's Gross code, a quantum low-density parity-check
-(qLDPC) code \cite{en-bravyi2024}, with errors on data qubits only and perfect syndromes.
+\cite{en-steane1996,en-fowler2012,en-googleQECBelowThreshold2025}, with errors in gates,
+preparation, and measurement and, in some configurations, crosstalk between adjacent
+qubits. The reference decoder is \emph{minimum-weight perfect matching} (MWPM), which pairs
+the triggered syndromes by choosing the most probable error configuration. MWPM is
+compared with a stand-alone neural network and with a hybrid strategy, whose intervention
+threshold is selected on the validation set and kept fixed on the test set
+\cite{en-alphaqubit2024}.
 
-Performance is measured through the logical failure probability \(p_{L}\). The noise
-model includes errors in gates, preparation, and measurement, with crosstalk between
-adjacent qubits in some configurations.
+An exploratory study also compares the surface code with IBM's Gross code, a quantum
+low-density parity-check (qLDPC) code that encodes 12 logical qubits in 144 data qubits
+\cite{en-bravyi2024}, in the code-capacity model, with errors on data qubits only and
+perfect syndromes. BP+OSD (\emph{belief propagation with ordered statistics decoding}) is
+used as an additional comparison decoder on the surface code and as the decoder of the
+Gross code \cite{en-roffe2020}.
 
-For the surface code, the reference decoder is \emph{minimum-weight perfect matching}
-(MWPM), which pairs the triggered syndromes by choosing the most probable error
-configuration. MWPM is compared with a stand-alone neural network and with a hybrid strategy. BP+OSD
-(\emph{belief propagation with ordered statistics decoding}) is an additional comparison
-decoder and the decoder of the Gross code \cite{en-roffe2020}. The intervention threshold of the hybrid decoder is selected on the
-validation set and kept fixed on the test set \cite{en-alphaqubit2024}.
+The comparison shows that the two approaches are not equivalent: for the same number of
+logical qubits the Gross code requires far fewer data qubits, with an advantage that
+depends decisively on the decoder (Section~\ref{sec:results-qec-en}).
 
-\subsection{Optimization strategy through the approximate QFT}
+\subsection{Noise reduction with the AQFT}
 
-The AQFT removes the small-angle controlled rotations of the QFT, reducing the number of
-gates and the circuit depth at the cost of some precision \cite{en-barencoAQFT1996}.
-Truncation of Shor's final inverse QFT for \(N = 15\) and truncation of the transforms
-used in the modular arithmetic for \(N = 21\) are analyzed separately. The noise model is built from the gate infidelities and readout errors of the offline
+The third strategy reduces the effect of noise at its source, by lowering the number of
+gates it can act on. The approximate QFT (AQFT) removes the small-angle controlled
+rotations of the QFT, which contribute little to the phase information: the circuit loses
+some precision but has fewer gates and lower depth, and therefore fewer opportunities for
+error \cite{en-barencoAQFT1996}. The question is whether the noise avoided outweighs the
+precision lost.
+
+Truncation of Shor's final inverse QFT for \(N = 15\) and truncation of the transforms used
+in the modular arithmetic for \(N = 21\) are analyzed separately; distinct phase-estimation
+benchmarks, with registers of six to ten qubits, isolate the effect of truncation. The
+noise model is built from the gate infidelities and readout errors of the offline
 FakeSherbrooke calibration, without adding \(T_{1}/T_{2}\) contributions and keeping
 layouts and random seeds unchanged. The truncation degree is selected on a dedicated set
 and evaluated on independent test data; the shots per configuration, 8,192 in the

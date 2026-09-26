@@ -1,7 +1,6 @@
 \section{Materiali e metodi}
 
-\subsection{Implementazione, validazione e definizione del
-successo}\label{sec:implementazione}
+\subsection{Algoritmo di Shor, validazione e definizione del successo}\label{sec:implementazione}
 
 Scelta una base \(a\) coprima con il numero \(N\) da fattorizzare, la successione
 \(a^{x} \bmod N\) è periodica; il periodo, detto ordine \(r\), è il minimo intero
@@ -18,8 +17,6 @@ tre dei quattro picchi ideali, con probabilità complessiva del 75\%. La verific
 classica è però permissiva e accetta 63 dei 256 valori, tanto che esiti del tutto
 uniformi darebbero comunque un successo di \(63/256 \simeq 24{,}61\%\). Questo riferimento dipende dall'istanza e dal post-processing e non misura la fedeltà dello stato quantistico. Mostra inoltre che fattorizzazioni corrette possono essere ottenute anche quando la distribuzione degli esiti di misura del registro di controllo ha perso gran parte della struttura ideale dei picchi \cite{smolin2013}.
 
-Un esperimento separato valuta la sensibilità di Shor agli errori di porta applicando errori di Pauli indipendenti dopo le porte compilate, escluse le rotazioni virtuali RZ. Per ogni valore di errore si eseguono 20 repliche da 4.096 shot. La probabilità \(p_g\) descrive il rumore fisico per porta e non è direttamente confrontabile con il fallimento logico \(p_L\), poiché Shor non viene eseguito con una compilazione fault-tolerant completa.
-
 La correttezza dei circuiti è verificata indipendentemente dal successo della fattorizzazione,
 controllando operatori modulari, ripristino dei qubit ausiliari e accordo con le
 distribuzioni teoriche. Oltre a \(N = 15\), si considerano le istanze \(N = 21\), \(a = 2\) e
@@ -27,23 +24,40 @@ distribuzioni teoriche. Oltre a \(N = 15\), si considerano le istanze \(N = 21\)
 l'aritmetica reversibile di Beauregard \cite{beauregard2002}; solo \(N = 21\) entra nelle
 prove rumorose esplorative sull'AQFT, perché per \(N = 35\) le risorse hardware disponibili
 non consentivano la simulazione di un circuito di Shor adeguato.
-Si impiegano Qiskit/Aer, scikit-learn, Stim e PyMatching, registrando versioni, parametri,
-semi casuali e identificativi dei circuiti.
+Si impiegano Qiskit/Aer, scikit-learn, Stim, PyMatching e ldpc, registrando versioni,
+parametri, semi casuali e identificativi dei circuiti.
 
-\subsection{Post-processing e classificazione}
+\subsection{Sensibilità di Shor agli errori di porta}
 
-Tre strategie, con estrattore dei fattori e regola dei pareggi comuni, operano sugli
-stessi istogrammi, uno per iterazione quantistica, da 1.024 shot ciascuno. TOP-1
-(Metodo 1) verifica il solo esito più frequente; TOP-4 fino a quattro candidati
-ordinati per frequenza; il Metodo 2 applica TOP-4 solo se un classificatore predice il
-successo del candidato dominante. Il confronto fra Metodo 2 e TOP-4 senza filtro è lo
-studio di ablazione, che stabilisce se il vantaggio venga dal modello appreso o dal
-semplice provare più candidati.
+Il punto di partenza dello studio è stato misurare quanto l'algoritmo di Shor sia robusto
+agli errori di porta. Nel circuito dell'istanza principale, compilato nelle porte native
+RZ, SX, X e CX (profondità 412, con 224 porte CX e 70 SX), si introducono errori di Pauli
+indipendenti dopo ogni porta, escluse le rotazioni RZ, che sono virtuali. L'intensità del
+rumore è fissata dalla probabilità \(p_g\) che dopo una porta si verifichi un errore di
+Pauli diverso dall'identità, fatta variare su 13 valori fra 0 e 0,5.
+
+Il modello di rumore è fenomenologico e uniforme e non riproduce la calibrazione di un
+dispositivo reale. Per questo \(p_g\) va inteso come probabilità di errore per singola
+porta: non è direttamente confrontabile con la probabilità di fallimento logico \(p_L\)
+dei codici di correzione, perché l'algoritmo di Shor non viene compilato in forma
+fault-tolerant.
+
+\subsection{Mitigazione degli errori mediante post-processing e machine learning}
+
+La prima strategia agisce a valle della misura: senza modificare il circuito, cerca di
+ricavare i fattori dagli esiti rumorosi scegliendo meglio quali verificare, e valuta se un
+modello di machine learning renda questa scelta più efficace. Tre strategie di selezione,
+con estrattore dei fattori e regola dei pareggi comuni, operano sugli stessi istogrammi,
+uno per iterazione quantistica, da 1.024 shot ciascuno. TOP-1 (Metodo~1) verifica il solo
+esito più frequente; TOP-4 fino a quattro candidati ordinati per frequenza; il Metodo~2
+applica TOP-4 solo se un classificatore predice il successo del candidato dominante. Il
+confronto fra Metodo~2 e TOP-4 senza filtro è lo studio di ablazione, che stabilisce se il
+vantaggio venga dal modello appreso o dal semplice provare più candidati.
 
 Due scenari illustrativi, UC1 di riferimento e UC2 di stress, includono
 depolarizzazione, rilassamento termico ed errori di lettura; per ciascuno scenario, 2.000
 istogrammi con parametri variati entro \(\pm50\%\) del nominale sono divisi
-60\% /20\% /20\% fra addestramento, selezione e verifica. Random forest, support vector
+60\%/20\%/20\% fra addestramento, selezione e verifica. Random forest, support vector
 machine (SVM) e perceptron multistrato sono confrontati su F1; il modello scelto è
 valutato su 400 istogrammi indipendenti per scenario. La metrica primaria è il numero di
 iterazioni per ottenere i fattori; l'accuratezza è stata considerata un elemento
@@ -51,16 +65,49 @@ secondario nello studio del classificatore, mentre il tempo di calcolo è stato 
 alle risorse hardware disponibili. Si usano 30 repliche appaiate per scenario e al massimo
 50 iterazioni.
 
-\subsection{Strategia di correzione degli errori quantistici}
+\subsection{Correzione quantistica degli errori: surface code e codici qLDPC}
 
-Nella correzione quantistica degli errori, l'informazione di un qubit logico viene distribuita su più qubit fisici; le sindromi permettono di rilevare gli errori senza misurare direttamente lo stato logico e guidano il decoder nella scelta della correzione.
+La seconda strategia protegge l'informazione prima che il rumore la distrugga. Nella
+correzione quantistica degli errori, l'informazione di un qubit logico viene distribuita su
+più qubit fisici; le sindromi permettono di rilevare gli errori senza misurare
+direttamente lo stato logico e guidano il decoder nella scelta della correzione. Le
+prestazioni sono misurate attraverso la probabilità di fallimento logico \(p_L\).
 
-Codice a ripetizione e codice di Steane sono utilizzati come verifiche preliminari, mentre l'analisi principale riguarda circuiti di memoria basati su surface code \cite{steane1996,fowler2012,googleQECBelowThreshold2025}. Uno studio esplorativo confronta inoltre il surface code con il Gross code di IBM, un codice quantum Low-Density Parity-Check (qLDPC) \cite{bravyi2024}, con errori sui soli qubit di dato e sindromi perfette.
+Codice a ripetizione e codice di Steane sono utilizzati come verifiche preliminari, mentre
+l'analisi principale riguarda circuiti di memoria basati su surface code
+\cite{steane1996,fowler2012,googleQECBelowThreshold2025}, con errori nelle operazioni,
+nella preparazione e nella misura e, in alcune configurazioni, crosstalk tra qubit
+adiacenti. Il decoder di riferimento è il \emph{minimum-weight perfect matching} (MWPM),
+che associa a coppie le sindromi attivate scegliendo la configurazione di errori più
+probabile. MWPM è confrontato con una rete neurale autonoma e con una strategia ibrida, la
+cui soglia d'intervento è selezionata sul validation set e mantenuta fissa sul test set
+\cite{alphaqubit2024}.
 
-Le prestazioni sono misurate attraverso la probabilità di fallimento logico \(p_L\). Il modello di rumore comprende errori nelle operazioni, nella preparazione e nella misura, con crosstalk tra qubit adiacenti in alcune configurazioni.
+Uno studio esplorativo confronta inoltre il surface code con il Gross code di IBM, un
+codice quantum Low-Density Parity-Check (qLDPC) che codifica 12 qubit logici in 144 qubit
+di dato \cite{bravyi2024}, nel modello code-capacity, con errori sui soli qubit di dato e
+sindromi perfette. BP+OSD (\emph{belief propagation with ordered statistics decoding}) è
+usato come ulteriore decoder di confronto sul surface code e come decoder del Gross code
+\cite{roffe2020}.
 
-Per il surface code, il decoder di riferimento è il \emph{minimum-weight perfect matching} (MWPM), che associa a coppie le sindromi attivate scegliendo la configurazione di errori più probabile. MWPM è confrontato con una rete neurale autonoma e con una strategia ibrida. BP+OSD (\emph{belief propagation with ordered statistics decoding}) è un ulteriore decoder di confronto e il decoder del Gross code \cite{roffe2020}. La soglia d'intervento del decoder ibrido è selezionata sul validation set e mantenuta fissa sul test set \cite{alphaqubit2024}.
+Il confronto mostra che i due approcci non sono equivalenti: a parità di qubit logici il
+Gross code richiede molti meno qubit di dato, con un vantaggio che dipende in modo decisivo
+dal decoder (Sezione~\ref{sec:risultati-qec}).
 
-\subsection{Strategia di ottimizzazione mediante QFT approssimata}
+\subsection{Riduzione del rumore con la AQFT}
 
-L'AQFT elimina le rotazioni controllate di piccolo angolo della QFT, riducendo il numero di porte e la profondità del circuito a fronte di una perdita di precisione \cite{barencoAQFT1996}. Si analizzano separatamente il troncamento della QFT inversa finale di Shor per \(N=15\) e quello delle trasformate impiegate nell'aritmetica modulare per \(N=21\). Il modello di rumore è costruito a partire dalle infedeltà delle porte e dagli errori di lettura della calibrazione offline FakeSherbrooke, senza aggiungere contributi \(T_1/T_2\), mantenendo invariati layout e semi casuali. Il grado di troncamento viene selezionato su un insieme dedicato e valutato su dati di verifica indipendenti; gli shot per configurazione, 8.192 nel pilota per \(N=15\) e 256 per \(N=21\), sono suddivisi equamente tra selezione e verifica.
+La terza strategia riduce l'effetto del rumore alla fonte, diminuendo il numero di porte su
+cui può agire. La QFT approssimata (AQFT) elimina le rotazioni controllate di piccolo angolo
+della QFT, che contribuiscono poco all'informazione di fase: il circuito perde un po' di
+precisione, ma ha meno porte e minore profondità, e quindi meno occasioni di errore
+\cite{barencoAQFT1996}. La domanda è se il rumore evitato compensi la precisione persa.
+
+Si analizzano separatamente il troncamento della QFT inversa finale di Shor per \(N = 15\) e
+quello delle trasformate impiegate nell'aritmetica modulare per \(N = 21\); benchmark
+distinti di stima di fase, con registri da sei a dieci qubit, isolano l'effetto del
+troncamento. Il modello di rumore è costruito a partire dalle infedeltà delle porte e dagli
+errori di lettura della calibrazione offline FakeSherbrooke, senza aggiungere contributi
+\(T_1/T_2\), mantenendo invariati layout e semi casuali. Il grado di troncamento viene
+selezionato su un insieme dedicato e valutato su dati di verifica indipendenti; gli shot per
+configurazione, 8.192 nel pilota per \(N = 15\) e 256 per \(N = 21\), sono suddivisi
+equamente tra selezione e verifica.
