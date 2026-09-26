@@ -124,9 +124,10 @@ CONTENUTO = [
     (2, 'Mitigazione degli errori mediante post-processing e machine learning', [
         'La prima strategia agisce a valle della misura: senza modificare il circuito, cerca di '
         'ricavare i fattori dagli esiti rumorosi scegliendo meglio quali verificare, e valuta '
-        'se un modello di machine learning renda questa scelta più efficace. Tre strategie '
+        'se un modello di machine learning renda questa scelta più efficace. Tre criteri '
         'di selezione, con estrattore dei fattori e regola dei pareggi comuni, operano sugli '
-        'stessi istogrammi, uno per iterazione quantistica, da 1.024 shot ciascuno. TOP-1 '
+        'stessi istogrammi da 1.024 shot; ogni istogramma corrisponde a un’iterazione e, '
+        'se non si ottengono i fattori, se ne esegue una nuova. TOP-1 '
         '(Metodo 1) verifica il solo esito più frequente; TOP-4 fino a quattro candidati '
         'ordinati per frequenza; il Metodo 2 applica TOP-4 solo se un classificatore predice il '
         'successo del candidato dominante. Il confronto fra Metodo 2 e TOP-4 senza filtro è '
@@ -154,19 +155,22 @@ CONTENUTO = [
         'logico [i]p[/i][sub]L[/sub].',
         'Codice a ripetizione e codice di Steane sono utilizzati come verifiche preliminari, '
         'mentre l’analisi principale riguarda circuiti di memoria basati su surface code '
-        '[7–9], con errori nelle operazioni, nella preparazione e nella misura e, in alcune '
+        '[7–9], di distanza [i]d[/i] crescente, che fissa quanti errori il codice può '
+        'correggere, con errori nelle operazioni, nella preparazione e nella misura e, in alcune '
         'configurazioni, crosstalk tra qubit adiacenti. Il decoder di riferimento è il '
         '[i]minimum-weight perfect matching[/i] (MWPM), che associa a coppie le sindromi '
         'attivate scegliendo la configurazione di errori più probabile. MWPM è '
-        'confrontato con una rete neurale autonoma e con una strategia ibrida, la cui soglia '
-        'd’intervento è selezionata sul validation set e mantenuta fissa sul test '
-        'set [10].',
+        'confrontato con una rete neurale autonoma e con una strategia ibrida, in cui una rete '
+        'neurale decide quando correggere la scelta di MWPM; la soglia d’intervento è '
+        'selezionata sul validation set e mantenuta fissa sul test set [10].',
         'Uno studio esplorativo confronta inoltre il surface code con il Gross code di IBM, un '
         'codice quantum Low-Density Parity-Check (qLDPC) che codifica 12 qubit logici in 144 '
         'qubit di dato [11], nel modello code-capacity, con errori sui soli qubit di dato e '
         'sindromi perfette. BP+OSD ([i]belief propagation with ordered statistics '
         'decoding[/i]) è usato come ulteriore decoder di confronto sul surface code e come '
-        'decoder del Gross code [12].',
+        'decoder del Gross code [12]; per quest’ultimo se ne confrontano più '
+        'configurazioni, fra cui l’ordine di aggiornamento dei messaggi, parallelo o '
+        'serial.',
         'Il confronto mostra che i due approcci non sono equivalenti: a parità di qubit '
         'logici il Gross code richiede molti meno qubit di dato, con un vantaggio che dipende '
         'in modo decisivo dal decoder (Sezione 3.3).',
@@ -201,7 +205,7 @@ CONTENUTO = [
         'scende al 72,5% per [i]p[/i][sub]g[/sub] = 0,1%, al 56,5% per 1%, al 45,2% per 2% e '
         'al 29,5% per 5%. Da 10% in poi resta intorno al 25%, fino al 24,59% per '
         '[i]p[/i][sub]g[/sub] = 0,5, praticamente il riferimento uniforme del 24,61%.',
-        'La fragilità cresce con il numero di porte: con 294 porte soggette a errore, '
+        'La fragilità si spiega con il numero di porte: con 294 porte soggette a errore, '
         'già per [i]p[/i][sub]g[/sub] = 1% si verificano in media circa tre errori per '
         'esecuzione. Il risultato motiva le tre strategie successive.',
     ]),
@@ -233,7 +237,8 @@ CONTENUTO = [
         'prestazioni dipendono inoltre dalla distanza, dal numero di cicli e dalla dimensione '
         'dell’ingresso della rete.',
         'Nel modello code-capacity il Gross code protegge 12 qubit logici con 144 qubit di '
-        'dato meglio di 12 patch di surface code a distanza 11 (1.452 qubit di dato) a ogni '
+        'dato meglio di 12 patch di surface code, cioè 12 blocchi indipendenti da un qubit '
+        'logico ciascuno, a distanza 11 (1.452 qubit di dato) a ogni '
         'livello di rumore studiato, e meglio di 12 patch a distanza 13 (2.028) per '
         '[i]p[/i] ≥ 0,75%: a [i]p[/i] = 1% il blocco fallisce con probabilità '
         '1,0×10[sup]−6[/sup], contro 1,6×10[sup]−6[/sup]. Il risultato '
