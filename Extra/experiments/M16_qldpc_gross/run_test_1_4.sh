@@ -2,12 +2,16 @@
 # M16 — test 1–4 (criteri in REGISTRO_M16, sez. 10). Uso:
 #     bash run_test_1_4.sh            # tutti e quattro
 #     bash run_test_1_4.sh 3 4        # solo alcuni
+#     VARIANTE=serial bash run_test_1_4.sh 2 4   # decoder scelto dal test 1
+# Il test 2 decodifica il Gross sia con il vecchio riferimento (validato sulle corse
+# dirette gia' salvate) sia con VARIANTE, per mostrare dove i due decoder divergono.
 set -euo pipefail
 cd "$(dirname "$0")"
 PY=/home/claudio/quantum-env/bin/python
 A=artifacts/v2_20260926
 TEST=("${@:-1 2 3 4}")
 TEST=(${TEST[@]})
+VARIANTE=${VARIANTE:-rif_minsum0625_osd10}
 
 # corse dirette di riferimento, sempre esplicite
 GROSS_MINSUM=(
@@ -24,10 +28,12 @@ for t in "${TEST[@]}"; do
   case "$t" in
     1) $PY sweep_decoder.py --seed 42 --output-dir $A 2>&1 | tee run_M16_test1_sweep_decoder.log ;;
     2) $PY analisi_fallimenti.py --seed 42 --output-dir $A \
+           --codici gross_144_12_12:rif_minsum0625_osd10 "gross_144_12_12:$VARIANTE" \
+                    surface_d9:mwpm surface_d11:mwpm \
            --diretti-json "${GROSS_MINSUM[@]}" "${SURFACE_MWPM[@]}" \
            2>&1 | tee run_M16_test2_fallimenti.log ;;
     3) $PY cerca_distanza.py --seed 42 --output-dir $A 2>&1 | tee run_M16_test3_distanza.log ;;
-    4) $PY famiglia_bb.py --seed 42 --output-dir $A --surface-json "${SURFACE_MWPM[@]}" \
+    4) $PY famiglia_bb.py --seed 42 --variante "$VARIANTE" --output-dir $A --surface-json "${SURFACE_MWPM[@]}" \
            2>&1 | tee run_M16_test4_famiglia_bb.log ;;
     *) echo "test sconosciuto: $t" >&2; exit 1 ;;
   esac

@@ -1,0 +1,85 @@
+================================================================================================
+M16 test 1 — sweep del decoder, 12 varianti, stessi shot
+================================================================================================
+
+q = 0.005   shots = 4000000
+  rif_minsum0625_osd10   p_L=9.250e-06 (    37)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=282s
+  minsum0500             p_L=0.000e+00 (     0)  var=-100.0%  b=0     c=37    p=3.3e-09  cpu=253s
+  minsum0750             p_L=5.750e-06 (    23)  var= -37.8%  b=20    c=34    p=7.7e-02  cpu=299s
+  minsum0875             p_L=0.000e+00 (     0)  var=-100.0%  b=0     c=37    p=3.3e-09  cpu=226s
+  minsum1000             p_L=1.823e-04 (   729)  var=+1870.3%  b=723   c=31    p=9.7e-140  cpu=319s
+  osd_cs30               p_L=1.250e-06 (     5)  var= -86.5%  b=0     c=32    p=4.3e-08  cpu=210s
+  osd_cs60               p_L=0.000e+00 (     0)  var=-100.0%  b=0     c=37    p=3.3e-09  cpu=293s
+  osd_e7                 p_L=3.600e-05 (   144)  var=+289.2%  b=109   c=2     p=8.2e-24  cpu=238s
+  iter1000               p_L=2.525e-05 (   101)  var=+173.0%  b=78    c=14    p=5.1e-11  cpu=304s
+  serial                 p_L=0.000e+00 (     0)  var=-100.0%  b=0     c=37    p=3.3e-09  cpu=273s
+  lsd_cs10               p_L=2.950e-05 (   118)  var=+218.9%  b=86    c=5     p=5.0e-17  cpu=302s
+  product_sum_osd10      p_L=3.700e-05 (   148)  var=+300.0%  b=138   c=27    p=1.1e-17  cpu=263s
+
+q = 0.01   shots = 2000000
+  rif_minsum0625_osd10   p_L=9.150e-05 (   183)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=142s
+  minsum0500             p_L=5.000e-07 (     1)  var= -99.5%  b=0     c=182   p=4.8e-41  cpu=119s
+  minsum0750             p_L=7.600e-05 (   152)  var= -16.9%  b=129   c=160   p=7.8e-02  cpu=137s
+  minsum0875             p_L=1.550e-05 (    31)  var= -83.1%  b=25    c=177   p=2.3e-26  cpu=117s
+  minsum1000             p_L=4.450e-05 (    89)  var= -51.4%  b=77    c=171   p=3.5e-09  cpu=130s
+  osd_cs30               p_L=3.350e-05 (    67)  var= -63.4%  b=2     c=118   p=8.8e-26  cpu=121s
+  osd_cs60               p_L=6.000e-06 (    12)  var= -93.4%  b=1     c=172   p=3.3e-38  cpu=136s
+  osd_e7                 p_L=3.100e-04 (   620)  var=+238.8%  b=462   c=25    p=7.0e-87  cpu=114s
+  iter1000               p_L=1.580e-04 (   316)  var= +72.7%  b=184   c=51    p=7.3e-18  cpu=128s
+  serial                 p_L=5.000e-07 (     1)  var= -99.5%  b=0     c=182   p=4.8e-41  cpu=131s
+  lsd_cs10               p_L=2.625e-04 (   525)  var=+186.9%  b=383   c=41    p=1.3e-61  cpu=139s
+  product_sum_osd10      p_L=2.930e-04 (   586)  var=+220.2%  b=527   c=124   p=6.3e-56  cpu=186s
+
+q = 0.02   shots = 1000000
+  rif_minsum0625_osd10   p_L=7.680e-04 (   768)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=72s
+  minsum0500             p_L=8.000e-05 (    80)  var= -89.6%  b=17    c=705   p=3.5e-144  cpu=69s
+  minsum0750             p_L=7.110e-04 (   711)  var=  -7.4%  b=501   c=558   p=8.5e-02  cpu=75s
+  minsum0875             p_L=2.090e-04 (   209)  var= -72.8%  b=120   c=679   p=9.7e-87  cpu=62s
+  minsum1000             p_L=6.240e-04 (   624)  var= -18.8%  b=537   c=681   p=4.2e-05  cpu=125s
+  osd_cs30               p_L=4.210e-04 (   421)  var= -45.2%  b=10    c=357   p=6.5e-73  cpu=89s
+  osd_cs60               p_L=1.300e-04 (   130)  var= -83.1%  b=5     c=643   p=3.4e-138  cpu=93s
+  osd_e7                 p_L=2.267e-03 (  2267)  var=+195.2%  b=1591  c=92    p=6.4e-292  cpu=67s
+  iter1000               p_L=8.850e-04 (   885)  var= +15.2%  b=234   c=117   p=6.0e-10  cpu=97s
+  serial                 p_L=8.000e-05 (    80)  var= -89.6%  b=2     c=690   p=2.4e-150  cpu=78s
+  lsd_cs10               p_L=2.116e-03 (  2116)  var=+175.5%  b=1459  c=111   p=2.6e-253  cpu=73s
+  product_sum_osd10      p_L=1.711e-03 (  1711)  var=+122.8%  b=1496  c=553   p=3.5e-96  cpu=140s
+
+q = 0.03   shots = 400000
+  rif_minsum0625_osd10   p_L=2.950e-03 (  1180)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=37s
+  minsum0500             p_L=1.195e-03 (   478)  var= -59.5%  b=98    c=800   p=5.1e-121  cpu=45s
+  minsum0750             p_L=3.130e-03 (  1252)  var=  +6.1%  b=671   c=599   p=4.6e-02  cpu=32s
+  minsum0875             p_L=2.020e-03 (   808)  var= -31.5%  b=386   c=758   p=5.4e-28  cpu=30s
+  minsum1000             p_L=4.025e-03 (  1610)  var= +36.4%  b=1213  c=783   p=7.8e-22  cpu=76s
+  osd_cs30               p_L=2.205e-03 (   882)  var= -25.3%  b=9     c=307   p=1.2e-62  cpu=43s
+  osd_cs60               p_L=1.305e-03 (   522)  var= -55.8%  b=5     c=663   p=1.5e-142  cpu=72s
+  osd_e7                 p_L=6.960e-03 (  2784)  var=+135.9%  b=1701  c=97    p=9.7e-313  cpu=35s
+  iter1000               p_L=3.060e-03 (  1224)  var=  +3.7%  b=145   c=101   p=6.1e-03  cpu=81s
+  serial                 p_L=1.150e-03 (   460)  var= -61.0%  b=19    c=739   p=2.4e-150  cpu=32s
+  lsd_cs10               p_L=7.043e-03 (  2817)  var=+138.7%  b=1716  c=79    p=0.0e+00  cpu=32s
+  product_sum_osd10      p_L=4.627e-03 (  1851)  var= +56.9%  b=1339  c=668   p=1.4e-50  cpu=65s
+
+Decoder saturo (nessun miglioramento >10% con p<0.01): False
+  migliora: minsum0500 a q=0.005 (-100.0%, p=3.3e-09)
+  migliora: minsum0875 a q=0.005 (-100.0%, p=3.3e-09)
+  migliora: osd_cs30 a q=0.005 (-86.5%, p=4.3e-08)
+  migliora: osd_cs60 a q=0.005 (-100.0%, p=3.3e-09)
+  migliora: serial a q=0.005 (-100.0%, p=3.3e-09)
+  migliora: minsum0500 a q=0.01 (-99.5%, p=4.8e-41)
+  migliora: minsum0875 a q=0.01 (-83.1%, p=2.3e-26)
+  migliora: minsum1000 a q=0.01 (-51.4%, p=3.5e-09)
+  migliora: osd_cs30 a q=0.01 (-63.4%, p=8.8e-26)
+  migliora: osd_cs60 a q=0.01 (-93.4%, p=3.3e-38)
+  migliora: serial a q=0.01 (-99.5%, p=4.8e-41)
+  migliora: minsum0500 a q=0.02 (-89.6%, p=3.5e-144)
+  migliora: minsum0875 a q=0.02 (-72.8%, p=9.7e-87)
+  migliora: minsum1000 a q=0.02 (-18.8%, p=4.2e-05)
+  migliora: osd_cs30 a q=0.02 (-45.2%, p=6.5e-73)
+  migliora: osd_cs60 a q=0.02 (-83.1%, p=3.4e-138)
+  migliora: serial a q=0.02 (-89.6%, p=2.4e-150)
+  migliora: minsum0500 a q=0.03 (-59.5%, p=5.1e-121)
+  migliora: minsum0875 a q=0.03 (-31.5%, p=5.4e-28)
+  migliora: osd_cs30 a q=0.03 (-25.3%, p=1.2e-62)
+  migliora: osd_cs60 a q=0.03 (-55.8%, p=1.5e-142)
+  migliora: serial a q=0.03 (-61.0%, p=2.4e-150)
+Tempo totale: 345s
+Salvato: artifacts/v2_20260926/results_M16_test1_sweep_decoder_20260926_104516.json

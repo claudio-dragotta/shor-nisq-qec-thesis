@@ -1,0 +1,650 @@
+{
+  "schema_version": "2.0",
+  "milestone": "M16_test3_ricerca_distanza",
+  "stato": "esplorativo",
+  "metodo": "information set casuale su ker(Hz) con righe e somme di coppie di righe; ogni vettore trovato e' verificato come logico non banale",
+  "limite_metodo": "fornisce limiti superiori, non dimostra la distanza",
+  "experiment_manifest": {
+    "script": "cerca_distanza.py",
+    "script_sha256": "a81af628737c824cbdf46c3de01489b397b1880ad8f64da22c6e377e1546030c",
+    "modulo_base_sha256": "43277ddd038a88ffe6f5660e272921653dfb9ed3f511397a04e93897578a5ce5",
+    "git_commit": "5127ec38146f14ec37330dfe63b8ebf8a6e87ad5",
+    "argv": [
+      "cerca_distanza.py",
+      "--seed",
+      "42",
+      "--output-dir",
+      "artifacts/v2_20260926"
+    ],
+    "seed": 42,
+    "python": "3.12.3",
+    "interprete": "/home/claudio/quantum-env/bin/python",
+    "piattaforma": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "cpu": 22,
+    "packages": {
+      "numpy": "2.5.1",
+      "ldpc": "2.4.1",
+      "PyMatching": "2.4.0",
+      "stim": "1.16.0",
+      "scipy": "1.18.0"
+    },
+    "timestamp": "2026-09-26T11:53:05"
+  },
+  "parametri": {
+    "codici": [
+      "surface_d5",
+      "surface_d7",
+      "surface_d9",
+      "bb_72_12_6",
+      "bb_90_8_10",
+      "bb_108_8_10",
+      "gross_144_12_12",
+      "bb_288_12_18"
+    ],
+    "iterazioni": 40000,
+    "workers": 20,
+    "seed_words": "[seed, 4000 + indice codice, settore, worker]"
+  },
+  "risultati": [
+    {
+      "codice": "surface_d5",
+      "n": 25,
+      "k": 1,
+      "distanza_attesa": 5,
+      "verifica": {
+        "n": 25,
+        "k": 1,
+        "commutano": true,
+        "righe_Hx": 12,
+        "righe_Hz": 12,
+        "rank_Hx": 12,
+        "rank_Hz": 12,
+        "peso_righe_Hz": [
+          2,
+          4
+        ],
+        "peso_colonne_Hz": [
+          1,
+          2
+        ],
+        "sha256_Hx": "e2d8970de2359c87a83a53ea202df8b2eda0fdc535537d7cb9fb219689993090",
+        "sha256_Hz": "b5885ee54984b890246039045c52633de5ad43e487f5c9803301350d16edc1e2"
+      },
+      "settori": {
+        "X": {
+          "peso_minimo_trovato": 5,
+          "supporto": [
+            0,
+            3,
+            4,
+            6,
+            7
+          ],
+          "logico_verificato": true,
+          "iterazioni": 40000,
+          "pesi_logici_visti": {
+            "5": 863380,
+            "7": 647230,
+            "9": 275861,
+            "11": 32324
+          }
+        },
+        "Z": {
+          "peso_minimo_trovato": 5,
+          "supporto": [
+            1,
+            6,
+            10,
+            15,
+            20
+          ],
+          "logico_verificato": true,
+          "iterazioni": 40000,
+          "pesi_logici_visti": {
+            "5": 862809,
+            "7": 646443,
+            "9": 276544,
+            "11": 32852
+          }
+        }
+      },
+      "limite_superiore_distanza": 5,
+      "esito": "coincide con la distanza attesa",
+      "secondi": 2.5,
+      "tutti_i_logici_verificati": true
+    },
+    {
+      "codice": "surface_d7",
+      "n": 49,
+      "k": 1,
+      "distanza_attesa": 7,
+      "verifica": {
+        "n": 49,
+        "k": 1,
+        "commutano": true,
+        "righe_Hx": 24,
+        "righe_Hz": 24,
+        "rank_Hx": 24,
+        "rank_Hz": 24,
+        "peso_righe_Hz": [
+          2,
+          4
+        ],
+        "peso_colonne_Hz": [
+          1,
+          2
+        ],
+        "sha256_Hx": "83515494e856e06f16f5ec9ae9ec5eb166511cb4581f6dbe8cdd3297bef7be55",
+        "sha256_Hz": "270190381e3143c2c9e99c010fbae5bc4129066c0be25a5931bd9c3497d53a8a"
+      },
+      "settori": {
+        "X": {
+          "peso_minimo_trovato": 7,
+          "supporto": [
+            21,
+            22,
+            30,
+            38,
+            46,
+            47,
+            48
+          ],
+          "logico_verificato": true,
+          "iterazioni": 40000,
+          "pesi_logici_visti": {
+            "7": 1587625,
+            "9": 1760120,
+            "11": 1445343,
+            "13": 592457
+          }
+        },
+        "Z": {
+          "peso_minimo_trovato": 7,
+          "supporto": [
+            3,
+            10,
+            16,
+            22,
+            29,
+            37,
+            45
+          ],
+          "logico_verificato": true,
+          "iterazioni": 40000,
+          "pesi_logici_visti": {
+            "7": 1588032,
+            "9": 1764220,
+            "11": 1443246,
+            "13": 590990
+          }
+        }
+      },
+      "limite_superiore_distanza": 7,
+      "esito": "coincide con la distanza attesa",
+      "secondi": 6.4,
+      "tutti_i_logici_verificati": true
+    },
+    {
+      "codice": "surface_d9",
+      "n": 81,
+      "k": 1,
+      "distanza_attesa": 9,
+      "verifica": {
+        "n": 81,
+        "k": 1,
+        "commutano": true,
+        "righe_Hx": 40,
+        "righe_Hz": 40,
+        "rank_Hx": 40,
+        "rank_Hz": 40,
+        "peso_righe_Hz": [
+          2,
+          4
+        ],
+        "peso_colonne_Hz": [
+          1,
+          2
+        ],
+        "sha256_Hx": "55198af33bc724e2130e0b090c5587a077e14484a92d11d82547b0967756e49f",
+        "sha256_Hz": "788ec9f4c42008651ec31efc0a6f3ce005459894e44fa218737550bf0931f216"
+      },
+      "settori": {
+        "X": {
+          "peso_minimo_trovato": 9,
+          "supporto": [
+            11,
+            12,
+            13,
+            14,
+            17,
+            18,
+            19,
+            24,
+            25
+          ],
+          "logico_verificato": true,
+          "iterazioni": 40000,
+          "pesi_logici_visti": {
+            "9": 2265729,
+            "11": 3165742,
+            "13": 3490078,
+            "15": 2250063
+          }
+        },
+        "Z": {
+          "peso_minimo_trovato": 9,
+          "supporto": [
+            8,
+            17,
+            26,
+            34,
+            42,
+            50,
+            58,
+            67,
+            76
+          ],
+          "logico_verificato": true,
+          "iterazioni": 40000,
+          "pesi_logici_visti": {
+            "9": 2267620,
+            "11": 3172975,
+            "13": 3498897,
+            "15": 2248769
+          }
+        }
+      },
+      "limite_superiore_distanza": 9,
+      "esito": "coincide con la distanza attesa",
+      "secondi": 26.3,
+      "tutti_i_logici_verificati": true
+    },
+    {
+      "codice": "bb_72_12_6",
+      "n": 72,
+      "k": 12,
+      "distanza_attesa": 6,
+      "verifica": {
+        "n": 72,
+        "k": 12,
+        "commutano": true,
+        "righe_Hx": 36,
+        "righe_Hz": 36,
+        "rank_Hx": 30,
+        "rank_Hz": 30,
+        "peso_righe_Hz": [
+          6
+        ],
+        "peso_colonne_Hz": [
+          3
+        ],
+        "sha256_Hx": "7ab0973bfd02e399d69728d26e67dbfa0e95bbc6ad2c5cf8bf309d667244a5a8",
+        "sha256_Hz": "267f345c09710ec0cfad1e49e0786b2636ab052fbfb660e5a76ae9919ba22614"
+      },
+      "settori": {
+        "X": {
+          "peso_minimo_trovato": 6,
+          "supporto": [
+            3,
+            6,
+            12,
+            15,
+            18,
+            24
+          ],
+          "logico_verificato": true,
+          "iterazioni": 40000,
+          "pesi_logici_visti": {
+            "6": 621052,
+            "8": 1741925,
+            "10": 4288004,
+            "12": 6033602
+          }
+        },
+        "Z": {
+          "peso_minimo_trovato": 6,
+          "supporto": [
+            6,
+            20,
+            34,
+            44,
+            58,
+            66
+          ],
+          "logico_verificato": true,
+          "iterazioni": 40000,
+          "pesi_logici_visti": {
+            "6": 620776,
+            "8": 1736181,
+            "10": 4280135,
+            "12": 6023072
+          }
+        }
+      },
+      "limite_superiore_distanza": 6,
+      "esito": "coincide con la distanza attesa",
+      "secondi": 25.7,
+      "tutti_i_logici_verificati": true
+    },
+    {
+      "codice": "bb_90_8_10",
+      "n": 90,
+      "k": 8,
+      "distanza_attesa": 10,
+      "verifica": {
+        "n": 90,
+        "k": 8,
+        "commutano": true,
+        "righe_Hx": 45,
+        "righe_Hz": 45,
+        "rank_Hx": 41,
+        "rank_Hz": 41,
+        "peso_righe_Hz": [
+          6
+        ],
+        "peso_colonne_Hz": [
+          3
+        ],
+        "sha256_Hx": "ff57bf512c40823c6ae89aa0062f3e74ceb337eff24a66b9dd824ed304184b59",
+        "sha256_Hz": "72cbb4962f1444480e1b417356f7703ea6fd0e016e20b461f2a335476422d6e9"
+      },
+      "settori": {
+        "X": {
+          "peso_minimo_trovato": 10,
+          "supporto": [
+            5,
+            11,
+            26,
+            41,
+            57,
+            58,
+            59,
+            68,
+            84,
+            85
+          ],
+          "logico_verificato": true,
+          "iterazioni": 40000,
+          "pesi_logici_visti": {
+            "10": 442627,
+            "12": 1774195,
+            "14": 3434759,
+            "16": 5884984
+          }
+        },
+        "Z": {
+          "peso_minimo_trovato": 10,
+          "supporto": [
+            6,
+            21,
+            25,
+            40,
+            53,
+            58,
+            62,
+            68,
+            77,
+            88
+          ],
+          "logico_verificato": true,
+          "iterazioni": 40000,
+          "pesi_logici_visti": {
+            "10": 441233,
+            "12": 1775815,
+            "14": 3428819,
+            "16": 5879453
+          }
+        }
+      },
+      "limite_superiore_distanza": 10,
+      "esito": "coincide con la distanza attesa",
+      "secondi": 43.7,
+      "tutti_i_logici_verificati": true
+    },
+    {
+      "codice": "bb_108_8_10",
+      "n": 108,
+      "k": 8,
+      "distanza_attesa": 10,
+      "verifica": {
+        "n": 108,
+        "k": 8,
+        "commutano": true,
+        "righe_Hx": 54,
+        "righe_Hz": 54,
+        "rank_Hx": 50,
+        "rank_Hz": 50,
+        "peso_righe_Hz": [
+          6
+        ],
+        "peso_colonne_Hz": [
+          3
+        ],
+        "sha256_Hx": "6ed504c815418f90551f83ee7a5023b5aa61aaf710404afde4f35d9f1dd91d6a",
+        "sha256_Hz": "b3b366f06e93c6c39a9eecc01f98dba6b8bef6c19b108f228eb7b1395b8b3ea0"
+      },
+      "settori": {
+        "X": {
+          "peso_minimo_trovato": 10,
+          "supporto": [
+            16,
+            25,
+            32,
+            47,
+            58,
+            66,
+            67,
+            88,
+            90,
+            105
+          ],
+          "logico_verificato": true,
+          "iterazioni": 40000,
+          "pesi_logici_visti": {
+            "10": 50218,
+            "12": 696596,
+            "14": 1512512,
+            "16": 3175893
+          }
+        },
+        "Z": {
+          "peso_minimo_trovato": 10,
+          "supporto": [
+            4,
+            6,
+            27,
+            28,
+            36,
+            43,
+            62,
+            69,
+            78,
+            107
+          ],
+          "logico_verificato": true,
+          "iterazioni": 40000,
+          "pesi_logici_visti": {
+            "10": 50574,
+            "12": 696683,
+            "14": 1510676,
+            "16": 3171714
+          }
+        }
+      },
+      "limite_superiore_distanza": 10,
+      "esito": "coincide con la distanza attesa",
+      "secondi": 79.2,
+      "tutti_i_logici_verificati": true
+    },
+    {
+      "codice": "gross_144_12_12",
+      "n": 144,
+      "k": 12,
+      "distanza_attesa": 12,
+      "verifica": {
+        "n": 144,
+        "k": 12,
+        "commutano": true,
+        "righe_Hx": 72,
+        "righe_Hz": 72,
+        "rank_Hx": 66,
+        "rank_Hz": 66,
+        "peso_righe_Hz": [
+          6
+        ],
+        "peso_colonne_Hz": [
+          3
+        ],
+        "sha256_Hx": "195d5586a406f0194b89649b6a2499ec2b481edb81c91293daf1745d8b806641",
+        "sha256_Hz": "72dc3b9cefec7d45c99325c8f8d0787174e3cea207a41cd5b740a8b05f263918"
+      },
+      "settori": {
+        "X": {
+          "peso_minimo_trovato": 12,
+          "supporto": [
+            18,
+            25,
+            40,
+            42,
+            49,
+            64,
+            75,
+            99,
+            100,
+            107,
+            124,
+            131
+          ],
+          "logico_verificato": true,
+          "iterazioni": 40000,
+          "pesi_logici_visti": {
+            "12": 399009,
+            "14": 893975,
+            "16": 1826177,
+            "18": 3139689
+          }
+        },
+        "Z": {
+          "peso_minimo_trovato": 12,
+          "supporto": [
+            3,
+            4,
+            5,
+            63,
+            71,
+            73,
+            76,
+            129,
+            135,
+            137,
+            138,
+            142
+          ],
+          "logico_verificato": true,
+          "iterazioni": 40000,
+          "pesi_logici_visti": {
+            "12": 398538,
+            "14": 891953,
+            "16": 1824679,
+            "18": 3132093
+          }
+        }
+      },
+      "limite_superiore_distanza": 12,
+      "esito": "coincide con la distanza attesa",
+      "secondi": 227.9,
+      "tutti_i_logici_verificati": true
+    },
+    {
+      "codice": "bb_288_12_18",
+      "n": 288,
+      "k": 12,
+      "distanza_attesa": 18,
+      "verifica": {
+        "n": 288,
+        "k": 12,
+        "commutano": true,
+        "righe_Hx": 144,
+        "righe_Hz": 144,
+        "rank_Hx": 138,
+        "rank_Hz": 138,
+        "peso_righe_Hz": [
+          6
+        ],
+        "peso_colonne_Hz": [
+          3
+        ],
+        "sha256_Hx": "c06e721ec6ea114b60e0e6f7187324f6e150e229b8d008888e8a4cc3f4a324a2",
+        "sha256_Hz": "599e3888110b72dd10de5d22583c12fb3832de67b63052c378e0c828b5968d23"
+      },
+      "settori": {
+        "X": {
+          "peso_minimo_trovato": 18,
+          "supporto": [
+            0,
+            9,
+            18,
+            27,
+            30,
+            33,
+            36,
+            42,
+            48,
+            54,
+            57,
+            66,
+            78,
+            81,
+            90,
+            102,
+            123,
+            132
+          ],
+          "logico_verificato": true,
+          "iterazioni": 40000,
+          "pesi_logici_visti": {
+            "18": 2295,
+            "20": 2532,
+            "22": 23397,
+            "24": 67444
+          }
+        },
+        "Z": {
+          "peso_minimo_trovato": 18,
+          "supporto": [
+            30,
+            34,
+            63,
+            64,
+            68,
+            71,
+            98,
+            100,
+            102,
+            104,
+            132,
+            133,
+            134,
+            136,
+            138,
+            139,
+            141,
+            143
+          ],
+          "logico_verificato": true,
+          "iterazioni": 40000,
+          "pesi_logici_visti": {
+            "18": 2384,
+            "20": 2600,
+            "22": 23299,
+            "24": 67002
+          }
+        }
+      },
+      "limite_superiore_distanza": 18,
+      "esito": "coincide con la distanza attesa",
+      "secondi": 2426.7,
+      "tutti_i_logici_verificati": true
+    }
+  ]
+}

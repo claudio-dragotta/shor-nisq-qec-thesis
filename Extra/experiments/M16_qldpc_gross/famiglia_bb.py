@@ -19,15 +19,40 @@ import os
 import time
 from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime
-from types import SimpleNamespace
+
+import numpy as np
 
 from analisi_consolidata import migliori_punti
 from codici_bb import CODICI_BB, costruisci
-from gross_code_capacity import (SCHEMA_VERSION, esegui_punto, gf2_nullspace, manifest,
-                                 pendenza_loglog, verifica_css)
-from sweep_decoder import RIFERIMENTO, VARIANTI
+from gross_code_capacity import (SCHEMA_VERSION, gf2_nullspace, manifest,
+                                 pendenza_loglog, verifica_css, wilson)
+from sweep_decoder import RIFERIMENTO, VARIANTI, blocco
 
 Q_FAMIGLIA = [0.005, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.08]
+
+
+def esegui_punto_variante(pool, Hz, K, q, variante, args, idx_cfg, idx_q):
+    """Come esegui_punto di gross_code_capacity, ma con qualsiasi variante di
+    sweep_decoder (anche schedulazione serial o BP+LSD)."""
+    shots = fall = viol = b = 0
+    t0 = time.time()
+    while shots < args.shots_max and fall < args.min_failures:
+        tasks = []
+        for _ in range(args.workers):
+            s = min(args.chunk, args.shots_max - shots - sum(t[3] for t in tasks))
+            if s <= 0:
+                break
+            tasks.append((Hz, K, q, s, [args.seed, idx_cfg, idx_q, b], [variante]))
+            b += 1
+        for n_s, esiti, violate, _ in pool.map(blocco, tasks):
+            fall += int(np.unpackbits(esiti[variante])[:n_s].sum())
+            viol += violate[variante]
+        shots += sum(t[3] for t in tasks)
+    lo, hi = wilson(fall, shots)
+    return {'q': q, 'shots': shots, 'fallimenti': fall,
+            'p_fallimento': fall / shots if shots else float('nan'),
+            'ic95_wilson': [lo, hi], 'sindromi_violate': viol,
+            'secondi': round(time.time() - t0, 2)}
 
 
 def main():
@@ -39,6 +64,8 @@ def main():
     ap.add_argument('--chunk', type=int, default=10_000)
     ap.add_argument('--workers', type=int, default=max(1, (os.cpu_count() or 2) - 2))
     ap.add_argument('--seed', type=int, default=42)
+    ap.add_argument('--variante', default=RIFERIMENTO,
+                    help="decoder del Gross e della famiglia (nome in sweep_decoder)")
     ap.add_argument('--surface-json', nargs='*', default=[])
     ap.add_argument('--output-dir', default=None)
     ap.add_argument('--quick', action='store_true')
@@ -49,14 +76,7 @@ def main():
     elif not args.output_dir:
         ap.error("--output-dir e' obbligatorio fuori da --quick")
 
-    spec = VARIANTI[RIFERIMENTO]
-    # esegui_punto legge i parametri del decoder da un oggetto tipo argparse
-    run_args = SimpleNamespace(
-        bp_max_iter=spec['max_iter'], bp_method=spec['bp_method'],
-        osd_method=spec['osd_method'], osd_order=spec['osd_order'],
-        ms_scaling_factor=spec['ms_scaling_factor'], shots_max=args.shots_max,
-        min_failures=args.min_failures, workers=args.workers, chunk=args.chunk,
-        seed=args.seed)
+    spec = VARIANTI[args.variante]
 
     surface = {}
     if args.surface_json:
@@ -72,13 +92,14 @@ def main():
         for i_c, nome in enumerate(args.codici):
             Hx, Hz, k, d_pub = costruisci(nome)
             verifica = verifica_css(Hx, Hz, k, nome)
-            cfg = {'Hz': Hz, 'K': gf2_nullspace(Hx), 'decoder': 'bposd'}
+            K = gf2_nullspace(Hx)
             n = Hz.shape[1]
             print(f"\n{nome}: n={n} k={k} d pubblicata={d_pub}  rank Hx={verifica['rank_Hx']}",
                   flush=True)
             punti = []
             for i_q, q in enumerate(args.q_list):
-                pt = esegui_punto(pool, cfg, q, run_args, 5000 + i_c, i_q)
+                pt = esegui_punto_variante(pool, Hz, K, q, args.variante, args,
+                                           5000 + i_c, i_q)
                 # confronto con k patch di surface (IC 95% non sovrapposti)
                 eq = {'peggiori': [], 'migliori': []}
                 for d, pts in surface.items():
@@ -120,7 +141,7 @@ def main():
         'parametri': {'codici': {c: CODICI_BB[c] for c in args.codici},
                       'q_list': args.q_list, 'shots_max': args.shots_max,
                       'min_failures': args.min_failures, 'chunk': args.chunk,
-                      'decoder': {RIFERIMENTO: spec},
+                      'decoder': {args.variante: spec},
                       'surface_json': [os.path.basename(p) for p in args.surface_json],
                       'seed_words': "[seed, 5000 + indice codice, indice q, blocco]",
                       'regola_confronto': ("k patch indipendenti, 1-(1-p_L)^k; migliore o "

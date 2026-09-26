@@ -1,0 +1,53 @@
+
+bb_72_12_6: n=72 k=12 d pubblicata=6  rank Hx=30
+  q=0.005  P_blocco=1.118e-04 (313/2800000)  surface peggiori [3, 5] / migliori [7, 9, 11, 13]
+  q=0.01   P_blocco=1.005e-03 (402/400000)  surface peggiori [3, 5] / migliori [7, 9, 11, 13]
+  q=0.02   P_blocco=9.175e-03 (1835/200000)  surface peggiori [3, 5] / migliori [7, 9, 11, 13]
+  q=0.03   P_blocco=3.313e-02 (6625/200000)  surface peggiori [3, 5] / migliori [9, 11, 13]
+  q=0.04   P_blocco=7.937e-02 (15873/200000)  surface peggiori [3, 5, 7] / migliori [9, 11, 13]
+  q=0.05   P_blocco=1.509e-01 (30187/200000)  surface peggiori [3, 5, 7] / migliori [9, 11, 13]
+  q=0.06   P_blocco=2.403e-01 (48064/200000)  surface peggiori [3, 5, 7] / migliori [11, 13]
+  q=0.08   P_blocco=4.540e-01 (90809/200000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+
+bb_90_8_10: n=90 k=8 d pubblicata=10  rank Hx=41
+  q=0.005  P_blocco=1.000e-07 (1/10000000)  surface peggiori [3, 5, 7, 9] / migliori []
+  q=0.01   P_blocco=1.040e-05 (104/10000000)  surface peggiori [3, 5, 7, 9] / migliori [13]
+  q=0.02   P_blocco=3.730e-04 (373/1000000)  surface peggiori [3, 5, 7, 9] / migliori [13]
+  q=0.03   P_blocco=3.340e-03 (668/200000)  surface peggiori [3, 5, 7, 9] / migliori [13]
+  q=0.04   P_blocco=1.503e-02 (3006/200000)  surface peggiori [3, 5, 7, 9, 11] / migliori [13]
+  q=0.05   P_blocco=4.224e-02 (8448/200000)  surface peggiori [3, 5, 7, 9, 11] / migliori [13]
+  q=0.06   P_blocco=9.249e-02 (18498/200000)  surface peggiori [3, 5, 7, 9, 11] / migliori []
+  q=0.08   P_blocco=2.636e-01 (52717/200000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+
+bb_108_8_10: n=108 k=8 d pubblicata=10  rank Hx=50
+  q=0.005  P_blocco=0.000e+00 (0/10000000)  surface peggiori [3, 5, 7, 9] / migliori []
+  q=0.01   P_blocco=1.900e-06 (19/10000000)  surface peggiori [3, 5, 7, 9, 11] / migliori []
+  q=0.02   P_blocco=1.464e-04 (322/2200000)  surface peggiori [3, 5, 7, 9, 11] / migliori []
+  q=0.03   P_blocco=1.675e-03 (335/200000)  surface peggiori [3, 5, 7, 9, 11] / migliori []
+  q=0.04   P_blocco=8.625e-03 (1725/200000)  surface peggiori [3, 5, 7, 9, 11] / migliori []
+  q=0.05   P_blocco=2.873e-02 (5745/200000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+  q=0.06   P_blocco=7.182e-02 (14363/200000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+  q=0.08   P_blocco=2.403e-01 (48054/200000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+
+gross_144_12_12: n=144 k=12 d pubblicata=12  rank Hx=66
+  q=0.005  P_blocco=0.000e+00 (0/10000000)  surface peggiori [3, 5, 7, 9] / migliori []
+  q=0.01   P_blocco=1.100e-06 (11/10000000)  surface peggiori [3, 5, 7, 9, 11] / migliori []
+  q=0.02   P_blocco=8.184e-05 (311/3800000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+  q=0.03   P_blocco=1.025e-03 (410/400000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+  q=0.04   P_blocco=7.375e-03 (1475/200000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+  q=0.05   P_blocco=2.770e-02 (5539/200000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+  q=0.06   P_blocco=7.707e-02 (15414/200000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+  q=0.08   P_blocco=2.839e-01 (56783/200000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+
+bb_288_12_18: n=288 k=12 d pubblicata=18  rank Hx=138
+  q=0.005  P_blocco=0.000e+00 (0/10000000)  surface peggiori [3, 5, 7, 9] / migliori []
+  q=0.01   P_blocco=0.000e+00 (0/10000000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+  q=0.02   P_blocco=1.000e-07 (1/10000000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+  q=0.03   P_blocco=9.000e-06 (90/10000000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+  q=0.04   P_blocco=2.825e-04 (339/1200000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+  q=0.05   P_blocco=3.745e-03 (749/200000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+  q=0.06   P_blocco=2.231e-02 (4462/200000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+  q=0.08   P_blocco=2.085e-01 (41708/200000)  surface peggiori [3, 5, 7, 9, 11, 13] / migliori []
+
+Tempo totale: 693s
+Salvato: artifacts/v2_20260926/results_M16_test4_famiglia_bb_20260926_120439.json

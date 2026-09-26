@@ -1,0 +1,797 @@
+{
+  "schema_version": "2.0",
+  "milestone": "M16_analisi_consolidata",
+  "stato": "esplorativo",
+  "input": {
+    "gross": {
+      "results_M16_test4_famiglia_bb_20260926_120439.json": "1d62f50ec0a6156344cdc9549eef3ad77d60c2b82e61b365800a4335e0e46082"
+    },
+    "surface": {
+      "results_M16_gross_code_capacity_20260926_031028.json": "1ab00c1eeddf60f705235aa0a05f7d06760dfd6a0dc42ef32592adf90f6cb878",
+      "results_M16_gross_code_capacity_basso_rumore_20260926_033631.json": "800e5743757a93cd479b9779efb687e36fb9b00773da7b8b20f455b525c36df4",
+      "results_M16_gross_code_capacity_surface_estensione_20260926_041513.json": "0ebb1bdbee89b3ea4f8a27eb9e501e90d9ff1ee6ca607822e0679b5973dd3be2"
+    }
+  },
+  "decoder_gross": {
+    "serial": {
+      "tipo": "bposd",
+      "bp_method": "minimum_sum",
+      "ms_scaling_factor": 0.625,
+      "max_iter": 100,
+      "schedule": "serial",
+      "osd_method": "osd_cs",
+      "osd_order": 10
+    }
+  },
+  "decoder_surface": "MWPM (PyMatching)",
+  "regola": "per ogni q e configurazione si usa il punto con piu' fallimenti fra i file indicati; 0 fallimenti -> limite superiore 3/N; una distanza e' 'migliore' o 'peggiore' del Gross solo se gli IC 95% non si sovrappongono",
+  "script_sha256": "1bf3f3ad1f567cabc8b955d0f5f97026b20a2e79e886fa881bf3cd8f9656491b",
+  "timestamp": "2026-09-26T12:06:28",
+  "righe": [
+    {
+      "q": 0.005,
+      "gross": {
+        "p_blocco": 0.0,
+        "ic95": [
+          0.0,
+          3.8414573450141057e-07
+        ],
+        "fallimenti": 0,
+        "shots": 10000000,
+        "file": "results_M16_test4_famiglia_bb_20260926_120439.json"
+      },
+      "surface_12_patch": {
+        "3": {
+          "p_blocco": 0.0052075292411203344,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.004224281810377817,
+            0.00641883805620147
+          ],
+          "fallimenti": 87,
+          "shots": 200000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 108
+        },
+        "5": {
+          "p_blocco": 0.0005398663700449946,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.00028406954618998004,
+            0.0010258731468771876
+          ],
+          "fallimenti": 9,
+          "shots": 200000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 300
+        },
+        "7": {
+          "p_blocco": 3.497086803505578e-05,
+          "solo_limite_superiore": false,
+          "ic95": [
+            2.8810973091486503e-05,
+            4.2447741516848936e-05
+          ],
+          "fallimenti": 102,
+          "shots": 35000000,
+          "file": "results_M16_gross_code_capacity_surface_estensione_20260926_041513.json",
+          "qubit_dati": 588
+        },
+        "9": {
+          "p_blocco": 3.399994701891451e-06,
+          "solo_limite_superiore": false,
+          "ic95": [
+            2.749955002934179e-06,
+            4.203691695736644e-06
+          ],
+          "fallimenti": 85,
+          "shots": 300000000,
+          "file": "results_M16_gross_code_capacity_surface_estensione_20260926_041513.json",
+          "qubit_dati": 972
+        },
+        "11": {
+          "p_blocco": 1.9999998224218274e-07,
+          "solo_limite_superiore": false,
+          "ic95": [
+            8.542804263989012e-08,
+            4.682301993907956e-07
+          ],
+          "fallimenti": 5,
+          "shots": 300000000,
+          "file": "results_M16_gross_code_capacity_surface_estensione_20260926_041513.json",
+          "qubit_dati": 1452
+        },
+        "13": {
+          "p_blocco": 1.1999999405265527e-07,
+          "solo_limite_superiore": true,
+          "ic95": [
+            0.0,
+            1.5365834060698802e-07
+          ],
+          "fallimenti": 0,
+          "shots": 300000000,
+          "file": "results_M16_gross_code_capacity_surface_estensione_20260926_041513.json",
+          "qubit_dati": 2028
+        }
+      },
+      "surface_peggiori_del_gross": [
+        3,
+        5,
+        7,
+        9
+      ],
+      "surface_migliori_del_gross": []
+    },
+    {
+      "q": 0.01,
+      "gross": {
+        "p_blocco": 1.1e-06,
+        "ic95": [
+          6.142438032591295e-07,
+          1.9699010861216656e-06
+        ],
+        "fallimenti": 11,
+        "shots": 10000000,
+        "file": "results_M16_test4_famiglia_bb_20260926_120439.json"
+      },
+      "surface_12_patch": {
+        "3": {
+          "p_blocco": 0.019739132996384745,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.017744867521708563,
+            0.02195480056551291
+          ],
+          "fallimenti": 332,
+          "shots": 200000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 108
+        },
+        "5": {
+          "p_blocco": 0.002995878435566812,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.0022734405099211763,
+            0.003947395213448224
+          ],
+          "fallimenti": 50,
+          "shots": 200000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 300
+        },
+        "7": {
+          "p_blocco": 0.0005014846982258625,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.000437963143269271,
+            0.0005742164625426316
+          ],
+          "fallimenti": 209,
+          "shots": 5000000,
+          "file": "results_M16_gross_code_capacity_basso_rumore_20260926_033631.json",
+          "qubit_dati": 588
+        },
+        "9": {
+          "p_blocco": 6.7576854239082e-05,
+          "solo_limite_superiore": false,
+          "ic95": [
+            5.5928648189707e-05,
+            8.165091371559186e-05
+          ],
+          "fallimenti": 107,
+          "shots": 19000000,
+          "file": "results_M16_gross_code_capacity_surface_estensione_20260926_041513.json",
+          "qubit_dati": 972
+        },
+        "11": {
+          "p_blocco": 1.2239931334034893e-05,
+          "solo_limite_superiore": false,
+          "ic95": [
+            1.0083925616410916e-05,
+            1.4856900710347176e-05
+          ],
+          "fallimenti": 102,
+          "shots": 100000000,
+          "file": "results_M16_gross_code_capacity_surface_estensione_20260926_041513.json",
+          "qubit_dati": 1452
+        },
+        "13": {
+          "p_blocco": 1.5999988272064058e-06,
+          "solo_limite_superiore": false,
+          "ic95": [
+            1.1750755475326002e-06,
+            2.178579953993065e-06
+          ],
+          "fallimenti": 40,
+          "shots": 300000000,
+          "file": "results_M16_gross_code_capacity_surface_estensione_20260926_041513.json",
+          "qubit_dati": 2028
+        }
+      },
+      "surface_peggiori_del_gross": [
+        3,
+        5,
+        7,
+        9,
+        11
+      ],
+      "surface_migliori_del_gross": []
+    },
+    {
+      "q": 0.02,
+      "gross": {
+        "p_blocco": 8.18421052631579e-05,
+        "ic95": [
+          7.323794551339397e-05,
+          9.14570087370822e-05
+        ],
+        "fallimenti": 311,
+        "shots": 3800000,
+        "file": "results_M16_test4_famiglia_bb_20260926_120439.json"
+      },
+      "surface_12_patch": {
+        "3": {
+          "p_blocco": 0.07394381061578759,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.06970186582191196,
+            0.07843196060967073
+          ],
+          "fallimenti": 1021,
+          "shots": 160000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 108
+        },
+        "5": {
+          "p_blocco": 0.023326821000733022,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.02115505258910444,
+            0.025718354391732867
+          ],
+          "fallimenti": 393,
+          "shots": 200000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 300
+        },
+        "7": {
+          "p_blocco": 0.007282247047322499,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.0068651268642223595,
+            0.0077246042372192125
+          ],
+          "fallimenti": 1096,
+          "shots": 1800000,
+          "file": "results_M16_gross_code_capacity_basso_rumore_20260926_033631.json",
+          "qubit_dati": 588
+        },
+        "9": {
+          "p_blocco": 0.0021937910737126476,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.0020563174191517986,
+            0.002340443752636534
+          ],
+          "fallimenti": 915,
+          "shots": 5000000,
+          "file": "results_M16_gross_code_capacity_basso_rumore_20260926_033631.json",
+          "qubit_dati": 972
+        },
+        "11": {
+          "p_blocco": 0.0006046323776022211,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.0005344657841610534,
+            0.0006840072789543461
+          ],
+          "fallimenti": 252,
+          "shots": 5000000,
+          "file": "results_M16_gross_code_capacity_basso_rumore_20260926_033631.json",
+          "qubit_dati": 1452
+        },
+        "13": {
+          "p_blocco": 0.00018512714725671398,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.0001533525335546404,
+            0.00022348465730170908
+          ],
+          "fallimenti": 108,
+          "shots": 7000000,
+          "file": "results_M16_gross_code_capacity_surface_estensione_20260926_041513.json",
+          "qubit_dati": 2028
+        }
+      },
+      "surface_peggiori_del_gross": [
+        3,
+        5,
+        7,
+        9,
+        11,
+        13
+      ],
+      "surface_migliori_del_gross": []
+    },
+    {
+      "q": 0.03,
+      "gross": {
+        "p_blocco": 0.001025,
+        "ic95": [
+          0.0009305119428953366,
+          0.0011290719246398618
+        ],
+        "fallimenti": 410,
+        "shots": 400000,
+        "file": "results_M16_test4_famiglia_bb_20260926_120439.json"
+      },
+      "surface_12_patch": {
+        "3": {
+          "p_blocco": 0.15770200708858573,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.14949534976638723,
+            0.1663099918094022
+          ],
+          "fallimenti": 1136,
+          "shots": 80000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 108
+        },
+        "5": {
+          "p_blocco": 0.07324456608705154,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.06902108146790653,
+            0.07771464460228739
+          ],
+          "fallimenti": 1011,
+          "shots": 160000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 300
+        },
+        "7": {
+          "p_blocco": 0.031107463135156,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.028596891025882476,
+            0.0338342594013038
+          ],
+          "fallimenti": 526,
+          "shots": 200000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 588
+        },
+        "9": {
+          "p_blocco": 0.014009234699802309,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.012339301866297392,
+            0.015903190022729552
+          ],
+          "fallimenti": 235,
+          "shots": 200000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 972
+        },
+        "11": {
+          "p_blocco": 0.0056851323026329,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.0046534893606500205,
+            0.006944617044455259
+          ],
+          "fallimenti": 95,
+          "shots": 200000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 1452
+        },
+        "13": {
+          "p_blocco": 0.0027565112753547005,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.002067462953902366,
+            0.0036747486318948752
+          ],
+          "fallimenti": 46,
+          "shots": 200000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 2028
+        }
+      },
+      "surface_peggiori_del_gross": [
+        3,
+        5,
+        7,
+        9,
+        11,
+        13
+      ],
+      "surface_migliori_del_gross": []
+    },
+    {
+      "q": 0.04,
+      "gross": {
+        "p_blocco": 0.007375,
+        "ic95": [
+          0.007009367260120398,
+          0.0077595563629234525
+        ],
+        "fallimenti": 1475,
+        "shots": 200000,
+        "file": "results_M16_test4_famiglia_bb_20260926_120439.json"
+      },
+      "surface_12_patch": {
+        "3": {
+          "p_blocco": 0.26415599232308806,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.2544568232057338,
+            0.27414734021549325
+          ],
+          "fallimenti": 2019,
+          "shots": 80000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 108
+        },
+        "5": {
+          "p_blocco": 0.14972135080903304,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.141677174893849,
+            0.15817534029116853
+          ],
+          "fallimenti": 1074,
+          "shots": 80000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 300
+        },
+        "7": {
+          "p_blocco": 0.08513528090594447,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.08061337110918321,
+            0.0898971939598735
+          ],
+          "fallimenti": 1182,
+          "shots": 160000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 588
+        },
+        "9": {
+          "p_blocco": 0.04776141386579724,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.04466283511189506,
+            0.05106868250703123
+          ],
+          "fallimenti": 814,
+          "shots": 200000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 972
+        },
+        "11": {
+          "p_blocco": 0.02824754580643285,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.025855290291287192,
+            0.030857325440417638
+          ],
+          "fallimenti": 477,
+          "shots": 200000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 1452
+        },
+        "13": {
+          "p_blocco": 0.014482962668312283,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.01278379989653411,
+            0.016405931016757025
+          ],
+          "fallimenti": 243,
+          "shots": 200000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 2028
+        }
+      },
+      "surface_peggiori_del_gross": [
+        3,
+        5,
+        7,
+        9,
+        11,
+        13
+      ],
+      "surface_migliori_del_gross": []
+    },
+    {
+      "q": 0.05,
+      "gross": {
+        "p_blocco": 0.027695,
+        "ic95": [
+          0.02698484546779441,
+          0.028423297585809703
+        ],
+        "fallimenti": 5539,
+        "shots": 200000,
+        "file": "results_M16_test4_famiglia_bb_20260926_120439.json"
+      },
+      "surface_12_patch": {
+        "3": {
+          "p_blocco": 0.3731657269285168,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.35867213331986136,
+            0.38803739610185606
+          ],
+          "fallimenti": 1527,
+          "shots": 40000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 108
+        },
+        "5": {
+          "p_blocco": 0.25102790039257716,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.2414562190028804,
+            0.26090479462502625
+          ],
+          "fallimenti": 1904,
+          "shots": 80000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 300
+        },
+        "7": {
+          "p_blocco": 0.17760499182479095,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.16902931535188725,
+            0.1865610093739849
+          ],
+          "fallimenti": 1293,
+          "shots": 80000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 588
+        },
+        "9": {
+          "p_blocco": 0.12137327341193227,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.11530763673697053,
+            0.12773245979380354
+          ],
+          "fallimenti": 1287,
+          "shots": 120000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 972
+        },
+        "11": {
+          "p_blocco": 0.07993738024049679,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.07554201081636391,
+            0.08457562892633286
+          ],
+          "fallimenti": 1107,
+          "shots": 160000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 1452
+        },
+        "13": {
+          "p_blocco": 0.051826552041760565,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.048604114205008764,
+            0.05525585002811595
+          ],
+          "fallimenti": 885,
+          "shots": 200000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 2028
+        }
+      },
+      "surface_peggiori_del_gross": [
+        3,
+        5,
+        7,
+        9,
+        11,
+        13
+      ],
+      "surface_migliori_del_gross": []
+    },
+    {
+      "q": 0.06,
+      "gross": {
+        "p_blocco": 0.07707,
+        "ic95": [
+          0.07590925248785767,
+          0.07824699388188387
+        ],
+        "fallimenti": 15414,
+        "shots": 200000,
+        "file": "results_M16_test4_famiglia_bb_20260926_120439.json"
+      },
+      "surface_12_patch": {
+        "3": {
+          "p_blocco": 0.4815747482024668,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.4672131696708889,
+            0.4961301873952212
+          ],
+          "fallimenti": 2131,
+          "shots": 40000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 108
+        },
+        "5": {
+          "p_blocco": 0.38690718935546997,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.3723796769659258,
+            0.4017881998261652
+          ],
+          "fallimenti": 1598,
+          "shots": 40000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 300
+        },
+        "7": {
+          "p_blocco": 0.282623756592418,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.2687661295819722,
+            0.2970293253670747
+          ],
+          "fallimenti": 1092,
+          "shots": 40000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 588
+        },
+        "9": {
+          "p_blocco": 0.2353428800632743,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.22594194808101875,
+            0.24506476056304016
+          ],
+          "fallimenti": 1769,
+          "shots": 80000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 972
+        },
+        "11": {
+          "p_blocco": 0.18023423305011255,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.17161340803398673,
+            0.189232645974291
+          ],
+          "fallimenti": 1314,
+          "shots": 80000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 1452
+        },
+        "13": {
+          "p_blocco": 0.1407581980106979,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.13290736053807595,
+            0.1490284277236935
+          ],
+          "fallimenti": 1005,
+          "shots": 80000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 2028
+        }
+      },
+      "surface_peggiori_del_gross": [
+        3,
+        5,
+        7,
+        9,
+        11,
+        13
+      ],
+      "surface_migliori_del_gross": []
+    },
+    {
+      "q": 0.08,
+      "gross": {
+        "p_blocco": 0.283915,
+        "ic95": [
+          0.28194306207025865,
+          0.2858952385866008
+        ],
+        "fallimenti": 56783,
+        "shots": 200000,
+        "file": "results_M16_test4_famiglia_bb_20260926_120439.json"
+      },
+      "surface_12_patch": {
+        "3": {
+          "p_blocco": 0.652774426085422,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.6403610843020738,
+            0.6651454103441041
+          ],
+          "fallimenti": 3375,
+          "shots": 40000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 108
+        },
+        "5": {
+          "p_blocco": 0.620287178348728,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.6073438342954878,
+            0.6332267703479486
+          ],
+          "fallimenti": 3101,
+          "shots": 40000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 300
+        },
+        "7": {
+          "p_blocco": 0.5769258719115438,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.5633928276327635,
+            0.5905116061141102
+          ],
+          "fallimenti": 2767,
+          "shots": 40000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 588
+        },
+        "9": {
+          "p_blocco": 0.5591386685746669,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.5454022116567481,
+            0.5729524604306242
+          ],
+          "fallimenti": 2639,
+          "shots": 40000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 972
+        },
+        "11": {
+          "p_blocco": 0.5217963375779919,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.5077055139183766,
+            0.536018834953207
+          ],
+          "fallimenti": 2385,
+          "shots": 40000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 1452
+        },
+        "13": {
+          "p_blocco": 0.4771217648003029,
+          "solo_limite_superiore": false,
+          "ic95": [
+            0.4627373706113509,
+            0.4917071239458848
+          ],
+          "fallimenti": 2104,
+          "shots": 40000,
+          "file": "results_M16_gross_code_capacity_20260926_031028.json",
+          "qubit_dati": 2028
+        }
+      },
+      "surface_peggiori_del_gross": [
+        3,
+        5,
+        7,
+        9,
+        11,
+        13
+      ],
+      "surface_migliori_del_gross": []
+    }
+  ]
+}
