@@ -287,6 +287,11 @@ CONTENUTO = [
         'esattamente e l’aritmetica è più complessa: il beneficio dell’AQFT non '
         'si trasferisce automaticamente, e il suo grado di approssimazione va scelto in '
         'funzione dell’istanza e del rumore e verificato su dati indipendenti.',
+        'Nel complesso, la selezione degli esiti a valle della misura riduce il costo di '
+        'fattorizzazione, ma non può recuperare l’informazione che il rumore ha già '
+        'distrutto: per proteggerla servono strategie che agiscono prima, correggendo gli '
+        'errori o riducendo il numero di porte con l’AQFT, e in entrambi i casi il beneficio '
+        'dipende dalla scelta del codice, del decoder e del grado di approssimazione.',
         'Le conclusioni restano limitate al contesto simulativo: il post-processing è '
         'valutato per [i]N[/i] = 15, la correzione quantistica su circuiti di memoria separati '
         'e, per il Gross code, nel solo modello code-capacity, l’AQFT su poche istanze con '
