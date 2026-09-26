@@ -35,7 +35,11 @@ distance 5 and is not significant at distance 7.
 
 BP+OSD is considered as a further comparison and, in the distance-5 configurations
 analyzed, outperforms the MWPM-based hybrid. The tests also show that performance depends
-on the distance, the number of rounds, and the size of the network input.
+on the distance, the number of rounds, and the size of the network input. The Gross code
+protects 12 logical qubits with 144 data qubits better than 12 distance-13 surface-code
+patches (2,028 data qubits) for \(p \geq 0.75\%\) and than distance-11 patches at every
+noise level; with serial scheduling of belief propagation the logical error at
+\(p = 1\%\) drops by about a hundred times.
 
 \subsection{Factorization success and the uniform reference}
 
@@ -49,8 +53,8 @@ the circuit.
 \subsection{Effectiveness and limitations of the approximate QFT}
 
 In the Shor pilot for \(N = 15\), the selected AQFT raises the single-shot success
-probability from 47.92\% to 62.79\%, an increase of 14.87 percentage points, or 31\% in
-relative terms, on independent test data (95\% Newcombe confidence interval
+probability from 47.92\% to 62.79\%, an increase of 14.87 percentage points (+31\% relative)
+on independent test data (95\% Newcombe confidence interval
 {[}12.73; 16.99{]}). At the same time, ECR gates decrease from 362 to 279 (\(-22.9\%\))
 and circuit depth from 1,351 to 1,141 (\(-15.5\%\)). The
 improvement therefore concerns factorization directly, not only phase estimation.
@@ -58,10 +62,8 @@ improvement therefore concerns factorization directly, not only phase estimation
 For \(N = 21\), truncating the QFTs inside the arithmetic reduces ECR gates from 49,661
 to 23,178, roughly by half (\(-53.3\%\)), but ideal success drops from 46.67\% to
 40.13\% (\(-6.54\) percentage points). In the three noisy
-comparisons, the intervals of the differences always include zero. With 128 test shots
-per variant and noise level, the ability to detect small effects remains limited. In the
-nine phase-estimation benchmarks, all differences favor the selected variant and six
-individual 95\% intervals exclude zero; the largest increase is 12.55 percentage points
-with ten qubits ({[}9.77; 15.30{]}). The comparisons remain exploratory, and the best
+comparisons, with only 128 test shots per variant, the intervals of the differences always
+include zero. In the nine phase-estimation benchmarks, from six to ten qubits, all
+differences favor the selected variant, up to 12.55 percentage points ({[}9.77; 15.30{]}). The comparisons remain exploratory, and the best
 truncation degree among those tested, two or three, cannot be considered valid in general
 for registers of arbitrary size.
