@@ -1,12 +1,25 @@
 \section{Risultati}
 
-\subsection{Validazione e contributo del post-processing}
+\subsection{Validazione dei circuiti e sensibilità di Shor agli errori di porta}
 
 Le verifiche ideali dell'aritmetica confermano la correttezza dei circuiti senza rumore per \(N=15\), \(N=21\) e \(N=35\); la distanza di variazione totale dalla distribuzione teorica è \(1{,}38 \times 10^{-9}\) per \(N=21\) e \(2{,}50 \times 10^{-13}\) per \(N=35\).
 
-Negli scenari UC1 e UC2, le SVM selezionate raggiungono valori di F1 pari a 0,919 e 0,923 e area sotto la curva ROC pari a 0,965 e 0,958. Tuttavia, questa capacità predittiva non porta a una riduzione del numero di iterazioni necessarie. TOP-4 richiede in media 1,00 iterazioni in entrambi gli scenari, contro 1,37 e 1,50 di TOP-1, con differenze statisticamente significative nei test appaiati; il Metodo 2 richiede invece 1,50 e 1,37 iterazioni, senza migliorare significativamente TOP-1 e risultando peggiore di TOP-4. Il vantaggio osservato sembra quindi legato soprattutto alla possibilità di considerare più candidati. Questi risultati restano comunque legati all'istanza, al rumore e ai metodi considerati.
+Per ciascun valore di \(p_g\) si eseguono 20 repliche da 4.096 shot, misurando il successo
+per singolo shot. Senza errori il successo è del 74,89\% (intervallo di confidenza al 95\%
+{[}74,59\%; 75,18\%{]}), in accordo con il 75\% atteso; scende al 72,5\% per
+\(p_g = 0{,}1\%\), al 56,5\% per 1\%, al 45,2\% per 2\% e al 29,5\% per 5\%. Da 10\% in poi
+resta intorno al 25\%, fino al 24,59\% per \(p_g = 0{,}5\), praticamente il riferimento
+uniforme del 24,61\%.
 
-\subsection{Protezione della memoria e decodifica}
+La fragilità cresce con il numero di porte: con 294 porte soggette a errore, già per
+\(p_g = 1\%\) si verificano in media circa tre errori per esecuzione. Il risultato motiva le
+tre strategie successive.
+
+\subsection{Post-processing e machine learning}
+
+Negli scenari UC1 e UC2, le SVM selezionate raggiungono valori di F1 pari a 0,919 e 0,923 e area sotto la curva ROC pari a 0,965 e 0,958. Tuttavia, questa capacità predittiva non porta a una riduzione del numero di iterazioni necessarie. TOP-4 richiede in media 1,00 iterazioni in entrambi gli scenari, contro 1,37 e 1,50 di TOP-1, con differenze statisticamente significative nei test appaiati; il Metodo~2 richiede invece 1,50 e 1,37 iterazioni, senza migliorare significativamente TOP-1 e risultando peggiore di TOP-4. Il vantaggio osservato sembra quindi legato soprattutto alla possibilità di considerare più candidati. Questi risultati restano comunque legati all'istanza, al rumore e ai metodi considerati.
+
+\subsection{Correzione quantistica degli errori}\label{sec:risultati-qec}
 
 Le verifiche iniziali sui codici a ripetizione e di Steane mostrano il comportamento atteso. Il codice a ripetizione riproduce, entro l'incertezza Monte Carlo, la relazione \(p_L=3p^2-2p^3\); per Steane la dipendenza dall'errore fisico è circa quadratica, con pendenza logaritmica pari a 1,94 e pseudo-soglia intorno a 0,08.
 
@@ -14,13 +27,9 @@ L'analisi principale riguarda il surface code. Sotto soglia, aumentare la distan
 
 Con rumore nominale, la rete neurale autonoma non mostra un vantaggio significativo rispetto a MWPM. In presenza di crosstalk, invece, il decoder ibrido migliora le prestazioni: per \(d=3\), \(p=0{,}003\) e crosstalk pari a 0,01, \(p_L\) passa da 0,05829 a 0,04851, con una riduzione relativa di circa il 16,8\%, significativa al test appaiato di McNemar. Il beneficio si riduce a distanza 5 e non risulta significativo a distanza 7.
 
-BP+OSD viene considerato come ulteriore confronto e, nelle configurazioni analizzate a distanza 5, supera l'ibrido basato su MWPM. Le prove mostrano inoltre che le prestazioni dipendono dalla distanza, dal numero di cicli e dalla dimensione dell'ingresso della rete. Nel modello code-capacity, il Gross code protegge 12 qubit logici con 144 qubit di dato meglio di 12 patch di surface code a distanza 13 (2.028 qubit di dato) per \(p \geq 0{,}75\%\) e di quelle a distanza 11 a ogni rumore; con la schedulazione serial della propagazione delle credenze l'errore logico a \(p=1\%\) scende di circa cento volte.
+BP+OSD viene considerato come ulteriore confronto e, nelle configurazioni analizzate a distanza 5, supera l'ibrido basato su MWPM. Le prove mostrano inoltre che le prestazioni dipendono dalla distanza, dal numero di cicli e dalla dimensione dell'ingresso della rete. Nel modello code-capacity, il Gross code protegge 12 qubit logici con 144 qubit di dato meglio di 12 patch di surface code a distanza 13 (2.028 qubit di dato) per \(p \geq 0{,}75\%\) e di quelle a distanza 11 a ogni rumore; con la schedulazione serial della propagazione delle credenze corregge tutti gli errori fino a cinque qubit, verificati su circa \(5\times10^{8}\) configurazioni, mentre la configurazione parallela usata inizialmente falliva già con tre, e l'errore logico a \(p=1\%\) scende di circa cento volte.
 
-\subsection{Successo di fattorizzazione e riferimento uniforme}
-
-In assenza di rumore, il successo per singolo shot è pari al 74,89\% (intervallo di confidenza al 95\% {[}74,59\%; 75,18\%{]}), in accordo con il 75\% atteso. All'aumentare di \(p_g\), il successo diminuisce fino al 24,59\% per \(p_g=0{,}5\), valore molto vicino al riferimento uniforme del 24,61\% (Sezione~\ref{sec:implementazione}). Questo mostra che il solo numero di fattorizzazioni corrette non è sufficiente per descrivere quanta struttura quantistica rimanga nel circuito.
-
-\subsection{Efficacia e limiti della QFT approssimata}
+\subsection{Riduzione del rumore con la AQFT}
 
 Nel pilota di Shor per \(N=15\), l'AQFT selezionata aumenta la probabilità di successo per shot dal 47,92\% al 62,79\%, con un incremento di 14,87 punti percentuali (+31\% relativo) sui dati indipendenti di verifica (intervallo di confidenza Newcombe al 95\% {[}12,73; 16,99{]}). Allo stesso tempo, le porte ECR diminuiscono da 362 a 279 (\(-22{,}9\%\)) e la profondità del circuito da 1.351 a 1.141 (\(-15{,}5\%\)). Il miglioramento riguarda quindi direttamente la fattorizzazione e non solo la stima di fase.
 

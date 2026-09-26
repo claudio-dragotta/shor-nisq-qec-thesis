@@ -1,22 +1,34 @@
 \section{Results}
 
-\subsection{Validation and contribution of post-processing}
+\subsection{Circuit validation and sensitivity of Shor's algorithm to gate errors}
 
-Ideal arithmetic checks confirm the correctness of the circuits in the absence of noise
-for the main instance \(N = 15\) and for the instances \(N = 21\) and \(N = 35\), with a
-total variation distance from the theoretical distribution of \(1.38 \times 10^{-9}\) for
-\(N = 21\) and \(2.50 \times 10^{-13}\) for \(N = 35\).
+Ideal arithmetic checks confirm the correctness of the circuits in the absence of noise for
+\(N = 15\), \(N = 21\), and \(N = 35\); the total variation distance from the theoretical
+distribution is \(1.38 \times 10^{-9}\) for \(N = 21\) and \(2.50 \times 10^{-13}\) for
+\(N = 35\).
+
+For each value of \(p_{g}\), 20 replicates of 4,096 shots are run, measuring single-shot
+success. Without errors, success is 74.89\% (95\% confidence interval
+{[}74.59\%; 75.18\%{]}), consistent with the expected 75\%; it falls to 72.5\% at
+\(p_{g} = 0.1\%\), 56.5\% at 1\%, 45.2\% at 2\%, and 29.5\% at 5\%. From 10\% onward it stays
+around 25\%, down to 24.59\% at \(p_{g} = 0.5\), practically the 24.61\% uniform reference.
+
+Fragility grows with the number of gates: with 294 gates exposed to errors, already at
+\(p_{g} = 1\%\) about three errors occur on average per run. This result motivates the three
+strategies that follow.
+
+\subsection{Post-processing and machine learning}
 
 In scenarios UC1 and UC2, the selected SVMs reach F1 scores of 0.919 and 0.923 and areas
 under the ROC curve of 0.965 and 0.958. This predictive ability, however, does not reduce
 the number of iterations required. TOP-4 needs 1.00 iterations on average in both
 scenarios, versus 1.37 and 1.50 for TOP-1, with statistically significant differences in
-paired tests; Method 2 instead needs 1.50 and 1.37 iterations, without significantly
+paired tests; Method~2 instead needs 1.50 and 1.37 iterations, without significantly
 improving on TOP-1 and performing worse than TOP-4. The observed advantage therefore
 appears to stem mainly from the possibility of considering more candidates. These results
 nonetheless remain tied to the instance, the noise, and the methods considered.
 
-\subsection{Memory protection and decoding}
+\subsection{Quantum error correction}\label{sec:results-qec-en}
 
 The initial checks on the repetition and Steane codes show the expected behavior. Within
 Monte Carlo uncertainty, the repetition code reproduces the relation
@@ -37,21 +49,14 @@ distance 5 and is not significant at distance 7.
 BP+OSD is considered as a further comparison and, in the distance-5 configurations
 analyzed, outperforms the MWPM-based hybrid. The tests also show that performance depends
 on the distance, the number of rounds, and the size of the network input. In the
-code-capacity model, the Gross code protects 12 logical qubits with 144 data qubits better than 12 distance-13 surface-code
-patches (2,028 data qubits) for \(p \geq 0.75\%\) and than distance-11 patches at every
-noise level; with serial scheduling of belief propagation the logical error at
-\(p = 1\%\) drops by about a hundred times.
+code-capacity model, the Gross code protects 12 logical qubits with 144 data qubits better
+than 12 distance-13 surface-code patches (2,028 data qubits) for \(p \geq 0.75\%\) and than
+distance-11 patches at every noise level; with serial scheduling of belief propagation it
+corrects all errors of up to five qubits, verified over about \(5\times10^{8}\)
+configurations, whereas the parallel configuration used initially already failed with three,
+and the logical error at \(p = 1\%\) drops by about a hundred times.
 
-\subsection{Factorization success and the uniform reference}
-
-Without noise, single-shot success is 74.89\% (95\% confidence interval
-{[}74.59\%; 75.18\%{]}), consistent with the expected 75\%. As \(p_{g}\) increases,
-success decreases down to 24.59\% at \(p_{g} = 0.5\), very close to the 24.61\% uniform
-reference (Section~\ref{sec:implementation-en}). This shows that the number of correct
-factorizations alone is not sufficient to describe how much quantum structure remains in
-the circuit.
-
-\subsection{Effectiveness and limitations of the approximate QFT}
+\subsection{Noise reduction with the AQFT}
 
 In the Shor pilot for \(N = 15\), the selected AQFT raises the single-shot success
 probability from 47.92\% to 62.79\%, an increase of 14.87 percentage points (+31\% relative)
@@ -65,6 +70,6 @@ to 23,178, roughly by half (\(-53.3\%\)), but ideal success drops from 46.67\% t
 40.13\% (\(-6.54\) percentage points). In the three noisy
 comparisons, with only 128 test shots per variant, the intervals of the differences always
 include zero. In the nine phase-estimation benchmarks, from six to ten qubits, all
-differences favor the selected variant, up to 12.55 percentage points ({[}9.77; 15.30{]}). The comparisons remain exploratory, and the best
-truncation degree among those tested, two or three, cannot be considered valid in general
-for registers of arbitrary size.
+differences favor the selected variant, up to 12.55 percentage points ({[}9.77; 15.30{]}).
+The comparisons remain exploratory, and the best truncation degree among those tested, two
+or three, cannot be considered valid in general for registers of arbitrary size.
