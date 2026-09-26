@@ -168,13 +168,8 @@ CONTENUTO = [
         'decoding[/i]) è usato come ulteriore decoder di confronto sul surface code e come '
         'decoder del Gross code [12].',
         'Il confronto mostra che i due approcci non sono equivalenti: a parità di qubit '
-        'logici e per [i]p[/i] ≥ 0,5%, il Gross code ottiene una protezione pari o '
-        'superiore a quella del surface code con un numero di qubit di dato molto minore, 144 '
-        'contro i 2.028 di 12 patch a distanza 13 (Sezione 3.3). Il vantaggio dipende però in modo decisivo dal decoder: '
-        'con la schedulazione serial della propagazione delle credenze il Gross code corregge '
-        'tutti gli errori fino a cinque qubit, verificati su circa 5×10[sup]8[/sup] '
-        'configurazioni, mentre la configurazione parallela usata inizialmente falliva già '
-        'con tre.',
+        'logici il Gross code richiede molti meno qubit di dato, con un vantaggio che dipende '
+        'in modo decisivo dal decoder (Sezione 3.3).',
     ]),
     (2, 'Riduzione del rumore con la AQFT', [
         'La terza strategia riduce l’effetto del rumore alla fonte, diminuendo il numero di '
@@ -208,9 +203,7 @@ CONTENUTO = [
         '[i]p[/i][sub]g[/sub] = 0,5, praticamente il riferimento uniforme del 24,61%.',
         'La fragilità cresce con il numero di porte: con 294 porte soggette a errore, '
         'già per [i]p[/i][sub]g[/sub] = 1% si verificano in media circa tre errori per '
-        'esecuzione. Il risultato motiva le tre strategie successive e mostra che il numero di '
-        'fattorizzazioni corrette, da solo, non misura quanta struttura quantistica sopravviva '
-        'nel circuito.',
+        'esecuzione. Il risultato motiva le tre strategie successive.',
     ]),
     (2, 'Post-processing e machine learning', []),
     (2, 'Correzione quantistica degli errori', []),
