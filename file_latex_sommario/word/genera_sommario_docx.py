@@ -119,9 +119,7 @@ CONTENUTO = [
         '[i]p[/i][sub]g[/sub] = 1%, 45,2% per [i]p[/i][sub]g[/sub] = 2% e 29,5% per '
         '[i]p[/i][sub]g[/sub] = 5%. Da [i]p[/i][sub]g[/sub] = 10% in poi il successo resta '
         'intorno al 25% e per [i]p[/i][sub]g[/sub] = 0,5 vale il 24,59%, praticamente il '
-        'riferimento uniforme del 24,61% (Sezione 2.1): la struttura dei picchi è persa e i '
-        'fattori corretti che si ottengono ancora sono dovuti alla permissività della '
-        'verifica classica.',
+        'riferimento uniforme del 24,61%.',
         'La fragilità dipende dal numero di porte: con 294 porte soggette a errore, già '
         'per [i]p[/i][sub]g[/sub] = 1% si verificano in media circa tre errori per esecuzione. '
         'Questo risultato è la premessa del lavoro e motiva le tre strategie successive: '
@@ -135,7 +133,28 @@ CONTENUTO = [
         '[i]p[/i][sub]L[/sub] dei codici di correzione, poiché Shor non viene eseguito con '
         'una compilazione fault-tolerant completa.',
     ]),
-    (2, 'Mitigazione degli errori mediante post-processing e machine learning', []),
+    (2, 'Mitigazione degli errori mediante post-processing e machine learning', [
+        'La prima strategia agisce a valle della misura: senza modificare il circuito, cerca di '
+        'ricavare i fattori dagli esiti rumorosi scegliendo meglio quali verificare, e valuta '
+        'se un modello di machine learning renda questa scelta più efficace. Tre strategie '
+        'di selezione, con estrattore dei fattori e regola dei pareggi comuni, operano sugli '
+        'stessi istogrammi, uno per iterazione quantistica, da 1.024 shot ciascuno. TOP-1 '
+        '(Metodo 1) verifica il solo esito più frequente; TOP-4 fino a quattro candidati '
+        'ordinati per frequenza; il Metodo 2 applica TOP-4 solo se un classificatore predice il '
+        'successo del candidato dominante. Il confronto fra Metodo 2 e TOP-4 senza filtro è '
+        'lo studio di ablazione, che stabilisce se il vantaggio venga dal modello appreso o dal '
+        'semplice provare più candidati.',
+        'Due scenari illustrativi, UC1 di riferimento e UC2 di stress, includono '
+        'depolarizzazione, rilassamento termico ed errori di lettura; per ciascuno scenario, '
+        '2.000 istogrammi con parametri variati entro ±50% del nominale sono divisi '
+        '60%/20%/20% fra addestramento, selezione e verifica. Random forest, support vector '
+        'machine (SVM) e perceptron multistrato sono confrontati su F1; il modello scelto è '
+        'valutato su 400 istogrammi indipendenti per scenario. La metrica primaria è il '
+        'numero di iterazioni per ottenere i fattori; l’accuratezza è stata considerata '
+        'un elemento secondario nello studio del classificatore, mentre il tempo di calcolo '
+        'è stato rapportato alle risorse hardware disponibili. Si usano 30 repliche appaiate '
+        'per scenario e al massimo 50 iterazioni.',
+    ]),
     (2, 'Correzione quantistica degli errori: surface code e codici qLDPC', []),
     (2, 'Riduzione del rumore con la AQFT', []),
     (1, 'Risultati', []),
@@ -193,7 +212,8 @@ def _bordo_sotto(elemento_pr, spessore_ottavi=4):
 def _spazi_indivisibili(testo):
     """Evita che formule e citazioni si spezzino a fine riga, come il ~ di LaTeX."""
     testo = testo.replace(' = ', ' = ').replace(' ≡ ', ' ≡ ')
-    testo = testo.replace(' ≃ ', ' ≃ ').replace('mod ', 'mod ')
+    testo = testo.replace(' \u2243 ', '\u00a0\u2243\u00a0').replace('mod ', 'mod\u00a0')
+    testo = re.sub(r'(Metodo|Sezione) (\d)', '\\1\u00a0\\2', testo)
     return re.sub(r' \[(\d)', ' [\\1', testo)
 
 
