@@ -216,7 +216,33 @@ CONTENUTO = [
         'candidati, non dal classificatore; il risultato resta legato all’istanza, al '
         'rumore e ai metodi considerati.',
     ]),
-    (2, 'Correzione quantistica degli errori', []),
+    (2, 'Correzione quantistica degli errori', [
+        'Le verifiche preliminari confermano il comportamento atteso: il codice a ripetizione '
+        'riproduce, entro l’incertezza Monte Carlo, la relazione [i]p[/i][sub]L[/sub] = '
+        '3[i]p[/i][sup]2[/sup] − 2[i]p[/i][sup]3[/sup], e per Steane la dipendenza '
+        'dall’errore fisico è circa quadratica, con pendenza logaritmica 1,94 e '
+        'pseudo-soglia intorno a 0,08. Nel surface code, sotto soglia l’aumento della '
+        'distanza riduce l’errore logico e sopra soglia lo aumenta; il fit fornisce soglie '
+        'di circa 0,86% in base [i]Z[/i] e 0,81% in base [i]X[/i].',
+        'Con rumore nominale la rete neurale autonoma non supera significativamente MWPM. In '
+        'presenza di crosstalk il decoder ibrido migliora invece le prestazioni: per '
+        '[i]d[/i] = 3, [i]p[/i] = 0,003 e crosstalk pari a 0,01, [i]p[/i][sub]L[/sub] passa da '
+        '0,05829 a 0,04851, una riduzione relativa del 16,8% significativa al test appaiato di '
+        'McNemar; il beneficio si riduce a distanza 5 e non è significativo a distanza 7. '
+        'Nelle configurazioni a distanza 5 BP+OSD supera l’ibrido basato su MWPM; le '
+        'prestazioni dipendono inoltre dalla distanza, dal numero di cicli e dalla dimensione '
+        'dell’ingresso della rete.',
+        'Nel modello code-capacity il Gross code protegge 12 qubit logici con 144 qubit di '
+        'dato meglio di 12 patch di surface code a distanza 11 (1.452 qubit di dato) a ogni '
+        'livello di rumore studiato, e meglio di 12 patch a distanza 13 (2.028) per '
+        '[i]p[/i] ≥ 0,75%: a [i]p[/i] = 1% il blocco fallisce con probabilità '
+        '1,0×10[sup]−6[/sup], contro 1,6×10[sup]−6[/sup]. Il risultato '
+        'dipende dal decoder: con la schedulazione serial della propagazione delle credenze il '
+        'Gross code corregge tutti gli errori fino a cinque qubit, verificati su circa '
+        '5×10[sup]8[/sup] configurazioni, e a [i]p[/i] = 1% l’errore logico è circa '
+        'cento volte più basso che con la configurazione parallela usata inizialmente, che '
+        'falliva già con tre errori.',
+    ]),
     (2, 'Riduzione del rumore con la AQFT', []),
     (1, 'Discussione e conclusioni', []),
     (1, 'Riferimenti bibliografici essenziali', []),
