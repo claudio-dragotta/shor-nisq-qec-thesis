@@ -103,12 +103,27 @@ CONTENUTO = [
         'parametri, semi casuali e identificativi dei circuiti.',
     ]),
     (2, 'Sensibilità di Shor agli errori di porta', [
-        'Un esperimento separato valuta la sensibilità di Shor agli errori di porta '
-        'applicando errori di Pauli indipendenti dopo le porte compilate, escluse le rotazioni '
-        'virtuali RZ. Per ogni valore di errore si eseguono 20 repliche da 4.096 shot. La '
-        'probabilità [i]p[/i][sub]g[/sub] descrive il rumore fisico per porta e non è '
-        'direttamente confrontabile con il fallimento logico [i]p[/i][sub]L[/sub], poiché '
-        'Shor non viene eseguito con una compilazione fault-tolerant completa.',
+        'Il punto di partenza dello studio è stato capire quanto l’algoritmo di Shor '
+        'sia robusto agli errori di porta. Nel circuito dell’istanza principale, compilato '
+        'nelle porte native RZ, SX, X e CX (profondità 412, con 224 porte CX e 70 porte SX), '
+        'si introducono in simulazione errori di Pauli indipendenti dopo ogni porta compilata; '
+        'le rotazioni RZ, che sono virtuali, ne sono escluse. L’intensità del rumore '
+        'è controllata da un unico parametro, la probabilità [i]p[/i][sub]g[/sub] che '
+        'dopo una porta si verifichi un errore di Pauli diverso dall’identità, fatta '
+        'variare su 13 valori fra 0 e 0,5.',
+        'Per ciascun valore si eseguono 20 repliche indipendenti da 4.096 shot e si misura il '
+        'successo per singolo shot, cioè la frazione di esiti da cui il post-processing '
+        'ricava i fattori. Il confronto con il valore ideale del 75% e con il riferimento '
+        'uniforme del 24,61% (Sezione 2.1) indica quanta informazione utile sopravvive al rumore '
+        'e da quale livello di errore la struttura dei picchi si perde. Questa curva motiva le '
+        'strategie successive: selezionare meglio gli esiti già misurati, proteggere '
+        'l’informazione con la correzione degli errori e ridurre il numero di porte su cui '
+        'il rumore può agire.',
+        'Il modello è fenomenologico e uniforme, non una calibrazione di hardware reale: '
+        '[i]p[/i][sub]g[/sub] è una probabilità di errore per porta e non è '
+        'direttamente confrontabile con la probabilità di fallimento logico '
+        '[i]p[/i][sub]L[/sub] dei codici di correzione, poiché Shor non viene eseguito con '
+        'una compilazione fault-tolerant completa.',
     ]),
     (2, 'Mitigazione degli errori mediante post-processing e machine learning', []),
     (2, 'Correzione quantistica degli errori: surface code e codici qLDPC', []),
