@@ -2,7 +2,7 @@
 
 \subsection{Validazione e contributo del post-processing}
 
-Le verifiche ideali dell'aritmetica mostrano una distanza di variazione totale dalla distribuzione teorica pari a \(1{,}38 \times 10^{-9}\) per \(N=21\) e \(2{,}50 \times 10^{-13}\) per \(N=35\), confermando la correttezza dei circuiti in assenza di rumore.
+Le verifiche ideali dell'aritmetica confermano la correttezza dei circuiti senza rumore per \(N=15\), \(N=21\) e \(N=35\); la distanza di variazione totale dalla distribuzione teorica è \(1{,}38 \times 10^{-9}\) per \(N=21\) e \(2{,}50 \times 10^{-13}\) per \(N=35\).
 
 Negli scenari UC1 e UC2, le SVM selezionate raggiungono valori di F1 pari a 0,919 e 0,923 e area sotto la curva ROC pari a 0,965 e 0,958. Tuttavia, questa capacità predittiva non porta a una riduzione del numero di iterazioni necessarie. TOP-4 richiede in media 1,00 iterazioni in entrambi gli scenari, contro 1,37 e 1,50 di TOP-1, con differenze statisticamente significative nei test appaiati; il Metodo 2 richiede invece 1,50 e 1,37 iterazioni, senza migliorare significativamente TOP-1 e risultando peggiore di TOP-4. Il vantaggio osservato sembra quindi legato soprattutto alla possibilità di considerare più candidati. Questi risultati restano comunque legati all'istanza, al rumore e ai metodi considerati.
 
