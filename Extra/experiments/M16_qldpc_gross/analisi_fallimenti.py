@@ -183,7 +183,10 @@ def main():
                             if kk[0] == nome and kk[1] == 'mwpm' and kk[4] == q]
                     dir_pt = max(cand, key=lambda p: p['fallimenti']) if cand else None
                 else:
-                    dir_pt = diretti.get(chiave)
+                    # le corse dirette di gross_code_capacity usano sempre la
+                    # schedulazione parallela: per altre schedulazioni non c'e' confronto
+                    dir_pt = (diretti.get(chiave) if bp.get('schedule', 'parallel') ==
+                              'parallel' else None)
                 if dir_pt:
                     riga['diretta'] = {'p_L': dir_pt['p_fallimento'],
                                        'ic95': dir_pt['ic95_wilson'],

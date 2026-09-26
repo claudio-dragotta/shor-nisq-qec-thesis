@@ -1,0 +1,1354 @@
+{
+  "schema_version": "2.0",
+  "milestone": "M16_test4_famiglia_bb",
+  "stato": "esplorativo",
+  "modello_rumore": "code-capacity, errori X indipendenti, sindromi perfette",
+  "experiment_manifest": {
+    "script": "famiglia_bb.py",
+    "script_sha256": "401025327ba239aba3f009e0a1f2b12018ea291b921d1b599da5704e8f4eb061",
+    "modulo_base_sha256": "43277ddd038a88ffe6f5660e272921653dfb9ed3f511397a04e93897578a5ce5",
+    "git_commit": "5127ec38146f14ec37330dfe63b8ebf8a6e87ad5",
+    "argv": [
+      "famiglia_bb.py",
+      "--seed",
+      "42",
+      "--variante",
+      "serial",
+      "--output-dir",
+      "artifacts/v2_20260926",
+      "--surface-json",
+      "artifacts/v2_20260926/results_M16_gross_code_capacity_20260926_031028.json",
+      "artifacts/v2_20260926/results_M16_gross_code_capacity_basso_rumore_20260926_033631.json",
+      "artifacts/v2_20260926/results_M16_gross_code_capacity_surface_estensione_20260926_041513.json"
+    ],
+    "seed": 42,
+    "python": "3.12.3",
+    "interprete": "/home/claudio/quantum-env/bin/python",
+    "piattaforma": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "cpu": 22,
+    "packages": {
+      "numpy": "2.5.1",
+      "ldpc": "2.4.1",
+      "PyMatching": "2.4.0",
+      "stim": "1.16.0",
+      "scipy": "1.18.0"
+    },
+    "timestamp": "2026-09-26T12:04:39"
+  },
+  "parametri": {
+    "codici": {
+      "bb_72_12_6": {
+        "l": 6,
+        "m": 6,
+        "n": 72,
+        "k": 12,
+        "d_pubblicata": 6,
+        "A": [
+          [
+            "x",
+            3
+          ],
+          [
+            "y",
+            1
+          ],
+          [
+            "y",
+            2
+          ]
+        ],
+        "B": [
+          [
+            "y",
+            3
+          ],
+          [
+            "x",
+            1
+          ],
+          [
+            "x",
+            2
+          ]
+        ]
+      },
+      "bb_90_8_10": {
+        "l": 15,
+        "m": 3,
+        "n": 90,
+        "k": 8,
+        "d_pubblicata": 10,
+        "A": [
+          [
+            "x",
+            9
+          ],
+          [
+            "y",
+            1
+          ],
+          [
+            "y",
+            2
+          ]
+        ],
+        "B": [
+          [
+            "x",
+            0
+          ],
+          [
+            "x",
+            2
+          ],
+          [
+            "x",
+            7
+          ]
+        ]
+      },
+      "bb_108_8_10": {
+        "l": 9,
+        "m": 6,
+        "n": 108,
+        "k": 8,
+        "d_pubblicata": 10,
+        "A": [
+          [
+            "x",
+            3
+          ],
+          [
+            "y",
+            1
+          ],
+          [
+            "y",
+            2
+          ]
+        ],
+        "B": [
+          [
+            "y",
+            3
+          ],
+          [
+            "x",
+            1
+          ],
+          [
+            "x",
+            2
+          ]
+        ]
+      },
+      "gross_144_12_12": {
+        "l": 12,
+        "m": 6,
+        "n": 144,
+        "k": 12,
+        "d_pubblicata": 12,
+        "A": [
+          [
+            "x",
+            3
+          ],
+          [
+            "y",
+            1
+          ],
+          [
+            "y",
+            2
+          ]
+        ],
+        "B": [
+          [
+            "y",
+            3
+          ],
+          [
+            "x",
+            1
+          ],
+          [
+            "x",
+            2
+          ]
+        ]
+      },
+      "bb_288_12_18": {
+        "l": 12,
+        "m": 12,
+        "n": 288,
+        "k": 12,
+        "d_pubblicata": 18,
+        "A": [
+          [
+            "x",
+            3
+          ],
+          [
+            "y",
+            2
+          ],
+          [
+            "y",
+            7
+          ]
+        ],
+        "B": [
+          [
+            "y",
+            3
+          ],
+          [
+            "x",
+            1
+          ],
+          [
+            "x",
+            2
+          ]
+        ]
+      }
+    },
+    "q_list": [
+      0.005,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.08
+    ],
+    "shots_max": 10000000,
+    "min_failures": 300,
+    "chunk": 10000,
+    "decoder": {
+      "serial": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      }
+    },
+    "surface_json": [
+      "results_M16_gross_code_capacity_20260926_031028.json",
+      "results_M16_gross_code_capacity_basso_rumore_20260926_033631.json",
+      "results_M16_gross_code_capacity_surface_estensione_20260926_041513.json"
+    ],
+    "seed_words": "[seed, 5000 + indice codice, indice q, blocco]",
+    "regola_confronto": "k patch indipendenti, 1-(1-p_L)^k; migliore o peggiore solo con IC 95% non sovrapposti; 0 fallimenti -> limite 3/N"
+  },
+  "risultati": [
+    {
+      "codice": "bb_72_12_6",
+      "n": 72,
+      "k": 12,
+      "distanza_pubblicata": 6,
+      "rapporto_k_su_n": 0.16666666666666666,
+      "verifica": {
+        "n": 72,
+        "k": 12,
+        "commutano": true,
+        "righe_Hx": 36,
+        "righe_Hz": 36,
+        "rank_Hx": 30,
+        "rank_Hz": 30,
+        "peso_righe_Hz": [
+          6
+        ],
+        "peso_colonne_Hz": [
+          3
+        ],
+        "sha256_Hx": "7ab0973bfd02e399d69728d26e67dbfa0e95bbc6ad2c5cf8bf309d667244a5a8",
+        "sha256_Hz": "267f345c09710ec0cfad1e49e0786b2636ab052fbfb660e5a76ae9919ba22614"
+      },
+      "punti": [
+        {
+          "q": 0.005,
+          "shots": 2800000,
+          "fallimenti": 313,
+          "p_fallimento": 0.00011178571428571429,
+          "ic95_wilson": [
+            0.00010006922212101377,
+            0.00012487384741868463
+          ],
+          "sindromi_violate": 0,
+          "secondi": 2.69,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5
+            ],
+            "migliori": [
+              7,
+              9,
+              11,
+              13
+            ]
+          }
+        },
+        {
+          "q": 0.01,
+          "shots": 400000,
+          "fallimenti": 402,
+          "p_fallimento": 0.001005,
+          "ic95_wilson": [
+            0.0009114822217786698,
+            0.0011081020298987214
+          ],
+          "sindromi_violate": 0,
+          "secondi": 0.42,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5
+            ],
+            "migliori": [
+              7,
+              9,
+              11,
+              13
+            ]
+          }
+        },
+        {
+          "q": 0.02,
+          "shots": 200000,
+          "fallimenti": 1835,
+          "p_fallimento": 0.009175,
+          "ic95_wilson": [
+            0.00876646125899196,
+            0.009602393219121208
+          ],
+          "sindromi_violate": 0,
+          "secondi": 0.25,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5
+            ],
+            "migliori": [
+              7,
+              9,
+              11,
+              13
+            ]
+          }
+        },
+        {
+          "q": 0.03,
+          "shots": 200000,
+          "fallimenti": 6625,
+          "p_fallimento": 0.033125,
+          "ic95_wilson": [
+            0.032349598245138333,
+            0.03391833622125821
+          ],
+          "sindromi_violate": 0,
+          "secondi": 0.34,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5
+            ],
+            "migliori": [
+              9,
+              11,
+              13
+            ]
+          }
+        },
+        {
+          "q": 0.04,
+          "shots": 200000,
+          "fallimenti": 15873,
+          "p_fallimento": 0.079365,
+          "ic95_wilson": [
+            0.07818840942639933,
+            0.08055774878355561
+          ],
+          "sindromi_violate": 0,
+          "secondi": 0.56,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7
+            ],
+            "migliori": [
+              9,
+              11,
+              13
+            ]
+          }
+        },
+        {
+          "q": 0.05,
+          "shots": 200000,
+          "fallimenti": 30187,
+          "p_fallimento": 0.150935,
+          "ic95_wilson": [
+            0.1493727933611054,
+            0.15251061556957782
+          ],
+          "sindromi_violate": 0,
+          "secondi": 0.76,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7
+            ],
+            "migliori": [
+              9,
+              11,
+              13
+            ]
+          }
+        },
+        {
+          "q": 0.06,
+          "shots": 200000,
+          "fallimenti": 48064,
+          "p_fallimento": 0.24032,
+          "ic95_wilson": [
+            0.2384524059880265,
+            0.24219756932064043
+          ],
+          "sindromi_violate": 0,
+          "secondi": 1.08,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7
+            ],
+            "migliori": [
+              11,
+              13
+            ]
+          }
+        },
+        {
+          "q": 0.08,
+          "shots": 200000,
+          "fallimenti": 90809,
+          "p_fallimento": 0.454045,
+          "ic95_wilson": [
+            0.4518638721820554,
+            0.4562278931264388
+          ],
+          "sindromi_violate": 0,
+          "secondi": 1.96,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        }
+      ],
+      "fit_loglog": {
+        "pendenza": 3.114021542419907,
+        "intercetta": 7.443416754328543,
+        "q_usati": [
+          0.005,
+          0.01,
+          0.02,
+          0.03,
+          0.04,
+          0.05,
+          0.06
+        ]
+      }
+    },
+    {
+      "codice": "bb_90_8_10",
+      "n": 90,
+      "k": 8,
+      "distanza_pubblicata": 10,
+      "rapporto_k_su_n": 0.08888888888888889,
+      "verifica": {
+        "n": 90,
+        "k": 8,
+        "commutano": true,
+        "righe_Hx": 45,
+        "righe_Hz": 45,
+        "rank_Hx": 41,
+        "rank_Hz": 41,
+        "peso_righe_Hz": [
+          6
+        ],
+        "peso_colonne_Hz": [
+          3
+        ],
+        "sha256_Hx": "ff57bf512c40823c6ae89aa0062f3e74ceb337eff24a66b9dd824ed304184b59",
+        "sha256_Hz": "72cbb4962f1444480e1b417356f7703ea6fd0e016e20b461f2a335476422d6e9"
+      },
+      "punti": [
+        {
+          "q": 0.005,
+          "shots": 10000000,
+          "fallimenti": 1,
+          "p_fallimento": 1e-07,
+          "ic95_wilson": [
+            1.7652455711617434e-08,
+            5.664932019606462e-07
+          ],
+          "sindromi_violate": 0,
+          "secondi": 16.57,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.01,
+          "shots": 10000000,
+          "fallimenti": 104,
+          "p_fallimento": 1.04e-05,
+          "ic95_wilson": [
+            8.584093637911482e-06,
+            1.2600044106358653e-05
+          ],
+          "sindromi_violate": 0,
+          "secondi": 13.31,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9
+            ],
+            "migliori": [
+              13
+            ]
+          }
+        },
+        {
+          "q": 0.02,
+          "shots": 1000000,
+          "fallimenti": 373,
+          "p_fallimento": 0.000373,
+          "ic95_wilson": [
+            0.00033702459494695217,
+            0.0004128139833997212
+          ],
+          "sindromi_violate": 0,
+          "secondi": 1.6,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9
+            ],
+            "migliori": [
+              13
+            ]
+          }
+        },
+        {
+          "q": 0.03,
+          "shots": 200000,
+          "fallimenti": 668,
+          "p_fallimento": 0.00334,
+          "ic95_wilson": [
+            0.0030965020339256883,
+            0.0036025765890044504
+          ],
+          "sindromi_violate": 0,
+          "secondi": 0.44,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9
+            ],
+            "migliori": [
+              13
+            ]
+          }
+        },
+        {
+          "q": 0.04,
+          "shots": 200000,
+          "fallimenti": 3006,
+          "p_fallimento": 0.01503,
+          "ic95_wilson": [
+            0.01450599687628638,
+            0.015572632688732806
+          ],
+          "sindromi_violate": 0,
+          "secondi": 0.75,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11
+            ],
+            "migliori": [
+              13
+            ]
+          }
+        },
+        {
+          "q": 0.05,
+          "shots": 200000,
+          "fallimenti": 8448,
+          "p_fallimento": 0.04224,
+          "ic95_wilson": [
+            0.04136725459158242,
+            0.04313032973256791
+          ],
+          "sindromi_violate": 0,
+          "secondi": 1.42,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11
+            ],
+            "migliori": [
+              13
+            ]
+          }
+        },
+        {
+          "q": 0.06,
+          "shots": 200000,
+          "fallimenti": 18498,
+          "p_fallimento": 0.09249,
+          "ic95_wilson": [
+            0.09122810025204421,
+            0.09376755377612449
+          ],
+          "sindromi_violate": 0,
+          "secondi": 2.02,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.08,
+          "shots": 200000,
+          "fallimenti": 52717,
+          "p_fallimento": 0.263585,
+          "ic95_wilson": [
+            0.2616586763742734,
+            0.2655204052361644
+          ],
+          "sindromi_violate": 0,
+          "secondi": 3.68,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        }
+      ],
+      "fit_loglog": {
+        "pendenza": 4.9690961231670565,
+        "intercetta": 11.573329488892634,
+        "q_usati": [
+          0.01,
+          0.02,
+          0.03,
+          0.04,
+          0.05,
+          0.06,
+          0.08
+        ]
+      }
+    },
+    {
+      "codice": "bb_108_8_10",
+      "n": 108,
+      "k": 8,
+      "distanza_pubblicata": 10,
+      "rapporto_k_su_n": 0.07407407407407407,
+      "verifica": {
+        "n": 108,
+        "k": 8,
+        "commutano": true,
+        "righe_Hx": 54,
+        "righe_Hz": 54,
+        "rank_Hx": 50,
+        "rank_Hz": 50,
+        "peso_righe_Hz": [
+          6
+        ],
+        "peso_colonne_Hz": [
+          3
+        ],
+        "sha256_Hx": "6ed504c815418f90551f83ee7a5023b5aa61aaf710404afde4f35d9f1dd91d6a",
+        "sha256_Hz": "b3b366f06e93c6c39a9eecc01f98dba6b8bef6c19b108f228eb7b1395b8b3ea0"
+      },
+      "punti": [
+        {
+          "q": 0.005,
+          "shots": 10000000,
+          "fallimenti": 0,
+          "p_fallimento": 0.0,
+          "ic95_wilson": [
+            0.0,
+            3.8414573450141057e-07
+          ],
+          "sindromi_violate": 0,
+          "secondi": 20.21,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.01,
+          "shots": 10000000,
+          "fallimenti": 19,
+          "p_fallimento": 1.9e-06,
+          "ic95_wilson": [
+            1.2164196864882306e-06,
+            2.9677245882593893e-06
+          ],
+          "sindromi_violate": 0,
+          "secondi": 21.91,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.02,
+          "shots": 2200000,
+          "fallimenti": 322,
+          "p_fallimento": 0.00014636363636363637,
+          "ic95_wilson": [
+            0.00013122731385386185,
+            0.0001632455623348956
+          ],
+          "sindromi_violate": 0,
+          "secondi": 4.69,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.03,
+          "shots": 200000,
+          "fallimenti": 335,
+          "p_fallimento": 0.001675,
+          "ic95_wilson": [
+            0.0015051017340345335,
+            0.0018640408479564886
+          ],
+          "sindromi_violate": 0,
+          "secondi": 0.53,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.04,
+          "shots": 200000,
+          "fallimenti": 1725,
+          "p_fallimento": 0.008625,
+          "ic95_wilson": [
+            0.008229073785319521,
+            0.009039801820411357
+          ],
+          "sindromi_violate": 0,
+          "secondi": 0.87,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.05,
+          "shots": 200000,
+          "fallimenti": 5745,
+          "p_fallimento": 0.028725,
+          "ic95_wilson": [
+            0.02800196381588591,
+            0.029466139671452316
+          ],
+          "sindromi_violate": 0,
+          "secondi": 1.48,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.06,
+          "shots": 200000,
+          "fallimenti": 14363,
+          "p_fallimento": 0.071815,
+          "ic95_wilson": [
+            0.07069169626360769,
+            0.07295475197091761
+          ],
+          "sindromi_violate": 0,
+          "secondi": 2.42,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.08,
+          "shots": 200000,
+          "fallimenti": 48054,
+          "p_fallimento": 0.24027,
+          "ic95_wilson": [
+            0.23840254013925538,
+            0.2421474370901041
+          ],
+          "sindromi_violate": 0,
+          "secondi": 4.95,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        }
+      ],
+      "fit_loglog": {
+        "pendenza": 5.3919308180087695,
+        "intercetta": 12.452231971476358,
+        "q_usati": [
+          0.02,
+          0.03,
+          0.04,
+          0.05,
+          0.06,
+          0.08
+        ]
+      }
+    },
+    {
+      "codice": "gross_144_12_12",
+      "n": 144,
+      "k": 12,
+      "distanza_pubblicata": 12,
+      "rapporto_k_su_n": 0.08333333333333333,
+      "verifica": {
+        "n": 144,
+        "k": 12,
+        "commutano": true,
+        "righe_Hx": 72,
+        "righe_Hz": 72,
+        "rank_Hx": 66,
+        "rank_Hz": 66,
+        "peso_righe_Hz": [
+          6
+        ],
+        "peso_colonne_Hz": [
+          3
+        ],
+        "sha256_Hx": "195d5586a406f0194b89649b6a2499ec2b481edb81c91293daf1745d8b806641",
+        "sha256_Hz": "72dc3b9cefec7d45c99325c8f8d0787174e3cea207a41cd5b740a8b05f263918"
+      },
+      "punti": [
+        {
+          "q": 0.005,
+          "shots": 10000000,
+          "fallimenti": 0,
+          "p_fallimento": 0.0,
+          "ic95_wilson": [
+            0.0,
+            3.8414573450141057e-07
+          ],
+          "sindromi_violate": 0,
+          "secondi": 26.69,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.01,
+          "shots": 10000000,
+          "fallimenti": 11,
+          "p_fallimento": 1.1e-06,
+          "ic95_wilson": [
+            6.142438032591295e-07,
+            1.9699010861216656e-06
+          ],
+          "sindromi_violate": 0,
+          "secondi": 31.59,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.02,
+          "shots": 3800000,
+          "fallimenti": 311,
+          "p_fallimento": 8.18421052631579e-05,
+          "ic95_wilson": [
+            7.323794551339397e-05,
+            9.14570087370822e-05
+          ],
+          "sindromi_violate": 0,
+          "secondi": 13.13,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.03,
+          "shots": 400000,
+          "fallimenti": 410,
+          "p_fallimento": 0.001025,
+          "ic95_wilson": [
+            0.0009305119428953366,
+            0.0011290719246398618
+          ],
+          "sindromi_violate": 0,
+          "secondi": 1.59,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.04,
+          "shots": 200000,
+          "fallimenti": 1475,
+          "p_fallimento": 0.007375,
+          "ic95_wilson": [
+            0.007009367260120398,
+            0.0077595563629234525
+          ],
+          "sindromi_violate": 0,
+          "secondi": 9.5,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.05,
+          "shots": 200000,
+          "fallimenti": 5539,
+          "p_fallimento": 0.027695,
+          "ic95_wilson": [
+            0.02698484546779441,
+            0.028423297585809703
+          ],
+          "sindromi_violate": 0,
+          "secondi": 2.19,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.06,
+          "shots": 200000,
+          "fallimenti": 15414,
+          "p_fallimento": 0.07707,
+          "ic95_wilson": [
+            0.07590925248785767,
+            0.07824699388188387
+          ],
+          "sindromi_violate": 0,
+          "secondi": 3.61,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.08,
+          "shots": 200000,
+          "fallimenti": 56783,
+          "p_fallimento": 0.283915,
+          "ic95_wilson": [
+            0.28194306207025865,
+            0.2858952385866008
+          ],
+          "sindromi_violate": 0,
+          "secondi": 8.01,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        }
+      ],
+      "fit_loglog": {
+        "pendenza": 5.988468138893959,
+        "intercetta": 14.167186369025323,
+        "q_usati": [
+          0.02,
+          0.03,
+          0.04,
+          0.05,
+          0.06,
+          0.08
+        ]
+      }
+    },
+    {
+      "codice": "bb_288_12_18",
+      "n": 288,
+      "k": 12,
+      "distanza_pubblicata": 18,
+      "rapporto_k_su_n": 0.041666666666666664,
+      "verifica": {
+        "n": 288,
+        "k": 12,
+        "commutano": true,
+        "righe_Hx": 144,
+        "righe_Hz": 144,
+        "rank_Hx": 138,
+        "rank_Hz": 138,
+        "peso_righe_Hz": [
+          6
+        ],
+        "peso_colonne_Hz": [
+          3
+        ],
+        "sha256_Hx": "c06e721ec6ea114b60e0e6f7187324f6e150e229b8d008888e8a4cc3f4a324a2",
+        "sha256_Hz": "599e3888110b72dd10de5d22583c12fb3832de67b63052c378e0c828b5968d23"
+      },
+      "punti": [
+        {
+          "q": 0.005,
+          "shots": 10000000,
+          "fallimenti": 0,
+          "p_fallimento": 0.0,
+          "ic95_wilson": [
+            0.0,
+            3.8414573450141057e-07
+          ],
+          "sindromi_violate": 0,
+          "secondi": 96.51,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.01,
+          "shots": 10000000,
+          "fallimenti": 0,
+          "p_fallimento": 0.0,
+          "ic95_wilson": [
+            0.0,
+            3.8414573450141057e-07
+          ],
+          "sindromi_violate": 0,
+          "secondi": 103.88,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.02,
+          "shots": 10000000,
+          "fallimenti": 1,
+          "p_fallimento": 1e-07,
+          "ic95_wilson": [
+            1.7652455711617434e-08,
+            5.664932019606462e-07
+          ],
+          "sindromi_violate": 0,
+          "secondi": 112.04,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.03,
+          "shots": 10000000,
+          "fallimenti": 90,
+          "p_fallimento": 9e-06,
+          "ic95_wilson": [
+            7.322799190590767e-06,
+            1.1061339629287426e-05
+          ],
+          "sindromi_violate": 0,
+          "secondi": 116.03,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.04,
+          "shots": 1200000,
+          "fallimenti": 339,
+          "p_fallimento": 0.0002825,
+          "ic95_wilson": [
+            0.00025398916709007494,
+            0.0003142102296650163
+          ],
+          "sindromi_violate": 0,
+          "secondi": 20.07,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.05,
+          "shots": 200000,
+          "fallimenti": 749,
+          "p_fallimento": 0.003745,
+          "ic95_wilson": [
+            0.0034866670009526934,
+            0.0040223960643680405
+          ],
+          "sindromi_violate": 0,
+          "secondi": 4.84,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.06,
+          "shots": 200000,
+          "fallimenti": 4462,
+          "p_fallimento": 0.02231,
+          "ic95_wilson": [
+            0.021671849148806946,
+            0.02296650076338147
+          ],
+          "sindromi_violate": 0,
+          "secondi": 9.22,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.08,
+          "shots": 200000,
+          "fallimenti": 41708,
+          "p_fallimento": 0.20854,
+          "ic95_wilson": [
+            0.20676510518002184,
+            0.21032609092081017
+          ],
+          "sindromi_violate": 0,
+          "secondi": 29.5,
+          "surface_k_patch": {
+            "peggiori": [
+              3,
+              5,
+              7,
+              9,
+              11,
+              13
+            ],
+            "migliori": []
+          }
+        }
+      ],
+      "fit_loglog": {
+        "pendenza": 10.338490589070148,
+        "intercetta": 24.99060577394612,
+        "q_usati": [
+          0.03,
+          0.04,
+          0.05,
+          0.06,
+          0.08
+        ]
+      }
+    }
+  ]
+}

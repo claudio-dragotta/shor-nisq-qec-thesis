@@ -1,0 +1,10 @@
+surface_d5         n=25   d attesa 5   trovati X=5 Z=5  verificati=True  -> coincide con la distanza attesa  (2.5s)
+surface_d7         n=49   d attesa 7   trovati X=7 Z=7  verificati=True  -> coincide con la distanza attesa  (6.4s)
+surface_d9         n=81   d attesa 9   trovati X=9 Z=9  verificati=True  -> coincide con la distanza attesa  (26.3s)
+bb_72_12_6         n=72   d attesa 6   trovati X=6 Z=6  verificati=True  -> coincide con la distanza attesa  (25.7s)
+bb_90_8_10         n=90   d attesa 10  trovati X=10 Z=10  verificati=True  -> coincide con la distanza attesa  (43.7s)
+bb_108_8_10        n=108  d attesa 10  trovati X=10 Z=10  verificati=True  -> coincide con la distanza attesa  (79.2s)
+gross_144_12_12    n=144  d attesa 12  trovati X=12 Z=12  verificati=True  -> coincide con la distanza attesa  (227.9s)
+bb_288_12_18       n=288  d attesa 18  trovati X=18 Z=18  verificati=True  -> coincide con la distanza attesa  (2426.7s)
+Tempo totale: 2839s
+Salvato: artifacts/v2_20260926/results_M16_test3_distanza_20260926_115305.json

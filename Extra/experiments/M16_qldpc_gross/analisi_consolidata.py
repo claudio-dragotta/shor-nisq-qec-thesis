@@ -57,11 +57,22 @@ def main():
     ap.add_argument('--decoder-gross', default='minimum_sum',
                     help="bp_method richiesto nei file del Gross code")
     ap.add_argument('--ms-scaling-factor', type=float, default=0.625)
+    ap.add_argument('--variante-gross', default=None,
+                    help="per i file del test 4 (famiglia_bb): variante di decoder "
+                         "richiesta, per nome (es. serial)")
+    ap.add_argument('--etichetta', default='', help="suffisso del file di output")
     ap.add_argument('--output-dir', required=True)
     args = ap.parse_args()
 
     gross_src = carica(args.gross_json)
+    decoder_gross = None
     for path, d in gross_src:
+        if d.get('milestone') == 'M16_test4_famiglia_bb':
+            nome_var = next(iter(d['parametri']['decoder']))
+            if nome_var != args.variante_gross:
+                raise SystemExit(f"{path}: variante {nome_var}, attesa {args.variante_gross}")
+            decoder_gross = {nome_var: d['parametri']['decoder'][nome_var]}
+            continue
         bp = d['parametri']['bposd']
         msf = d['parametri'].get('ms_scaling_factor')
         if bp['bp_method'] != args.decoder_gross or msf != args.ms_scaling_factor:
@@ -69,7 +80,9 @@ def main():
                              f"atteso {args.decoder_gross} / {args.ms_scaling_factor}")
     surf_src = carica(args.surface_json)
 
-    gross = migliori_punti(gross_src, lambda r: r['nome'] == 'gross_bposd')
+    # corse di gross_code_capacity ('nome') o del test 4 ('codice')
+    gross = migliori_punti(gross_src, lambda r: r.get('nome') == 'gross_bposd' or
+                           r.get('codice') == 'gross_144_12_12')
     distanze = sorted({r['d'] for _, d in surf_src for r in d['risultati']
                        if r.get('decoder') == 'mwpm'})
     surface = {d: migliori_punti(surf_src, lambda r, d=d: r.get('d') == d and
@@ -133,8 +146,8 @@ def main():
         'stato': 'esplorativo',
         'input': {'gross': {os.path.basename(p): sha(p) for p in args.gross_json},
                   'surface': {os.path.basename(p): sha(p) for p in args.surface_json}},
-        'decoder_gross': {'bp_method': args.decoder_gross,
-                          'ms_scaling_factor': args.ms_scaling_factor},
+        'decoder_gross': decoder_gross or {'bp_method': args.decoder_gross,
+                                           'ms_scaling_factor': args.ms_scaling_factor},
         'decoder_surface': 'MWPM (PyMatching)',
         'regola': ("per ogni q e configurazione si usa il punto con piu' fallimenti fra i "
                    "file indicati; 0 fallimenti -> limite superiore 3/N; una distanza e' "
@@ -145,7 +158,8 @@ def main():
     }
     os.makedirs(args.output_dir, exist_ok=True)
     path = os.path.join(args.output_dir,
-                        f"analysis_M16_consolidata_{datetime.now():%Y%m%d_%H%M%S}.json")
+                        f"analysis_M16_consolidata{'_' + args.etichetta if args.etichetta else ''}"
+                        f"_{datetime.now():%Y%m%d_%H%M%S}.json")
     json.dump(out, open(path, 'w', encoding='utf-8'), indent=2, ensure_ascii=False)
     print(f"\nSalvato: {path}")
 

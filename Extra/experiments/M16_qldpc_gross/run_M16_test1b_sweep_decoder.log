@@ -1,0 +1,63 @@
+================================================================================================
+M16 test 1 — sweep del decoder, 12 varianti, stessi shot
+================================================================================================
+
+q = 0.01   shots = 4000000
+  serial                 p_L=1.250e-06 (     5)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=180s
+  minsum0500             p_L=1.250e-06 (     5)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=353s
+  minsum0400             p_L=1.250e-06 (     5)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=263s
+  minsum0450             p_L=1.250e-06 (     5)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=196s
+  minsum0550             p_L=4.775e-05 (   191)  var=+3720.0%  b=186   c=0     p=6.5e-42  cpu=241s
+  minsum0500_osd60       p_L=1.250e-06 (     5)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=186s
+  osd_cs60               p_L=6.250e-06 (    25)  var=+400.0%  b=20    c=0     p=2.2e-05  cpu=244s
+  serial_minsum0500      p_L=1.250e-06 (     5)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=236s
+  serial_minsum0875      p_L=1.250e-06 (     5)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=395s
+  serial_osd60           p_L=1.250e-06 (     5)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=275s
+  serial_minsum0500_osd60 p_L=1.250e-06 (     5)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=343s
+  serial_iter1000        p_L=1.250e-06 (     5)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=253s
+
+q = 0.02   shots = 2000000
+  serial                 p_L=8.750e-05 (   175)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=152s
+  minsum0500             p_L=8.650e-05 (   173)  var=  -1.1%  b=39    c=41    p=9.1e-01  cpu=149s
+  minsum0400             p_L=8.650e-05 (   173)  var=  -1.1%  b=57    c=59    p=9.3e-01  cpu=195s
+  minsum0450             p_L=8.600e-05 (   172)  var=  -1.7%  b=46    c=49    p=8.4e-01  cpu=150s
+  minsum0550             p_L=4.005e-04 (   801)  var=+357.7%  b=651   c=25    p=1.1e-127  cpu=137s
+  minsum0500_osd60       p_L=8.400e-05 (   168)  var=  -4.0%  b=38    c=45    p=5.1e-01  cpu=231s
+  osd_cs60               p_L=1.335e-04 (   267)  var= +52.6%  b=109   c=17    p=5.2e-16  cpu=193s
+  serial_minsum0500      p_L=8.750e-05 (   175)  var=  +0.0%  b=37    c=37    p=9.1e-01  cpu=169s
+  serial_minsum0875      p_L=9.550e-05 (   191)  var=  +9.1%  b=68    c=52    p=1.7e-01  cpu=142s
+  serial_osd60           p_L=8.400e-05 (   168)  var=  -4.0%  b=0     c=7     p=2.3e-02  cpu=153s
+  serial_minsum0500_osd60 p_L=8.550e-05 (   171)  var=  -2.3%  b=37    c=41    p=7.3e-01  cpu=264s
+  serial_iter1000        p_L=8.750e-05 (   175)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=156s
+
+q = 0.03   shots = 800000
+  serial                 p_L=1.139e-03 (   911)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=70s
+  minsum0500             p_L=1.180e-03 (   944)  var=  +3.6%  b=193   c=160   p=8.9e-02  cpu=105s
+  minsum0400             p_L=1.238e-03 (   990)  var=  +8.7%  b=315   c=236   p=8.9e-04  cpu=214s
+  minsum0450             p_L=1.194e-03 (   955)  var=  +4.8%  b=258   c=214   p=4.8e-02  cpu=116s
+  minsum0550             p_L=1.902e-03 (  1522)  var= +67.1%  b=718   c=107   p=4.3e-100  cpu=76s
+  minsum0500_osd60       p_L=1.140e-03 (   912)  var=  +0.1%  b=170   c=169   p=1.0e+00  cpu=240s
+  osd_cs60               p_L=1.298e-03 (  1038)  var= +13.9%  b=180   c=53    p=1.5e-16  cpu=153s
+  serial_minsum0500      p_L=1.175e-03 (   940)  var=  +3.2%  b=188   c=159   p=1.3e-01  cpu=128s
+  serial_minsum0875      p_L=1.332e-03 (  1066)  var= +17.0%  b=352   c=197   p=4.9e-11  cpu=72s
+  serial_osd60           p_L=1.106e-03 (   885)  var=  -2.9%  b=1     c=27    p=2.3e-06  cpu=103s
+  serial_minsum0500_osd60 p_L=1.134e-03 (   907)  var=  -0.4%  b=165   c=169   p=8.7e-01  cpu=267s
+  serial_iter1000        p_L=1.139e-03 (   911)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=124s
+
+q = 0.04   shots = 400000
+  serial                 p_L=7.655e-03 (  3062)  var=  +0.0%  b=0     c=0     p=1.0e+00  cpu=59s
+  minsum0500             p_L=7.665e-03 (  3066)  var=  +0.1%  b=447   c=443   p=9.2e-01  cpu=75s
+  minsum0400             p_L=7.983e-03 (  3193)  var=  +4.3%  b=754   c=623   p=4.6e-04  cpu=153s
+  minsum0450             p_L=7.843e-03 (  3137)  var=  +2.4%  b=613   c=538   p=2.9e-02  cpu=103s
+  minsum0550             p_L=8.405e-03 (  3362)  var=  +9.8%  b=612   c=312   p=7.8e-23  cpu=69s
+  minsum0500_osd60       p_L=7.247e-03 (  2899)  var=  -5.3%  b=362   c=525   p=5.3e-08  cpu=316s
+  osd_cs60               p_L=7.622e-03 (  3049)  var=  -0.4%  b=182   c=195   p=5.4e-01  cpu=152s
+  serial_minsum0500      p_L=7.670e-03 (  3068)  var=  +0.2%  b=445   c=439   p=8.7e-01  cpu=111s
+  serial_minsum0875      p_L=8.585e-03 (  3434)  var= +12.1%  b=990   c=618   p=2.2e-20  cpu=43s
+  serial_osd60           p_L=7.313e-03 (  2925)  var=  -4.5%  b=4     c=141   p=1.4e-29  cpu=96s
+  serial_minsum0500_osd60 p_L=7.250e-03 (  2900)  var=  -5.3%  b=360   c=522   p=5.9e-08  cpu=286s
+  serial_iter1000        p_L=7.660e-03 (  3064)  var=  +0.1%  b=6     c=4     p=7.5e-01  cpu=166s
+
+Decoder saturo (nessun miglioramento >10% con p<0.01): True
+Tempo totale: 462s
+Salvato: artifacts/v2_20260926/results_M16_test1_sweep_decoder_giro1b_20260926_105429.json

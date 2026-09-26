@@ -53,9 +53,25 @@ VARIANTI = {
     'lsd_cs10': dict(tipo='bplsd', bp_method='minimum_sum', ms_scaling_factor=0.625,
                      max_iter=100, schedule='parallel', lsd_method='LSD_CS', lsd_order=10),
     'product_sum_osd10': _v(bp_method='product_sum', ms_scaling_factor=None),
+    # --- giro 1b: attorno ai vincitori del primo sweep (serial e fattore 0,5) ---
+    'minsum0400': _v(ms_scaling_factor=0.4),
+    'minsum0450': _v(ms_scaling_factor=0.45),
+    'minsum0550': _v(ms_scaling_factor=0.55),
+    'minsum0500_osd60': _v(ms_scaling_factor=0.5, osd_order=60),
+    'serial_minsum0500': _v(schedule='serial', ms_scaling_factor=0.5),
+    'serial_minsum0875': _v(schedule='serial', ms_scaling_factor=0.875),
+    'serial_osd60': _v(schedule='serial', osd_order=60),
+    'serial_minsum0500_osd60': _v(schedule='serial', ms_scaling_factor=0.5, osd_order=60),
+    'serial_iter1000': _v(schedule='serial', max_iter=1000),
 }
 
-SHOTS_PER_Q = {0.005: 4_000_000, 0.01: 2_000_000, 0.02: 1_000_000, 0.03: 400_000}
+# Varianti del giro 1b, confrontate con il vincitore del primo giro.
+GIRO_1B = ['serial', 'minsum0500', 'minsum0400', 'minsum0450', 'minsum0550',
+           'minsum0500_osd60', 'osd_cs60', 'serial_minsum0500', 'serial_minsum0875',
+           'serial_osd60', 'serial_minsum0500_osd60', 'serial_iter1000']
+
+SHOTS_PER_Q = {0.005: 4_000_000, 0.01: 2_000_000, 0.02: 1_000_000, 0.03: 400_000,
+               0.04: 200_000}
 
 
 def crea_decoder(Hz, q, spec):
@@ -101,6 +117,11 @@ def mcnemar(b, c):
 def main():
     ap = argparse.ArgumentParser(description="M16 test 1 — sweep del decoder sul Gross code")
     ap.add_argument('--q-list', type=float, nargs='+', default=list(SHOTS_PER_Q))
+    ap.add_argument('--riferimento', default=RIFERIMENTO,
+                    help="variante con cui si confrontano le altre")
+    ap.add_argument('--giro-1b', action='store_true',
+                    help="varianti del giro 1b attorno ai vincitori del primo sweep")
+    ap.add_argument('--etichetta', default='', help="suffisso del file di output")
     ap.add_argument('--shots-scala', type=float, default=1.0,
                     help="moltiplica gli shot per q di SHOTS_PER_Q")
     ap.add_argument('--varianti', nargs='+', default=list(VARIANTI))
@@ -112,8 +133,10 @@ def main():
     ap.add_argument('--output-dir', default=None)
     ap.add_argument('--quick', action='store_true')
     args = ap.parse_args()
-    if RIFERIMENTO not in args.varianti:
-        args.varianti = [RIFERIMENTO] + args.varianti
+    if args.giro_1b:
+        args.varianti = list(GIRO_1B)
+    if args.riferimento not in args.varianti:
+        args.varianti = [args.riferimento] + args.varianti
     if args.quick:
         args.q_list, args.shots_scala, args.chunk = [0.02], 0.002, 500
     elif not args.output_dir:
@@ -147,7 +170,7 @@ def main():
                     viol[v] += violate[v]
                     sec[v] += secondi[v]
             fail = {v: np.concatenate(fail[v]) for v in args.varianti}
-            rif = fail[RIFERIMENTO]
+            rif = fail[args.riferimento]
             n_shots = rif.size
             print(f"\nq = {q}   shots = {n_shots}")
             for v in args.varianti:
@@ -172,7 +195,7 @@ def main():
                       f"b={bb:<5} c={cc:<5} p={pm:.1e}  cpu={sec[v]:.0f}s"
                       + (f"  VIOLATE={viol[v]}" if viol[v] else ""), flush=True)
 
-    migliori = [r for r in risultati if r['variante'] != RIFERIMENTO
+    migliori = [r for r in risultati if r['variante'] != args.riferimento
                 and r['variazione_rel_vs_rif'] < -args.soglia_miglioramento
                 and r['mcnemar']['p_value'] < args.alpha]
     saturo = not migliori
@@ -194,7 +217,7 @@ def main():
         'experiment_manifest': manifest(args, __file__),
         'parametri': {'q_list': args.q_list, 'shots_per_q': {str(q): int(SHOTS_PER_Q.get(
             q, 1_000_000) * args.shots_scala) for q in args.q_list},
-            'riferimento': RIFERIMENTO, 'varianti': {v: VARIANTI[v] for v in args.varianti},
+            'riferimento': args.riferimento, 'varianti': {v: VARIANTI[v] for v in args.varianti},
             'criterio': {'soglia_miglioramento': args.soglia_miglioramento,
                          'alpha': args.alpha},
             'seed_words': "[seed, 0, indice di q in Q_LIST, blocco]"},
@@ -206,7 +229,8 @@ def main():
     }
     os.makedirs(args.output_dir, exist_ok=True)
     path = os.path.join(args.output_dir,
-                        f"results_M16_test1_sweep_decoder_{datetime.now():%Y%m%d_%H%M%S}.json")
+                        f"results_M16_test1_sweep_decoder{'_' + args.etichetta if args.etichetta else ''}"
+                        f"_{datetime.now():%Y%m%d_%H%M%S}.json")
     json.dump(out, open(path, 'w', encoding='utf-8'), indent=2, ensure_ascii=False)
     print(f"Salvato: {path}")
 
