@@ -92,6 +92,16 @@ def main():
                              'surface_d11:mwpm'],
                     help="voci codice:decoder; decoder = mwpm o una variante di sweep_decoder")
     ap.add_argument('--w-max', type=int, default=30)
+    ap.add_argument('--w-min', type=int, default=0,
+                    help="pesi sotto w-min non campionati (vedi --esaustivo-json e "
+                         "--garanzia-mwpm per fissarli)")
+    ap.add_argument('--esaustivo-json', nargs='*', default=[],
+                    help="enumerazioni esaustive (espliciti): f(w) esatta per quei pesi")
+    ap.add_argument('--garanzia-mwpm', action='store_true',
+                    help="per MWPM sul surface f(w) = 0 per w <= (d-1)/2 (teorema)")
+    ap.add_argument('--seed-base', type=int, default=3000,
+                    help="indice di configurazione dei semi; cambiarlo da' campioni nuovi")
+    ap.add_argument('--etichetta', default='', help="suffisso del file di output")
     ap.add_argument('--shots-max', type=int, default=2_000_000)
     ap.add_argument('--min-failures', type=int, default=300)
     ap.add_argument('--chunk', type=int, default=10_000)
@@ -131,7 +141,34 @@ def main():
             n = Hz.shape[1]
             print(f"\n{nome} ({decoder}), n={n}, distanza attesa {d_attesa}", flush=True)
             per_w, f_per_w, min_res = [], {}, None
-            for w in range(0, min(args.w_max, n) + 1):
+            # pesi fissati senza campionare: enumerazione esaustiva o garanzia di MWPM
+            for pe in args.esaustivo_json:
+                de = json.load(open(pe, encoding='utf-8'))
+                if (de['parametri']['codice'] == nome and
+                        de['parametri']['variante'] == decoder):
+                    for r in de['risultati']:
+                        fe = r['f_esatta']
+                        f_per_w[r['w']] = (fe, fe, fe)
+                        per_w.append({'w': r['w'], 'shots': r['configurazioni'],
+                                      'fallimenti': r['fallimenti'], 'f': fe,
+                                      'ic95_wilson': [fe, fe], 'sindromi_violate':
+                                      r['sindromi_violate'],
+                                      'fonte': 'enumerazione esaustiva ' +
+                                               os.path.basename(pe)})
+            if args.garanzia_mwpm and decoder == 'mwpm':
+                for w in range(0, (d_attesa - 1) // 2 + 1):
+                    if w not in f_per_w:
+                        f_per_w[w] = (0.0, 0.0, 0.0)
+                        per_w.append({'w': w, 'shots': 0, 'fallimenti': 0, 'f': 0.0,
+                                      'ic95_wilson': [0.0, 0.0],
+                                      'fonte': "garanzia MWPM: corregge ogni errore di "
+                                               "peso <= (d-1)/2"})
+            for w in f_per_w:
+                print(f"  w={w:<3} f={f_per_w[w][0]:.3e}  (fissata: "
+                      f"{next(r['fonte'] for r in per_w if r['w'] == w)})", flush=True)
+            for w in range(max(0, args.w_min), min(args.w_max, n) + 1):
+                if w in f_per_w:
+                    continue
                 shots = fall = viol = 0
                 b = 0
                 hist = np.zeros(n + 1, dtype=np.int64)
@@ -142,7 +179,8 @@ def main():
                         s = min(args.chunk, args.shots_max - shots - sum(t[3] for t in tasks))
                         if s <= 0:
                             break
-                        tasks.append((Hz, K, w, s, [args.seed, 3000 + i_c, w, b], decoder))
+                        tasks.append((Hz, K, w, s, [args.seed, args.seed_base + i_c, w, b],
+                                      decoder))
                         b += 1
                     for f, v, mr, h in pool.map(blocco, tasks):
                         fall += f
@@ -168,6 +206,7 @@ def main():
                 if f > 0.999 and w > d_attesa:
                     break
 
+            per_w.sort(key=lambda r: r['w'])
             ricostruzione = []
             for q in Q_RICOSTRUZIONE:
                 st, lo, hi = ricostruisci(n, f_per_w, q)
@@ -216,12 +255,15 @@ def main():
                       'shots_max': args.shots_max, 'min_failures': args.min_failures,
                       'chunk': args.chunk, 'priore_decoder': PRIORE_FISSO,
                       'diretti_json': [os.path.basename(p) for p in args.diretti_json],
-                      'seed_words': "[seed, 3000 + indice codice, w, blocco]"},
+                      'w_min': args.w_min, 'garanzia_mwpm': args.garanzia_mwpm,
+                      'esaustivo_json': [os.path.basename(p) for p in args.esaustivo_json],
+                      'seed_words': f"[seed, {args.seed_base} + indice codice, w, blocco]"},
         'risultati': risultati,
     }
     os.makedirs(args.output_dir, exist_ok=True)
     path = os.path.join(args.output_dir,
-                        f"results_M16_test2_fallimenti_{datetime.now():%Y%m%d_%H%M%S}.json")
+                        f"results_M16_test2_fallimenti{'_' + args.etichetta if args.etichetta else ''}"
+                        f"_{datetime.now():%Y%m%d_%H%M%S}.json")
     json.dump(out, open(path, 'w', encoding='utf-8'), indent=2, ensure_ascii=False)
     print(f"Salvato: {path}")
 

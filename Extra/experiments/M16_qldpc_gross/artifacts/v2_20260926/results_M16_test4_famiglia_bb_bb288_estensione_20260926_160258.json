@@ -1,0 +1,168 @@
+{
+  "schema_version": "2.0",
+  "milestone": "M16_test4_famiglia_bb",
+  "stato": "esplorativo",
+  "modello_rumore": "code-capacity, errori X indipendenti, sindromi perfette",
+  "experiment_manifest": {
+    "script": "famiglia_bb.py",
+    "script_sha256": "f009c249627383e5ce05cb8a32a1802e99494428d0fb34faf72cc242ba39298f",
+    "modulo_base_sha256": "2988a7a7342103f1b8879e13803d12add141c911815fd40a7dbd744a45068a68",
+    "git_commit": "223b190378915cbca68df2069812389b8b357121",
+    "argv": [
+      "famiglia_bb.py",
+      "--seed",
+      "42",
+      "--variante",
+      "serial",
+      "--codici",
+      "bb_288_12_18",
+      "--q-list",
+      "0.02",
+      "0.03",
+      "--shots-max",
+      "100000000",
+      "--min-failures",
+      "300",
+      "--indice-base",
+      "7100",
+      "--etichetta",
+      "bb288_estensione",
+      "--output-dir",
+      "artifacts/v2_20260926"
+    ],
+    "seed": 42,
+    "python": "3.12.3",
+    "interprete": "/home/claudio/quantum-env/bin/python",
+    "piattaforma": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "cpu": 22,
+    "packages": {
+      "numpy": "2.5.1",
+      "ldpc": "2.4.1",
+      "PyMatching": "2.4.0",
+      "stim": "1.16.0",
+      "scipy": "1.18.0"
+    },
+    "timestamp": "2026-09-26T16:02:58"
+  },
+  "parametri": {
+    "codici": {
+      "bb_288_12_18": {
+        "l": 12,
+        "m": 12,
+        "n": 288,
+        "k": 12,
+        "d_pubblicata": 18,
+        "A": [
+          [
+            "x",
+            3
+          ],
+          [
+            "y",
+            2
+          ],
+          [
+            "y",
+            7
+          ]
+        ],
+        "B": [
+          [
+            "y",
+            3
+          ],
+          [
+            "x",
+            1
+          ],
+          [
+            "x",
+            2
+          ]
+        ]
+      }
+    },
+    "q_list": [
+      0.02,
+      0.03
+    ],
+    "shots_max": 100000000,
+    "min_failures": 300,
+    "chunk": 10000,
+    "decoder": {
+      "serial": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      }
+    },
+    "surface_json": [],
+    "seed_words": "[seed, 7100 + indice codice, indice q, blocco]",
+    "regola_confronto": "k patch indipendenti, 1-(1-p_L)^k; migliore o peggiore solo con IC 95% non sovrapposti; 0 fallimenti -> limite 3/N"
+  },
+  "risultati": [
+    {
+      "codice": "bb_288_12_18",
+      "n": 288,
+      "k": 12,
+      "distanza_pubblicata": 18,
+      "rapporto_k_su_n": 0.041666666666666664,
+      "verifica": {
+        "n": 288,
+        "k": 12,
+        "commutano": true,
+        "righe_Hx": 144,
+        "righe_Hz": 144,
+        "rank_Hx": 138,
+        "rank_Hz": 138,
+        "peso_righe_Hz": [
+          6
+        ],
+        "peso_colonne_Hz": [
+          3
+        ],
+        "sha256_Hx": "c06e721ec6ea114b60e0e6f7187324f6e150e229b8d008888e8a4cc3f4a324a2",
+        "sha256_Hz": "599e3888110b72dd10de5d22583c12fb3832de67b63052c378e0c828b5968d23"
+      },
+      "punti": [
+        {
+          "q": 0.02,
+          "shots": 100000000,
+          "fallimenti": 5,
+          "p_fallimento": 5e-08,
+          "ic95_wilson": [
+            2.135701155882367e-08,
+            1.1705757133097836e-07
+          ],
+          "sindromi_violate": 0,
+          "secondi": 1211.89,
+          "surface_k_patch": {
+            "peggiori": [],
+            "migliori": []
+          }
+        },
+        {
+          "q": 0.03,
+          "shots": 31800000,
+          "fallimenti": 302,
+          "p_fallimento": 9.49685534591195e-06,
+          "ic95_wilson": [
+            8.484471765080487e-06,
+            1.0630037209545142e-05
+          ],
+          "sindromi_violate": 0,
+          "secondi": 368.33,
+          "surface_k_patch": {
+            "peggiori": [],
+            "migliori": []
+          }
+        }
+      ],
+      "fit_loglog": null
+    }
+  ]
+}

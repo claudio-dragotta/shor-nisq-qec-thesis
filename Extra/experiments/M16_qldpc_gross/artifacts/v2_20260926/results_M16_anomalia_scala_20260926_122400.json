@@ -1,0 +1,2396 @@
+{
+  "schema_version": "2.0",
+  "milestone": "M16_anomalia_fattore_scala",
+  "stato": "esplorativo",
+  "meccanismi": {
+    "M1": "BP converge a una soluzione sbagliata; l'OSD non interviene",
+    "M2": "BP non converge; l'OSD sceglie male con informazione soft degradata"
+  },
+  "experiment_manifest": {
+    "script": "anomalia_scala.py",
+    "script_sha256": "b6df80dbd39fb5a147107af02e6fbe6c81cc86967c98fe003a1bb180b58fd977",
+    "modulo_base_sha256": "43277ddd038a88ffe6f5660e272921653dfb9ed3f511397a04e93897578a5ce5",
+    "git_commit": "223b190378915cbca68df2069812389b8b357121",
+    "argv": [
+      "anomalia_scala.py",
+      "--seed",
+      "42",
+      "--output-dir",
+      "artifacts/v2_20260926"
+    ],
+    "seed": 42,
+    "python": "3.12.3",
+    "interprete": "/home/claudio/quantum-env/bin/python",
+    "piattaforma": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "cpu": 22,
+    "packages": {
+      "numpy": "2.5.1",
+      "ldpc": "2.4.1",
+      "PyMatching": "2.4.0",
+      "stim": "1.16.0",
+      "scipy": "1.18.0"
+    },
+    "timestamp": "2026-09-26T12:24:00"
+  },
+  "parametri": {
+    "q_list": [
+      0.02,
+      0.03
+    ],
+    "shots": 500000,
+    "chunk": 5000,
+    "varianti": {
+      "parallel_ms0.400": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.4,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.425": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.425,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.450": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.45,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.475": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.475,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.500": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.5,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.525": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.525,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.550": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.55,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.575": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.575,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.600": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.6,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.625": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.650": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.65,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.675": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.675,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.700": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.7,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.725": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.725,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.750": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.75,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.775": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.775,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.800": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.8,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.825": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.825,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.850": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.85,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.875": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.875,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.900": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.9,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.925": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.925,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.950": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.95,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.975": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.975,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms1.000": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 1.0,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "serial_ms0.400": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.4,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "serial_ms0.500": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.5,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "serial_ms0.600": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.6,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "serial_ms0.700": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.7,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "serial_ms0.800": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.8,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "serial_ms0.900": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.9,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "serial_ms1.000": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 1.0,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "serial_ms0.625": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.625_iter10": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 10,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.625_iter30": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 30,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.625_iter300": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 300,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "parallel_ms0.625_iter1000": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 1000,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      }
+    },
+    "seed_words": "[seed, 6000, indice di q in Q_LIST, blocco]"
+  },
+  "verifica_codice": {
+    "n": 144,
+    "k": 12,
+    "commutano": true,
+    "righe_Hx": 72,
+    "righe_Hz": 72,
+    "rank_Hx": 66,
+    "rank_Hz": 66,
+    "peso_righe_Hz": [
+      6
+    ],
+    "peso_colonne_Hz": [
+      3
+    ],
+    "sha256_Hx": "195d5586a406f0194b89649b6a2499ec2b481edb81c91293daf1745d8b806641",
+    "sha256_Hz": "72dc3b9cefec7d45c99325c8f8d0787174e3cea207a41cd5b740a8b05f263918"
+  },
+  "risultati": [
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.400",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.4,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 49,
+      "p_fallimento": 9.8e-05,
+      "ic95_wilson": [
+        7.413513266087466e-05,
+        0.00012954622011345516
+      ],
+      "fallimenti_bp_converge": 0,
+      "fallimenti_osd": 49,
+      "quota_fallimenti_bp_converge": 0.0,
+      "tasso_non_convergenza": 0.048466,
+      "iterazioni_medie": 6.852162,
+      "osd0_avrebbe_fallito": 134,
+      "osd0_avrebbe_salvato": 1
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.425",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.425,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 49,
+      "p_fallimento": 9.8e-05,
+      "ic95_wilson": [
+        7.413513266087466e-05,
+        0.00012954622011345516
+      ],
+      "fallimenti_bp_converge": 0,
+      "fallimenti_osd": 49,
+      "quota_fallimenti_bp_converge": 0.0,
+      "tasso_non_convergenza": 0.03085,
+      "iterazioni_medie": 5.036374,
+      "osd0_avrebbe_fallito": 111,
+      "osd0_avrebbe_salvato": 1
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.450",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.45,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 43,
+      "p_fallimento": 8.6e-05,
+      "ic95_wilson": [
+        6.385191478351769e-05,
+        0.00011582962237941887
+      ],
+      "fallimenti_bp_converge": 0,
+      "fallimenti_osd": 43,
+      "quota_fallimenti_bp_converge": 0.0,
+      "tasso_non_convergenza": 0.020896,
+      "iterazioni_medie": 3.96768,
+      "osd0_avrebbe_fallito": 98,
+      "osd0_avrebbe_salvato": 1
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.475",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.475,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 42,
+      "p_fallimento": 8.4e-05,
+      "ic95_wilson": [
+        6.214919904655107e-05,
+        0.00011353236884781993
+      ],
+      "fallimenti_bp_converge": 0,
+      "fallimenti_osd": 42,
+      "quota_fallimenti_bp_converge": 0.0,
+      "tasso_non_convergenza": 0.015702,
+      "iterazioni_medie": 3.40759,
+      "osd0_avrebbe_fallito": 90,
+      "osd0_avrebbe_salvato": 1
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.500",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.5,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 47,
+      "p_fallimento": 9.4e-05,
+      "ic95_wilson": [
+        7.069532343727597e-05,
+        0.00012498609079992273
+      ],
+      "fallimenti_bp_converge": 0,
+      "fallimenti_osd": 47,
+      "quota_fallimenti_bp_converge": 0.0,
+      "tasso_non_convergenza": 0.01279,
+      "iterazioni_medie": 3.04032,
+      "osd0_avrebbe_fallito": 86,
+      "osd0_avrebbe_salvato": 1
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.525",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.525,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 117,
+      "p_fallimento": 0.000234,
+      "ic95_wilson": [
+        0.00019527073438196972,
+        0.00028040852865481687
+      ],
+      "fallimenti_bp_converge": 1,
+      "fallimenti_osd": 116,
+      "quota_fallimenti_bp_converge": 0.008547008547008548,
+      "tasso_non_convergenza": 0.009648,
+      "iterazioni_medie": 2.598564,
+      "osd0_avrebbe_fallito": 853,
+      "osd0_avrebbe_salvato": 5
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.550",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.55,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 195,
+      "p_fallimento": 0.00039,
+      "ic95_wilson": [
+        0.000338976060962584,
+        0.0004487008050223149
+      ],
+      "fallimenti_bp_converge": 4,
+      "fallimenti_osd": 191,
+      "quota_fallimenti_bp_converge": 0.020512820512820513,
+      "tasso_non_convergenza": 0.008652,
+      "iterazioni_medie": 2.465446,
+      "osd0_avrebbe_fallito": 1368,
+      "osd0_avrebbe_salvato": 6
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.575",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.575,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 259,
+      "p_fallimento": 0.000518,
+      "ic95_wilson": [
+        0.00045865212465783694,
+        0.0005850227745152565
+      ],
+      "fallimenti_bp_converge": 3,
+      "fallimenti_osd": 256,
+      "quota_fallimenti_bp_converge": 0.011583011583011582,
+      "tasso_non_convergenza": 0.008168,
+      "iterazioni_medie": 2.38779,
+      "osd0_avrebbe_fallito": 1638,
+      "osd0_avrebbe_salvato": 12
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.600",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.6,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 372,
+      "p_fallimento": 0.000744,
+      "ic95_wilson": [
+        0.0006721620271690541,
+        0.0008235093993519454
+      ],
+      "fallimenti_bp_converge": 5,
+      "fallimenti_osd": 367,
+      "quota_fallimenti_bp_converge": 0.013440860215053764,
+      "tasso_non_convergenza": 0.007816,
+      "iterazioni_medie": 2.34132,
+      "osd0_avrebbe_fallito": 1935,
+      "osd0_avrebbe_salvato": 13
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.625",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 399,
+      "p_fallimento": 0.000798,
+      "ic95_wilson": [
+        0.0007234724359251522,
+        0.000880198160847117
+      ],
+      "fallimenti_bp_converge": 8,
+      "fallimenti_osd": 391,
+      "quota_fallimenti_bp_converge": 0.020050125313283207,
+      "tasso_non_convergenza": 0.007688,
+      "iterazioni_medie": 2.31919,
+      "osd0_avrebbe_fallito": 2084,
+      "osd0_avrebbe_salvato": 16
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.650",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.65,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 427,
+      "p_fallimento": 0.000854,
+      "ic95_wilson": [
+        0.0007767777016592559,
+        0.0009388920346328487
+      ],
+      "fallimenti_bp_converge": 10,
+      "fallimenti_osd": 417,
+      "quota_fallimenti_bp_converge": 0.0234192037470726,
+      "tasso_non_convergenza": 0.007568,
+      "iterazioni_medie": 2.310424,
+      "osd0_avrebbe_fallito": 2064,
+      "osd0_avrebbe_salvato": 13
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.675",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.675,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 543,
+      "p_fallimento": 0.001086,
+      "ic95_wilson": [
+        0.0009984590419855016,
+        0.0011812071294602057
+      ],
+      "fallimenti_bp_converge": 12,
+      "fallimenti_osd": 531,
+      "quota_fallimenti_bp_converge": 0.022099447513812154,
+      "tasso_non_convergenza": 0.007184,
+      "iterazioni_medie": 2.285274,
+      "osd0_avrebbe_fallito": 1935,
+      "osd0_avrebbe_salvato": 18
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.700",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.7,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 525,
+      "p_fallimento": 0.00105,
+      "ic95_wilson": [
+        0.0009639822306473712,
+        0.0011436844939641565
+      ],
+      "fallimenti_bp_converge": 19,
+      "fallimenti_osd": 506,
+      "quota_fallimenti_bp_converge": 0.03619047619047619,
+      "tasso_non_convergenza": 0.006568,
+      "iterazioni_medie": 2.246938,
+      "osd0_avrebbe_fallito": 1664,
+      "osd0_avrebbe_salvato": 13
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.725",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.725,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 502,
+      "p_fallimento": 0.001004,
+      "ic95_wilson": [
+        0.0009199670953152654,
+        0.0010957003361192548
+      ],
+      "fallimenti_bp_converge": 18,
+      "fallimenti_osd": 484,
+      "quota_fallimenti_bp_converge": 0.035856573705179286,
+      "tasso_non_convergenza": 0.005744,
+      "iterazioni_medie": 2.201762,
+      "osd0_avrebbe_fallito": 1300,
+      "osd0_avrebbe_salvato": 12
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.750",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.75,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 347,
+      "p_fallimento": 0.000694,
+      "ic95_wilson": [
+        0.0006247408227234488,
+        0.0007709313720834121
+      ],
+      "fallimenti_bp_converge": 18,
+      "fallimenti_osd": 329,
+      "quota_fallimenti_bp_converge": 0.05187319884726225,
+      "tasso_non_convergenza": 0.004514,
+      "iterazioni_medie": 2.167358,
+      "osd0_avrebbe_fallito": 994,
+      "osd0_avrebbe_salvato": 6
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.775",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.775,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 290,
+      "p_fallimento": 0.00058,
+      "ic95_wilson": [
+        0.0005169924084249637,
+        0.0006506815380736615
+      ],
+      "fallimenti_bp_converge": 26,
+      "fallimenti_osd": 264,
+      "quota_fallimenti_bp_converge": 0.0896551724137931,
+      "tasso_non_convergenza": 0.003306,
+      "iterazioni_medie": 2.099506,
+      "osd0_avrebbe_fallito": 647,
+      "osd0_avrebbe_salvato": 3
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.800",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.8,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 255,
+      "p_fallimento": 0.00051,
+      "ic95_wilson": [
+        0.00045113993475667493,
+        0.0005765350873421563
+      ],
+      "fallimenti_bp_converge": 28,
+      "fallimenti_osd": 227,
+      "quota_fallimenti_bp_converge": 0.10980392156862745,
+      "tasso_non_convergenza": 0.00233,
+      "iterazioni_medie": 2.066428,
+      "osd0_avrebbe_fallito": 520,
+      "osd0_avrebbe_salvato": 2
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.825",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.825,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 165,
+      "p_fallimento": 0.00033,
+      "ic95_wilson": [
+        0.0002833488574578647,
+        0.00038432893047006794
+      ],
+      "fallimenti_bp_converge": 28,
+      "fallimenti_osd": 137,
+      "quota_fallimenti_bp_converge": 0.1696969696969697,
+      "tasso_non_convergenza": 0.001826,
+      "iterazioni_medie": 2.06028,
+      "osd0_avrebbe_fallito": 308,
+      "osd0_avrebbe_salvato": 4
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.850",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.85,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 119,
+      "p_fallimento": 0.000238,
+      "ic95_wilson": [
+        0.00019891143175264066,
+        0.00028476776982127704
+      ],
+      "fallimenti_bp_converge": 24,
+      "fallimenti_osd": 95,
+      "quota_fallimenti_bp_converge": 0.20168067226890757,
+      "tasso_non_convergenza": 0.00147,
+      "iterazioni_medie": 2.041886,
+      "osd0_avrebbe_fallito": 321,
+      "osd0_avrebbe_salvato": 1
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.875",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.875,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 126,
+      "p_fallimento": 0.000252,
+      "ic95_wilson": [
+        0.00021167690513622457,
+        0.0003000020813176519
+      ],
+      "fallimenti_bp_converge": 24,
+      "fallimenti_osd": 102,
+      "quota_fallimenti_bp_converge": 0.19047619047619047,
+      "tasso_non_convergenza": 0.001244,
+      "iterazioni_medie": 2.053994,
+      "osd0_avrebbe_fallito": 235,
+      "osd0_avrebbe_salvato": 2
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.900",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.9,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 132,
+      "p_fallimento": 0.000264,
+      "ic95_wilson": [
+        0.0002226455938237416,
+        0.0003130332082415282
+      ],
+      "fallimenti_bp_converge": 26,
+      "fallimenti_osd": 106,
+      "quota_fallimenti_bp_converge": 0.19696969696969696,
+      "tasso_non_convergenza": 0.001104,
+      "iterazioni_medie": 2.086832,
+      "osd0_avrebbe_fallito": 189,
+      "osd0_avrebbe_salvato": 1
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.925",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.925,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 95,
+      "p_fallimento": 0.00019,
+      "ic95_wilson": [
+        0.00015544451212666743,
+        0.00023223542700167725
+      ],
+      "fallimenti_bp_converge": 23,
+      "fallimenti_osd": 72,
+      "quota_fallimenti_bp_converge": 0.24210526315789474,
+      "tasso_non_convergenza": 0.001026,
+      "iterazioni_medie": 2.115182,
+      "osd0_avrebbe_fallito": 182,
+      "osd0_avrebbe_salvato": 0
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.950",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.95,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 88,
+      "p_fallimento": 0.000176,
+      "ic95_wilson": [
+        0.00014287128860922916,
+        0.00021680886563915674
+      ],
+      "fallimenti_bp_converge": 19,
+      "fallimenti_osd": 69,
+      "quota_fallimenti_bp_converge": 0.2159090909090909,
+      "tasso_non_convergenza": 0.00103,
+      "iterazioni_medie": 2.17599,
+      "osd0_avrebbe_fallito": 149,
+      "osd0_avrebbe_salvato": 1
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.975",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.975,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 86,
+      "p_fallimento": 0.000172,
+      "ic95_wilson": [
+        0.0001392891732524201,
+        0.00021239104245883474
+      ],
+      "fallimenti_bp_converge": 18,
+      "fallimenti_osd": 68,
+      "quota_fallimenti_bp_converge": 0.20930232558139536,
+      "tasso_non_convergenza": 0.000988,
+      "iterazioni_medie": 2.27675,
+      "osd0_avrebbe_fallito": 185,
+      "osd0_avrebbe_salvato": 1
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms1.000",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 1.0,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 313,
+      "p_fallimento": 0.000626,
+      "ic95_wilson": [
+        0.000560401913698678,
+        0.0006992713259769546
+      ],
+      "fallimenti_bp_converge": 9,
+      "fallimenti_osd": 304,
+      "quota_fallimenti_bp_converge": 0.02875399361022364,
+      "tasso_non_convergenza": 0.00339,
+      "iterazioni_medie": 6.985768,
+      "osd0_avrebbe_fallito": 652,
+      "osd0_avrebbe_salvato": 1
+    },
+    {
+      "q": 0.02,
+      "variante": "serial_ms0.400",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.4,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 49,
+      "p_fallimento": 9.8e-05,
+      "ic95_wilson": [
+        7.413513266087466e-05,
+        0.00012954622011345516
+      ],
+      "fallimenti_bp_converge": 0,
+      "fallimenti_osd": 49,
+      "quota_fallimenti_bp_converge": 0.0,
+      "tasso_non_convergenza": 0.04808,
+      "iterazioni_medie": 6.513566,
+      "osd0_avrebbe_fallito": 134,
+      "osd0_avrebbe_salvato": 1
+    },
+    {
+      "q": 0.02,
+      "variante": "serial_ms0.500",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.5,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 48,
+      "p_fallimento": 9.6e-05,
+      "ic95_wilson": [
+        7.241379738040499e-05,
+        0.00012726758612535927
+      ],
+      "fallimenti_bp_converge": 0,
+      "fallimenti_osd": 48,
+      "quota_fallimenti_bp_converge": 0.0,
+      "tasso_non_convergenza": 0.012088,
+      "iterazioni_medie": 2.699168,
+      "osd0_avrebbe_fallito": 87,
+      "osd0_avrebbe_salvato": 1
+    },
+    {
+      "q": 0.02,
+      "variante": "serial_ms0.600",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.6,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 43,
+      "p_fallimento": 8.6e-05,
+      "ic95_wilson": [
+        6.385191478351769e-05,
+        0.00011582962237941887
+      ],
+      "fallimenti_bp_converge": 6,
+      "fallimenti_osd": 37,
+      "quota_fallimenti_bp_converge": 0.13953488372093023,
+      "tasso_non_convergenza": 0.001006,
+      "iterazioni_medie": 1.510348,
+      "osd0_avrebbe_fallito": 61,
+      "osd0_avrebbe_salvato": 2
+    },
+    {
+      "q": 0.02,
+      "variante": "serial_ms0.700",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.7,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 39,
+      "p_fallimento": 7.8e-05,
+      "ic95_wilson": [
+        5.7062448239669317e-05,
+        0.00010661921184900507
+      ],
+      "fallimenti_bp_converge": 15,
+      "fallimenti_osd": 24,
+      "quota_fallimenti_bp_converge": 0.38461538461538464,
+      "tasso_non_convergenza": 0.00032,
+      "iterazioni_medie": 1.408434,
+      "osd0_avrebbe_fallito": 50,
+      "osd0_avrebbe_salvato": 0
+    },
+    {
+      "q": 0.02,
+      "variante": "serial_ms0.800",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.8,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 46,
+      "p_fallimento": 9.2e-05,
+      "ic95_wilson": [
+        6.897980079441359e-05,
+        0.00012270164417421957
+      ],
+      "fallimenti_bp_converge": 23,
+      "fallimenti_osd": 23,
+      "quota_fallimenti_bp_converge": 0.5,
+      "tasso_non_convergenza": 0.000114,
+      "iterazioni_medie": 1.429276,
+      "osd0_avrebbe_fallito": 35,
+      "osd0_avrebbe_salvato": 0
+    },
+    {
+      "q": 0.02,
+      "variante": "serial_ms0.900",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.9,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 47,
+      "p_fallimento": 9.4e-05,
+      "ic95_wilson": [
+        7.069532343727597e-05,
+        0.00012498609079992273
+      ],
+      "fallimenti_bp_converge": 31,
+      "fallimenti_osd": 16,
+      "quota_fallimenti_bp_converge": 0.6595744680851063,
+      "tasso_non_convergenza": 6.6e-05,
+      "iterazioni_medie": 1.473002,
+      "osd0_avrebbe_fallito": 24,
+      "osd0_avrebbe_salvato": 0
+    },
+    {
+      "q": 0.02,
+      "variante": "serial_ms1.000",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 1.0,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 119,
+      "p_fallimento": 0.000238,
+      "ic95_wilson": [
+        0.00019891143175264066,
+        0.00028476776982127704
+      ],
+      "fallimenti_bp_converge": 32,
+      "fallimenti_osd": 87,
+      "quota_fallimenti_bp_converge": 0.2689075630252101,
+      "tasso_non_convergenza": 0.00033,
+      "iterazioni_medie": 3.323998,
+      "osd0_avrebbe_fallito": 127,
+      "osd0_avrebbe_salvato": 1
+    },
+    {
+      "q": 0.02,
+      "variante": "serial_ms0.625",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 44,
+      "p_fallimento": 8.8e-05,
+      "ic95_wilson": [
+        6.55579937089261e-05,
+        0.00011812351272257599
+      ],
+      "fallimenti_bp_converge": 8,
+      "fallimenti_osd": 36,
+      "quota_fallimenti_bp_converge": 0.18181818181818182,
+      "tasso_non_convergenza": 0.000722,
+      "iterazioni_medie": 1.466236,
+      "osd0_avrebbe_fallito": 60,
+      "osd0_avrebbe_salvato": 2
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.625_iter10",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 10,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 114,
+      "p_fallimento": 0.000228,
+      "ic95_wilson": [
+        0.000189815452428136,
+        0.000273863902802954
+      ],
+      "fallimenti_bp_converge": 0,
+      "fallimenti_osd": 114,
+      "quota_fallimenti_bp_converge": 0.0,
+      "tasso_non_convergenza": 0.00907,
+      "iterazioni_medie": 1.570654,
+      "osd0_avrebbe_fallito": 485,
+      "osd0_avrebbe_salvato": 1
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.625_iter30",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 30,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 508,
+      "p_fallimento": 0.001016,
+      "ic95_wilson": [
+        0.0009314449910815289,
+        0.0011082222559643845
+      ],
+      "fallimenti_bp_converge": 5,
+      "fallimenti_osd": 503,
+      "quota_fallimenti_bp_converge": 0.00984251968503937,
+      "tasso_non_convergenza": 0.00781,
+      "iterazioni_medie": 1.744582,
+      "osd0_avrebbe_fallito": 1968,
+      "osd0_avrebbe_salvato": 21
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.625_iter300",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 300,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 402,
+      "p_fallimento": 0.000804,
+      "ic95_wilson": [
+        0.0007291792851692596,
+        0.0008864912194087063
+      ],
+      "fallimenti_bp_converge": 9,
+      "fallimenti_osd": 393,
+      "quota_fallimenti_bp_converge": 0.022388059701492536,
+      "tasso_non_convergenza": 0.00766,
+      "iterazioni_medie": 3.951792,
+      "osd0_avrebbe_fallito": 2070,
+      "osd0_avrebbe_salvato": 14
+    },
+    {
+      "q": 0.02,
+      "variante": "parallel_ms0.625_iter1000",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 1000,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 462,
+      "p_fallimento": 0.000924,
+      "ic95_wilson": [
+        0.000843530688616706,
+        0.0010121379720751922
+      ],
+      "fallimenti_bp_converge": 9,
+      "fallimenti_osd": 453,
+      "quota_fallimenti_bp_converge": 0.01948051948051948,
+      "tasso_non_convergenza": 0.007656,
+      "iterazioni_medie": 9.654754,
+      "osd0_avrebbe_fallito": 1985,
+      "osd0_avrebbe_salvato": 19
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.400",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.4,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 613,
+      "p_fallimento": 0.001226,
+      "ic95_wilson": [
+        0.0011327633692405016,
+        0.0013269006510047937
+      ],
+      "fallimenti_bp_converge": 0,
+      "fallimenti_osd": 613,
+      "quota_fallimenti_bp_converge": 0.0,
+      "tasso_non_convergenza": 0.165848,
+      "iterazioni_medie": 18.961022,
+      "osd0_avrebbe_fallito": 1938,
+      "osd0_avrebbe_salvato": 13
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.425",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.425,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 611,
+      "p_fallimento": 0.001222,
+      "ic95_wilson": [
+        0.0011289214373355434,
+        0.0013227426443726208
+      ],
+      "fallimenti_bp_converge": 1,
+      "fallimenti_osd": 610,
+      "quota_fallimenti_bp_converge": 0.0016366612111292963,
+      "tasso_non_convergenza": 0.117828,
+      "iterazioni_medie": 14.30719,
+      "osd0_avrebbe_fallito": 1745,
+      "osd0_avrebbe_salvato": 16
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.450",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.45,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 595,
+      "p_fallimento": 0.00119,
+      "ic95_wilson": [
+        0.001098195429392568,
+        0.0012894691440185476
+      ],
+      "fallimenti_bp_converge": 2,
+      "fallimenti_osd": 593,
+      "quota_fallimenti_bp_converge": 0.0033613445378151263,
+      "tasso_non_convergenza": 0.085308,
+      "iterazioni_medie": 11.098918,
+      "osd0_avrebbe_fallito": 1569,
+      "osd0_avrebbe_salvato": 14
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.475",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.475,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 593,
+      "p_fallimento": 0.001186,
+      "ic95_wilson": [
+        0.0010943558790048888,
+        0.0012853087558690958
+      ],
+      "fallimenti_bp_converge": 5,
+      "fallimenti_osd": 588,
+      "quota_fallimenti_bp_converge": 0.008431703204047217,
+      "tasso_non_convergenza": 0.064428,
+      "iterazioni_medie": 9.053498,
+      "osd0_avrebbe_fallito": 1430,
+      "osd0_avrebbe_salvato": 13
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.500",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.5,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 588,
+      "p_fallimento": 0.001176,
+      "ic95_wilson": [
+        0.001084758192888325,
+        0.0012749065956428316
+      ],
+      "fallimenti_bp_converge": 7,
+      "fallimenti_osd": 581,
+      "quota_fallimenti_bp_converge": 0.011904761904761904,
+      "tasso_non_convergenza": 0.051418,
+      "iterazioni_medie": 7.696998,
+      "osd0_avrebbe_fallito": 1312,
+      "osd0_avrebbe_salvato": 10
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.525",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.525,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 740,
+      "p_fallimento": 0.00148,
+      "ic95_wilson": [
+        0.0013772070238032665,
+        0.0015904530935498525
+      ],
+      "fallimenti_bp_converge": 25,
+      "fallimenti_osd": 715,
+      "quota_fallimenti_bp_converge": 0.033783783783783786,
+      "tasso_non_convergenza": 0.03792,
+      "iterazioni_medie": 6.213898,
+      "osd0_avrebbe_fallito": 2429,
+      "osd0_avrebbe_salvato": 14
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.550",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.55,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 962,
+      "p_fallimento": 0.001924,
+      "ic95_wilson": [
+        0.0018063028926741834,
+        0.0020493504023004856
+      ],
+      "fallimenti_bp_converge": 42,
+      "fallimenti_osd": 920,
+      "quota_fallimenti_bp_converge": 0.04365904365904366,
+      "tasso_non_convergenza": 0.032342,
+      "iterazioni_medie": 5.567822,
+      "osd0_avrebbe_fallito": 3533,
+      "osd0_avrebbe_salvato": 16
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.575",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.575,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1126,
+      "p_fallimento": 0.002252,
+      "ic95_wilson": [
+        0.0021243803832571378,
+        0.00238726787176228
+      ],
+      "fallimenti_bp_converge": 58,
+      "fallimenti_osd": 1068,
+      "quota_fallimenti_bp_converge": 0.05150976909413854,
+      "tasso_non_convergenza": 0.028826,
+      "iterazioni_medie": 5.131802,
+      "osd0_avrebbe_fallito": 4333,
+      "osd0_avrebbe_salvato": 21
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.600",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.6,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1347,
+      "p_fallimento": 0.002694,
+      "ic95_wilson": [
+        0.002554097178615958,
+        0.0028415442847564455
+      ],
+      "fallimenti_bp_converge": 92,
+      "fallimenti_osd": 1255,
+      "quota_fallimenti_bp_converge": 0.06829992576095026,
+      "tasso_non_convergenza": 0.02623,
+      "iterazioni_medie": 4.833794,
+      "osd0_avrebbe_fallito": 5000,
+      "osd0_avrebbe_salvato": 30
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.625",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1435,
+      "p_fallimento": 0.00287,
+      "ic95_wilson": [
+        0.002725491671553356,
+        0.0030221470874528147
+      ],
+      "fallimenti_bp_converge": 107,
+      "fallimenti_osd": 1328,
+      "quota_fallimenti_bp_converge": 0.07456445993031359,
+      "tasso_non_convergenza": 0.02492,
+      "iterazioni_medie": 4.667104,
+      "osd0_avrebbe_fallito": 5516,
+      "osd0_avrebbe_salvato": 40
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.650",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.65,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1584,
+      "p_fallimento": 0.003168,
+      "ic95_wilson": [
+        0.00301600707949441,
+        0.0033276271005280252
+      ],
+      "fallimenti_bp_converge": 129,
+      "fallimenti_osd": 1455,
+      "quota_fallimenti_bp_converge": 0.08143939393939394,
+      "tasso_non_convergenza": 0.023572,
+      "iterazioni_medie": 4.552596,
+      "osd0_avrebbe_fallito": 5496,
+      "osd0_avrebbe_salvato": 39
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.675",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.675,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1768,
+      "p_fallimento": 0.003536,
+      "ic95_wilson": [
+        0.003375238822248937,
+        0.003704389703189559
+      ],
+      "fallimenti_bp_converge": 150,
+      "fallimenti_osd": 1618,
+      "quota_fallimenti_bp_converge": 0.08484162895927602,
+      "tasso_non_convergenza": 0.021682,
+      "iterazioni_medie": 4.417112,
+      "osd0_avrebbe_fallito": 5182,
+      "osd0_avrebbe_salvato": 37
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.700",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.7,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1753,
+      "p_fallimento": 0.003506,
+      "ic95_wilson": [
+        0.003345935834781803,
+        0.0036736931516282096
+      ],
+      "fallimenti_bp_converge": 166,
+      "fallimenti_osd": 1587,
+      "quota_fallimenti_bp_converge": 0.09469480889903023,
+      "tasso_non_convergenza": 0.019338,
+      "iterazioni_medie": 4.266456,
+      "osd0_avrebbe_fallito": 4467,
+      "osd0_avrebbe_salvato": 33
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.725",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.725,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1728,
+      "p_fallimento": 0.003456,
+      "ic95_wilson": [
+        0.0032971042474256407,
+        0.003622525507270233
+      ],
+      "fallimenti_bp_converge": 202,
+      "fallimenti_osd": 1526,
+      "quota_fallimenti_bp_converge": 0.11689814814814815,
+      "tasso_non_convergenza": 0.016646,
+      "iterazioni_medie": 4.116212,
+      "osd0_avrebbe_fallito": 3784,
+      "osd0_avrebbe_salvato": 36
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.750",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.75,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1508,
+      "p_fallimento": 0.003016,
+      "ic95_wilson": [
+        0.0028677781465666556,
+        0.003171858369044799
+      ],
+      "fallimenti_bp_converge": 219,
+      "fallimenti_osd": 1289,
+      "quota_fallimenti_bp_converge": 0.14522546419098142,
+      "tasso_non_convergenza": 0.01366,
+      "iterazioni_medie": 4.028822,
+      "osd0_avrebbe_fallito": 3080,
+      "osd0_avrebbe_salvato": 25
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.775",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.775,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1370,
+      "p_fallimento": 0.00274,
+      "ic95_wilson": [
+        0.0025988791899779315,
+        0.0028887615665714786
+      ],
+      "fallimenti_bp_converge": 234,
+      "fallimenti_osd": 1136,
+      "quota_fallimenti_bp_converge": 0.1708029197080292,
+      "tasso_non_convergenza": 0.010796,
+      "iterazioni_medie": 3.901296,
+      "osd0_avrebbe_fallito": 2487,
+      "osd0_avrebbe_salvato": 17
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.800",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.8,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1215,
+      "p_fallimento": 0.00243,
+      "ic95_wilson": [
+        0.0022972995259843564,
+        0.0025703459939373945
+      ],
+      "fallimenti_bp_converge": 252,
+      "fallimenti_osd": 963,
+      "quota_fallimenti_bp_converge": 0.2074074074074074,
+      "tasso_non_convergenza": 0.008268,
+      "iterazioni_medie": 3.828376,
+      "osd0_avrebbe_fallito": 1967,
+      "osd0_avrebbe_salvato": 14
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.825",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.825,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1128,
+      "p_fallimento": 0.002256,
+      "ic95_wilson": [
+        0.0021282640323010693,
+        0.00239138416125548
+      ],
+      "fallimenti_bp_converge": 255,
+      "fallimenti_osd": 873,
+      "quota_fallimenti_bp_converge": 0.22606382978723405,
+      "tasso_non_convergenza": 0.006954,
+      "iterazioni_medie": 3.821268,
+      "osd0_avrebbe_fallito": 1607,
+      "osd0_avrebbe_salvato": 13
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.850",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.85,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1014,
+      "p_fallimento": 0.002028,
+      "ic95_wilson": [
+        0.0019070705822526277,
+        0.0021565811146874495
+      ],
+      "fallimenti_bp_converge": 270,
+      "fallimenti_osd": 744,
+      "quota_fallimenti_bp_converge": 0.26627218934911245,
+      "tasso_non_convergenza": 0.005736,
+      "iterazioni_medie": 3.804622,
+      "osd0_avrebbe_fallito": 1409,
+      "osd0_avrebbe_salvato": 6
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.875",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.875,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 976,
+      "p_fallimento": 0.001952,
+      "ic95_wilson": [
+        0.0018334241955679374,
+        0.0020782286691666493
+      ],
+      "fallimenti_bp_converge": 261,
+      "fallimenti_osd": 715,
+      "quota_fallimenti_bp_converge": 0.26741803278688525,
+      "tasso_non_convergenza": 0.005202,
+      "iterazioni_medie": 3.87747,
+      "osd0_avrebbe_fallito": 1291,
+      "osd0_avrebbe_salvato": 12
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.900",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.9,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 957,
+      "p_fallimento": 0.001914,
+      "ic95_wilson": [
+        0.0017966182681181287,
+        0.0020390351805137127
+      ],
+      "fallimenti_bp_converge": 273,
+      "fallimenti_osd": 684,
+      "quota_fallimenti_bp_converge": 0.2852664576802508,
+      "tasso_non_convergenza": 0.004724,
+      "iterazioni_medie": 3.99116,
+      "osd0_avrebbe_fallito": 1205,
+      "osd0_avrebbe_salvato": 5
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.925",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.925,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 912,
+      "p_fallimento": 0.001824,
+      "ic95_wilson": [
+        0.0017094947383829572,
+        0.0019461600931634352
+      ],
+      "fallimenti_bp_converge": 245,
+      "fallimenti_osd": 667,
+      "quota_fallimenti_bp_converge": 0.26864035087719296,
+      "tasso_non_convergenza": 0.00465,
+      "iterazioni_medie": 4.11891,
+      "osd0_avrebbe_fallito": 1203,
+      "osd0_avrebbe_salvato": 6
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.950",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.95,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 943,
+      "p_fallimento": 0.001886,
+      "ic95_wilson": [
+        0.0017695057488033232,
+        0.0020101481300686007
+      ],
+      "fallimenti_bp_converge": 243,
+      "fallimenti_osd": 700,
+      "quota_fallimenti_bp_converge": 0.2576882290562036,
+      "tasso_non_convergenza": 0.00484,
+      "iterazioni_medie": 4.359188,
+      "osd0_avrebbe_fallito": 1261,
+      "osd0_avrebbe_salvato": 7
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.975",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.975,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1011,
+      "p_fallimento": 0.002022,
+      "ic95_wilson": [
+        0.0019012547649123735,
+        0.0021503970242220077
+      ],
+      "fallimenti_bp_converge": 200,
+      "fallimenti_osd": 811,
+      "quota_fallimenti_bp_converge": 0.19782393669634027,
+      "tasso_non_convergenza": 0.005174,
+      "iterazioni_medie": 4.737058,
+      "osd0_avrebbe_fallito": 1441,
+      "osd0_avrebbe_salvato": 5
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms1.000",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 1.0,
+        "max_iter": 100,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1998,
+      "p_fallimento": 0.003996,
+      "ic95_wilson": [
+        0.0038249034827074215,
+        0.0041747179745011504
+      ],
+      "fallimenti_bp_converge": 115,
+      "fallimenti_osd": 1883,
+      "quota_fallimenti_bp_converge": 0.05755755755755756,
+      "tasso_non_convergenza": 0.015236,
+      "iterazioni_medie": 18.154958,
+      "osd0_avrebbe_fallito": 3474,
+      "osd0_avrebbe_salvato": 12
+    },
+    {
+      "q": 0.03,
+      "variante": "serial_ms0.400",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.4,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 613,
+      "p_fallimento": 0.001226,
+      "ic95_wilson": [
+        0.0011327633692405016,
+        0.0013269006510047937
+      ],
+      "fallimenti_bp_converge": 0,
+      "fallimenti_osd": 613,
+      "quota_fallimenti_bp_converge": 0.0,
+      "tasso_non_convergenza": 0.165222,
+      "iterazioni_medie": 18.348368,
+      "osd0_avrebbe_fallito": 1938,
+      "osd0_avrebbe_salvato": 13
+    },
+    {
+      "q": 0.03,
+      "variante": "serial_ms0.500",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.5,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 587,
+      "p_fallimento": 0.001174,
+      "ic95_wilson": [
+        0.001082838861021382,
+        0.0012728259582412088
+      ],
+      "fallimenti_bp_converge": 7,
+      "fallimenti_osd": 580,
+      "quota_fallimenti_bp_converge": 0.01192504258943782,
+      "tasso_non_convergenza": 0.049568,
+      "iterazioni_medie": 6.870232,
+      "osd0_avrebbe_fallito": 1312,
+      "osd0_avrebbe_salvato": 10
+    },
+    {
+      "q": 0.03,
+      "variante": "serial_ms0.600",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.6,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 594,
+      "p_fallimento": 0.001188,
+      "ic95_wilson": [
+        0.001096275620374371,
+        0.0012873889837681789
+      ],
+      "fallimenti_bp_converge": 92,
+      "fallimenti_osd": 502,
+      "quota_fallimenti_bp_converge": 0.15488215488215487,
+      "tasso_non_convergenza": 0.009226,
+      "iterazioni_medie": 2.7824,
+      "osd0_avrebbe_fallito": 971,
+      "osd0_avrebbe_salvato": 7
+    },
+    {
+      "q": 0.03,
+      "variante": "serial_ms0.700",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.7,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 617,
+      "p_fallimento": 0.001234,
+      "ic95_wilson": [
+        0.0011404480062364123,
+        0.0013352158910831453
+      ],
+      "fallimenti_bp_converge": 186,
+      "fallimenti_osd": 431,
+      "quota_fallimenti_bp_converge": 0.3014586709886548,
+      "tasso_non_convergenza": 0.00401,
+      "iterazioni_medie": 2.155912,
+      "osd0_avrebbe_fallito": 850,
+      "osd0_avrebbe_salvato": 3
+    },
+    {
+      "q": 0.03,
+      "variante": "serial_ms0.800",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.8,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 655,
+      "p_fallimento": 0.00131,
+      "ic95_wilson": [
+        0.0012135017101860982,
+        0.0014141610193389496
+      ],
+      "fallimenti_bp_converge": 288,
+      "fallimenti_osd": 367,
+      "quota_fallimenti_bp_converge": 0.4396946564885496,
+      "tasso_non_convergenza": 0.00179,
+      "iterazioni_medie": 2.026766,
+      "osd0_avrebbe_fallito": 588,
+      "osd0_avrebbe_salvato": 7
+    },
+    {
+      "q": 0.03,
+      "variante": "serial_ms0.900",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.9,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 707,
+      "p_fallimento": 0.001414,
+      "ic95_wilson": [
+        0.001313605452465289,
+        0.0015220556790251668
+      ],
+      "fallimenti_bp_converge": 369,
+      "fallimenti_osd": 338,
+      "quota_fallimenti_bp_converge": 0.521923620933522,
+      "tasso_non_convergenza": 0.001174,
+      "iterazioni_medie": 2.152284,
+      "osd0_avrebbe_fallito": 461,
+      "osd0_avrebbe_salvato": 3
+    },
+    {
+      "q": 0.03,
+      "variante": "serial_ms1.000",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 1.0,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 957,
+      "p_fallimento": 0.001914,
+      "ic95_wilson": [
+        0.0017966182681181287,
+        0.0020390351805137127
+      ],
+      "fallimenti_bp_converge": 295,
+      "fallimenti_osd": 662,
+      "quota_fallimenti_bp_converge": 0.30825496342737724,
+      "tasso_non_convergenza": 0.00244,
+      "iterazioni_medie": 7.745572,
+      "osd0_avrebbe_fallito": 939,
+      "osd0_avrebbe_salvato": 5
+    },
+    {
+      "q": 0.03,
+      "variante": "serial_ms0.625",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 589,
+      "p_fallimento": 0.001178,
+      "ic95_wilson": [
+        0.0010866775934391254,
+        0.001276987164360597
+      ],
+      "fallimenti_bp_converge": 110,
+      "fallimenti_osd": 479,
+      "quota_fallimenti_bp_converge": 0.1867572156196944,
+      "tasso_non_convergenza": 0.007308,
+      "iterazioni_medie": 2.536362,
+      "osd0_avrebbe_fallito": 935,
+      "osd0_avrebbe_salvato": 4
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.625_iter10",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 10,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 808,
+      "p_fallimento": 0.001616,
+      "ic95_wilson": [
+        0.0015084283970198317,
+        0.0017312296305957442
+      ],
+      "fallimenti_bp_converge": 25,
+      "fallimenti_osd": 783,
+      "quota_fallimenti_bp_converge": 0.03094059405940594,
+      "tasso_non_convergenza": 0.033934,
+      "iterazioni_medie": 2.318774,
+      "osd0_avrebbe_fallito": 1914,
+      "osd0_avrebbe_salvato": 16
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.625_iter30",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 30,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1623,
+      "p_fallimento": 0.003246,
+      "ic95_wilson": [
+        0.0030921073467458657,
+        0.003407525634750627
+      ],
+      "fallimenti_bp_converge": 89,
+      "fallimenti_osd": 1534,
+      "quota_fallimenti_bp_converge": 0.05483672211953173,
+      "tasso_non_convergenza": 0.02581,
+      "iterazioni_medie": 2.887062,
+      "osd0_avrebbe_fallito": 5151,
+      "osd0_avrebbe_salvato": 35
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.625_iter300",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 300,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1457,
+      "p_fallimento": 0.002914,
+      "ic95_wilson": [
+        0.0027683627037337374,
+        0.003067275379180875
+      ],
+      "fallimenti_bp_converge": 108,
+      "fallimenti_osd": 1349,
+      "quota_fallimenti_bp_converge": 0.07412491420727522,
+      "tasso_non_convergenza": 0.024832,
+      "iterazioni_medie": 9.696396,
+      "osd0_avrebbe_fallito": 5505,
+      "osd0_avrebbe_salvato": 41
+    },
+    {
+      "q": 0.03,
+      "variante": "parallel_ms0.625_iter1000",
+      "spec": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 1000,
+        "schedule": "parallel",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      },
+      "shots": 500000,
+      "fallimenti": 1516,
+      "p_fallimento": 0.003032,
+      "ic95_wilson": [
+        0.0028833767468980785,
+        0.0031882595228619006
+      ],
+      "fallimenti_bp_converge": 108,
+      "fallimenti_osd": 1408,
+      "quota_fallimenti_bp_converge": 0.0712401055408971,
+      "tasso_non_convergenza": 0.024804,
+      "iterazioni_medie": 27.27035,
+      "osd0_avrebbe_fallito": 5418,
+      "osd0_avrebbe_salvato": 41
+    }
+  ]
+}

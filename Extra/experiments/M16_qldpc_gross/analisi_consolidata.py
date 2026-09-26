@@ -61,6 +61,8 @@ def main():
                     help="per i file del test 4 (famiglia_bb): variante di decoder "
                          "richiesta, per nome (es. serial)")
     ap.add_argument('--etichetta', default='', help="suffisso del file di output")
+    ap.add_argument('--codice', default='gross_144_12_12',
+                    help="codice BB da confrontare (nei file del test 4)")
     ap.add_argument('--output-dir', required=True)
     args = ap.parse_args()
 
@@ -81,8 +83,11 @@ def main():
     surf_src = carica(args.surface_json)
 
     # corse di gross_code_capacity ('nome') o del test 4 ('codice')
-    gross = migliori_punti(gross_src, lambda r: r.get('nome') == 'gross_bposd' or
-                           r.get('codice') == 'gross_144_12_12')
+    gross = migliori_punti(gross_src, lambda r: (r.get('nome') == 'gross_bposd' and
+                                                 args.codice == 'gross_144_12_12') or
+                           r.get('codice') == args.codice)
+    if not gross:
+        raise SystemExit(f"nessun dato per {args.codice} nei file indicati")
     distanze = sorted({r['d'] for _, d in surf_src for r in d['risultati']
                        if r.get('decoder') == 'mwpm'})
     surface = {d: migliori_punti(surf_src, lambda r, d=d: r.get('d') == d and
@@ -148,6 +153,7 @@ def main():
                   'surface': {os.path.basename(p): sha(p) for p in args.surface_json}},
         'decoder_gross': decoder_gross or {'bp_method': args.decoder_gross,
                                            'ms_scaling_factor': args.ms_scaling_factor},
+        'codice': args.codice,
         'decoder_surface': 'MWPM (PyMatching)',
         'regola': ("per ogni q e configurazione si usa il punto con piu' fallimenti fra i "
                    "file indicati; 0 fallimenti -> limite superiore 3/N; una distanza e' "

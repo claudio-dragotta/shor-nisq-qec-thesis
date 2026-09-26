@@ -1,0 +1,2241 @@
+{
+  "schema_version": "2.0",
+  "milestone": "M16_test2_fallimenti_peso_fissato",
+  "stato": "esplorativo",
+  "experiment_manifest": {
+    "script": "analisi_fallimenti.py",
+    "script_sha256": "3b1b966f86603f8a08b7c24cbeb3ebf31d12fd2ab255f82749d4073f2e799149",
+    "modulo_base_sha256": "2988a7a7342103f1b8879e13803d12add141c911815fd40a7dbd744a45068a68",
+    "git_commit": "223b190378915cbca68df2069812389b8b357121",
+    "argv": [
+      "analisi_fallimenti.py",
+      "--seed",
+      "42",
+      "--seed-base",
+      "3100",
+      "--etichetta",
+      "basso_rumore",
+      "--codici",
+      "gross_144_12_12:serial",
+      "surface_d11:mwpm",
+      "surface_d13:mwpm",
+      "--esaustivo-json",
+      "artifacts/v2_20260926/results_M16_esaustivo_gross_144_12_12_serial_w5_20260926_133538.json",
+      "--garanzia-mwpm",
+      "--w-max",
+      "30",
+      "--shots-max",
+      "20000000",
+      "--min-failures",
+      "1000",
+      "--output-dir",
+      "artifacts/v2_20260926"
+    ],
+    "seed": 42,
+    "python": "3.12.3",
+    "interprete": "/home/claudio/quantum-env/bin/python",
+    "piattaforma": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "cpu": 22,
+    "packages": {
+      "numpy": "2.5.1",
+      "ldpc": "2.4.1",
+      "PyMatching": "2.4.0",
+      "stim": "1.16.0",
+      "scipy": "1.18.0"
+    },
+    "timestamp": "2026-09-26T13:45:43"
+  },
+  "parametri": {
+    "codici": [
+      "gross_144_12_12:serial",
+      "surface_d11:mwpm",
+      "surface_d13:mwpm"
+    ],
+    "w_max": 30,
+    "shots_max": 20000000,
+    "min_failures": 1000,
+    "chunk": 10000,
+    "priore_decoder": 0.01,
+    "diretti_json": [],
+    "w_min": 0,
+    "garanzia_mwpm": true,
+    "esaustivo_json": [
+      "results_M16_esaustivo_gross_144_12_12_serial_w5_20260926_133538.json"
+    ],
+    "seed_words": "[seed, 3100 + indice codice, w, blocco]"
+  },
+  "risultati": [
+    {
+      "codice": "gross_144_12_12",
+      "decoder": "serial",
+      "n": 144,
+      "distanza_attesa": 12,
+      "verifica": {
+        "n": 144,
+        "k": 12,
+        "commutano": true,
+        "righe_Hx": 72,
+        "righe_Hz": 72,
+        "rank_Hx": 66,
+        "rank_Hz": 66,
+        "peso_righe_Hz": [
+          6
+        ],
+        "peso_colonne_Hz": [
+          3
+        ],
+        "sha256_Hx": "195d5586a406f0194b89649b6a2499ec2b481edb81c91293daf1745d8b806641",
+        "sha256_Hz": "72dc3b9cefec7d45c99325c8f8d0787174e3cea207a41cd5b740a8b05f263918"
+      },
+      "peso_minimo_con_fallimenti": 6,
+      "peso_min_residuo_logico": 12,
+      "per_peso": [
+        {
+          "w": 0,
+          "shots": 1,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "sindromi_violate": 0,
+          "fonte": "enumerazione esaustiva results_M16_esaustivo_gross_144_12_12_serial_w5_20260926_133538.json"
+        },
+        {
+          "w": 1,
+          "shots": 144,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "sindromi_violate": 0,
+          "fonte": "enumerazione esaustiva results_M16_esaustivo_gross_144_12_12_serial_w5_20260926_133538.json"
+        },
+        {
+          "w": 2,
+          "shots": 10296,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "sindromi_violate": 0,
+          "fonte": "enumerazione esaustiva results_M16_esaustivo_gross_144_12_12_serial_w5_20260926_133538.json"
+        },
+        {
+          "w": 3,
+          "shots": 487344,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "sindromi_violate": 0,
+          "fonte": "enumerazione esaustiva results_M16_esaustivo_gross_144_12_12_serial_w5_20260926_133538.json"
+        },
+        {
+          "w": 4,
+          "shots": 17178876,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "sindromi_violate": 0,
+          "fonte": "enumerazione esaustiva results_M16_esaustivo_gross_144_12_12_serial_w5_20260926_133538.json"
+        },
+        {
+          "w": 5,
+          "shots": 481008528,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "sindromi_violate": 0,
+          "fonte": "enumerazione esaustiva results_M16_esaustivo_gross_144_12_12_serial_w5_20260926_133538.json"
+        },
+        {
+          "w": 6,
+          "shots": 14000000,
+          "fallimenti": 1008,
+          "f": 7.2e-05,
+          "ic95_wilson": [
+            6.769043893375593e-05,
+            7.658391139458114e-05
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 1008
+          }
+        },
+        {
+          "w": 7,
+          "shots": 1800000,
+          "fallimenti": 1014,
+          "f": 0.0005633333333333333,
+          "ic95_wilson": [
+            0.0005297193710632987,
+            0.0005990790303745449
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 797,
+            "14": 217
+          }
+        },
+        {
+          "w": 8,
+          "shots": 400000,
+          "fallimenti": 1077,
+          "f": 0.0026925,
+          "ic95_wilson": [
+            0.002536618647177785,
+            0.00285793319250208
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 667,
+            "14": 341,
+            "16": 68,
+            "18": 1
+          }
+        },
+        {
+          "w": 9,
+          "shots": 200000,
+          "fallimenti": 2038,
+          "f": 0.01019,
+          "ic95_wilson": [
+            0.009759166104546196,
+            0.010639649383508832
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 951,
+            "14": 695,
+            "16": 322,
+            "18": 65,
+            "20": 5
+          }
+        },
+        {
+          "w": 10,
+          "shots": 200000,
+          "fallimenti": 6013,
+          "f": 0.030065,
+          "ic95_wilson": [
+            0.029325576640157988,
+            0.030822475372620728
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 1925,
+            "14": 1913,
+            "16": 1301,
+            "18": 676,
+            "20": 186,
+            "22": 11,
+            "24": 1
+          }
+        },
+        {
+          "w": 11,
+          "shots": 200000,
+          "fallimenti": 16187,
+          "f": 0.080935,
+          "ic95_wilson": [
+            0.07974774028390932,
+            0.08213835761630053
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 3611,
+            "14": 4158,
+            "16": 3922,
+            "18": 2690,
+            "20": 1338,
+            "22": 440,
+            "24": 28
+          }
+        },
+        {
+          "w": 12,
+          "shots": 200000,
+          "fallimenti": 38262,
+          "f": 0.19131,
+          "ic95_wilson": [
+            0.18959211117537794,
+            0.19303974679609615
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 5602,
+            "14": 7489,
+            "16": 8652,
+            "18": 7619,
+            "20": 5367,
+            "22": 2682,
+            "24": 782,
+            "26": 69
+          }
+        },
+        {
+          "w": 13,
+          "shots": 200000,
+          "fallimenti": 74209,
+          "f": 0.371045,
+          "ic95_wilson": [
+            0.3689303235649358,
+            0.37316463009314005
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 6876,
+            "14": 10512,
+            "16": 14190,
+            "18": 14808,
+            "20": 13287,
+            "22": 9108,
+            "24": 4227,
+            "26": 1115,
+            "28": 85,
+            "30": 1
+          }
+        },
+        {
+          "w": 14,
+          "shots": 200000,
+          "fallimenti": 119038,
+          "f": 0.59519,
+          "ic95_wilson": [
+            0.5930369631773058,
+            0.5973393802082765
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 6892,
+            "14": 11762,
+            "16": 17747,
+            "18": 21801,
+            "20": 22644,
+            "22": 19318,
+            "24": 12461,
+            "26": 5114,
+            "28": 1222,
+            "30": 77
+          }
+        },
+        {
+          "w": 15,
+          "shots": 200000,
+          "fallimenti": 156905,
+          "f": 0.784525,
+          "ic95_wilson": [
+            0.7827176265489776,
+            0.7863214437502429
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 5431,
+            "14": 10295,
+            "16": 17351,
+            "18": 23900,
+            "20": 28816,
+            "22": 29318,
+            "24": 23004,
+            "26": 13148,
+            "28": 4740,
+            "30": 870,
+            "32": 32
+          }
+        },
+        {
+          "w": 16,
+          "shots": 200000,
+          "fallimenti": 180113,
+          "f": 0.900565,
+          "ic95_wilson": [
+            0.8992458206566099,
+            0.9018687920994124
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 3487,
+            "14": 7296,
+            "16": 13676,
+            "18": 20963,
+            "20": 28632,
+            "22": 33932,
+            "24": 32706,
+            "26": 23450,
+            "28": 11825,
+            "30": 3693,
+            "32": 441,
+            "34": 12
+          }
+        },
+        {
+          "w": 17,
+          "shots": 200000,
+          "fallimenti": 191160,
+          "f": 0.9558,
+          "ic95_wilson": [
+            0.9548904129143455,
+            0.956692078052651
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 1809,
+            "14": 4388,
+            "16": 9243,
+            "18": 15875,
+            "20": 24191,
+            "22": 32897,
+            "24": 36529,
+            "26": 32766,
+            "28": 21586,
+            "30": 9354,
+            "32": 2294,
+            "34": 224,
+            "36": 4
+          }
+        },
+        {
+          "w": 18,
+          "shots": 200000,
+          "fallimenti": 196009,
+          "f": 0.980045,
+          "ic95_wilson": [
+            0.9794228271482176,
+            0.9806487324749765
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 898,
+            "14": 2341,
+            "16": 5383,
+            "18": 10300,
+            "20": 18245,
+            "22": 27908,
+            "24": 36096,
+            "26": 38133,
+            "28": 30798,
+            "30": 18106,
+            "32": 6582,
+            "34": 1161,
+            "36": 58
+          }
+        },
+        {
+          "w": 19,
+          "shots": 200000,
+          "fallimenti": 198128,
+          "f": 0.99064,
+          "ic95_wilson": [
+            0.9902084591330975,
+            0.9910526934953516
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 357,
+            "14": 1110,
+            "16": 2870,
+            "18": 6501,
+            "20": 12336,
+            "22": 21307,
+            "24": 31552,
+            "26": 38632,
+            "28": 37663,
+            "30": 27507,
+            "32": 13622,
+            "34": 4137,
+            "36": 521,
+            "38": 13
+          }
+        },
+        {
+          "w": 20,
+          "shots": 200000,
+          "fallimenti": 199065,
+          "f": 0.995325,
+          "ic95_wilson": [
+            0.9950163824919046,
+            0.9956145901676555
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 145,
+            "14": 475,
+            "16": 1544,
+            "18": 3544,
+            "20": 7721,
+            "22": 15159,
+            "24": 25060,
+            "26": 34975,
+            "28": 40219,
+            "30": 35715,
+            "32": 22628,
+            "34": 9600,
+            "36": 2084,
+            "38": 194,
+            "40": 2
+          }
+        },
+        {
+          "w": 21,
+          "shots": 200000,
+          "fallimenti": 199531,
+          "f": 0.997655,
+          "ic95_wilson": [
+            0.9974332483080818,
+            0.9978576348472069
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 62,
+            "14": 221,
+            "16": 740,
+            "18": 1896,
+            "20": 4601,
+            "22": 9766,
+            "24": 18358,
+            "26": 29113,
+            "28": 38688,
+            "30": 40186,
+            "32": 31795,
+            "34": 17279,
+            "36": 5806,
+            "38": 975,
+            "40": 44,
+            "42": 1
+          }
+        },
+        {
+          "w": 22,
+          "shots": 200000,
+          "fallimenti": 199726,
+          "f": 0.99863,
+          "ic95_wilson": [
+            0.9984580370146319,
+            0.9987828086871529
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 21,
+            "14": 94,
+            "16": 315,
+            "18": 898,
+            "20": 2520,
+            "22": 5777,
+            "24": 12505,
+            "26": 22308,
+            "28": 33526,
+            "30": 41155,
+            "32": 38583,
+            "34": 26360,
+            "36": 12171,
+            "38": 3160,
+            "40": 320,
+            "42": 13
+          }
+        },
+        {
+          "w": 23,
+          "shots": 200000,
+          "fallimenti": 199825,
+          "f": 0.999125,
+          "ic95_wilson": [
+            0.9989854777508693,
+            0.9992453489360595
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 12,
+          "istogramma_pesi_residuo": {
+            "12": 6,
+            "14": 30,
+            "16": 128,
+            "18": 454,
+            "20": 1205,
+            "22": 3468,
+            "24": 7947,
+            "26": 16112,
+            "28": 27481,
+            "30": 37813,
+            "32": 41766,
+            "34": 34592,
+            "36": 20110,
+            "38": 7285,
+            "40": 1343,
+            "42": 85
+          }
+        }
+      ],
+      "ricostruzione": [
+        {
+          "q": 0.005,
+          "p_L_ricostruita": 1.3855494673546373e-08,
+          "limiti": [
+            1.3046163117972041e-08,
+            1.4715389795329981e-08
+          ]
+        },
+        {
+          "q": 0.01,
+          "p_L_ricostruita": 1.0065022001366022e-06,
+          "limiti": [
+            9.527921757048115e-07,
+            1.0633896005779643e-06
+          ]
+        },
+        {
+          "q": 0.02,
+          "p_L_ricostruita": 8.423952938456317e-05,
+          "limiti": [
+            8.10656309185703e-05,
+            8.756981753324374e-05
+          ]
+        },
+        {
+          "q": 0.03,
+          "p_L_ricostruita": 0.00118959169337292,
+          "limiti": [
+            0.0011608958869786098,
+            0.0012193949104016939
+          ]
+        },
+        {
+          "q": 0.04,
+          "p_L_ricostruita": 0.007497297882787221,
+          "limiti": [
+            0.007381052809977275,
+            0.007616910099286868
+          ]
+        },
+        {
+          "q": 0.05,
+          "p_L_ricostruita": 0.02873203236946888,
+          "limiti": [
+            0.028433405515956425,
+            0.029037131701250857
+          ]
+        },
+        {
+          "q": 0.06,
+          "p_L_ricostruita": 0.0779028217200247,
+          "limiti": [
+            0.07733521887855252,
+            0.07848406757496273
+          ]
+        }
+      ]
+    },
+    {
+      "codice": "surface_d11",
+      "decoder": "mwpm",
+      "n": 121,
+      "distanza_attesa": 11,
+      "verifica": {
+        "n": 121,
+        "k": 1,
+        "commutano": true,
+        "righe_Hx": 60,
+        "righe_Hz": 60,
+        "rank_Hx": 60,
+        "rank_Hz": 60,
+        "peso_righe_Hz": [
+          2,
+          4
+        ],
+        "peso_colonne_Hz": [
+          1,
+          2
+        ],
+        "sha256_Hx": "1c8c6301dc2071d9a511b8ae574578950f57d51699a0031c578f2b2f87821b46",
+        "sha256_Hz": "4b26bbd0dc93245e4ed0558965fcf67b6603153f6fe9e975d9fc92194ec95995"
+      },
+      "peso_minimo_con_fallimenti": 6,
+      "peso_min_residuo_logico": 11,
+      "per_peso": [
+        {
+          "w": 0,
+          "shots": 0,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "fonte": "garanzia MWPM: corregge ogni errore di peso <= (d-1)/2"
+        },
+        {
+          "w": 1,
+          "shots": 0,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "fonte": "garanzia MWPM: corregge ogni errore di peso <= (d-1)/2"
+        },
+        {
+          "w": 2,
+          "shots": 0,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "fonte": "garanzia MWPM: corregge ogni errore di peso <= (d-1)/2"
+        },
+        {
+          "w": 3,
+          "shots": 0,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "fonte": "garanzia MWPM: corregge ogni errore di peso <= (d-1)/2"
+        },
+        {
+          "w": 4,
+          "shots": 0,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "fonte": "garanzia MWPM: corregge ogni errore di peso <= (d-1)/2"
+        },
+        {
+          "w": 5,
+          "shots": 0,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "fonte": "garanzia MWPM: corregge ogni errore di peso <= (d-1)/2"
+        },
+        {
+          "w": 6,
+          "shots": 3400000,
+          "fallimenti": 1004,
+          "f": 0.0002952941176470588,
+          "ic95_wilson": [
+            0.0002775869985870105,
+            0.00031413040899023635
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 1004
+          }
+        },
+        {
+          "w": 7,
+          "shots": 600000,
+          "fallimenti": 1034,
+          "f": 0.0017233333333333332,
+          "ic95_wilson": [
+            0.0016215253257296875,
+            0.0018315216644084384
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 848,
+            "13": 186
+          }
+        },
+        {
+          "w": 8,
+          "shots": 200000,
+          "fallimenti": 1232,
+          "f": 0.00616,
+          "ic95_wilson": [
+            0.005826446070127414,
+            0.00651252422574465
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 801,
+            "13": 360,
+            "15": 71
+          }
+        },
+        {
+          "w": 9,
+          "shots": 200000,
+          "fallimenti": 3116,
+          "f": 0.01558,
+          "ic95_wilson": [
+            0.01504647068705736,
+            0.01613213775034412
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 1608,
+            "13": 1053,
+            "15": 396,
+            "17": 59
+          }
+        },
+        {
+          "w": 10,
+          "shots": 200000,
+          "fallimenti": 6478,
+          "f": 0.03239,
+          "ic95_wilson": [
+            0.03162306720945226,
+            0.033174895491124325
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 2432,
+            "13": 2194,
+            "15": 1379,
+            "17": 407,
+            "19": 66
+          }
+        },
+        {
+          "w": 11,
+          "shots": 200000,
+          "fallimenti": 11784,
+          "f": 0.05892,
+          "ic95_wilson": [
+            0.05789645159341763,
+            0.05996049198770834
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 3294,
+            "13": 3715,
+            "15": 2969,
+            "17": 1343,
+            "19": 405,
+            "21": 58
+          }
+        },
+        {
+          "w": 12,
+          "shots": 200000,
+          "fallimenti": 18839,
+          "f": 0.094195,
+          "ic95_wilson": [
+            0.09292262247245617,
+            0.09548296606009762
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 3852,
+            "13": 5086,
+            "15": 5018,
+            "17": 3229,
+            "19": 1279,
+            "21": 342,
+            "23": 33
+          }
+        },
+        {
+          "w": 13,
+          "shots": 200000,
+          "fallimenti": 28298,
+          "f": 0.14149,
+          "ic95_wilson": [
+            0.1399694292448433,
+            0.1430243425046568
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 3876,
+            "13": 6197,
+            "15": 7536,
+            "17": 5937,
+            "19": 3175,
+            "21": 1241,
+            "23": 299,
+            "25": 37
+          }
+        },
+        {
+          "w": 14,
+          "shots": 200000,
+          "fallimenti": 38180,
+          "f": 0.1909,
+          "ic95_wilson": [
+            0.18918353071225813,
+            0.1926283430088946
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 3492,
+            "13": 6350,
+            "15": 9339,
+            "17": 8722,
+            "19": 5965,
+            "21": 3058,
+            "23": 1032,
+            "25": 198,
+            "27": 24
+          }
+        },
+        {
+          "w": 15,
+          "shots": 200000,
+          "fallimenti": 48780,
+          "f": 0.2439,
+          "ic95_wilson": [
+            0.24202289156717263,
+            0.24578694621990996
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 2813,
+            "13": 6136,
+            "15": 9979,
+            "17": 11024,
+            "19": 9191,
+            "21": 5830,
+            "23": 2739,
+            "25": 864,
+            "27": 184,
+            "29": 20
+          }
+        },
+        {
+          "w": 16,
+          "shots": 200000,
+          "fallimenti": 58791,
+          "f": 0.293955,
+          "ic95_wilson": [
+            0.29196237898088195,
+            0.29595553600091984
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 2082,
+            "13": 5223,
+            "15": 9787,
+            "17": 12425,
+            "19": 12186,
+            "21": 8950,
+            "23": 5145,
+            "25": 2202,
+            "27": 659,
+            "29": 123,
+            "31": 9
+          }
+        },
+        {
+          "w": 17,
+          "shots": 200000,
+          "fallimenti": 67332,
+          "f": 0.33666,
+          "ic95_wilson": [
+            0.3345920744332896,
+            0.3387342000850316
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 1363,
+            "13": 3951,
+            "15": 8105,
+            "17": 12395,
+            "19": 13756,
+            "21": 12285,
+            "23": 8586,
+            "25": 4570,
+            "27": 1753,
+            "29": 490,
+            "31": 73,
+            "33": 5
+          }
+        },
+        {
+          "w": 18,
+          "shots": 200000,
+          "fallimenti": 75340,
+          "f": 0.3767,
+          "ic95_wilson": [
+            0.3745787542811821,
+            0.37882598214656976
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 798,
+            "13": 2747,
+            "15": 6809,
+            "17": 11057,
+            "19": 14385,
+            "21": 14653,
+            "23": 11978,
+            "25": 7573,
+            "27": 3621,
+            "29": 1342,
+            "31": 328,
+            "33": 46,
+            "35": 3
+          }
+        },
+        {
+          "w": 19,
+          "shots": 200000,
+          "fallimenti": 82106,
+          "f": 0.41053,
+          "ic95_wilson": [
+            0.40837579982220906,
+            0.41268763706498457
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 474,
+            "13": 1838,
+            "15": 4957,
+            "17": 9247,
+            "19": 13631,
+            "21": 15565,
+            "23": 14751,
+            "25": 10995,
+            "27": 6486,
+            "29": 2927,
+            "31": 990,
+            "33": 208,
+            "35": 36,
+            "37": 1
+          }
+        },
+        {
+          "w": 20,
+          "shots": 200000,
+          "fallimenti": 86593,
+          "f": 0.432965,
+          "ic95_wilson": [
+            0.4307947850692353,
+            0.43513779000322494
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 244,
+            "13": 1104,
+            "15": 3160,
+            "17": 6841,
+            "19": 11402,
+            "21": 15102,
+            "23": 16411,
+            "25": 13922,
+            "27": 9822,
+            "29": 5404,
+            "31": 2330,
+            "33": 685,
+            "35": 147,
+            "37": 19
+          }
+        },
+        {
+          "w": 21,
+          "shots": 200000,
+          "fallimenti": 90316,
+          "f": 0.45158,
+          "ic95_wilson": [
+            0.44939994361798996,
+            0.45376191638064545
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 133,
+            "13": 588,
+            "15": 2000,
+            "17": 4960,
+            "19": 9110,
+            "21": 13648,
+            "23": 16127,
+            "25": 16198,
+            "27": 12900,
+            "29": 8263,
+            "31": 4228,
+            "33": 1657,
+            "35": 425,
+            "37": 71,
+            "39": 7,
+            "41": 1
+          }
+        },
+        {
+          "w": 22,
+          "shots": 200000,
+          "fallimenti": 93432,
+          "f": 0.46716,
+          "ic95_wilson": [
+            0.4649740769172214,
+            0.46934718459362507
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 50,
+            "13": 295,
+            "15": 1178,
+            "17": 3297,
+            "19": 6799,
+            "21": 11146,
+            "23": 15323,
+            "25": 16886,
+            "27": 15381,
+            "29": 11527,
+            "31": 6925,
+            "33": 3132,
+            "35": 1182,
+            "37": 266,
+            "39": 42,
+            "41": 3
+          }
+        },
+        {
+          "w": 23,
+          "shots": 200000,
+          "fallimenti": 95486,
+          "f": 0.47743,
+          "ic95_wilson": [
+            0.4752413817915201,
+            0.47961948520908304
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 28,
+            "13": 136,
+            "15": 639,
+            "17": 1994,
+            "19": 4729,
+            "21": 8766,
+            "23": 13056,
+            "25": 16579,
+            "27": 16980,
+            "29": 14107,
+            "31": 9942,
+            "33": 5362,
+            "35": 2281,
+            "37": 737,
+            "39": 140,
+            "41": 10
+          }
+        },
+        {
+          "w": 24,
+          "shots": 200000,
+          "fallimenti": 97203,
+          "f": 0.486015,
+          "ic95_wilson": [
+            0.4838248405970203,
+            0.4882056966206772
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 5,
+            "13": 75,
+            "15": 365,
+            "17": 1209,
+            "19": 2985,
+            "21": 6236,
+            "23": 10716,
+            "25": 14494,
+            "27": 17161,
+            "29": 16294,
+            "31": 12875,
+            "33": 8375,
+            "35": 4201,
+            "37": 1672,
+            "39": 456,
+            "41": 76,
+            "43": 8
+          }
+        },
+        {
+          "w": 25,
+          "shots": 200000,
+          "fallimenti": 98396,
+          "f": 0.49198,
+          "ic95_wilson": [
+            0.48978915063374173,
+            0.49417115744533824
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 2,
+            "13": 35,
+            "15": 167,
+            "17": 591,
+            "19": 1880,
+            "21": 4426,
+            "23": 8049,
+            "25": 12544,
+            "27": 16157,
+            "29": 17248,
+            "31": 15423,
+            "33": 11129,
+            "35": 6494,
+            "37": 2988,
+            "39": 991,
+            "41": 240,
+            "43": 31,
+            "45": 1
+          }
+        },
+        {
+          "w": 26,
+          "shots": 200000,
+          "fallimenti": 98771,
+          "f": 0.493855,
+          "ic95_wilson": [
+            0.4916639982127728,
+            0.4960462378403378
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 1,
+            "13": 10,
+            "15": 85,
+            "17": 340,
+            "19": 1137,
+            "21": 2775,
+            "23": 5826,
+            "25": 9781,
+            "27": 14007,
+            "29": 16830,
+            "31": 16865,
+            "33": 13876,
+            "35": 9505,
+            "37": 4997,
+            "39": 2028,
+            "41": 591,
+            "43": 104,
+            "45": 13
+          }
+        },
+        {
+          "w": 27,
+          "shots": 200000,
+          "fallimenti": 99343,
+          "f": 0.496715,
+          "ic95_wilson": [
+            0.494523825080445,
+            0.49890630110905354
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 11,
+          "istogramma_pesi_residuo": {
+            "11": 1,
+            "13": 5,
+            "15": 34,
+            "17": 162,
+            "19": 622,
+            "21": 1746,
+            "23": 3912,
+            "25": 7425,
+            "27": 11928,
+            "29": 15657,
+            "31": 17237,
+            "33": 15749,
+            "35": 12231,
+            "37": 7377,
+            "39": 3512,
+            "41": 1327,
+            "43": 353,
+            "45": 60,
+            "47": 5
+          }
+        },
+        {
+          "w": 28,
+          "shots": 200000,
+          "fallimenti": 99622,
+          "f": 0.49811,
+          "ic95_wilson": [
+            0.4959187666486125,
+            0.5003013059535647
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 3,
+            "15": 15,
+            "17": 82,
+            "19": 335,
+            "21": 978,
+            "23": 2498,
+            "25": 5364,
+            "27": 9321,
+            "29": 13372,
+            "31": 16622,
+            "33": 17180,
+            "35": 14676,
+            "37": 10188,
+            "39": 5645,
+            "41": 2416,
+            "43": 763,
+            "45": 150,
+            "47": 13,
+            "49": 1
+          }
+        },
+        {
+          "w": 29,
+          "shots": 200000,
+          "fallimenti": 99820,
+          "f": 0.4991,
+          "ic95_wilson": [
+            0.49690873552883774,
+            0.5012912990436276
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 2,
+            "15": 5,
+            "17": 43,
+            "19": 149,
+            "21": 526,
+            "23": 1537,
+            "25": 3663,
+            "27": 6955,
+            "29": 11063,
+            "31": 14959,
+            "33": 17281,
+            "35": 16510,
+            "37": 12901,
+            "39": 8152,
+            "41": 4079,
+            "43": 1493,
+            "45": 417,
+            "47": 77,
+            "49": 7,
+            "51": 1
+          }
+        },
+        {
+          "w": 30,
+          "shots": 200000,
+          "fallimenti": 100230,
+          "f": 0.50115,
+          "ic95_wilson": [
+            0.49895869840067014,
+            0.5033412574234019
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 15,
+          "istogramma_pesi_residuo": {
+            "15": 1,
+            "17": 17,
+            "19": 75,
+            "21": 277,
+            "23": 896,
+            "25": 2333,
+            "27": 4967,
+            "29": 8642,
+            "31": 12962,
+            "33": 16651,
+            "35": 17491,
+            "37": 15187,
+            "39": 10830,
+            "41": 6161,
+            "43": 2662,
+            "45": 863,
+            "47": 185,
+            "49": 25,
+            "51": 5
+          }
+        }
+      ],
+      "ricostruzione": [
+        {
+          "q": 0.005,
+          "p_L_ricostruita": 1.6214750855126032e-08,
+          "limiti": [
+            1.5259827628531008e-08,
+            1.7229580601998993e-08
+          ]
+        },
+        {
+          "q": 0.01,
+          "p_L_ricostruita": 9.547600309406538e-07,
+          "limiti": [
+            9.009329841348712e-07,
+            1.0118589920230212e-06
+          ]
+        },
+        {
+          "q": 0.02,
+          "p_L_ricostruita": 5.167054374614519e-05,
+          "limiti": [
+            4.917390832149193e-05,
+            5.430473585901633e-05
+          ]
+        },
+        {
+          "q": 0.03,
+          "p_L_ricostruita": 0.0004915810935907492,
+          "limiti": [
+            0.0004723401684252463,
+            0.0005117493152201459
+          ]
+        },
+        {
+          "q": 0.04,
+          "p_L_ricostruita": 0.0022723077394969796,
+          "limiti": [
+            0.002201992859259937,
+            0.0023455027585998966
+          ]
+        },
+        {
+          "q": 0.05,
+          "p_L_ricostruita": 0.007025463570101944,
+          "limiti": [
+            0.0068541398720094624,
+            0.007202607141982704
+          ]
+        },
+        {
+          "q": 0.06,
+          "p_L_ricostruita": 0.016759016681098186,
+          "limiti": [
+            0.016433743248614057,
+            0.01709326984957352
+          ]
+        }
+      ]
+    },
+    {
+      "codice": "surface_d13",
+      "decoder": "mwpm",
+      "n": 169,
+      "distanza_attesa": 13,
+      "verifica": {
+        "n": 169,
+        "k": 1,
+        "commutano": true,
+        "righe_Hx": 84,
+        "righe_Hz": 84,
+        "rank_Hx": 84,
+        "rank_Hz": 84,
+        "peso_righe_Hz": [
+          2,
+          4
+        ],
+        "peso_colonne_Hz": [
+          1,
+          2
+        ],
+        "sha256_Hx": "92a8db3b3ea572c37c622e23c3b5e121e0266b68b437f04fe8c354a5cb97b11c",
+        "sha256_Hz": "e55405c01a482cabbd1507f91b1bdcdac33c5d149b6e8412f91f815c2a07a790"
+      },
+      "peso_minimo_con_fallimenti": 7,
+      "peso_min_residuo_logico": 13,
+      "per_peso": [
+        {
+          "w": 0,
+          "shots": 0,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "fonte": "garanzia MWPM: corregge ogni errore di peso <= (d-1)/2"
+        },
+        {
+          "w": 1,
+          "shots": 0,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "fonte": "garanzia MWPM: corregge ogni errore di peso <= (d-1)/2"
+        },
+        {
+          "w": 2,
+          "shots": 0,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "fonte": "garanzia MWPM: corregge ogni errore di peso <= (d-1)/2"
+        },
+        {
+          "w": 3,
+          "shots": 0,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "fonte": "garanzia MWPM: corregge ogni errore di peso <= (d-1)/2"
+        },
+        {
+          "w": 4,
+          "shots": 0,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "fonte": "garanzia MWPM: corregge ogni errore di peso <= (d-1)/2"
+        },
+        {
+          "w": 5,
+          "shots": 0,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "fonte": "garanzia MWPM: corregge ogni errore di peso <= (d-1)/2"
+        },
+        {
+          "w": 6,
+          "shots": 0,
+          "fallimenti": 0,
+          "f": 0.0,
+          "ic95_wilson": [
+            0.0,
+            0.0
+          ],
+          "fonte": "garanzia MWPM: corregge ogni errore di peso <= (d-1)/2"
+        },
+        {
+          "w": 7,
+          "shots": 20000000,
+          "fallimenti": 434,
+          "f": 2.17e-05,
+          "ic95_wilson": [
+            1.9752233425523702e-05,
+            2.3839831142654948e-05
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 434
+          }
+        },
+        {
+          "w": 8,
+          "shots": 6000000,
+          "fallimenti": 1016,
+          "f": 0.00016933333333333332,
+          "ic95_wilson": [
+            0.00015923708566763147,
+            0.00018006960689703636
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 845,
+            "15": 171
+          }
+        },
+        {
+          "w": 9,
+          "shots": 1600000,
+          "fallimenti": 1114,
+          "f": 0.00069625,
+          "ic95_wilson": [
+            0.0006565598585980255,
+            0.000738337704138942
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 752,
+            "15": 310,
+            "17": 52
+          }
+        },
+        {
+          "w": 10,
+          "shots": 600000,
+          "fallimenti": 1238,
+          "f": 0.0020633333333333333,
+          "ic95_wilson": [
+            0.0019516597862077071,
+            0.0021813828503049627
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 678,
+            "15": 384,
+            "17": 164,
+            "19": 12
+          }
+        },
+        {
+          "w": 11,
+          "shots": 400000,
+          "fallimenti": 1998,
+          "f": 0.004995,
+          "ic95_wilson": [
+            0.004781229790455203,
+            0.005218277824854704
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 856,
+            "15": 709,
+            "17": 327,
+            "19": 89,
+            "21": 17
+          }
+        },
+        {
+          "w": 12,
+          "shots": 200000,
+          "fallimenti": 2154,
+          "f": 0.01077,
+          "ic95_wilson": [
+            0.010326937751169312,
+            0.0112318554568525
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 723,
+            "15": 740,
+            "17": 448,
+            "19": 191,
+            "21": 48,
+            "23": 4
+          }
+        },
+        {
+          "w": 13,
+          "shots": 200000,
+          "fallimenti": 3866,
+          "f": 0.01933,
+          "ic95_wilson": [
+            0.01873576019599616,
+            0.019942704189466393
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 1010,
+            "15": 1148,
+            "17": 1012,
+            "19": 468,
+            "21": 183,
+            "23": 35,
+            "25": 10
+          }
+        },
+        {
+          "w": 14,
+          "shots": 200000,
+          "fallimenti": 6740,
+          "f": 0.0337,
+          "ic95_wilson": [
+            0.032918045018873764,
+            0.034499867359558824
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 1291,
+            "15": 1730,
+            "17": 1787,
+            "19": 1174,
+            "21": 572,
+            "23": 144,
+            "25": 38,
+            "27": 4
+          }
+        },
+        {
+          "w": 15,
+          "shots": 200000,
+          "fallimenti": 10497,
+          "f": 0.052485,
+          "ic95_wilson": [
+            0.051516231325822885,
+            0.053470959448430284
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 1415,
+            "15": 2348,
+            "17": 2667,
+            "19": 2145,
+            "21": 1211,
+            "23": 518,
+            "25": 167,
+            "27": 24,
+            "29": 2
+          }
+        },
+        {
+          "w": 16,
+          "shots": 200000,
+          "fallimenti": 15641,
+          "f": 0.078205,
+          "ic95_wilson": [
+            0.07703637999085741,
+            0.07938982277916395
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 1525,
+            "15": 2756,
+            "17": 3713,
+            "19": 3357,
+            "21": 2319,
+            "23": 1267,
+            "25": 531,
+            "27": 140,
+            "29": 29,
+            "31": 4
+          }
+        },
+        {
+          "w": 17,
+          "shots": 200000,
+          "fallimenti": 21620,
+          "f": 0.1081,
+          "ic95_wilson": [
+            0.10674668898366532,
+            0.10946836540429891
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 1427,
+            "15": 2790,
+            "17": 4381,
+            "19": 4730,
+            "21": 4004,
+            "23": 2429,
+            "25": 1229,
+            "27": 467,
+            "29": 151,
+            "31": 10,
+            "33": 2
+          }
+        },
+        {
+          "w": 18,
+          "shots": 200000,
+          "fallimenti": 28736,
+          "f": 0.14368,
+          "ic95_wilson": [
+            0.14214957636842274,
+            0.145224111254745
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 1188,
+            "15": 2779,
+            "17": 4886,
+            "19": 5905,
+            "21": 5605,
+            "23": 4211,
+            "25": 2472,
+            "27": 1140,
+            "29": 435,
+            "31": 95,
+            "33": 19,
+            "35": 1
+          }
+        },
+        {
+          "w": 19,
+          "shots": 200000,
+          "fallimenti": 35779,
+          "f": 0.178895,
+          "ic95_wilson": [
+            0.1772214729419588,
+            0.18058086193746772
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 979,
+            "15": 2535,
+            "17": 4840,
+            "19": 6625,
+            "21": 6989,
+            "23": 6073,
+            "25": 4062,
+            "27": 2253,
+            "29": 989,
+            "31": 341,
+            "33": 82,
+            "35": 11
+          }
+        },
+        {
+          "w": 20,
+          "shots": 200000,
+          "fallimenti": 44247,
+          "f": 0.221235,
+          "ic95_wilson": [
+            0.2194212359582138,
+            0.22305947247878763
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 749,
+            "15": 2142,
+            "17": 4711,
+            "19": 6795,
+            "21": 8074,
+            "23": 7958,
+            "25": 6408,
+            "27": 4065,
+            "29": 2093,
+            "31": 900,
+            "33": 284,
+            "35": 54,
+            "37": 13,
+            "39": 1
+          }
+        },
+        {
+          "w": 21,
+          "shots": 200000,
+          "fallimenti": 52010,
+          "f": 0.26005,
+          "ic95_wilson": [
+            0.25813213774874505,
+            0.26197707965465383
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 565,
+            "15": 1704,
+            "17": 3864,
+            "19": 6520,
+            "21": 8870,
+            "23": 9319,
+            "25": 8325,
+            "27": 6268,
+            "29": 3735,
+            "31": 1813,
+            "33": 754,
+            "35": 215,
+            "37": 51,
+            "39": 7
+          }
+        },
+        {
+          "w": 22,
+          "shots": 200000,
+          "fallimenti": 59745,
+          "f": 0.298725,
+          "ic95_wilson": [
+            0.296722963962043,
+            0.3007347677856924
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 345,
+            "15": 1295,
+            "17": 3117,
+            "19": 5836,
+            "21": 8512,
+            "23": 10182,
+            "25": 10230,
+            "27": 8365,
+            "29": 5953,
+            "31": 3468,
+            "33": 1641,
+            "35": 610,
+            "37": 161,
+            "39": 28,
+            "41": 2
+          }
+        },
+        {
+          "w": 23,
+          "shots": 200000,
+          "fallimenti": 66396,
+          "f": 0.33198,
+          "ic95_wilson": [
+            0.3299193675648252,
+            0.3340470867303158
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 249,
+            "15": 879,
+            "17": 2405,
+            "19": 4751,
+            "21": 7683,
+            "23": 10161,
+            "25": 11229,
+            "27": 10391,
+            "29": 8213,
+            "31": 5373,
+            "33": 3107,
+            "35": 1310,
+            "37": 466,
+            "39": 149,
+            "41": 22,
+            "43": 8
+          }
+        },
+        {
+          "w": 24,
+          "shots": 200000,
+          "fallimenti": 72697,
+          "f": 0.363485,
+          "ic95_wilson": [
+            0.3613795918428822,
+            0.3655956522239025
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 139,
+            "15": 532,
+            "17": 1729,
+            "19": 3610,
+            "21": 6564,
+            "23": 9449,
+            "25": 11506,
+            "27": 11945,
+            "29": 10376,
+            "31": 7764,
+            "33": 4907,
+            "35": 2599,
+            "37": 1077,
+            "39": 386,
+            "41": 95,
+            "43": 17,
+            "45": 2
+          }
+        },
+        {
+          "w": 25,
+          "shots": 200000,
+          "fallimenti": 77847,
+          "f": 0.389235,
+          "ic95_wilson": [
+            0.38710028673499125,
+            0.3913739681751462
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 69,
+            "15": 328,
+            "17": 1161,
+            "19": 2660,
+            "21": 5257,
+            "23": 8262,
+            "25": 10954,
+            "27": 12442,
+            "29": 11955,
+            "31": 10049,
+            "33": 7100,
+            "35": 4236,
+            "37": 2146,
+            "39": 861,
+            "41": 298,
+            "43": 58,
+            "45": 9,
+            "47": 2
+          }
+        },
+        {
+          "w": 26,
+          "shots": 200000,
+          "fallimenti": 82774,
+          "f": 0.41387,
+          "ic95_wilson": [
+            0.4117131247410976,
+            0.41603018384383567
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 35,
+            "15": 201,
+            "17": 683,
+            "19": 1762,
+            "21": 3937,
+            "23": 6639,
+            "25": 9873,
+            "27": 12220,
+            "29": 12972,
+            "31": 12125,
+            "33": 9599,
+            "35": 6372,
+            "37": 3715,
+            "39": 1754,
+            "41": 645,
+            "43": 190,
+            "45": 43,
+            "47": 8,
+            "49": 1
+          }
+        },
+        {
+          "w": 27,
+          "shots": 200000,
+          "fallimenti": 86486,
+          "f": 0.43243,
+          "ic95_wilson": [
+            0.43026011384242385,
+            0.4346024817814463
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 19,
+            "15": 85,
+            "17": 433,
+            "19": 1221,
+            "21": 2731,
+            "23": 5205,
+            "25": 8135,
+            "27": 11152,
+            "29": 13290,
+            "31": 13271,
+            "33": 11642,
+            "35": 8631,
+            "37": 5520,
+            "39": 3088,
+            "41": 1383,
+            "43": 498,
+            "45": 151,
+            "47": 26,
+            "49": 5
+          }
+        },
+        {
+          "w": 28,
+          "shots": 200000,
+          "fallimenti": 89450,
+          "f": 0.44725,
+          "ic95_wilson": [
+            0.44507195652209064,
+            0.44943006980851685
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 12,
+            "15": 52,
+            "17": 261,
+            "19": 709,
+            "21": 1849,
+            "23": 3744,
+            "25": 6601,
+            "27": 9604,
+            "29": 12049,
+            "31": 13630,
+            "33": 13098,
+            "35": 11097,
+            "37": 7790,
+            "39": 4969,
+            "41": 2416,
+            "43": 1093,
+            "45": 360,
+            "47": 93,
+            "49": 22,
+            "51": 1
+          }
+        },
+        {
+          "w": 29,
+          "shots": 200000,
+          "fallimenti": 92117,
+          "f": 0.460585,
+          "ic95_wilson": [
+            0.4584012907213676,
+            0.4627702233605452
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 1,
+            "15": 27,
+            "17": 123,
+            "19": 417,
+            "21": 1144,
+            "23": 2619,
+            "25": 4853,
+            "27": 7656,
+            "29": 10917,
+            "31": 13240,
+            "33": 13865,
+            "35": 12997,
+            "37": 10015,
+            "39": 7003,
+            "41": 4127,
+            "43": 2036,
+            "45": 755,
+            "47": 255,
+            "49": 55,
+            "51": 12
+          }
+        },
+        {
+          "w": 30,
+          "shots": 200000,
+          "fallimenti": 93831,
+          "f": 0.469155,
+          "ic95_wilson": [
+            0.46696848066392477,
+            0.47134270421129015
+          ],
+          "sindromi_violate": 0,
+          "peso_min_residuo": 13,
+          "istogramma_pesi_residuo": {
+            "13": 2,
+            "15": 11,
+            "17": 79,
+            "19": 257,
+            "21": 763,
+            "23": 1730,
+            "25": 3404,
+            "27": 6114,
+            "29": 9070,
+            "31": 11963,
+            "33": 13927,
+            "35": 14055,
+            "37": 11766,
+            "39": 9140,
+            "41": 5962,
+            "43": 3343,
+            "45": 1490,
+            "47": 546,
+            "49": 165,
+            "51": 39,
+            "53": 5
+          }
+        }
+      ],
+      "ricostruzione": [
+        {
+          "q": 0.005,
+          "p_L_ricostruita": 1.1259147989132929e-09,
+          "limiti": [
+            1.0438857095236857e-09,
+            1.2147383109890849e-09
+          ]
+        },
+        {
+          "q": 0.01,
+          "p_L_ricostruita": 1.3566679090179164e-07,
+          "limiti": [
+            1.2702066673258057e-07,
+            1.4493548051707226e-07
+          ]
+        },
+        {
+          "q": 0.02,
+          "p_L_ricostruita": 1.4781695093985472e-05,
+          "limiti": [
+            1.400486331805941e-05,
+            1.5604192703911488e-05
+          ]
+        },
+        {
+          "q": 0.03,
+          "p_L_ricostruita": 0.00020778859998127626,
+          "limiti": [
+            0.0001987545286371212,
+            0.00021727246902997194
+          ]
+        },
+        {
+          "q": 0.04,
+          "p_L_ricostruita": 0.001246859388569557,
+          "limiti": [
+            0.0012030790159301178,
+            0.0012924822605689928
+          ]
+        },
+        {
+          "q": 0.05,
+          "p_L_ricostruita": 0.004648953562194949,
+          "limiti": [
+            0.0045196261040209885,
+            0.004782809499709928
+          ]
+        },
+        {
+          "q": 0.06,
+          "p_L_ricostruita": 0.012737727268170698,
+          "limiti": [
+            0.012458649678129539,
+            0.013024792230094688
+          ]
+        }
+      ]
+    }
+  ]
+}

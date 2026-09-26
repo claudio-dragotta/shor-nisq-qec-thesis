@@ -1,0 +1,232 @@
+{
+  "schema_version": "2.0",
+  "milestone": "M16_confronto_basso_rumore",
+  "stato": "esplorativo",
+  "metodo": "p_L(q) = somma su w di B(w; n, q) f(w); pesi bassi da enumerazione esaustiva (Gross) o garanzia MWPM (surface); limiti da IC di f(w)",
+  "decoder_gross": "serial",
+  "input": {
+    "results_M16_test2_fallimenti_basso_rumore_20260926_134543.json": "cb514e3b9c47755312074f276ce24aad2a58bcddeb6a38be7aaf281c8942aa8a"
+  },
+  "script_sha256": "abf2de15b0d856e79df2b6dcad4dc23e6948cf0df551eb92e9d134ac8cdc1640",
+  "timestamp": "2026-09-26T14:31:30",
+  "righe": [
+    {
+      "q": 0.002,
+      "gross": {
+        "p_blocco": 5.321479847986793e-11,
+        "limiti": [
+          5.004040066159817e-11,
+          5.6590624482251344e-11
+        ]
+      },
+      "surface": {
+        "11": {
+          "p_blocco": 8.398801654152521e-10,
+          "limiti": [
+            7.897376086418717e-10,
+            8.932055095556279e-10
+          ]
+        },
+        "13": {
+          "p_blocco": 2.2709834013312502e-11,
+          "limiti": [
+            2.085931427586729e-11,
+            2.4732216274969687e-11
+          ]
+        }
+      },
+      "surface_peggiori_del_gross": [
+        11
+      ],
+      "surface_migliori_del_gross": [
+        13
+      ]
+    },
+    {
+      "q": 0.003,
+      "gross": {
+        "p_blocco": 6.18477810976609e-10,
+        "limiti": [
+          5.817487599345756e-10,
+          6.575289979401815e-10
+        ]
+      },
+      "surface": {
+        "11": {
+          "p_blocco": 9.397817191114655e-09,
+          "limiti": [
+            8.838735077176807e-09,
+            9.99227234288469e-09
+          ]
+        },
+        "13": {
+          "p_blocco": 3.851585717029593e-10,
+          "limiti": [
+            3.5502267792253406e-10,
+            4.179629975453736e-10
+          ]
+        }
+      },
+      "surface_peggiori_del_gross": [
+        11
+      ],
+      "surface_migliori_del_gross": [
+        13
+      ]
+    },
+    {
+      "q": 0.005,
+      "gross": {
+        "p_blocco": 1.3855494673546373e-08,
+        "limiti": [
+          1.3046163117972041e-08,
+          1.4715389795329981e-08
+        ]
+      },
+      "surface": {
+        "11": {
+          "p_blocco": 1.9457699318436994e-07,
+          "limiti": [
+            1.8311791616376638e-07,
+            2.0675494827315788e-07
+          ]
+        },
+        "13": {
+          "p_blocco": 1.351097755897257e-08,
+          "limiti": [
+            1.2526628956344155e-08,
+            1.4576859608261827e-08
+          ]
+        }
+      },
+      "surface_peggiori_del_gross": [
+        11
+      ],
+      "surface_migliori_del_gross": []
+    },
+    {
+      "q": 0.0075,
+      "gross": {
+        "p_blocco": 1.677748331260928e-07,
+        "limiti": [
+          1.5832573378490586e-07,
+          1.7780071613067854e-07
+        ]
+      },
+      "surface": {
+        "11": {
+          "p_blocco": 2.1251916230147216e-06,
+          "limiti": [
+            2.002337692541545e-06,
+            2.2556451820809897e-06
+          ]
+        },
+        "13": {
+          "p_blocco": 2.244927426175991e-07,
+          "limiti": [
+            2.0928995858593424e-07,
+            2.408644710349961e-07
+          ]
+        }
+      },
+      "surface_peggiori_del_gross": [
+        11,
+        13
+      ],
+      "surface_migliori_del_gross": []
+    },
+    {
+      "q": 0.01,
+      "gross": {
+        "p_blocco": 1.0065022001366022e-06,
+        "limiti": [
+          9.527921757048115e-07,
+          1.0633896005779643e-06
+        ]
+      },
+      "surface": {
+        "11": {
+          "p_blocco": 1.1457060207886727e-05,
+          "limiti": [
+            1.0811142238553728e-05,
+            1.2142240330081933e-05
+          ]
+        },
+        "13": {
+          "p_blocco": 1.6280002761437373e-06,
+          "limiti": [
+            1.5242469363352384e-06,
+            1.7392243796265916e-06
+          ]
+        }
+      },
+      "surface_peggiori_del_gross": [
+        11,
+        13
+      ],
+      "surface_migliori_del_gross": []
+    },
+    {
+      "q": 0.015,
+      "gross": {
+        "p_blocco": 1.3136772206662259e-05,
+        "limiti": [
+          1.2534996784650384e-05,
+          1.3771352615312446e-05
+        ]
+      },
+      "surface": {
+        "11": {
+          "p_blocco": 0.0001201275788417222,
+          "limiti": [
+            0.00011379822900137171,
+            0.00012682505592298554
+          ]
+        },
+        "13": {
+          "p_blocco": 2.5796497986507738e-05,
+          "limiti": [
+            2.4310901774682314e-05,
+            2.7377891071433957e-05
+          ]
+        }
+      },
+      "surface_peggiori_del_gross": [
+        11,
+        13
+      ],
+      "surface_migliori_del_gross": []
+    },
+    {
+      "q": 0.02,
+      "gross": {
+        "p_blocco": 8.423952938456317e-05,
+        "limiti": [
+          8.10656309185703e-05,
+          8.756981753324374e-05
+        ]
+      },
+      "surface": {
+        "11": {
+          "p_blocco": 0.0006198703455232435,
+          "limiti": [
+            0.0005899273331791965,
+            0.0006514622312492335
+          ]
+        },
+        "13": {
+          "p_blocco": 0.00017736592093620107,
+          "limiti": [
+            0.00016804541543180562,
+            0.00018723424288868973
+          ]
+        }
+      },
+      "surface_peggiori_del_gross": [
+        11,
+        13
+      ],
+      "surface_migliori_del_gross": []
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+
+bb_288_12_18: n=288 k=12 d pubblicata=18  rank Hx=138
+  q=0.02   P_blocco=5.000e-08 (5/100000000)  surface peggiori [] / migliori []
+  q=0.03   P_blocco=9.497e-06 (302/31800000)  surface peggiori [] / migliori []
+
+Tempo totale: 1580s
+Salvato: artifacts/v2_20260926/results_M16_test4_famiglia_bb_bb288_estensione_20260926_160258.json

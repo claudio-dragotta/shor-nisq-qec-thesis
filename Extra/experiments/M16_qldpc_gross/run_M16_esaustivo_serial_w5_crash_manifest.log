@@ -1,0 +1,20 @@
+gross_144_12_12 con decoder serial: n=144, d=12, pesi 0…5
+  w=0:            1 configurazioni, 0 fallimenti  (0s)
+  w=1:          144 configurazioni, 0 fallimenti  (0s)
+  w=2:       10,296 configurazioni, 0 fallimenti  (0s)
+  w=3:      487,344 configurazioni, 0 fallimenti  (3s)
+  w=4:   17,178,876 configurazioni, 0 fallimenti  (55s)
+  w=5:  481,008,528 configurazioni, 0 fallimenti  (1763s)
+
+Corregge tutti gli errori fino a peso 5: True
+Tempo totale: 1822s
+Traceback (most recent call last):
+  File "/mnt/c/Users/ludov/Desktop/tesi_magistrale_quantum/Extra/experiments/M16_qldpc_gross/enumerazione_esaustiva.py", line 162, in <module>
+    main()
+  File "/mnt/c/Users/ludov/Desktop/tesi_magistrale_quantum/Extra/experiments/M16_qldpc_gross/enumerazione_esaustiva.py", line 145, in main
+    'experiment_manifest': manifest(args, __file__),
+                           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/ludov/Desktop/tesi_magistrale_quantum/Extra/experiments/M16_qldpc_gross/gross_code_capacity.py", line 279, in manifest
+    'seed': args.seed,
+            ^^^^^^^^^
+AttributeError: 'Namespace' object has no attribute 'seed'

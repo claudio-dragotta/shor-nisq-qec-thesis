@@ -1,0 +1,124 @@
+{
+  "schema_version": "2.0",
+  "milestone": "M16_enumerazione_esaustiva",
+  "stato": "esplorativo",
+  "experiment_manifest": {
+    "script": "enumerazione_esaustiva.py",
+    "script_sha256": "ff98a977896230c827fc51fc12b264d6c1977400d58066f4c6c484487a2e4216",
+    "modulo_base_sha256": "2988a7a7342103f1b8879e13803d12add141c911815fd40a7dbd744a45068a68",
+    "git_commit": "223b190378915cbca68df2069812389b8b357121",
+    "argv": [
+      "enumerazione_esaustiva.py",
+      "--variante",
+      "serial",
+      "--w-max",
+      "5",
+      "--output-dir",
+      "artifacts/v2_20260926"
+    ],
+    "seed": null,
+    "python": "3.12.3",
+    "interprete": "/home/claudio/quantum-env/bin/python",
+    "piattaforma": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "cpu": 22,
+    "packages": {
+      "numpy": "2.5.1",
+      "ldpc": "2.4.1",
+      "PyMatching": "2.4.0",
+      "stim": "1.16.0",
+      "scipy": "1.18.0"
+    },
+    "timestamp": "2026-09-26T13:35:38"
+  },
+  "parametri": {
+    "codice": "gross_144_12_12",
+    "variante": "serial",
+    "decoder": {
+      "tipo": "bposd",
+      "bp_method": "minimum_sum",
+      "ms_scaling_factor": 0.625,
+      "max_iter": 100,
+      "schedule": "serial",
+      "osd_method": "osd_cs",
+      "osd_order": 10
+    },
+    "w_max": 5,
+    "priore_decoder": 0.01
+  },
+  "verifica_codice": {
+    "n": 144,
+    "k": 12,
+    "commutano": true,
+    "righe_Hx": 72,
+    "righe_Hz": 72,
+    "rank_Hx": 66,
+    "rank_Hz": 66,
+    "peso_righe_Hz": [
+      6
+    ],
+    "peso_colonne_Hz": [
+      3
+    ],
+    "sha256_Hx": "195d5586a406f0194b89649b6a2499ec2b481edb81c91293daf1745d8b806641",
+    "sha256_Hz": "72dc3b9cefec7d45c99325c8f8d0787174e3cea207a41cd5b740a8b05f263918"
+  },
+  "risultati": [
+    {
+      "w": 0,
+      "configurazioni": 1,
+      "fallimenti": 0,
+      "f_esatta": 0.0,
+      "sindromi_violate": 0,
+      "esempi_di_fallimento": [],
+      "secondi": 0.1
+    },
+    {
+      "w": 1,
+      "configurazioni": 144,
+      "fallimenti": 0,
+      "f_esatta": 0.0,
+      "sindromi_violate": 0,
+      "esempi_di_fallimento": [],
+      "secondi": 0.0
+    },
+    {
+      "w": 2,
+      "configurazioni": 10296,
+      "fallimenti": 0,
+      "f_esatta": 0.0,
+      "sindromi_violate": 0,
+      "esempi_di_fallimento": [],
+      "secondi": 0.5
+    },
+    {
+      "w": 3,
+      "configurazioni": 487344,
+      "fallimenti": 0,
+      "f_esatta": 0.0,
+      "sindromi_violate": 0,
+      "esempi_di_fallimento": [],
+      "secondi": 7.5
+    },
+    {
+      "w": 4,
+      "configurazioni": 17178876,
+      "fallimenti": 0,
+      "f_esatta": 0.0,
+      "sindromi_violate": 0,
+      "esempi_di_fallimento": [],
+      "secondi": 80.7
+    },
+    {
+      "w": 5,
+      "configurazioni": 481008528,
+      "fallimenti": 0,
+      "f_esatta": 0.0,
+      "sindromi_violate": 0,
+      "esempi_di_fallimento": [],
+      "secondi": 2265.8
+    }
+  ],
+  "esito": {
+    "corregge_tutti_fino_a_w_max": true
+  }
+}

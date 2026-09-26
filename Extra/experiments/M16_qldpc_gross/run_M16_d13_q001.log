@@ -1,0 +1,9 @@
+========================================================================================
+M16 — Gross code [[144,12,12]] e surface code in code-capacity (errori X)
+    q = [0.01]   shots max 1000000000   stop a 300 fallimenti   workers 20
+    Gross: n=144 k=12 rank Hx=66 rank Hz=66 pesi righe [6]
+========================================================================================
+  surface_d13_mwpm     q=0.01   p_L=1.350e-07 (135/1000000000)  2371.19s
+
+Tempo totale: 2371s
+Risultati salvati in: artifacts/v2_20260926/results_M16_gross_code_capacity_d13_q001_20260926_143129.json
