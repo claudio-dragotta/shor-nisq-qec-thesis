@@ -179,6 +179,13 @@ CONTENUTO = [
         'sindromi perfette. BP+OSD ([i]belief propagation with ordered statistics '
         'decoding[/i]) è usato come ulteriore decoder di confronto sul surface code e come '
         'decoder del Gross code [12].',
+        'Il confronto mostra che i due approcci non sono equivalenti: a parità di qubit '
+        'logici e per [i]p[/i] ≥ 0,5%, il Gross code ottiene una protezione pari o '
+        'superiore a quella del surface code con un numero di qubit di dato molto minore, 144 '
+        'contro i 2.028 di 12 patch a distanza 13 (Sezione 3.3). Il vantaggio dipende però in modo decisivo dal decoder: '
+        'con la schedulazione serial della propagazione delle credenze il Gross code corregge '
+        'tutti gli errori fino a cinque qubit, verificati su circa 5×10[sup]8[/sup] '
+        'configurazioni, mentre con quella parallela fallisce già con tre.',
     ]),
     (2, 'Riduzione del rumore con la AQFT', []),
     (1, 'Risultati', []),
