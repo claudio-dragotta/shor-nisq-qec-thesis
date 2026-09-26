@@ -1,0 +1,119 @@
+
+gross_144_12_12 (serial), n=144, distanza attesa 12
+  w=0   f=0.000e+00  (fissata: enumerazione esaustiva results_M16_esaustivo_gross_144_12_12_serial_w5_20260926_133538.json)
+  w=1   f=0.000e+00  (fissata: enumerazione esaustiva results_M16_esaustivo_gross_144_12_12_serial_w5_20260926_133538.json)
+  w=2   f=0.000e+00  (fissata: enumerazione esaustiva results_M16_esaustivo_gross_144_12_12_serial_w5_20260926_133538.json)
+  w=3   f=0.000e+00  (fissata: enumerazione esaustiva results_M16_esaustivo_gross_144_12_12_serial_w5_20260926_133538.json)
+  w=4   f=0.000e+00  (fissata: enumerazione esaustiva results_M16_esaustivo_gross_144_12_12_serial_w5_20260926_133538.json)
+  w=5   f=0.000e+00  (fissata: enumerazione esaustiva results_M16_esaustivo_gross_144_12_12_serial_w5_20260926_133538.json)
+  w=6   f=7.200e-05 (1008/14000000)  residuo min 12
+  w=7   f=5.633e-04 (1014/1800000)  residuo min 12
+  w=8   f=2.693e-03 (1077/400000)  residuo min 12
+  w=9   f=1.019e-02 (2038/200000)  residuo min 12
+  w=10  f=3.007e-02 (6013/200000)  residuo min 12
+  w=11  f=8.094e-02 (16187/200000)  residuo min 12
+  w=12  f=1.913e-01 (38262/200000)  residuo min 12
+  w=13  f=3.710e-01 (74209/200000)  residuo min 12
+  w=14  f=5.952e-01 (119038/200000)  residuo min 12
+  w=15  f=7.845e-01 (156905/200000)  residuo min 12
+  w=16  f=9.006e-01 (180113/200000)  residuo min 12
+  w=17  f=9.558e-01 (191160/200000)  residuo min 12
+  w=18  f=9.800e-01 (196009/200000)  residuo min 12
+  w=19  f=9.906e-01 (198128/200000)  residuo min 12
+  w=20  f=9.953e-01 (199065/200000)  residuo min 12
+  w=21  f=9.977e-01 (199531/200000)  residuo min 12
+  w=22  f=9.986e-01 (199726/200000)  residuo min 12
+  w=23  f=9.991e-01 (199825/200000)  residuo min 12
+  ricostruita q=0.005: 1.386e-08 [1.30e-08, 1.47e-08]
+  ricostruita q=0.01: 1.007e-06 [9.53e-07, 1.06e-06]
+  ricostruita q=0.02: 8.424e-05 [8.11e-05, 8.76e-05]
+  ricostruita q=0.03: 1.190e-03 [1.16e-03, 1.22e-03]
+  ricostruita q=0.04: 7.497e-03 [7.38e-03, 7.62e-03]
+  ricostruita q=0.05: 2.873e-02 [2.84e-02, 2.90e-02]
+  ricostruita q=0.06: 7.790e-02 [7.73e-02, 7.85e-02]
+  primo peso con fallimenti: 6;  residuo logico piu' leggero: 12 (limite superiore alla distanza)
+
+surface_d11 (mwpm), n=121, distanza attesa 11
+  w=0   f=0.000e+00  (fissata: garanzia MWPM: corregge ogni errore di peso <= (d-1)/2)
+  w=1   f=0.000e+00  (fissata: garanzia MWPM: corregge ogni errore di peso <= (d-1)/2)
+  w=2   f=0.000e+00  (fissata: garanzia MWPM: corregge ogni errore di peso <= (d-1)/2)
+  w=3   f=0.000e+00  (fissata: garanzia MWPM: corregge ogni errore di peso <= (d-1)/2)
+  w=4   f=0.000e+00  (fissata: garanzia MWPM: corregge ogni errore di peso <= (d-1)/2)
+  w=5   f=0.000e+00  (fissata: garanzia MWPM: corregge ogni errore di peso <= (d-1)/2)
+  w=6   f=2.953e-04 (1004/3400000)  residuo min 11
+  w=7   f=1.723e-03 (1034/600000)  residuo min 11
+  w=8   f=6.160e-03 (1232/200000)  residuo min 11
+  w=9   f=1.558e-02 (3116/200000)  residuo min 11
+  w=10  f=3.239e-02 (6478/200000)  residuo min 11
+  w=11  f=5.892e-02 (11784/200000)  residuo min 11
+  w=12  f=9.420e-02 (18839/200000)  residuo min 11
+  w=13  f=1.415e-01 (28298/200000)  residuo min 11
+  w=14  f=1.909e-01 (38180/200000)  residuo min 11
+  w=15  f=2.439e-01 (48780/200000)  residuo min 11
+  w=16  f=2.940e-01 (58791/200000)  residuo min 11
+  w=17  f=3.367e-01 (67332/200000)  residuo min 11
+  w=18  f=3.767e-01 (75340/200000)  residuo min 11
+  w=19  f=4.105e-01 (82106/200000)  residuo min 11
+  w=20  f=4.330e-01 (86593/200000)  residuo min 11
+  w=21  f=4.516e-01 (90316/200000)  residuo min 11
+  w=22  f=4.672e-01 (93432/200000)  residuo min 11
+  w=23  f=4.774e-01 (95486/200000)  residuo min 11
+  w=24  f=4.860e-01 (97203/200000)  residuo min 11
+  w=25  f=4.920e-01 (98396/200000)  residuo min 11
+  w=26  f=4.939e-01 (98771/200000)  residuo min 11
+  w=27  f=4.967e-01 (99343/200000)  residuo min 11
+  w=28  f=4.981e-01 (99622/200000)  residuo min 13
+  w=29  f=4.991e-01 (99820/200000)  residuo min 13
+  w=30  f=5.011e-01 (100230/200000)  residuo min 15
+  ricostruita q=0.005: 1.621e-08 [1.53e-08, 1.72e-08]
+  ricostruita q=0.01: 9.548e-07 [9.01e-07, 1.01e-06]
+  ricostruita q=0.02: 5.167e-05 [4.92e-05, 5.43e-05]
+  ricostruita q=0.03: 4.916e-04 [4.72e-04, 5.12e-04]
+  ricostruita q=0.04: 2.272e-03 [2.20e-03, 2.35e-03]
+  ricostruita q=0.05: 7.025e-03 [6.85e-03, 7.20e-03]
+  ricostruita q=0.06: 1.676e-02 [1.64e-02, 1.71e-02]
+  primo peso con fallimenti: 6;  residuo logico piu' leggero: 11 (limite superiore alla distanza)
+
+surface_d13 (mwpm), n=169, distanza attesa 13
+  w=0   f=0.000e+00  (fissata: garanzia MWPM: corregge ogni errore di peso <= (d-1)/2)
+  w=1   f=0.000e+00  (fissata: garanzia MWPM: corregge ogni errore di peso <= (d-1)/2)
+  w=2   f=0.000e+00  (fissata: garanzia MWPM: corregge ogni errore di peso <= (d-1)/2)
+  w=3   f=0.000e+00  (fissata: garanzia MWPM: corregge ogni errore di peso <= (d-1)/2)
+  w=4   f=0.000e+00  (fissata: garanzia MWPM: corregge ogni errore di peso <= (d-1)/2)
+  w=5   f=0.000e+00  (fissata: garanzia MWPM: corregge ogni errore di peso <= (d-1)/2)
+  w=6   f=0.000e+00  (fissata: garanzia MWPM: corregge ogni errore di peso <= (d-1)/2)
+  w=7   f=2.170e-05 (434/20000000)  residuo min 13
+  w=8   f=1.693e-04 (1016/6000000)  residuo min 13
+  w=9   f=6.963e-04 (1114/1600000)  residuo min 13
+  w=10  f=2.063e-03 (1238/600000)  residuo min 13
+  w=11  f=4.995e-03 (1998/400000)  residuo min 13
+  w=12  f=1.077e-02 (2154/200000)  residuo min 13
+  w=13  f=1.933e-02 (3866/200000)  residuo min 13
+  w=14  f=3.370e-02 (6740/200000)  residuo min 13
+  w=15  f=5.248e-02 (10497/200000)  residuo min 13
+  w=16  f=7.820e-02 (15641/200000)  residuo min 13
+  w=17  f=1.081e-01 (21620/200000)  residuo min 13
+  w=18  f=1.437e-01 (28736/200000)  residuo min 13
+  w=19  f=1.789e-01 (35779/200000)  residuo min 13
+  w=20  f=2.212e-01 (44247/200000)  residuo min 13
+  w=21  f=2.601e-01 (52010/200000)  residuo min 13
+  w=22  f=2.987e-01 (59745/200000)  residuo min 13
+  w=23  f=3.320e-01 (66396/200000)  residuo min 13
+  w=24  f=3.635e-01 (72697/200000)  residuo min 13
+  w=25  f=3.892e-01 (77847/200000)  residuo min 13
+  w=26  f=4.139e-01 (82774/200000)  residuo min 13
+  w=27  f=4.324e-01 (86486/200000)  residuo min 13
+  w=28  f=4.472e-01 (89450/200000)  residuo min 13
+  w=29  f=4.606e-01 (92117/200000)  residuo min 13
+  w=30  f=4.692e-01 (93831/200000)  residuo min 13
+  ricostruita q=0.005: 1.126e-09 [1.04e-09, 1.21e-09]
+  ricostruita q=0.01: 1.357e-07 [1.27e-07, 1.45e-07]
+  ricostruita q=0.02: 1.478e-05 [1.40e-05, 1.56e-05]
+  ricostruita q=0.03: 2.078e-04 [1.99e-04, 2.17e-04]
+  ricostruita q=0.04: 1.247e-03 [1.20e-03, 1.29e-03]
+  ricostruita q=0.05: 4.649e-03 [4.52e-03, 4.78e-03]
+  ricostruita q=0.06: 1.274e-02 [1.25e-02, 1.30e-02]
+  primo peso con fallimenti: 7;  residuo logico piu' leggero: 13 (limite superiore alla distanza)
+
+Tempo totale: 540s
+Salvato: artifacts/v2_20260926/results_M16_test2_fallimenti_basso_rumore_20260926_134543.json

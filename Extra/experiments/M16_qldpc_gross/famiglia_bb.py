@@ -67,6 +67,9 @@ def main():
     ap.add_argument('--variante', default=RIFERIMENTO,
                     help="decoder del Gross e della famiglia (nome in sweep_decoder)")
     ap.add_argument('--surface-json', nargs='*', default=[])
+    ap.add_argument('--indice-base', type=int, default=5000,
+                    help="indice di configurazione dei semi; cambiarlo da' campioni nuovi")
+    ap.add_argument('--etichetta', default='', help="suffisso del file di output")
     ap.add_argument('--output-dir', default=None)
     ap.add_argument('--quick', action='store_true')
     args = ap.parse_args()
@@ -99,7 +102,7 @@ def main():
             punti = []
             for i_q, q in enumerate(args.q_list):
                 pt = esegui_punto_variante(pool, Hz, K, q, args.variante, args,
-                                           5000 + i_c, i_q)
+                                           args.indice_base + i_c, i_q)
                 # confronto con k patch di surface (IC 95% non sovrapposti)
                 eq = {'peggiori': [], 'migliori': []}
                 for d, pts in surface.items():
@@ -143,7 +146,8 @@ def main():
                       'min_failures': args.min_failures, 'chunk': args.chunk,
                       'decoder': {args.variante: spec},
                       'surface_json': [os.path.basename(p) for p in args.surface_json],
-                      'seed_words': "[seed, 5000 + indice codice, indice q, blocco]",
+                      'seed_words': f"[seed, {args.indice_base} + indice codice, "
+                                    f"indice q, blocco]",
                       'regola_confronto': ("k patch indipendenti, 1-(1-p_L)^k; migliore o "
                                            "peggiore solo con IC 95% non sovrapposti; "
                                            "0 fallimenti -> limite 3/N")},
@@ -151,7 +155,8 @@ def main():
     }
     os.makedirs(args.output_dir, exist_ok=True)
     path = os.path.join(args.output_dir,
-                        f"results_M16_test4_famiglia_bb_{datetime.now():%Y%m%d_%H%M%S}.json")
+                        f"results_M16_test4_famiglia_bb{'_' + args.etichetta if args.etichetta else ''}"
+                        f"_{datetime.now():%Y%m%d_%H%M%S}.json")
     json.dump(out, open(path, 'w', encoding='utf-8'), indent=2, ensure_ascii=False)
     print(f"Salvato: {path}")
 

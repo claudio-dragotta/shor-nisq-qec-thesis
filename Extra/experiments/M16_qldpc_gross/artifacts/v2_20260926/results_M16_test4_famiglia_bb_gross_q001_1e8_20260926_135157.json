@@ -1,0 +1,150 @@
+{
+  "schema_version": "2.0",
+  "milestone": "M16_test4_famiglia_bb",
+  "stato": "esplorativo",
+  "modello_rumore": "code-capacity, errori X indipendenti, sindromi perfette",
+  "experiment_manifest": {
+    "script": "famiglia_bb.py",
+    "script_sha256": "f009c249627383e5ce05cb8a32a1802e99494428d0fb34faf72cc242ba39298f",
+    "modulo_base_sha256": "2988a7a7342103f1b8879e13803d12add141c911815fd40a7dbd744a45068a68",
+    "git_commit": "223b190378915cbca68df2069812389b8b357121",
+    "argv": [
+      "famiglia_bb.py",
+      "--seed",
+      "42",
+      "--variante",
+      "serial",
+      "--codici",
+      "gross_144_12_12",
+      "--q-list",
+      "0.01",
+      "--shots-max",
+      "100000000",
+      "--min-failures",
+      "1000000000",
+      "--indice-base",
+      "7000",
+      "--etichetta",
+      "gross_q001_1e8",
+      "--output-dir",
+      "artifacts/v2_20260926"
+    ],
+    "seed": 42,
+    "python": "3.12.3",
+    "interprete": "/home/claudio/quantum-env/bin/python",
+    "piattaforma": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "cpu": 22,
+    "packages": {
+      "numpy": "2.5.1",
+      "ldpc": "2.4.1",
+      "PyMatching": "2.4.0",
+      "stim": "1.16.0",
+      "scipy": "1.18.0"
+    },
+    "timestamp": "2026-09-26T13:51:57"
+  },
+  "parametri": {
+    "codici": {
+      "gross_144_12_12": {
+        "l": 12,
+        "m": 6,
+        "n": 144,
+        "k": 12,
+        "d_pubblicata": 12,
+        "A": [
+          [
+            "x",
+            3
+          ],
+          [
+            "y",
+            1
+          ],
+          [
+            "y",
+            2
+          ]
+        ],
+        "B": [
+          [
+            "y",
+            3
+          ],
+          [
+            "x",
+            1
+          ],
+          [
+            "x",
+            2
+          ]
+        ]
+      }
+    },
+    "q_list": [
+      0.01
+    ],
+    "shots_max": 100000000,
+    "min_failures": 1000000000,
+    "chunk": 10000,
+    "decoder": {
+      "serial": {
+        "tipo": "bposd",
+        "bp_method": "minimum_sum",
+        "ms_scaling_factor": 0.625,
+        "max_iter": 100,
+        "schedule": "serial",
+        "osd_method": "osd_cs",
+        "osd_order": 10
+      }
+    },
+    "surface_json": [],
+    "seed_words": "[seed, 7000 + indice codice, indice q, blocco]",
+    "regola_confronto": "k patch indipendenti, 1-(1-p_L)^k; migliore o peggiore solo con IC 95% non sovrapposti; 0 fallimenti -> limite 3/N"
+  },
+  "risultati": [
+    {
+      "codice": "gross_144_12_12",
+      "n": 144,
+      "k": 12,
+      "distanza_pubblicata": 12,
+      "rapporto_k_su_n": 0.08333333333333333,
+      "verifica": {
+        "n": 144,
+        "k": 12,
+        "commutano": true,
+        "righe_Hx": 72,
+        "righe_Hz": 72,
+        "rank_Hx": 66,
+        "rank_Hz": 66,
+        "peso_righe_Hz": [
+          6
+        ],
+        "peso_colonne_Hz": [
+          3
+        ],
+        "sha256_Hx": "195d5586a406f0194b89649b6a2499ec2b481edb81c91293daf1745d8b806641",
+        "sha256_Hz": "72dc3b9cefec7d45c99325c8f8d0787174e3cea207a41cd5b740a8b05f263918"
+      },
+      "punti": [
+        {
+          "q": 0.01,
+          "shots": 100000000,
+          "fallimenti": 94,
+          "p_fallimento": 9.4e-07,
+          "ic95_wilson": [
+            7.682135497272381e-07,
+            1.1502009647845998e-06
+          ],
+          "sindromi_violate": 0,
+          "secondi": 372.7,
+          "surface_k_patch": {
+            "peggiori": [],
+            "migliori": []
+          }
+        }
+      ],
+      "fit_loglog": null
+    }
+  ]
+}

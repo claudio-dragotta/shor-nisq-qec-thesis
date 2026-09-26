@@ -276,7 +276,8 @@ def manifest(args, script=None):
         'modulo_base_sha256': hashlib.sha256(open(modulo, 'rb').read()).hexdigest(),
         'git_commit': commit or 'non-disponibile',
         'argv': sys.argv,
-        'seed': args.seed,
+        # alcune corse (es. l'enumerazione esaustiva) sono deterministiche e non hanno seme
+        'seed': getattr(args, 'seed', None),
         'python': platform.python_version(),
         'interprete': sys.executable,
         'piattaforma': platform.platform(),
