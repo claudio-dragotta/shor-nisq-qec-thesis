@@ -248,7 +248,23 @@ CONTENUTO = [
         'cento volte più basso che con la configurazione parallela usata inizialmente, che '
         'falliva già con tre errori.',
     ]),
-    (2, 'Riduzione del rumore con la AQFT', []),
+    (2, 'Riduzione del rumore con la AQFT', [
+        'Nel pilota di Shor per [i]N[/i] = 15 l’AQFT selezionata aumenta il successo per '
+        'shot dal 47,92% al 62,79%, cioè di 14,87 punti percentuali (+31% relativo) sui '
+        'dati di verifica (intervallo di confidenza Newcombe al 95% [12,73; 16,99]), mentre '
+        'le porte a due qubit ECR scendono da 362 a 279 (−22,9%) e la profondità da 1.351 '
+        'a 1.141 (−15,5%). In questo caso il rumore evitato supera la precisione persa, e il '
+        'miglioramento riguarda direttamente la fattorizzazione, non solo la stima di fase.',
+        'Per [i]N[/i] = 21 il troncamento delle QFT interne all’aritmetica dimezza le porte '
+        'ECR, da 49.661 a 23.178 (−53,3%), ma il successo ideale scende dal 46,67% al 40,13% '
+        '(−6,54 punti percentuali); nei tre confronti con rumore, con soli 128 shot di '
+        'verifica per variante, gli intervalli delle differenze comprendono sempre lo zero, '
+        'quindi un beneficio non è dimostrato. Nei nove benchmark di stima di fase tutte le '
+        'differenze favoriscono la variante troncata, fino a 12,55 punti percentuali '
+        '([9,77; 15,30]). I confronti restano esplorativi e il grado di troncamento migliore '
+        'fra quelli provati, due o tre, non vale in generale per registri di dimensione '
+        'arbitraria.',
+    ]),
     (1, 'Discussione e conclusioni', []),
     (1, 'Riferimenti bibliografici essenziali', []),
 ]
@@ -500,6 +516,23 @@ def paragrafo(doc, testo):
     testo_con_markup(p, testo)
 
 
+def _riduci_ultimo_paragrafo(doc):
+    """Il paragrafo creato da un'interruzione di sezione e' vuoto: lo si rende alto 1 pt,
+    cosi' non aggiunge righe bianche ne' pagine vuote."""
+    p = doc.paragraphs[-1]
+    pf = p.paragraph_format
+    pf.space_before = Pt(0)
+    pf.space_after = Pt(0)
+    pf.line_spacing_rule = WD_LINE_SPACING.EXACTLY
+    pf.line_spacing = Pt(1)
+    rpr = p._p.get_or_add_pPr()
+    marca = OxmlElement('w:rPr')
+    sz = OxmlElement('w:sz')
+    sz.set(qn('w:val'), '2')
+    marca.append(sz)
+    rpr.append(marca)
+
+
 def colonne(sezione, n, spazio_pt=10):
     sectpr = sezione._sectPr
     cols = sectpr.find(qn('w:cols'))
@@ -543,23 +576,28 @@ def main():
             n2 += 1
             numero = f'{n1}.{n2}'
         if testo_titolo.startswith('Riferimenti') and BIBLIOGRAFIA:
-            # come in 05_bibliografia.tex: titolo fuori dalle colonne, poi due colonne
-            # separate da 10 pt, corpo 6,4 pt, interlinea singola, testo a bandiera
+            # come in 05_bibliografia.tex: titolo, poi due colonne separate da circa 10 pt,
+            # corpo 6,4 pt, interlinea singola, testo a bandiera. Le colonne sono le due
+            # celle di una tabella senza bordi: sempre bilanciate come in LaTeX e senza le
+            # interruzioni di sezione, che in Word lasciavano una pagina bianca in fondo.
             titolo(doc, numero, testo_titolo, livello)
-            sez = doc.add_section(WD_SECTION.CONTINUOUS)
-            colonne(sez, 2)
-            for i, voce in enumerate(BIBLIOGRAFIA, 1):
-                p = doc.add_paragraph()
-                p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-                _spaziatura(p, dopo=2, interlinea=1.0)
-                p.paragraph_format.left_indent = Cm(0.6)
-                p.paragraph_format.first_line_indent = Cm(-0.5)
-                p.paragraph_format.tab_stops.add_tab_stop(Cm(0.6))
-                _senza_sillabazione(p)
-                testo_con_markup(p, f'[{i}]\t{voce}', size=6.4)
-            # sezione continua finale a una colonna: fa bilanciare le due colonne
-            sez = doc.add_section(WD_SECTION.CONTINUOUS)
-            colonne(sez, 1)
+            tab = doc.add_table(rows=1, cols=3)
+            _senza_bordi(tab)
+            _margini_cella_zero(tab)
+            _larghezze(tab, [7.15, 0.35, 7.15])
+            meta = (len(BIBLIOGRAFIA) + 1) // 2
+            for c, voci in ((0, BIBLIOGRAFIA[:meta]), (2, BIBLIOGRAFIA[meta:])):
+                cella = tab.rows[0].cells[c]
+                primo = c * 0 if c == 0 else meta
+                for k, voce in enumerate(voci):
+                    p = cella.paragraphs[0] if k == 0 else cella.add_paragraph()
+                    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                    _spaziatura(p, dopo=2, interlinea=1.0)
+                    p.paragraph_format.left_indent = Cm(0.6)
+                    p.paragraph_format.first_line_indent = Cm(-0.5)
+                    p.paragraph_format.tab_stops.add_tab_stop(Cm(0.6))
+                    _senza_sillabazione(p)
+                    testo_con_markup(p, f'[{primo + k + 1}]\t{voce}', size=6.4)
             continue
         titolo(doc, numero, testo_titolo, livello)
         for t in paragrafi:
