@@ -155,7 +155,31 @@ CONTENUTO = [
         'è stato rapportato alle risorse hardware disponibili. Si usano 30 repliche appaiate '
         'per scenario e al massimo 50 iterazioni.',
     ]),
-    (2, 'Correzione quantistica degli errori: surface code e codici qLDPC', []),
+    # Numerazione dei riferimenti in ordine di prima citazione: con questo ordine dei
+    # paragrafi AlphaQubit diventa [10], Bravyi et al. [11], Roffe et al. [12].
+    (2, 'Correzione quantistica degli errori: surface code e codici qLDPC', [
+        'La seconda strategia protegge l’informazione prima che il rumore la distrugga. '
+        'Nella correzione quantistica degli errori, l’informazione di un qubit logico viene '
+        'distribuita su più qubit fisici; le sindromi permettono di rilevare gli errori '
+        'senza misurare direttamente lo stato logico e guidano il decoder nella scelta della '
+        'correzione. Le prestazioni sono misurate attraverso la probabilità di fallimento '
+        'logico [i]p[/i][sub]L[/sub].',
+        'Codice a ripetizione e codice di Steane sono utilizzati come verifiche preliminari, '
+        'mentre l’analisi principale riguarda circuiti di memoria basati su surface code '
+        '[7–9], con errori nelle operazioni, nella preparazione e nella misura e, in alcune '
+        'configurazioni, crosstalk tra qubit adiacenti. Il decoder di riferimento è il '
+        '[i]minimum-weight perfect matching[/i] (MWPM), che associa a coppie le sindromi '
+        'attivate scegliendo la configurazione di errori più probabile. MWPM è '
+        'confrontato con una rete neurale autonoma e con una strategia ibrida, la cui soglia '
+        'd’intervento è selezionata sul validation set e mantenuta fissa sul test '
+        'set [10].',
+        'Uno studio esplorativo confronta inoltre il surface code con il Gross code di IBM, un '
+        'codice quantum Low-Density Parity-Check (qLDPC) che codifica 12 qubit logici in 144 '
+        'qubit di dato [11], nel modello code-capacity, con errori sui soli qubit di dato e '
+        'sindromi perfette. BP+OSD ([i]belief propagation with ordered statistics '
+        'decoding[/i]) è usato come ulteriore decoder di confronto sul surface code e come '
+        'decoder del Gross code [12].',
+    ]),
     (2, 'Riduzione del rumore con la AQFT', []),
     (1, 'Risultati', []),
     (2, 'Validazione dei circuiti', []),
