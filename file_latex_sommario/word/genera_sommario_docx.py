@@ -205,7 +205,17 @@ CONTENUTO = [
         'già per [i]p[/i][sub]g[/sub] = 1% si verificano in media circa tre errori per '
         'esecuzione. Il risultato motiva le tre strategie successive.',
     ]),
-    (2, 'Post-processing e machine learning', []),
+    (2, 'Post-processing e machine learning', [
+        'Negli scenari UC1 e UC2 le SVM selezionate raggiungono valori di F1 pari a 0,919 e '
+        '0,923 e area sotto la curva ROC pari a 0,965 e 0,958, ma questa capacità '
+        'predittiva non riduce il numero di iterazioni necessarie. TOP-4 ricava i fattori alla '
+        'prima iterazione in entrambi gli scenari (1,00 iterazioni in media), contro 1,37 e '
+        '1,50 di TOP-1, con differenze statisticamente significative nei test appaiati; il '
+        'Metodo 2 richiede invece 1,50 e 1,37 iterazioni, senza migliorare significativamente '
+        'TOP-1 e risultando peggiore di TOP-4. Il vantaggio viene quindi dal considerare più '
+        'candidati, non dal classificatore; il risultato resta legato all’istanza, al '
+        'rumore e ai metodi considerati.',
+    ]),
     (2, 'Correzione quantistica degli errori', []),
     (2, 'Riduzione del rumore con la AQFT', []),
     (1, 'Discussione e conclusioni', []),
