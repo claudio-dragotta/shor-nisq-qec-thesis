@@ -99,7 +99,7 @@ CONTENUTO = [
         'usano l’aritmetica reversibile di Beauregard [6]; solo [i]N[/i] = 21 entra nelle '
         'prove rumorose esplorative sull’AQFT, perché per [i]N[/i] = 35 le risorse '
         'hardware disponibili non consentivano la simulazione di un circuito di Shor adeguato. '
-        'Si impiegano Qiskit/Aer, scikit-learn, Stim e PyMatching, registrando versioni, '
+        'Si impiegano Qiskit/Aer, scikit-learn, Stim, PyMatching e ldpc, registrando versioni, '
         'parametri, semi casuali e identificativi dei circuiti.',
     ]),
     (2, 'Sensibilità di Shor agli errori di porta', [
@@ -185,7 +185,8 @@ CONTENUTO = [
         'contro i 2.028 di 12 patch a distanza 13 (Sezione 3.3). Il vantaggio dipende però in modo decisivo dal decoder: '
         'con la schedulazione serial della propagazione delle credenze il Gross code corregge '
         'tutti gli errori fino a cinque qubit, verificati su circa 5×10[sup]8[/sup] '
-        'configurazioni, mentre con quella parallela fallisce già con tre.',
+        'configurazioni, mentre la configurazione parallela usata inizialmente falliva già '
+        'con tre.',
     ]),
     (2, 'Riduzione del rumore con la AQFT', []),
     (1, 'Risultati', []),
