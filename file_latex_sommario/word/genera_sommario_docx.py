@@ -68,13 +68,6 @@ CONTENUTO = [
         'con uno studio di ablazione del contributo del machine learning; la correzione '
         'quantistica degli errori, con surface code e codici qLDPC; la riduzione del numero di '
         'porte mediante trasformata di Fourier quantistica approssimata, o AQFT.',
-        'Gli ambiti di intervento — selezione degli esiti, protezione dell’informazione '
-        'e riduzione del costo circuitale — sono collegati da un criterio comune: confrontare '
-        'ogni soluzione con un riferimento esplicito, isolare il contributo dei singoli '
-        'componenti e misurare il beneficio mediante indicatori coerenti con il compito. Le '
-        'campagne sperimentali sono state condotte separatamente, difatti i metodi di correzione '
-        'degli errori non sono stati applicati direttamente all’intero circuito di Shor in '
-        'un’unica simulazione.',
     ]),
     (1, 'Materiali e metodi', []),
     (2, 'Algoritmo di Shor, validazione e definizione del successo', [
@@ -99,11 +92,9 @@ CONTENUTO = [
         'dei picchi [5].',
         'La correttezza dei circuiti è verificata indipendentemente dal successo della '
         'fattorizzazione, controllando operatori modulari, ripristino dei qubit ausiliari e '
-        'accordo con le distribuzioni teoriche. Oltre a [i]N[/i] = 15, si considerano le istanze '
-        '[i]N[/i] = 21, [i]a[/i] = 2 e [i]N[/i] = 35, [i]a[/i] = 6, che, validate idealmente, '
-        'usano l’aritmetica reversibile di Beauregard [6]; solo [i]N[/i] = 21 entra nelle '
-        'prove rumorose esplorative sull’AQFT, perché per [i]N[/i] = 35 le risorse '
-        'hardware disponibili non consentivano la simulazione di un circuito di Shor adeguato. '
+        'accordo con le distribuzioni teoriche. Oltre a [i]N[/i] = 15, si considera l’istanza '
+        '[i]N[/i] = 21, [i]a[/i] = 2, che, validata idealmente, usa l’aritmetica reversibile '
+        'di Beauregard [6]. '
         'Si impiegano Qiskit/Aer, scikit-learn, Stim, PyMatching e ldpc, registrando versioni, '
         'parametri, semi casuali e identificativi dei circuiti.',
     ]),
@@ -171,9 +162,6 @@ CONTENUTO = [
         'decoder del Gross code [12]; per quest’ultimo se ne confrontano più '
         'configurazioni, fra cui l’ordine di aggiornamento dei messaggi, parallelo o '
         'serial.',
-        'Il confronto mostra che i due approcci non sono equivalenti: a parità di qubit '
-        'logici il Gross code richiede molti meno qubit di dato, con un vantaggio che dipende '
-        'in modo decisivo dal decoder (Sezione 3.3).',
     ]),
     (2, 'Riduzione del rumore con la AQFT', [
         'La terza strategia riduce l’effetto del rumore alla fonte, diminuendo il numero di '
@@ -196,9 +184,9 @@ CONTENUTO = [
     (1, 'Risultati', []),
     (2, 'Validazione dei circuiti e sensibilità di Shor agli errori di porta', [
         'Le verifiche ideali dell’aritmetica confermano la correttezza dei circuiti senza '
-        'rumore per [i]N[/i] = 15, [i]N[/i] = 21 e [i]N[/i] = 35; la distanza di variazione '
+        'rumore per [i]N[/i] = 15 e [i]N[/i] = 21; la distanza di variazione '
         'totale dalla distribuzione teorica è 1,38×10[sup]−9[/sup] per '
-        '[i]N[/i] = 21 e 2,50×10[sup]−13[/sup] per [i]N[/i] = 35.',
+        '[i]N[/i] = 21.',
         'Per ciascun valore di [i]p[/i][sub]g[/sub] si eseguono 20 repliche da 4.096 shot, '
         'misurando il successo per singolo shot. Senza errori il successo è del 74,89% '
         '(intervallo di confidenza al 95% [74,59%; 75,18%]), in accordo con il 75% atteso; '
@@ -207,7 +195,8 @@ CONTENUTO = [
         '[i]p[/i][sub]g[/sub] = 0,5, praticamente il riferimento uniforme del 24,61%.',
         'La fragilità si spiega con il numero di porte: con 294 porte soggette a errore, '
         'già per [i]p[/i][sub]g[/sub] = 1% si verificano in media circa tre errori per '
-        'esecuzione. Il risultato motiva le tre strategie successive.',
+        'esecuzione. Il risultato motiva le tre strategie di mitigazione e correzione degli '
+        'errori analizzate.',
     ]),
     (2, 'Post-processing e machine learning', [
         'Negli scenari UC1 e UC2 le SVM selezionate raggiungono valori di F1 pari a 0,919 e '
