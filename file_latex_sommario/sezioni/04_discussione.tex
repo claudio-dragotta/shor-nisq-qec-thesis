@@ -1,9 +1,33 @@
 \section{Discussione e conclusioni}
 
-Il post-processing consente di sfruttare meglio l'informazione contenuta nelle misure, ma non interviene sullo stato quantistico. Lo studio di ablazione mostra che buone prestazioni del classificatore non implicano necessariamente una riduzione del costo di fattorizzazione, mentre nella decodifica il modello appreso può essere utile quando le sindromi contengono correlazioni non rappresentate adeguatamente dal decoder di riferimento.
+Le strategie agiscono su livelli distinti. Il post-processing sfrutta l'informazione residua
+senza modificare lo stato quantistico: nell'ablazione, buone metriche del classificatore non
+implicano un minor costo di fattorizzazione. Alle alte intensità di rumore, il successo
+prossimo al riferimento uniforme non dimostra che l'informazione quantistica sia preservata.
 
-Per \(N=15\), l'AQFT porta a una riduzione del numero di porte accompagnata da un aumento della probabilità di successo. Poiché l'ordine \(r=4\) genera fasi rappresentabili esattamente con due bit del registro di controllo, le rotazioni eliminate contribuiscono poco all'informazione utile. Per \(N=21\), con \(r=6\), le fasi non sono invece rappresentabili esattamente e l'aritmetica è più complessa; il beneficio dell'approssimazione non si trasferisce quindi automaticamente. Il grado di troncamento deve essere scelto in funzione dell'istanza e del regime di rumore e verificato su dati indipendenti.
+La QEC protegge l'informazione e, negli esperimenti di memoria, la decodifica appresa può
+essere utile quando le sindromi contengono correlazioni non rappresentate dal decoder di
+riferimento, come il crosstalk. Il confronto qLDPC mostra che struttura del codice e decoder
+determinano insieme il rapporto tra protezione e numero di qubit di dato; non costituisce una
+misura del miglioramento di Shor.
 
-Le conclusioni restano limitate al contesto simulativo analizzato. Il post-processing è valutato principalmente per \(N=15\), la correzione quantistica su circuiti di memoria separati e l'AQFT su un numero limitato di istanze e con una singola calibrazione offline. Non viene realizzata un'esecuzione fault-tolerant completa di Shor né una stima delle risorse necessarie per la fattorizzazione su scala crittografica.
+L'AQFT riduce le opportunità di errore. Per \(N = 15\), l'ordine \(r = 4\) genera fasi
+rappresentabili esattamente con due bit; per \(N = 21\), \(r = 6\) richiede fasi non
+esattamente rappresentabili e un'aritmetica più complessa. Il beneficio non è automatico,
+l'approssimazione va scelta per istanza e rumore e verificata su dati indipendenti.
 
-Nel complesso, il lavoro fornisce una caratterizzazione quantitativa delle condizioni in cui post-processing, decodifica e approssimazione circuitale possono risultare utili. Sviluppi futuri potranno includere la verifica su hardware reale, ulteriori valori di \(N\) e dell'ordine \(r\), e l'integrazione tra operazioni logiche protette, decodifica e ottimizzazione del circuito.
+Le conclusioni restano simulative: post-processing su \(N = 15\), QEC su memorie separate,
+Gross code in code-capacity e AQFT su poche istanze con una calibrazione offline. Non si
+realizza Shor fault-tolerant né si stimano risorse per la scala crittografica.
+
+Per gli sviluppi futuri si propone pertanto di privilegiare la riduzione controllata del costo
+circuitale, preservando l'informazione necessaria alla ricerca dell'ordine. Oltre all'AQFT
+\cite{barencoAQFT1996}, andrebbero investigate ottimizzazioni dell'aritmetica modulare e della
+sintesi delle operazioni \cite{gidney2021}. La qualità dovrà essere verificata mediante
+accuratezza della stima di fase e successo della fattorizzazione, non dal solo numero di porte.
+Non si dimostra qui una modifica della complessità asintotica di Shor.
+
+Questa direzione va integrata con una futura implementazione fault-tolerant, basata su qubit
+logici e operazioni protette che limitino la propagazione degli errori. Ottimizzazione e QEC
+sono complementari: la prima mira a contenere le risorse, la seconda a proteggere l'esecuzione
+dal rumore.
