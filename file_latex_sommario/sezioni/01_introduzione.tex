@@ -1,23 +1,14 @@
 \section{Introduzione e obiettivi}
 
-L'algoritmo di Shor consente di fattorizzare numeri interi in tempo polinomiale rispetto
-alla lunghezza binaria dell'input, con implicazioni per la sicurezza dei sistemi
-crittografici fondati sulla difficoltà della fattorizzazione
-\cite{shor1994,nist2024pqc,gidney2021}. La
-realizzazione di questo vantaggio teorico richiede tuttavia un controllo degli errori
-compatibile con la profondità dei circuiti. Errori nelle operazioni, decoerenza e
-lettura imperfetta possono alterare la distribuzione delle misure e compromettere
-l'informazione necessaria alla ricerca dell'ordine moltiplicativo \cite{preskill2018}.
+L'algoritmo di Shor fattorizza numeri interi in tempo polinomiale rispetto alla lunghezza
+binaria dell'input, con implicazioni per la sicurezza dei sistemi crittografici basati sulla
+fattorizzazione \cite{shor1994,nist2024pqc,gidney2021}. Errori nelle operazioni, decoerenza e
+lettura imperfetta possono però compromettere l'informazione necessaria alla ricerca
+dell'ordine moltiplicativo \cite{preskill2018}.
 
-La tesi sviluppa uno studio simulativo volto a stabilire quali interventi migliorino
-effettivamente l'affidabilità della computazione e rispetto a quali riferimenti. Il punto
-di partenza è la misura della sensibilità di Shor agli errori di porta; ne seguono tre
-strategie: la selezione degli esiti mediante post-processing, con uno studio di ablazione
-del contributo del machine learning; la correzione quantistica degli errori, con surface
-code e codici qLDPC; la riduzione del numero di porte mediante trasformata di Fourier
-quantistica approssimata, o AQFT.
-
-Gli ambiti di intervento --- selezione degli esiti, protezione dell'informazione e
-riduzione del costo circuitale --- sono collegati da un criterio comune: confrontare
-ogni soluzione con un riferimento esplicito, isolare il contributo dei singoli
-componenti e misurare il beneficio mediante indicatori coerenti con il compito. Le campagne sperimentali sono state condotte separatamente, difatti i metodi di correzione degli errori non sono stati applicati direttamente all'intero circuito di Shor in un'unica simulazione.
+La tesi ne studia la sensibilità al rumore e valuta tre strategie: selezione degli esiti
+mediante post-processing, isolando il contributo del machine learning; correzione quantistica
+degli errori (QEC) con surface code e codici qLDPC; riduzione delle porte mediante trasformata
+di Fourier quantistica approssimata (AQFT). Ogni strategia è confrontata con riferimenti
+espliciti e metriche coerenti con il compito. Le campagne simulative sono separate: la QEC è
+valutata su circuiti di memoria, non integrata nell'intero algoritmo di Shor.
