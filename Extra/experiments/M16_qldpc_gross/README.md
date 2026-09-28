@@ -4,7 +4,8 @@ Verifica numerica del Gross code [[144,12,12]] e della sua famiglia di codici bi
 bicycle (Bravyi et al., *Nature* 627, 2024), citati nella tesi come riferimento qLDPC,
 con la libreria `ldpc` già usata in M10/E7.
 
-**Stato: esplorativo.** Non è integrato nella tesi e va discusso col relatore. Il diario
+**Stato: esplorativo, integrato nella tesi il 27/09/2026** (Sezioni 3.5.4, 4.6.3, 5.3.8 e
+Appendice E.4 di `file_latex_v2`), dopo l'approvazione del sommario da parte del relatore. Il diario
 di lavoro, con tutte le corse, i criteri fissati in anticipo e le decisioni, è in
 `REGISTRO_M16.md` (privato).
 
