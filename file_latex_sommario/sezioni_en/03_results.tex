@@ -1,75 +1,64 @@
 \section{Results}
 
-\subsection{Circuit validation and sensitivity of Shor's algorithm to gate errors}
+\subsection{Validation and sensitivity of Shor's algorithm to noise}
 
-Ideal arithmetic checks confirm the correctness of the circuits in the absence of noise for
-\(N = 15\), \(N = 21\), and \(N = 35\); the total variation distance from the theoretical
-distribution is \(1.38 \times 10^{-9}\) for \(N = 21\) and \(2.50 \times 10^{-13}\) for
-\(N = 35\).
-
-For each value of \(p_{g}\), 20 replicates of 4,096 shots are run, measuring single-shot
-success. Without errors, success is 74.89\% (95\% confidence interval
-{[}74.59\%; 75.18\%{]}), consistent with the expected 75\%; it falls to 72.5\% at
-\(p_{g} = 0.1\%\), 56.5\% at 1\%, 45.2\% at 2\%, and 29.5\% at 5\%. From 10\% onward it stays
-around 25\%, down to 24.59\% at \(p_{g} = 0.5\), practically the 24.61\% uniform reference.
-
-Fragility grows with the number of gates: with 294 gates exposed to errors, already at
-\(p_{g} = 1\%\) about three errors occur on average per run. This result motivates the three
-strategies that follow.
+Ideal checks confirm that the circuits are correct; the total variation distance from the
+theoretical distribution is \(1.38 \times 10^{-9}\) for \(N = 21\) and
+\(2.50 \times 10^{-13}\) for \(N = 35\). For each \(p_g\), 20 replicates of 4,096 shots are
+run. Noise-free success is 74.89\% (95\% confidence interval {[}74.59\%; 75.18\%{]}),
+consistent with the expected 75\%. It falls to 72.5\%, 56.5\%, 45.2\%, and 29.5\% for
+\(p_g\) equal to 0.1\%, 1\%, 2\%, and 5\%, respectively. For \(p_g \geq 10\%\) it stays
+around 25\%, down to 24.59\% at \(p_g = 0.5\), close to the uniform reference of 24.61\%.
+With 294 exposed gates, \(p_g = 1\%\) implies about three errors on average per run.
 
 \subsection{Post-processing and machine learning}
 
-In scenarios UC1 and UC2, the selected SVMs reach F1 scores of 0.919 and 0.923 and areas
-under the ROC curve of 0.965 and 0.958. This predictive ability, however, does not reduce
-the number of iterations required. TOP-4 needs 1.00 iterations on average in both
-scenarios, versus 1.37 and 1.50 for TOP-1, with statistically significant differences in
-paired tests; Method~2 instead needs 1.50 and 1.37 iterations, without significantly
-improving on TOP-1 and performing worse than TOP-4. The observed advantage therefore
-appears to stem mainly from the possibility of considering more candidates. These results
-nonetheless remain tied to the instance, the noise, and the methods considered.
+The selected SVMs reach, in UC1 and UC2, F1 scores of 0.919 and 0.923 and areas under the
+ROC curve of 0.965 and 0.958. This predictive ability, however, does not reduce the
+iterations. TOP-4 obtains the factors at the first iteration in the observed replicates of
+both scenarios: mean 1.00, versus 1.37 and 1.50 for TOP-1, with significant differences in
+paired tests. Method~2 instead requires 1.50 and 1.37 iterations: it does not
+significantly improve on TOP-1 and is worse than TOP-4. The benefit thus comes from the
+additional candidates, not the classifier, under the conditions studied.
 
 \subsection{Quantum error correction}\label{sec:results-qec-en}
 
-The initial checks on the repetition and Steane codes show the expected behavior. Within
-Monte Carlo uncertainty, the repetition code reproduces the relation
-\(p_{L} = 3p^{2} - 2p^{3}\); for Steane, the dependence on the physical error is
-approximately quadratic, with a logarithmic slope of 1.94 and a pseudo-threshold around
-0.08.
+Denoting by \(p\) the physical error probability, the repetition code reproduces, within
+Monte Carlo uncertainty, \(p_L = 3p^2 - 2p^3\); the Steane code shows an approximately
+quadratic dependence on the physical error, with a logarithmic slope of 1.94 and a
+pseudo-threshold of about 0.08. In the surface code, increasing the distance reduces the
+logical error below threshold and increases it above threshold. The fit estimates
+thresholds of about 0.86\% in the \(Z\) basis and 0.81\% in the \(X\) basis, in this model.
 
-The main analysis concerns the surface code. Below threshold, increasing the distance
-reduces the logical error, while above threshold the opposite behavior is observed; the
-fit gives values of about 0.86\% in the \(Z\) basis and 0.81\% in the \(X\) basis.
+Under nominal noise, the stand-alone network does not significantly outperform MWPM. With
+crosstalk, for \(d = 3\), \(p = 0.003\), and crosstalk 0.01, the hybrid decoder reduces
+\(p_L\) from 0.05829 to 0.04851: \(-16.8\%\) relative, significant by the paired McNemar
+test. The benefit shrinks at \(d = 5\) and is not significant at \(d = 7\); in the
+distance-5 configurations BP+OSD outperforms the hybrid. Performance also depends on the
+number of correction rounds and on the size of the network input.
 
-Under nominal noise, the stand-alone neural network shows no significant advantage over
-MWPM. With crosstalk, however, the hybrid decoder improves performance: at \(d = 3\),
-\(p = 0.003\), and crosstalk 0.01, \(p_{L}\) falls from 0.05829 to 0.04851, a relative
-reduction of about 16.8\%, significant by paired McNemar test. The benefit shrinks at
-distance 5 and is not significant at distance 7.
+In the code-capacity model, the Gross code protects 12 logical qubits with 144 data qubits
+better than 12 independent surface-code patches at distance 11 (1,452 data qubits) at all
+noise levels studied, and better than distance-13 patches (2,028) for
+\(p \geq 0.75\%\). At \(p = 1\%\) the block failure is \(1.0 \times 10^{-6}\), versus
+\(1.6 \times 10^{-6}\) for the distance-13 patches. With serial updates, the Gross code
+corrects all errors of up to five qubits, verified over about \(5 \times 10^{8}\)
+configurations; at \(p = 1\%\) the logical error is about a hundred times lower than with
+the initial parallel configuration, which already failed with three errors. The advantage
+therefore depends on the decoder, in this model.
 
-BP+OSD is considered as a further comparison and, in the distance-5 configurations
-analyzed, outperforms the MWPM-based hybrid. The tests also show that performance depends
-on the distance, the number of rounds, and the size of the network input. In the
-code-capacity model, the Gross code protects 12 logical qubits with 144 data qubits better
-than 12 distance-13 surface-code patches (2,028 data qubits) for \(p \geq 0.75\%\) and than
-distance-11 patches at every noise level; with serial scheduling of belief propagation it
-corrects all errors of up to five qubits, verified over about \(5\times10^{8}\)
-configurations, whereas the parallel configuration used initially already failed with three,
-and the logical error at \(p = 1\%\) drops by about a hundred times.
+\subsection{Effects of the AQFT}
 
-\subsection{Noise reduction with the AQFT}
+For \(N = 15\), on the test data the selected AQFT raises per-shot success from 47.92\% to
+62.79\%: +14.87 percentage points (+31\% relative), with a 95\% Newcombe confidence
+interval of {[}12.73; 16.99{]}. Two-qubit ECR gates decrease from 362 to 279
+(\(-22.9\%\)) and depth from 1,351 to 1,141 (\(-15.5\%\)). The benefit concerns
+factorization directly.
 
-In the Shor pilot for \(N = 15\), the selected AQFT raises the single-shot success
-probability from 47.92\% to 62.79\%, an increase of 14.87 percentage points (+31\% relative)
-on independent test data (95\% Newcombe confidence interval
-{[}12.73; 16.99{]}). At the same time, ECR gates decrease from 362 to 279 (\(-22.9\%\))
-and circuit depth from 1,351 to 1,141 (\(-15.5\%\)). The
-improvement therefore concerns factorization directly, not only phase estimation.
-
-For \(N = 21\), truncating the QFTs inside the arithmetic reduces ECR gates from 49,661
-to 23,178, roughly by half (\(-53.3\%\)), but ideal success drops from 46.67\% to
-40.13\% (\(-6.54\) percentage points). In the three noisy
-comparisons, with only 128 test shots per variant, the intervals of the differences always
-include zero. In the nine phase-estimation benchmarks, from six to ten qubits, all
-differences favor the selected variant, up to 12.55 percentage points ({[}9.77; 15.30{]}).
-The comparisons remain exploratory, and the best truncation degree among those tested, two
-or three, cannot be considered valid in general for registers of arbitrary size.
+For \(N = 21\), ECR gates drop from 49,661 to 23,178 (\(-53.3\%\)), but ideal success falls
+from 46.67\% to 40.13\% (\(-6.54\) percentage points). In the three noisy comparisons, with
+128 test shots per variant, the intervals of the differences include zero: a benefit is
+not demonstrated. In the nine phase-estimation benchmarks all differences favor the AQFT,
+up to 12.55 percentage points ({[}9.77; 15.30{]}). The comparisons remain exploratory: the
+best approximation degree among those tested, two or three, cannot be generalized to
+arbitrary registers.
