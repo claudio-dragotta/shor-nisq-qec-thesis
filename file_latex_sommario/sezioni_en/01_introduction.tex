@@ -1,23 +1,14 @@
 \section{Introduction and objectives}
 
-Shor's algorithm factors integers in time polynomial in the binary length of the input,
-with implications for the security of cryptographic systems based on the difficulty of
-factorization \cite{en-shor1994,en-nist2024pqc,en-gidney2021}. Realizing this theoretical
-advantage, however, requires error control compatible with circuit depth. Gate errors,
-decoherence, and imperfect readout can alter the measurement distribution and compromise
-the information needed to find the multiplicative order \cite{en-preskill2018}.
+Shor's algorithm factors integers in polynomial time with respect to the binary length of
+the input, with implications for the security of cryptographic systems based on
+factorization \cite{en-shor1994,en-nist2024pqc,en-gidney2021}. Errors in operations,
+decoherence, and imperfect readout, however, can compromise the information needed to find
+the multiplicative order \cite{en-preskill2018}.
 
-The thesis develops a simulation study aimed at establishing which interventions actually
-improve the reliability of the computation, and relative to which baselines. The starting
-point is the measurement of Shor's sensitivity to gate errors; three strategies follow:
-outcome selection through post-processing, with an ablation study of the
-machine-learning contribution; quantum error correction, with surface codes and qLDPC
-codes; and the reduction of the number of gates through the approximate quantum Fourier
-transform (AQFT).
-
-The areas of intervention---outcome selection, information protection, and circuit cost
-reduction---are linked by a common criterion: compare each solution with an explicit
-baseline, isolate the contribution of individual components, and measure the benefit with
-task-relevant metrics. The experimental campaigns were conducted separately; in
-particular, the error-correction methods were not applied directly to the full Shor
-circuit in a single simulation.
+The thesis studies its sensitivity to noise and evaluates three strategies: outcome
+selection through post-processing, isolating the contribution of machine learning; quantum
+error correction (QEC) with surface codes and qLDPC codes; gate reduction through the
+approximate quantum Fourier transform (AQFT). Each strategy is compared with explicit
+references and with metrics consistent with the task. The simulation campaigns are
+separate: QEC is evaluated on memory circuits, not within the full Shor algorithm.
