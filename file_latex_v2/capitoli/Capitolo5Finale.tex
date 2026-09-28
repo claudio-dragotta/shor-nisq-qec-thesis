@@ -1071,12 +1071,68 @@ MWPM & 0.03232 & 0.05742 & 0.11172 & 0.20853 \\
 
 Il trasferimento non elimina il problema di generalizzazione alla scala. La stessa architettura che si trasferisce bene fra intensità di crosstalk perde infatti efficacia quando aumenta il numero di detector. I due risultati non sono contraddittori: il primo riguarda la stabilità della regola appresa rispetto all\textquotesingle intensità di un meccanismo già rappresentato nei dati; il secondo riguarda la capacità del modello di rappresentare una sindrome di dimensione crescente. Questo limite di scala è coerente con la letteratura sui decoder neurali, che ricorre a architetture strutturate e dataset molto più ampi quando cresce la distanza del codice \cite{alphaqubit2024,torlaiMelko2017,yan2026}.
 
+\subsection{Oltre il surface code: il Gross code nel modello code-capacity}\label{sec:finale_5_3_8}
+
+Le sezioni precedenti confrontano decoder diversi sullo stesso codice. Il confronto esplorativo M16 cambia invece il codice: il Gross code \ensuremath{[[144,12,12]]} \cite{bravyi2024} viene messo a confronto con 12 patch indipendenti di surface code, che proteggono lo stesso numero di qubit logici, nel modello code-capacity descritto nella Sezione~\ref{sec:finale_3_5_4}. Prima dei confronti sono stati superati i controlli di costruzione: parametri \(n\), \(k\) e ranghi delle matrici coincidono con quelli pubblicati, la ricerca della distanza ritrova 12 per il Gross code e i valori attesi per gli altri quattro codici della famiglia e per il surface code, e nessuna correzione viola la sindrome in alcuna corsa. Sul surface code MWPM e BP+OSD coincidono entro l'incertezza, per cui il riferimento non è penalizzato dal proprio decoder.
+
+\paragraph{Il decoder conta quanto il codice.} Nelle prime corse il Gross code, decodificato con BP+OSD ad aggiornamento parallelo dei messaggi, risultava peggiore di 12 patch a distanza 9 per \(q \le 1\%\). Uno sweep di dodici varianti del decoder sugli stessi shot ha mostrato che la sola schedulazione seriale riduce il fallimento logico di un ordine di grandezza o più a \(q = 1\)--2\% e di circa 2.5 volte a 3\%, con p di McNemar compresi fra 10⁻⁹ e 10⁻¹⁵⁰. Un secondo sweep attorno alla nuova configurazione non ha trovato varianti che la migliorassero di oltre il 10\%: a \(q = 1\%\) nove decoder diversi sbagliano esattamente gli stessi cinque shot su quattro milioni, segno che il margine residuo appartiene al codice più che alla regola di decodifica. La Tabella~\ref{tab:finale_5_gross_fw} mostra la causa: il decoder parallelo falliva già con tre errori, pur avendo il codice distanza 12; quello seriale non fallisce mai con meno di sei.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Probabilità di fallimento con esattamente \(w\) errori, \(f(w)\), fino a \(2\times10^{6}\) prove per peso. Per il Gross code seriale i pesi fino a 5 sono enumerati in modo esaustivo; per il surface code MWPM corregge per costruzione ogni errore di peso \(\le (d-1)/2\).}
+\label{tab:finale_5_gross_fw}
+\begin{tabular}{@{}rcccc@{}}
+\toprule
+\(w\) & Gross, parallelo & Gross, seriale & surface \(d=9\) & surface \(d=11\) \\
+\midrule
+3 & \(1.9\times10^{-4}\) & 0 & 0 & 0 \\
+4 & \(8.4\times10^{-4}\) & 0 & 0 & 0 \\
+5 & \(2.0\times10^{-3}\) & 0 & \(2.8\times10^{-3}\) & 0 \\
+6 & \(3.6\times10^{-3}\) & \(7.1\times10^{-5}\) & \(1.5\times10^{-2}\) & \(2.7\times10^{-4}\) \\
+7 & \(5.8\times10^{-3}\) & \(5.4\times10^{-4}\) & \(4.1\times10^{-2}\) & \(1.7\times10^{-3}\) \\
+8 & \(8.9\times10^{-3}\) & \(2.7\times10^{-3}\) & \(8.7\times10^{-2}\) & \(6.1\times10^{-3}\) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Lo zero del decoder seriale fino a peso 5 non è una stima: tutte le 498 685 189 configurazioni di errore di peso compreso fra 0 e 5 sono state decodificate senza alcun fallimento. Il decoder raggiunge quindi la capacità di correzione garantita dalla distanza, \(\lfloor(12-1)/2\rfloor = 5\). Un'analisi dei fallimenti ne chiarisce il meccanismo: nelle configurazioni parallele peggiori l'89--98\% degli errori nasce quando la belief propagation non converge e l'OSD, guidato da stime di probabilità fuorvianti, sceglie la correzione sbagliata. La schedulazione seriale converge molto più spesso (non convergenza 0.07\% contro 0.77\% a \(q = 2\%\)) e lascia all'OSD pochissimi casi. A \(q = 1\%\) il fallimento del blocco scende così da circa \(9.8\times10^{-5}\) a \(1.0\times10^{-6}\), circa cento volte.
+
+\paragraph{Confronto con il surface code.} La Tabella~\ref{tab:finale_5_gross_confronto} riporta il confronto finale con il decoder seriale. Per \(q \le 2\%\) i valori derivano dalla decomposizione per peso, validata da due controlli diretti: per il Gross code a \(q = 1\%\) la simulazione diretta dà \(9.4\times10^{-7}\) (94 fallimenti su 10⁸ shot) contro \(1.01\times10^{-6}\) ricostruito, scarto del 7\%; per il surface code a distanza 13 dà \(1.350\times10^{-7}\) (135 su 10⁹) contro \(1.357\times10^{-7}\), scarto dello 0.5\%. Per \(q \ge 3\%\) i valori provengono da simulazione diretta.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Probabilità che almeno uno dei 12 qubit logici fallisca, nel modello code-capacity. Fra parentesi i qubit di dato. ``Migliore'' e ``peggiore'' richiedono intervalli al 95\% non sovrapposti.}
+\label{tab:finale_5_gross_confronto}
+\begin{tabular}{@{}lcccl@{}}
+\toprule
+\(q\) & Gross (144) & \(12\times d{=}11\) (1452) & \(12\times d{=}13\) (2028) & Esito rispetto a \(d=13\) \\
+\midrule
+0.2\% & \(5.3\times10^{-11}\) & \(8.4\times10^{-10}\) & \(2.3\times10^{-11}\) & peggiore \\
+0.3\% & \(6.2\times10^{-10}\) & \(9.4\times10^{-9}\) & \(3.9\times10^{-10}\) & peggiore \\
+0.5\% & \(1.39\times10^{-8}\) & \(1.95\times10^{-7}\) & \(1.35\times10^{-8}\) & compatibile \\
+0.75\% & \(1.68\times10^{-7}\) & \(2.1\times10^{-6}\) & \(2.2\times10^{-7}\) & migliore \\
+1\% & \(1.01\times10^{-6}\) & \(1.15\times10^{-5}\) & \(1.63\times10^{-6}\) & migliore \\
+2\% & \(8.4\times10^{-5}\) & \(6.2\times10^{-4}\) & \(1.77\times10^{-4}\) & migliore \\
+3\% & \(1.0\times10^{-3}\) & \(5.7\times10^{-3}\) & \(2.8\times10^{-3}\) & migliore \\
+5\% & \(2.8\times10^{-2}\) & \(8.0\times10^{-2}\) & \(5.2\times10^{-2}\) & migliore \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Il Gross code protegge i 12 qubit logici meglio di 12 patch a distanza 11, che usano dieci volte i suoi qubit di dato, a tutti i livelli di rumore studiati, e meglio di 12 patch a distanza 13, con oltre quattordici volte i qubit di dato, per \(q \ge 0.75\%\). A rumore molto basso l'ordine si inverte rispetto alla distanza 13, come atteso: il Gross code fallisce a partire da sei errori, la patch a distanza 13 da sette, quindi il primo scala come \(q^6\) e la seconda come \(q^7\). In quel regime il Gross code si colloca fra le distanze 11 e 13, coerentemente con la sua distanza 12.
+
+Lo stesso comportamento si ritrova nella famiglia bivariate bicycle, simulata con semi indipendenti che replicano anche il Gross code entro il 10\%. Tutti i codici con distanza almeno 10 battono le patch di surface code che usano lo stesso numero di qubit di dato o più. Il codice \ensuremath{[[288,12,18]]}, per \(q \ge 2\%\), batte 12 patch fino a distanza 17, che richiedono 3468 qubit di dato contro 288, con un margine di circa 250 volte a \(q = 2\%\) e 45 volte a 3\%. I codici \ensuremath{[[90,8,10]]} e \ensuremath{[[108,8,10]]}, con uguali \(k\) e \(d\), differiscono invece di circa cinque volte a \(q = 1\%\): la distanza non è l'unico fattore che conta. Tabelle complete, sweep del decoder e controlli sono nell'Appendice~\ref{app:gross}.
+
+Il risultato va letto nel suo perimetro. Il modello code-capacity non include errori di misura né il circuito che estrae le sindromi; il confronto conta i soli qubit di dato, mentre includendo le ancille il Gross code usa 288 qubit e 12 patch a distanza 13 ne usano 4044; i numeri non sono confrontabili con le soglie circuit-level della Sezione~\ref{sec:finale_5_2_3} né con quelle pubblicate da IBM a livello di circuito. Il confronto mostra che struttura del codice e decoder determinano insieme il rapporto fra protezione e qubit impiegati; non costituisce una misura del miglioramento di Shor.
+
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0000}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Risposta a DR3.} Nel perimetro studiato, sostituire il decoder analitico con una rete non conviene. Il machine learning produce invece un beneficio come correttore residuale quando la sindrome contiene correlazioni non rappresentabili dalla struttura del decoder di riferimento. Il vantaggio è reale a piccola distanza, si riduce con la crescita dell'ingresso e deve essere confrontato con decoder analitici più forti come BP+OSD. I controlli mostrano inoltre che il guadagno appreso e quello analitico non sono semplicemente additivi.
+\textbf{Risposta a DR3.} Nel perimetro studiato, sostituire il decoder analitico con una rete non conviene. Il machine learning produce invece un beneficio come correttore residuale quando la sindrome contiene correlazioni non rappresentabili dalla struttura del decoder di riferimento. Il vantaggio è reale a piccola distanza, si riduce con la crescita dell'ingresso e deve essere confrontato con decoder analitici più forti come BP+OSD. I controlli mostrano inoltre che il guadagno appreso e quello analitico non sono semplicemente additivi. Cambiando codice, infine, il Gross code protegge 12 qubit logici con 144 qubit di dato meglio di 12 patch di surface code a distanza 13 per \(p \ge 0.75\%\) nel modello code-capacity, ma solo con un decoder adeguato: la schedulazione dei messaggi di BP+OSD sposta il suo errore logico di circa due ordini di grandezza.
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
@@ -1087,7 +1143,7 @@ Il trasferimento non elimina il problema di generalizzazione alla scala. La stes
 
 \section{DR4 --- Sensibilità dell'algoritmo di Shor al rumore per gate}\label{sec:finale_5_4}
 
-La quarta domanda di ricerca collega il comportamento algoritmico al rumore senza identificare impropriamente le metriche QEC con gli errori di una computazione fault-tolerant. Nell\textquotesingle artefatto originario M8 il parametro veniva denominato p\_L; nella versione revisionata viene indicato p\_g per distinguerlo dal logical error rate dei memory experiment. p\_g è la probabilità totale di applicare un Pauli non identità dopo ciascun gate compilato incluso nel modello.
+La quarta domanda di ricerca è il punto di partenza concettuale dello studio: misura quanto rapidamente la specifica implementazione di Shor perde la capacità di fattorizzare al crescere dell'errore per gate, ed è questa fragilità a motivare le tre strategie di intervento. Viene presentata qui, dopo le campagne QEC, per mantenere l'ordine delle domande di ricerca. L'analisi collega il comportamento algoritmico al rumore senza identificare impropriamente le metriche QEC con gli errori di una computazione fault-tolerant. Nell\textquotesingle artefatto originario M8 il parametro veniva denominato p\_L; nella versione revisionata viene indicato p\_g per distinguerlo dal logical error rate dei memory experiment. p\_g è la probabilità totale di applicare un Pauli non identità dopo ciascun gate compilato incluso nel modello.
 
 \subsection{Probabilità di fattorizzazione per singola misura}\label{sec:finale_5_4_1}\label{sec:risultati_logico}
 
