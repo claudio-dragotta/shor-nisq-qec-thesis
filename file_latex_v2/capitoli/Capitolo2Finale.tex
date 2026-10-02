@@ -5,7 +5,7 @@
 
 L'algoritmo di Shor costituisce un caso di studio particolarmente adatto per analizzare il rapporto tra vantaggio algoritmico e affidabilità dell'esecuzione quantistica. In condizioni ideali, la fattorizzazione viene ricondotta alla ricerca dell'ordine di una funzione periodica; in presenza di rumore, invece, gli errori di gate, la decoerenza e la misura alterano progressivamente la distribuzione degli esiti e possono rendere meno affidabile il recupero del periodo e dei fattori. \cite{shor1994,preskill2018,skosana2021,smolin2013}
 
-Il problema affrontato in questa tesi non è quindi stabilire se Shor sia teoricamente efficiente, ma comprendere quali interventi producano un beneficio misurabile quando il calcolo è soggetto a rumore. Il punto di partenza è un'analisi di sensibilità che misura come il successo della specifica implementazione di Shor degradi al crescere di un errore per gate controllato. Questa fragilità motiva tre livelli distinti di intervento: il post-processing degli esiti già misurati, la protezione dell'informazione mediante Quantum Error Correction (QEC), con surface code e codici qLDPC, e la riduzione del costo circuitale attraverso una Quantum Fourier Transform approssimata (AQFT).
+Il problema affrontato in questa tesi non è quindi stabilire se Shor sia teoricamente efficiente, ma comprendere quali interventi producano un beneficio misurabile quando il calcolo è soggetto a rumore. Il punto di partenza è un'analisi di sensibilità che misura come il successo della specifica implementazione di Shor degradi al crescere di un proxy di errore Pauli per gate definito nel modello sperimentale, senza identificarlo con un tasso logico QEC. Questa fragilità motiva tre livelli distinti di intervento: il post-processing degli esiti già misurati, la protezione dell'informazione mediante Quantum Error Correction (QEC), con surface code e codici qLDPC, e la riduzione del costo circuitale attraverso una Quantum Fourier Transform approssimata (AQFT).
 
 Il criterio metodologico comune è il confronto con una baseline esplicita. Una tecnica aggiuntiva viene considerata utile soltanto se migliora una metrica direttamente collegata al compito, a parità di informazione osservata e, quando possibile, sugli stessi campioni. Questo criterio è particolarmente importante per i metodi basati su machine learning: una buona accuratezza predittiva non dimostra da sola un vantaggio operativo se una regola più semplice, applicata agli stessi dati, raggiunge un risultato uguale o migliore.
 
@@ -136,7 +136,7 @@ Il contributo del lavoro è principalmente metodologico e sperimentale. In parti
 \item
   una progressione QEC da codici didattici a surface code, con metriche coerenti e con separazione esplicita fra errore fisico e logico;
 \item
-  un confronto tra decoder analitici, appresi e ibridi che verifica il ruolo del model mismatch e delle correlazioni non rappresentate;
+  un confronto tra decoder analitici, appresi e ibridi che verifica il ruolo del disallineamento tra modello di rumore e decoder (model mismatch) e delle correlazioni non rappresentate;
 \item
   un'analisi di sensibilità di Shor che mantiene distinto il proxy per gate dalle metriche dei memory experiment;
 \item

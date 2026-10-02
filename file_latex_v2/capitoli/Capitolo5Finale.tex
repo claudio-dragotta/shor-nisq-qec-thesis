@@ -1,9 +1,9 @@
 % Generato dalla versione Word revisionata e dalla bozza auditata.
 % Le citazioni numeriche originali sono state convertite in chiavi BibLaTeX.
 
-Questo capitolo presenta i risultati secondo le cinque domande di ricerca definite nel Capitolo 2. L\textquotesingle ordine dell\textquotesingle esposizione segue deliberatamente il contratto sperimentale dei Capitoli 3 e 4: per ogni domanda vengono richiamati soltanto gli elementi necessari a interpretare l\textquotesingle evidenza, quindi si riportano la metrica primaria, l\textquotesingle incertezza statistica, i controlli che delimitano il risultato e la conclusione ammessa dai dati. Questa scelta separa il risultato dalla sua interpretazione e impedisce che una metrica intermedia venga scambiata per l\textquotesingle obiettivo finale dell\textquotesingle esperimento.
+Questo capitolo presenta i risultati secondo le cinque domande di ricerca definite nel Capitolo 2. L'ordine dell'esposizione segue deliberatamente il contratto sperimentale dei Capitoli 3 e 4: per ogni domanda vengono richiamati soltanto gli elementi necessari a interpretare l'evidenza, quindi si riportano la metrica primaria, l'incertezza statistica, i controlli che delimitano il risultato e la conclusione ammessa dai dati. Questa scelta separa il risultato dalla sua interpretazione e impedisce che una metrica intermedia venga scambiata per l'obiettivo finale dell'esperimento.
 
-Prima di discutere il comportamento sotto rumore è stata verificata la correttezza funzionale delle implementazioni. Per N=21, a=2, e N=35, a=6, l\textquotesingle aritmetica reversibile supera i controlli di truth table e di uncomputation; le ancille tornano allo stato nullo e la distribuzione della Quantum Phase Estimation coincide con quella teorica entro la precisione numerica della simulazione. Questi controlli non dimostrano robustezza al rumore, ma stabiliscono che le differenze osservate nelle campagne successive non derivano da una trasformazione aritmetica errata.
+Prima di discutere il comportamento sotto rumore è stata verificata la correttezza funzionale delle implementazioni. Per N=21, a=2, e N=35, a=6, l'aritmetica reversibile supera i controlli di truth table e di uncomputation; le ancille tornano allo stato nullo e la distribuzione della Quantum Phase Estimation coincide con quella teorica entro la precisione numerica della simulazione. Questi controlli non dimostrano robustezza al rumore, ma stabiliscono che le differenze osservate nelle campagne successive non derivano da una trasformazione aritmetica errata.
 
 \begingroup
 \small
@@ -48,11 +48,11 @@ N=35, a=6 & validazione aritmetica ideale & ancille a zero; QPE teorica & TVD = 
 
 \section{DR1 --- Post-processing di Shor e ablazione del machine learning}\label{sec:finale_5_1}\label{sec:setup_m1}
 
-La prima domanda di ricerca chiede se la ricerca di più candidati nell\textquotesingle istogramma riduca il costo della fattorizzazione e, soprattutto, se un classificatore applicato allo stesso istogramma aggiunga un vantaggio ulteriore. Il confronto è appaiato: TOP-1, TOP-4 e M2 ricevono esattamente gli stessi conteggi. Di conseguenza, una differenza fra le strategie può essere attribuita alla regola di decisione e non a una differente realizzazione Monte Carlo.
+La prima domanda di ricerca chiede se la ricerca di più candidati nell'istogramma riduca il costo della fattorizzazione e, soprattutto, se un classificatore applicato allo stesso istogramma aggiunga un vantaggio ulteriore. Il confronto è appaiato: TOP-1, TOP-4 e M2 ricevono esattamente gli stessi conteggi. Di conseguenza, una differenza fra le strategie può essere attribuita alla regola di decisione e non a una differente realizzazione Monte Carlo.
 
 \subsection{Prestazione predittiva del classificatore}\label{sec:finale_5_1_1}
 
-Il classificatore selezionato è una SVM RBF. Sul test indipendente di 400 istogrammi per scenario, la SVM raggiunge F1 pari a 0.919 in UC1 e 0.923 in UC2, con AUC-ROC 0.965 e 0.958. Questi valori mostrano che la distribuzione finale contiene informazione sufficiente a predire con buona accuratezza se il candidato dominante, cioè TOP-1, condurrà ai fattori. Il punto metodologico, tuttavia, è che questa capacità predittiva non coincide con l\textquotesingle utilità operativa del filtro: il costo da minimizzare è il numero di esecuzioni necessarie alla fattorizzazione, non l\textquotesingle errore di classificazione.
+Il classificatore selezionato è una SVM RBF. Sul test indipendente di 400 istogrammi per scenario, la SVM raggiunge F1 pari a 0.919 in UC1 e 0.923 in UC2, con AUC-ROC 0.965 e 0.958. Questi valori mostrano che la distribuzione finale contiene informazione sufficiente a predire con buona accuratezza se il candidato dominante, cioè TOP-1, condurrà ai fattori. Il punto metodologico, tuttavia, è che questa capacità predittiva non coincide con l'utilità operativa del filtro: il costo da minimizzare è il numero di esecuzioni necessarie alla fattorizzazione, non l'errore di classificazione.
 
 \begingroup
 \small
@@ -159,11 +159,11 @@ UC2 & M2: ML + TOP-4 & 30/30 & 1.37 & 0.0874 \\
 \label{fig:finale_5_1}
 \end{figure}
 
-L\textquotesingle interpretazione è univoca nel perimetro dell\textquotesingle esperimento: il classificatore è accurato, ma filtra alcuni istogrammi che TOP-4 avrebbe risolto direttamente. La prestazione predittiva è quindi reale, ma non è allineata all\textquotesingle obiettivo operativo. Questo è un risultato negativo rispetto all\textquotesingle ipotesi iniziale sul filtro, ma positivo sul piano metodologico: dimostra perché un modello appreso deve essere confrontato con una baseline che utilizzi la stessa informazione e la stessa possibilità di verifica classica. Questo esito è coerente con la distinzione, presente anche nella letteratura recente sull\textquotesingle order finding rumoroso, fra riconoscibilità statistica dell\textquotesingle output e utilità operativa del post-processing \cite{skosana2021,yang2026,smolin2013}.
+Nel perimetro dell'esperimento, l'interpretazione supportata dai dati è chiara: il classificatore è accurato, ma filtra alcuni istogrammi che TOP-4 avrebbe risolto direttamente. La prestazione predittiva è quindi reale, ma non è allineata all'obiettivo operativo. Si tratta di un risultato negativo rispetto all'ipotesi iniziale sul filtro, ma informativo sul piano metodologico: mostra perché un modello appreso debba essere confrontato con una baseline che utilizzi la stessa informazione e la stessa possibilità di verifica classica. Questo esito è coerente con la distinzione, presente anche nella letteratura recente sull'order finding rumoroso, fra riconoscibilità statistica dell'output e utilità operativa del post-processing \cite{skosana2021,yang2026,smolin2013}.
 
 \subsection{Audit combinatorio: perché TOP-K può apparire molto robusto}\label{sec:finale_5_1_3}
 
-L\textquotesingle istanza N=15 rende necessario un secondo controllo. Con otto bit di misura esistono 256 possibili valori; la procedura classica adottata restituisce fattori non banali per 63 di essi. Se gli esiti fossero uniformi, la probabilità che un singolo candidato sia utile sarebbe già 63/256=24.61\%. All\textquotesingle aumentare di K, la probabilità di includere almeno uno dei 63 valori utili cresce rapidamente anche in assenza di struttura quantistica. Per K=4 vale circa 67.94\%; per K=16 circa 99.07\%.
+L'istanza N=15 rende necessario un secondo controllo. Con otto bit di misura esistono 256 possibili valori; la procedura classica adottata restituisce fattori non banali per 63 di essi. Se gli esiti fossero uniformi, la probabilità che un singolo candidato sia utile sarebbe già 63/256=24.61\%. All'aumentare di K, la probabilità di includere almeno uno dei 63 valori utili cresce rapidamente anche in assenza di struttura quantistica. Per K=4 vale circa 67.94\%; per K=16 circa 99.07\%.
 
 \begingroup
 \small
@@ -209,11 +209,11 @@ L\textquotesingle istanza N=15 rende necessario un secondo controllo. Con otto b
 \label{fig:finale_5_2}
 \end{figure}
 
-Questo controllo chiarisce anche il significato di TOP-16. Nei dataset rigenerati la regola TOP-16 produce 2 000 positivi e 0 negativi in entrambi gli scenari; non definisce quindi un problema di classificazione discriminante. Il risultato non implica che l\textquotesingle istogramma sia quasi ideale: riflette in larga misura la permissività combinatoria della verifica su questa piccola istanza.
+Questo controllo chiarisce anche il significato di TOP-16. Nei dataset rigenerati la regola TOP-16 produce 2 000 positivi e 0 negativi in entrambi gli scenari; non definisce quindi un problema di classificazione discriminante. Il risultato non implica che l'istogramma sia quasi ideale: riflette in larga misura la permissività combinatoria della verifica su questa piccola istanza.
 
 \subsection{Struttura residua dell'istogramma e confronto con la ZNE}\label{sec:finale_5_1_4}\label{sec:parametri_mitigazione}
 
-Per evitare di confondere il successo della procedura classica con la qualità della distribuzione, è stata misurata separatamente la massa sui quattro picchi QPE teorici \{0,64,128,192\}. L\textquotesingle indice descrittivo normalizzato f passa da 0.8036 a λ\_2q=10⁻³ a 0.0015 a λ\_2q=0.3. Il proxy di nessun evento Pauli sulle 224 porte CX decade molto più rapidamente: a λ\_2q=0.1 vale 2.65×10⁻¹⁰, mentre f è ancora 0.0421. I due oggetti non sono quindi intercambiabili: il proxy conta la probabilità di evitare una classe di eventi, mentre l\textquotesingle algoritmo può conservare informazione utile anche dopo alcuni errori.
+Per evitare di confondere il successo della procedura classica con la qualità della distribuzione, è stata misurata separatamente la massa sui quattro picchi QPE teorici \{0,64,128,192\}. L'indice descrittivo normalizzato f passa da 0.8036 a λ\_2q=10⁻³ a 0.0015 a λ\_2q=0.3. Il proxy di nessun evento Pauli sulle 224 porte CX decade molto più rapidamente: a λ\_2q=0.1 vale 2.65×10⁻¹⁰, mentre f è ancora 0.0421. I due oggetti non sono quindi intercambiabili: il proxy conta la probabilità di evitare una classe di eventi, mentre l'algoritmo può conservare informazione utile anche dopo alcuni errori.
 
 \begingroup
 \small
@@ -263,7 +263,7 @@ Per evitare di confondere il successo della procedura classica con la qualità d
 \label{fig:finale_5_3}\label{fig:frazione_coerente}
 \end{figure}
 
-La Zero-Noise Extrapolation digitale, usata come confronto aggiuntivo nello scenario UC1, non riduce il numero di iterazioni e aumenta il costo di campionamento. ZNE-2 richiede in media 3 072 shot complessivi e ZNE-3 4 813, rispetto a 1 399 di TOP-1 e 1 024 di TOP-4. Poiché il protocollo scala i parametri depolarizzanti nel simulatore e non implementa gate folding su hardware, questo esito è locale al modello adottato e non costituisce una valutazione generale della ZNE. Il confronto è volutamente locale: la ZNE ha fondamenti generali consolidati, ma la sua efficacia dipende dalla realizzazione del noise scaling e dall\textquotesingle osservabile considerato \cite{temme2017,liBenjamin2017}. La tabella appaiata completa e il contratto della campagna sono conservati nell'Appendice~\ref{app:parametrica}.
+La Zero-Noise Extrapolation digitale, usata come confronto aggiuntivo nello scenario UC1, non riduce il numero di iterazioni e aumenta il costo di campionamento. ZNE-2 richiede in media 3 072 shot complessivi e ZNE-3 4 813, rispetto a 1 399 di TOP-1 e 1 024 di TOP-4. Poiché il protocollo scala i parametri depolarizzanti nel simulatore e non implementa gate folding su hardware, questo esito è locale al modello adottato e non costituisce una valutazione generale della ZNE. Il confronto è volutamente locale: la ZNE ha fondamenti generali consolidati, ma la sua efficacia dipende dalla realizzazione del noise scaling e dall'osservabile considerato \cite{temme2017,liBenjamin2017}. La tabella appaiata completa e il contratto della campagna sono conservati nell'Appendice~\ref{app:parametrica}.
 
 \iffalse
 \begingroup
@@ -319,7 +319,7 @@ TOP-4 & 100\% & 1.00 & 1 024 & 1 024 & 0.0024 \\
 \endgroup
 \fi
 
-Gli sweep su K, numero di shot, T1/T2, errore 1Q/2Q, readout e livello di ottimizzazione confermano che TOP-4 rimane molto efficace nell\textquotesingle istanza N=15 lungo gli intervalli esplorati. Tale robustezza non va però generalizzata: con 63 esiti accettabili su 256 e soli quattro picchi ideali, l\textquotesingle istanza offre condizioni combinatorie particolarmente favorevoli. Intervalli, griglie ed esiti per ciascuna famiglia sono riportati nelle Tabelle D.3--D.10 dell'Appendice~\ref{app:parametrica}.
+Gli sweep su K, numero di shot, T1/T2, errore 1Q/2Q, readout e livello di ottimizzazione confermano che TOP-4 rimane molto efficace nell'istanza N=15 lungo gli intervalli esplorati. Tale robustezza non va però generalizzata: con 63 esiti accettabili su 256 e soli quattro picchi ideali, l'istanza offre condizioni combinatorie particolarmente favorevoli. Intervalli, griglie ed esiti per ciascuna famiglia sono riportati nelle Tabelle D.3--D.10 dell'Appendice~\ref{app:parametrica}.
 
 \iffalse
 \begingroup
@@ -364,7 +364,7 @@ Optimization level & 0--3 & M medio 1.00 \\
 \endgroup
 \fi
 
-La tabella va letta come mappa di stabilità locale, non come prova di insensibilità. In particolare, l\textquotesingle assenza di variazione osservata con 30 repliche non autorizza a concludere che readout, coerenza o livello di ottimizzazione siano irrilevanti in generale. Il risultato è specifico della piccola istanza N=15 e della sua struttura di picchi.
+La tabella va letta come mappa di stabilità locale, non come prova di insensibilità. In particolare, l'assenza di variazione osservata con 30 repliche non autorizza a concludere che readout, coerenza o livello di ottimizzazione siano irrilevanti in generale. Il risultato è specifico della piccola istanza N=15 e della sua struttura di picchi.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -382,19 +382,19 @@ La tabella va letta come mappa di stabilità locale, non come prova di insensibi
 
 \section{DR2 --- Correzione quantistica: dalla soppressione elementare alla soglia del surface code}\label{sec:finale_5_2}
 
-La seconda domanda di ricerca riguarda un problema diverso: non come utilizzare meglio gli esiti già misurati, ma se la codifica possa ridurre la probabilità di errore dell\textquotesingle informazione logica durante la conservazione dello stato. La progressione sperimentale usa il codice a ripetizione come controllo elementare, il codice di Steane come primo codice capace di correggere un errore arbitrario su un qubit e il surface code per studiare il ruolo della distanza e della soglia.
+La seconda domanda di ricerca riguarda un problema diverso: non come utilizzare meglio gli esiti già misurati, ma se la codifica possa ridurre la probabilità di errore dell'informazione logica durante la conservazione dello stato. La progressione sperimentale usa il codice a ripetizione come controllo elementare, il codice di Steane come primo codice capace di correggere un errore arbitrario su un qubit e il surface code per studiare il ruolo della distanza e della soglia.
 
 \subsection{Codice a ripetizione: verifica della legge analitica}\label{sec:finale_5_2_1}\label{sec:repetition}
 
-Per il codice a ripetizione a tre qubit, un fallimento logico si verifica quando almeno due qubit subiscono l\textquotesingle errore considerato. La probabilità teorica è
+Per il codice a ripetizione a tre qubit, un fallimento logico si verifica quando almeno due qubit subiscono l'errore considerato. La probabilità teorica è
 
 p\_L = 3p²(1-p) + p³ = 3p² - 2p³.
 
-La simulazione Monte Carlo usa 20 000 campioni per punto e riproduce la curva analitica entro l\textquotesingle incertezza statistica, sia per la protezione da bit flip sia per il duale in base di Hadamard. A p=0.10 si osserva p\_L=0.0288±0.0012, contro 0.0280 teorico; a p=0.20 si osserva 0.1026±0.0021, contro 0.1040. Sotto p=0.5 il codice riduce l\textquotesingle errore da O(p) a O(p²); a p=0.5 si raggiunge il break-even. Il risultato ha valore soprattutto come validazione della pipeline di sindrome e decodifica: il codice protegge da una sola classe di errore per volta e non è una soluzione generale.
+La simulazione Monte Carlo usa 20 000 campioni per punto e riproduce la curva analitica entro l'incertezza statistica, sia per la protezione da bit flip sia per il duale in base di Hadamard. A p=0.10 si osserva p\_L=0.0288±0.0012, contro 0.0280 teorico; a p=0.20 si osserva 0.1026±0.0021, contro 0.1040. Sotto p=0.5 il codice riduce l'errore da O(p) a O(p²); a p=0.5 si raggiunge il break-even. Il risultato ha valore soprattutto come validazione della pipeline di sindrome e decodifica: il codice protegge da una sola classe di errore per volta e non è una soluzione generale.
 
 \subsection{Codice di Steane: soppressione quadratica e pseudo-soglia}\label{sec:finale_5_2_2}\label{sec:steane}
 
-Nel codice di Steane \ensuremath{[[7,1,3]]} vengono prima verificati il code space e la corrispondenza sindrome-errore. La preparazione di \textbar0\_L⟩ produce sindrome nulla in 2 000 campioni; l\textquotesingle iniezione deterministica di X, Z e Y su ciascuno dei sette qubit copre 21 casi e restituisce sindromi distinte e coerenti con la lookup table.
+Nel codice di Steane \ensuremath{[[7,1,3]]} vengono prima verificati il code space e la corrispondenza sindrome-errore. La preparazione di \textbar0\_L⟩ produce sindrome nulla in 2 000 campioni; l'iniezione deterministica di X, Z e Y su ciascuno dei sette qubit copre 21 casi e restituisce sindromi distinte e coerenti con la lookup table.
 
 La campagna quantitativa, con 200 000 campioni per punto, mostra p\_L∝p\^{}γ con pendenza log-log γ=1.94, in accordo con la soppressione quadratica attesa per un codice di distanza tre quando i fallimenti iniziano al secondo errore. Il confronto con il qubit fisico individua una pseudo-soglia intorno a p≈0.08: a p=0.01 si osserva p\_L=1.67×10⁻³, a p=0.05 p\_L=3.4×10⁻², mentre a p=0.10 p\_L=0.116 e la codifica non è più conveniente.
 
@@ -439,11 +439,11 @@ La campagna quantitativa, con 200 000 campioni per punto, mostra p\_L∝p\^{}γ 
 \end{longtable}
 \endgroup
 
-La parola pseudo-soglia è essenziale. Nel modello implementato gli errori agiscono sui qubit dati e l\textquotesingle estrazione della sindrome è assunta ideale; non vengono simulate tutte le location di guasto di un protocollo fault-tolerant. L\textquotesingle intersezione p\_L=p caratterizza quindi questo specifico memory experiment, non la soglia fault-tolerant del codice in un\textquotesingle architettura completa.
+La parola pseudo-soglia è essenziale. Nel modello implementato gli errori agiscono sui qubit dati e l'estrazione della sindrome è assunta ideale; non vengono simulate tutte le location di guasto di un protocollo fault-tolerant. L'intersezione p\_L=p caratterizza quindi questo specifico memory experiment, non la soglia fault-tolerant del codice in un'architettura completa.
 
 \subsection{Surface code: comportamento di soglia e fit di scala}\label{sec:finale_5_2_3}\label{sec:surface_concetto}\label{sec:surface_risultati}
 
-Il surface code introduce un parametro di scala reale: la distanza d. La campagna usa d=3,5,7,9, memorie nelle basi X e Z, rounds=d e rumore circuit-level. Sotto soglia, aumentando d deve diminuire p\_L; sopra soglia l\textquotesingle ordine delle curve si inverte. L\textquotesingle esperimento riproduce precisamente questo comportamento.
+Il surface code introduce un parametro di scala reale: la distanza d. La campagna usa d=3,5,7,9, memorie nelle basi X e Z, rounds=d e rumore circuit-level. Sotto soglia, aumentando d deve diminuire p\_L; sopra soglia l'ordine delle curve si inverte. L'esperimento riproduce precisamente questo comportamento.
 
 \begin{figure}[H]
 \centering
@@ -452,9 +452,9 @@ Il surface code introduce un parametro di scala reale: la distanza d. La campagn
 \label{fig:finale_5_4}
 \end{figure}
 
-A p=2×10⁻³, nella memoria Z, p\_L scende da 1.94×10⁻³ a d=3 a 5.10×10⁻⁴ a d=5, 1.02×10⁻⁴ a d=7 e 2.01×10⁻⁵ a d=9. Il miglioramento è quindi progressivo e, fra d=5 e d=9, compatibile con una riduzione circa geometrica. A p=10⁻² l\textquotesingle ordine si inverte: p\_L è circa 3.9\% a d=3 e 5.6\% a d=9. L\textquotesingle incrocio visuale si colloca intorno a 0.9\% in base Z e 0.7\% in base X.
+A p=2×10⁻³, nella memoria Z, p\_L scende da 1.94×10⁻³ a d=3 a 5.10×10⁻⁴ a d=5, 1.02×10⁻⁴ a d=7 e 2.01×10⁻⁵ a d=9. Il miglioramento è quindi progressivo e, fra d=5 e d=9, compatibile con una riduzione circa geometrica. A p=10⁻² l'ordine si inverte: p\_L è circa 3.9\% a d=3 e 5.6\% a d=9. L'incrocio visuale si colloca intorno a 0.9\% in base Z e 0.7\% in base X.
 
-Un fit nel regime sotto soglia usa la legge p\_L(d,p)=A(p/p\_th)\^{}\{⌊(d+1)/2⌋\}. Con i punti p≤6×10⁻³ restituisce p\_th=0.86\% in base Z e 0.81\% in base X, con residuo quadratico medio 0.08 in ln(p\_L). L\textquotesingle accordo fra fit e incrocio è un controllo interno, ma non rende universale la soglia: essa dipende dal circuito di memoria, dal modello di rumore e dal decoder MWPM utilizzati. L\textquotesingle interpretazione del crossing e dello scaling con la distanza è coerente con la teoria del surface code e con dimostrazioni sperimentali recenti di soppressione logica sotto soglia \cite{fowler2012,googleQECBelowThreshold2025,googleSurfaceCode2023,dennis2002topological}.
+Un fit nel regime sotto soglia usa la legge p\_L(d,p)=A(p/p\_th)\^{}\{⌊(d+1)/2⌋\}. Con i punti p≤6×10⁻³ restituisce p\_th=0.86\% in base Z e 0.81\% in base X, con residuo quadratico medio 0.08 in ln(p\_L). L'accordo fra fit e incrocio è un controllo interno, ma non rende universale la soglia: essa dipende dal circuito di memoria, dal modello di rumore e dal decoder MWPM utilizzati. L'interpretazione del crossing e dello scaling con la distanza è coerente con la teoria del surface code e con dimostrazioni sperimentali recenti di soppressione logica sotto soglia \cite{fowler2012,googleQECBelowThreshold2025,googleSurfaceCode2023,dennis2002topological}.
 
 \begingroup
 \small
@@ -503,7 +503,7 @@ X & ≈0.7\% & 0.81\% & 3.4×10⁻² & stesso protocollo \\
 
 \subsection{Implicazione ingegneristica: distanza e overhead della memoria}\label{sec:finale_5_2_4}
 
-Invertendo il fit è possibile stimare, nel solo modello di memoria utilizzato, quale distanza sarebbe necessaria per raggiungere un dato p\_L. Per un surface code ruotato il numero di qubit fisici per qubit logico è approssimativamente 2d²-1. Il risultato quantifica il valore della qualità dei gate: dimezzare l\textquotesingle errore fisico da 2×10⁻³ a 10⁻³ riduce sensibilmente la distanza richiesta.
+Invertendo il fit è possibile stimare, nel solo modello di memoria utilizzato, quale distanza sarebbe necessaria per raggiungere un dato p\_L. Per un surface code ruotato il numero di qubit fisici per qubit logico è approssimativamente 2d²-1. Il risultato quantifica il valore della qualità dei gate: dimezzare l'errore fisico da 2×10⁻³ a 10⁻³ riduce sensibilmente la distanza richiesta.
 
 \begingroup
 \small
@@ -552,11 +552,11 @@ Invertendo il fit è possibile stimare, nel solo modello di memoria utilizzato, 
 \end{longtable}
 \endgroup
 
-Questa tabella non è una stima del costo di Shor fault-tolerant. Proteggere una memoria e realizzare un gate logico non sono lo stesso problema: un\textquotesingle esecuzione completa richiederebbe operazioni logiche, cicli di sindrome, routing, feed-forward, gestione delle operazioni non-Clifford e correlazioni residue. Il risultato utile è più circoscritto: sotto soglia, la qualità fisica del dispositivo si traduce direttamente in overhead di codifica.
+Questa tabella non è una stima del costo di Shor fault-tolerant. Proteggere una memoria e realizzare un gate logico non sono lo stesso problema: un'esecuzione completa richiederebbe operazioni logiche, cicli di sindrome, routing, feed-forward, gestione delle operazioni non-Clifford e correlazioni residue. Il risultato utile è più circoscritto: sotto soglia, la qualità fisica del dispositivo si traduce direttamente in overhead di codifica.
 
 \subsection{Controllo oltre il modello Pauli}\label{sec:finale_5_2_5}\label{sec:oltre_pauli}
 
-Un controllo full-state a d=3 confronta il modello Pauli con sovrarotazioni coerenti. A p=3×10⁻² si osservano meno flip grezzi sotto sovrarotazione, 0.237 contro 0.262, ma un errore MWPM leggermente maggiore, 0.0789 contro 0.0767, pari a circa +2.9\%. Per il decoder ibrido, le differenze di guadagno fra rumore Pauli e coerente sono dell\textquotesingle ordine di una deviazione standard e non risultano statisticamente risolte. Questo controllo non dimostra equivalenza fra canali: mostra che, nel regime studiato, il risultato appreso discusso più avanti non dipende semplicemente dal carattere non-Pauli del rumore.
+Un controllo full-state a d=3 confronta il modello Pauli con sovrarotazioni coerenti. A p=3×10⁻² si osservano meno flip grezzi sotto sovrarotazione, 0.237 contro 0.262, ma un errore MWPM leggermente maggiore, 0.0789 contro 0.0767, pari a circa +2.9\%. Per il decoder ibrido, le differenze di guadagno fra rumore Pauli e coerente sono dell'ordine di una deviazione standard e non risultano statisticamente risolte. Questo controllo non dimostra equivalenza fra canali: mostra che, nel regime studiato, il risultato appreso discusso più avanti non dipende semplicemente dal carattere non-Pauli del rumore.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -574,17 +574,17 @@ Un controllo full-state a d=3 confronta il modello Pauli con sovrarotazioni coer
 
 \section{DR3 --- Decoder analitici, appresi e ibridi}\label{sec:finale_5_3}\label{sec:decodifica_appresa}
 
-La terza domanda di ricerca verifica dove il machine learning possa aggiungere informazione a un decoder analitico. È la parte più delicata della campagna, perché una rete può apparire vantaggiosa semplicemente se la baseline scelta è debole. Per questo il percorso sperimentale non si arresta al confronto rete-MWPM: vengono verificati il costo in dati, il rumore correlato, l\textquotesingle uso della rete come validatore, un decoder ibrido residuale, la robustezza alla mis-calibrazione, il confronto con BP+OSD, la non additività dei guadagni e la trasferibilità fra profili simulati.
+La terza domanda di ricerca verifica dove il machine learning possa aggiungere informazione a un decoder analitico. È la parte più delicata della campagna, perché una rete può apparire vantaggiosa semplicemente se la baseline scelta è debole. Per questo il percorso sperimentale non si arresta al confronto rete-MWPM: vengono verificati il costo in dati, il rumore correlato, l'uso della rete come validatore, un decoder ibrido residuale, la robustezza alla mis-calibrazione, il confronto con BP+OSD, la non additività dei guadagni e la trasferibilità fra profili simulati.
 
 \subsection{Sostituire MWPM con una rete: risultato negativo a modello corretto}\label{sec:finale_5_3_1}
 
-Quando MWPM riceve il detector error model corretto, la rete densa non lo supera con significatività statistica in nessuna delle quattordici configurazioni iniziali, costituite da d=3 e d=5 su sette valori di p. A d=3 la rete si avvicina progressivamente al matching; a d=5 resta invece nettamente peggiore. Un esperimento dedicato varia soltanto la numerosità del training set a d=3, p=3×10⁻³: il rapporto fra errore MWPM e errore della rete cresce da 0.50 con 2.5×10⁴ campioni a 1.02 con 8×10⁵. Nell\textquotesingle ultimo punto, p\_L è 3.98×10⁻³ per la rete e 4.04×10⁻³ per MWPM, ma lo scarto vale soltanto 0.2 deviazioni standard e non è significativo.
+Quando MWPM riceve il detector error model corretto, la rete densa non lo supera con significatività statistica in nessuna delle quattordici configurazioni iniziali, costituite da d=3 e d=5 su sette valori di p. A d=3 la rete si avvicina progressivamente al matching; a d=5 resta invece nettamente peggiore. Un esperimento dedicato varia soltanto la numerosità del training set a d=3, p=3×10⁻³: il rapporto fra errore MWPM e errore della rete cresce da 0.50 con 2.5×10⁴ campioni a 1.02 con 8×10⁵. Nell'ultimo punto, p\_L è 3.98×10⁻³ per la rete e 4.04×10⁻³ per MWPM, ma lo scarto vale soltanto 0.2 deviazioni standard e non è significativo.
 
-Il dato più informativo non è quindi che la rete \textquotesingle fallisca\textquotesingle, ma il costo per arrivare al pareggio: nell\textquotesingle architettura densa adottata servono circa 10⁵--10⁶ campioni soltanto per raggiungere MWPM a d=3. Aumentare il volume dei dati aiuta, ma non risolve il problema di scala quando la rappresentazione della sindrome cresce.
+Il dato più informativo non è quindi che la rete ``fallisca'', ma il costo per arrivare al pareggio: nell'architettura densa adottata servono circa 10⁵--10⁶ campioni soltanto per raggiungere MWPM a d=3. Aumentare il volume dei dati aiuta, ma non risolve il problema di scala quando la rappresentazione della sindrome cresce.
 
 \subsection{Rumore correlato: quando la struttura del decoder diventa il collo di bottiglia}\label{sec:finale_5_3_2}
 
-La situazione cambia introducendo un errore correlato fra qubit dati adiacenti, usato come modello elementare di crosstalk. L\textquotesingle errore fisico di base rimane p=3×10⁻³. A d=3, la rete appresa dai campioni supera MWPM in tutte e quattro le intensità considerate; a d=5 il quadro si inverte. Il risultato dimostra che la sola conoscenza dei parametri del rumore non è sufficiente se la struttura del decoder non rappresenta adeguatamente la classe di correlazioni osservata.
+La situazione cambia introducendo un errore correlato fra qubit dati adiacenti, usato come modello elementare di crosstalk. L'errore fisico di base rimane p=3×10⁻³. A d=3, la rete appresa dai campioni supera MWPM in tutte e quattro le intensità considerate; a d=5 il quadro si inverte. Nel modello simulato, il risultato indica che una buona stima dei parametri del rumore non è sufficiente quando la struttura del decoder non rappresenta adeguatamente la classe di correlazioni osservata.
 
 \begingroup
 \small
@@ -644,11 +644,11 @@ La situazione cambia introducendo un errore correlato fra qubit dati adiacenti, 
 \label{fig:finale_5_5}
 \end{figure}
 
-Un esito controintuitivo è che fornire a MWPM un modello che include il crosstalk non migliora sempre la decodifica. A d=3 e crosstalk 0.005, l\textquotesingle errore passa da 0.03097 con modello nominale a 0.05656 con il modello che tenta di includere il crosstalk. La tesi interpreta questo effetto come un limite di rappresentazione: l\textquotesingle errore correlato può attivare più detection event e la decomposizione richiesta dal grafo del matching può diventare inadeguata. A d=5, invece, il modello che include il crosstalk torna a essere il migliore dei due matching. Il dato obbliga quindi a distinguere fra stima del canale e rappresentabilità del canale nel decoder.
+Un esito controintuitivo è che fornire a MWPM un modello che include il crosstalk non migliora sempre la decodifica. A d=3 e crosstalk 0.005, l'errore passa da 0.03097 con modello nominale a 0.05656 con il modello che tenta di includere il crosstalk. Nel modello adottato, questo comportamento è coerente con un limite di rappresentazione: l'errore correlato può attivare più detection event e la decomposizione richiesta dal grafo del matching può diventare inadeguata. A d=5, invece, il modello che include il crosstalk torna a essere il migliore dei due matching. Il dato richiede quindi di distinguere fra accuratezza della stima del canale e rappresentabilità del canale nel decoder.
 
 \subsection{Dalla sostituzione al correttore residuale}\label{sec:finale_5_3_3}
 
-La rete viene quindi usata per un compito più circoscritto: riconoscere quando MWPM ha sbagliato. A d=3 e crosstalk 0.01, il segnale appreso discrimina i fallimenti del matching con AUC=0.941. Alla soglia più restrittiva vengono segnalati solo lo 0.59\% degli shot, ma l\textquotesingle85.9\% delle segnalazioni è corretto; la recall è 0.085. La distinzione fra precision e recall è importante: il modello non intercetta la maggioranza degli errori, ma identifica un piccolo sottoinsieme sufficientemente puro da rendere conveniente l\textquotesingle intervento.
+La rete viene quindi usata per un compito più circoscritto: riconoscere quando MWPM ha sbagliato. A d=3 e crosstalk 0.01, il segnale appreso discrimina i fallimenti del matching con AUC=0.941. Alla soglia più restrittiva vengono segnalati solo lo 0.59\% degli shot, ma l'85.9\% delle segnalazioni è corretto; la recall è 0.085. La distinzione fra precision e recall è importante: il modello non intercetta la maggioranza degli errori, ma identifica un piccolo sottoinsieme sufficientemente puro da rendere conveniente l'intervento.
 
 \begingroup
 \small
@@ -750,11 +750,11 @@ Il decoder ibrido applica quindi la decisione di MWPM e la inverte soltanto quan
 \end{longtable}
 \endgroup
 
-Questa distinzione corregge un\textquotesingle ambiguità importante della formulazione originaria. Nei dati a d=3 il rapporto di guadagno G=p\_L\^{}MWPM/p\_L\^{}ibrido varia fra circa 1.185 e 1.213, cioè un eccesso del 18--21\% rispetto a 1; espresso invece come riduzione relativa dell\textquotesingle errore, il miglioramento è 15.6--17.6\%. A d=5 la riduzione relativa è 0.5--3.2\%. Entrambe le metriche sono lecite, ma non devono essere denominate con la stessa percentuale.
+Questa distinzione è importante perché il rapporto di guadagno e la riduzione relativa dell'errore non esprimono la stessa percentuale. Nei dati a d=3 il rapporto G=p\_L\^{}MWPM/p\_L\^{}ibrido varia fra circa 1.185 e 1.213, cioè un eccesso del 18--21\% rispetto a 1; espresso invece come riduzione relativa dell'errore, il miglioramento è 15.6--17.6\%. A d=5 la riduzione relativa è 0.5--3.2\%. Entrambe le metriche sono legittime, purché siano denominate e interpretate in modo distinto.
 
 \subsection{Perché il vantaggio si riduce con la scala}\label{sec:finale_5_3_4}
 
-A d=7 il correttore residuale tende ad astenersi anche quando il training set contiene molti fallimenti di MWPM. Il controllo E9 separa due variabili che in precedenza crescevano insieme: distanza del codice e numero di detector. Variando il numero di round a distanza fissa, il comportamento segue soprattutto la larghezza dell\textquotesingle ingresso. Con 336 detector il residuo si astiene sia a d=7 sia a d=5; con 120--144 detector interviene anche a distanza 7 quando dispone di un numero sufficiente di esempi. La matrice completa, con round, detector ed esempi positivi, è riportata nella Tabella E.6 dell'Appendice~\ref{app:decodifica}.
+A d=7 il correttore residuale tende ad astenersi anche quando il training set contiene molti fallimenti di MWPM. Il controllo E9 separa due variabili che in precedenza crescevano insieme: distanza del codice e numero di detector. Variando il numero di round a distanza fissa, il comportamento segue soprattutto la larghezza dell'ingresso. Con 336 detector il residuo si astiene sia a d=7 sia a d=5; con 120--144 detector interviene anche a distanza 7 quando dispone di un numero sufficiente di esempi. La matrice completa, con round, detector ed esempi positivi, è riportata nella Tabella E.6 dell'Appendice~\ref{app:decodifica}.
 
 \iffalse
 \begingroup
@@ -815,11 +815,11 @@ A d=7 il correttore residuale tende ad astenersi anche quando il training set co
 \endgroup
 \fi
 
-Un secondo controllo, E12, mostra che il problema non è soltanto la soglia di decisione. Con 336 detector l\textquotesingle AUC resta fra 0.57 e 0.77, quindi la rete conserva capacità di ranking; tuttavia persino una soglia oracolo scelta sul test produce un guadagno di circa 1.000. Perché invertire una decisione di MWPM sia vantaggioso, più della metà degli shot selezionati deve essere realmente errata: con input molto ampi la discriminazione non concentra abbastanza i fallimenti da superare questa soglia di precisione. Il limite osservato è quindi architetturale oltre che statistico.
+Un secondo controllo, E12, mostra che il problema non è soltanto la soglia di decisione. Con 336 detector l'AUC resta fra 0.57 e 0.77, quindi la rete conserva capacità di ranking; tuttavia persino una soglia oracolo scelta sul test produce un guadagno di circa 1.000. Perché invertire una decisione di MWPM sia vantaggioso, più della metà degli shot selezionati deve essere realmente errata: con input molto ampi la discriminazione non concentra abbastanza i fallimenti da superare questa soglia di precisione. Il risultato suggerisce quindi un limite legato anche alla rappresentazione e alla scala dell'architettura, non soltanto alla calibrazione statistica della soglia.
 
 \subsection{Una baseline analitica più forte: BP+OSD}\label{sec:finale_5_3_5}
 
-Il controllo più severo consiste nel sostituire MWPM con un decoder analitico più potente, BP+OSD \cite{roffe2020,panteleev2021}. Entrambi i decoder analitici ricevono lo stesso modello nominale, privo di crosstalk, così la differenza dipende dalla regola di decodifica e non da un vantaggio informativo. Il risultato cambia l\textquotesingle interpretazione del confronto: a modello corretto BP+OSD sfrutta meglio la struttura disponibile; quando il crosstalk rende incompleta la descrizione nominale, il suo vantaggio si erode mentre quello del residuo appreso cresce.
+Il controllo più severo consiste nel sostituire MWPM con un decoder analitico più espressivo nel modello considerato, BP+OSD \cite{roffe2020,panteleev2021}. Entrambi i decoder analitici ricevono lo stesso modello nominale, privo di crosstalk, così la differenza dipende dalla regola di decodifica e non da un vantaggio informativo. Il risultato modifica l'interpretazione del confronto: a modello corretto BP+OSD sfrutta meglio la struttura disponibile; quando il crosstalk rende incompleta la descrizione nominale, il suo vantaggio si erode mentre quello del residuo appreso cresce.
 
 \begingroup
 \scriptsize
@@ -886,11 +886,11 @@ Il controllo più severo consiste nel sostituire MWPM con un decoder analitico p
 \label{fig:finale_5_6}
 \end{figure}
 
-Nel caso senza crosstalk, a d=5 BP+OSD porta p\_L da 0.00192 a 0.00143: il rapporto di guadagno è 1.339, mentre la riduzione relativa dell\textquotesingle errore è 25.5\%. Con crosstalk 0.005 la riduzione relativa è 21.3\%; a 0.04 scende a circa 2.1\%. A d=3 il quadro opposto è evidente: appena compare il crosstalk, BP+OSD non supera più MWPM, mentre il residuo appreso mantiene un rapporto di guadagno fra 1.185 e 1.213. Ne consegue che il valore del machine learning va misurato contro il miglior decoder analitico plausibile nel regime considerato, non contro una baseline scelta per convenzione. Il confronto con decoder analitici più forti è essenziale per non attribuire al machine learning un margine dovuto soltanto a una baseline subottimale \cite{roffe2020,panteleev2021}.
+Nel caso senza crosstalk, a d=5 BP+OSD porta p\_L da 0.00192 a 0.00143: il rapporto di guadagno è 1.339, mentre la riduzione relativa dell'errore è 25.5\%. Con crosstalk 0.005 la riduzione relativa è 21.3\%; a 0.04 scende a circa 2.1\%. A d=3 il quadro opposto è evidente: appena compare il crosstalk, BP+OSD non supera più MWPM, mentre il residuo appreso mantiene un rapporto di guadagno fra 1.185 e 1.213. Ne consegue che il valore del machine learning va misurato contro il miglior decoder analitico plausibile nel regime considerato, non contro una baseline scelta per convenzione. Il confronto con decoder analitici più forti è essenziale per non attribuire al machine learning un margine dovuto soltanto a una baseline subottimale \cite{roffe2020,panteleev2021}.
 
 \subsection{I guadagni sono additivi? Controlli E8--E11}\label{sec:finale_5_3_6}
 
-Se BP+OSD e il residuo appreso agissero su errori indipendenti, il loro guadagno potrebbe essere moltiplicativo. E8 mette direttamente alla prova questa ipotesi costruendo il residuo sopra BP+OSD. Il combinato non raggiunge il prodotto previsto quando entrambi i componenti possiedono un guadagno reale; a distanza 5 lo scarto dal prodotto è sempre negativo, fra -0.007 e -0.027, e il residuo migliora BP+OSD in modo significativo in una sola configurazione, di circa l\textquotesingle1\%. Il combinato tende quindi a eguagliare il migliore dei due metodi, non a moltiplicarne i benefici. Le matrici complete di E8 ed E10 sono riportate nelle Tabelle E.10 ed E.11 dell'Appendice~\ref{app:decodifica}.
+Se BP+OSD e il residuo appreso agissero su errori indipendenti, il loro guadagno potrebbe essere moltiplicativo. E8 mette direttamente alla prova questa ipotesi costruendo il residuo sopra BP+OSD. Il combinato non raggiunge il prodotto previsto quando entrambi i componenti possiedono un guadagno reale; a distanza 5 lo scarto dal prodotto è sempre negativo, fra -0.007 e -0.027, e il residuo migliora BP+OSD in modo significativo in una sola configurazione, di circa l'1\%. Il combinato tende quindi a eguagliare il migliore dei due metodi, non a moltiplicarne i benefici. Le matrici complete di E8 ed E10 sono riportate nelle Tabelle E.10 ed E.11 dell'Appendice~\ref{app:decodifica}.
 
 \iffalse
 \begingroup
@@ -1011,13 +1011,13 @@ Se BP+OSD e il residuo appreso agissero su errori indipendenti, il loro guadagno
 \endgroup
 \fi
 
-E10 chiarisce la ragione. In presenza di crosstalk, rete sola, MWPM+residuo e BP+OSD+residuo convergono entro circa 0.9--2.0\% l\textquotesingle uno dall\textquotesingle altro pur partendo da decoder differenti. Per crosstalk 0.01, ad esempio, i tre errori sono 0.04965, 0.04885 e 0.04982. Il risultato è compatibile con un pavimento comune determinato dall\textquotesingle informazione estraibile dalla sindrome nel modello adottato. E11 controlla che tale pavimento non sia semplicemente il limite della rete densa (128,64): una rete circa quaranta volte più grande raggiunge praticamente lo stesso livello, mentre una tabella empirica non parametrica non lo supera. Il dato non dimostra un limite informativo assoluto, ma rende poco plausibile che il risultato sia un artefatto della capacità del solo MLP utilizzato.
+E10 chiarisce la ragione. In presenza di crosstalk, rete sola, MWPM+residuo e BP+OSD+residuo convergono entro circa 0.9--2.0\% l'uno dall'altro pur partendo da decoder differenti. Per crosstalk 0.01, ad esempio, i tre errori sono 0.04965, 0.04885 e 0.04982. Il risultato è compatibile con un pavimento comune associato all'informazione estraibile dalla sindrome nel modello adottato. E11 controlla che tale pavimento non sia semplicemente il limite della rete densa (128,64): una rete circa quaranta volte più grande raggiunge praticamente lo stesso livello, mentre una tabella empirica non parametrica non lo supera. Il dato non dimostra un limite informativo assoluto, ma rende poco plausibile che il risultato sia un artefatto della capacità del solo MLP utilizzato.
 
 \subsection{Mis-calibrazione e trasferimento fra profili simulati}\label{sec:finale_5_3_7}
 
-Due controlli delimitano ulteriormente il risultato. E6 perturba il rapporto fra errore di misura ed errore di gate nel modello fornito a MWPM. Il matching risulta robusto: errori di calibrazione anche molto ampi modificano in genere p\_L dell\textquotesingle ordine dell\textquotesingle1--3\%; soltanto a d=5 e con errore di misura sovrastimato del 900\% il costo sale di circa il 20\%. La rete non supera MWPM in nessuna delle dodici configurazioni. Ciò indica che il margine appreso non nasce da una semplice mis-calibrazione parametrica: serve un mismatch strutturale, cioè una classe di correlazioni che il decoder non rappresenta.
+Due controlli delimitano ulteriormente il risultato. E6 perturba il rapporto fra errore di misura ed errore di gate nel modello fornito a MWPM. Il matching risulta robusto: errori di calibrazione anche molto ampi modificano in genere p\_L dell'ordine dell'1--3\%; soltanto a d=5 e con errore di misura sovrastimato del 900\% il costo sale di circa il 20\%. La rete non supera MWPM in nessuna delle dodici configurazioni. Nel perimetro studiato, il dato è quindi coerente con l'ipotesi che il margine appreso richieda un disallineamento strutturale, cioè una classe di correlazioni che il decoder non rappresenta, e non una semplice mis-calibrazione parametrica.
 
-E5 valuta invece il trasferimento fra quattro intensità simulate di crosstalk. Tutte le dodici combinazioni fuori diagonale mantengono un vantaggio su MWPM e il costo medio del trasferimento, rispetto all\textquotesingle addestramento sul profilo di test, è circa 1.6\%. Questo è un risultato interessante, ma va formulato nel suo perimetro: dimostra trasferibilità fra profili di intensità dello stesso modello simulato e della stessa geometria di codice; non dimostra ancora trasferimento fra dispositivi fisici differenti o fra famiglie di rumore diverse. La matrice completa dei sedici incroci, insieme al confronto MWPM, è riportata nella Tabella~\ref{tab:neural_trasferimento} dell\textquotesingle Appendice~\ref{app:decodifica}.
+E5 valuta invece il trasferimento fra quattro intensità simulate di crosstalk. Tutte le dodici combinazioni fuori diagonale mantengono un vantaggio su MWPM e il costo medio del trasferimento, rispetto all'addestramento sul profilo di test, è circa 1.6\%. Il risultato mostra trasferibilità fra profili di intensità dello stesso modello simulato e della stessa geometria di codice; non dimostra trasferimento fra dispositivi fisici differenti o fra famiglie di rumore diverse. La matrice completa dei sedici incroci, insieme al confronto MWPM, è riportata nella Tabella~\ref{tab:neural_trasferimento} dell'Appendice~\ref{app:decodifica}.
 
 \iffalse
 \begingroup
@@ -1069,7 +1069,7 @@ MWPM & 0.03232 & 0.05742 & 0.11172 & 0.20853 \\
 \endgroup
 \fi
 
-Il trasferimento non elimina il problema di generalizzazione alla scala. La stessa architettura che si trasferisce bene fra intensità di crosstalk perde infatti efficacia quando aumenta il numero di detector. I due risultati non sono contraddittori: il primo riguarda la stabilità della regola appresa rispetto all\textquotesingle intensità di un meccanismo già rappresentato nei dati; il secondo riguarda la capacità del modello di rappresentare una sindrome di dimensione crescente. Questo limite di scala è coerente con la letteratura sui decoder neurali, che ricorre a architetture strutturate e dataset molto più ampi quando cresce la distanza del codice \cite{alphaqubit2024,torlaiMelko2017,yan2026}.
+Il trasferimento non elimina il problema di generalizzazione alla scala. La stessa architettura che si trasferisce bene fra intensità di crosstalk perde infatti efficacia quando aumenta il numero di detector. I due risultati non sono contraddittori: il primo riguarda la stabilità della regola appresa rispetto all'intensità di un meccanismo già rappresentato nei dati; il secondo riguarda la capacità del modello di rappresentare una sindrome di dimensione crescente. Questo limite di scala è coerente con la letteratura sui decoder neurali, che ricorre a architetture strutturate e dataset molto più ampi quando cresce la distanza del codice \cite{alphaqubit2024,torlaiMelko2017,yan2026}.
 
 \subsection{Oltre il surface code: il Gross code nel modello code-capacity}\label{sec:finale_5_3_8}
 
@@ -1143,11 +1143,11 @@ Il risultato va letto nel suo perimetro. Il modello code-capacity non include er
 
 \section{DR4 --- Sensibilità dell'algoritmo di Shor al rumore per gate}\label{sec:finale_5_4}
 
-La quarta domanda di ricerca è il punto di partenza concettuale dello studio: misura quanto rapidamente la specifica implementazione di Shor perde la capacità di fattorizzare al crescere dell'errore per gate, ed è questa fragilità a motivare le tre strategie di intervento. Viene presentata qui, dopo le campagne QEC, per mantenere l'ordine delle domande di ricerca. L'analisi collega il comportamento algoritmico al rumore senza identificare impropriamente le metriche QEC con gli errori di una computazione fault-tolerant. Nell\textquotesingle artefatto originario M8 il parametro veniva denominato p\_L; nella versione revisionata viene indicato p\_g per distinguerlo dal logical error rate dei memory experiment. p\_g è la probabilità totale di applicare un Pauli non identità dopo ciascun gate compilato incluso nel modello.
+La quarta domanda di ricerca è il punto di partenza concettuale dello studio: misura quanto rapidamente la specifica implementazione di Shor perde la capacità di fattorizzare al crescere dell'errore per gate, ed è questa fragilità a motivare le tre strategie di intervento. Viene presentata qui, dopo le campagne QEC, per mantenere l'ordine delle domande di ricerca. L'analisi collega il comportamento algoritmico al rumore senza identificare impropriamente le metriche QEC con gli errori di una computazione fault-tolerant. Nell'artefatto originario M8 il parametro veniva denominato p\_L; nella versione revisionata viene indicato p\_g per distinguerlo dal logical error rate dei memory experiment. p\_g è la probabilità totale di applicare un Pauli non identità dopo ciascun gate compilato incluso nel modello.
 
 \subsection{Probabilità di fattorizzazione per singola misura}\label{sec:finale_5_4_1}\label{sec:risultati_logico}
 
-Ogni punto aggrega 20 repliche da 4 096 shot, pari a 81 920 misure. In assenza di rumore il successo osservato è 0.7489, con IC Wilson 95\% {[}0.7459;0.7518{]}, coerente con il 75\% atteso dalla specifica procedura di post-processing. All\textquotesingle aumentare di p\_g la curva è compatibile con una funzione non crescente: a p\_g=0.01 il successo è 0.5651, a 0.02 è 0.4518 e a 0.05 scende a 0.2953.
+Ogni punto aggrega 20 repliche da 4 096 shot, pari a 81 920 misure. In assenza di rumore il successo osservato è 0.7489, con IC Wilson 95\% {[}0.7459;0.7518{]}, coerente con il 75\% atteso dalla specifica procedura di post-processing. All'aumentare di p\_g la curva è compatibile con una funzione non crescente: a p\_g=0.01 il successo è 0.5651, a 0.02 è 0.4518 e a 0.05 scende a 0.2953.
 
 \begingroup
 \small
@@ -1204,13 +1204,13 @@ Ogni punto aggrega 20 repliche da 4 096 shot, pari a 81 920 misure. In assenza d
 
 \subsection{Il plateau vicino a 63/256 e il significato del successo residuo}\label{sec:finale_5_4_2}
 
-Per p\_g≥0.1 il successo si stabilizza intorno a 0.245, praticamente coincidente con 63/256=0.2461. Questo comportamento è coerente con la perdita della struttura quantistica utile e con il fatto che la procedura classica accetta comunque 63 dei 256 possibili valori. Il plateau non è quindi una soglia universale di Shor, né prova la presenza di informazione quantistica residua: è una proprietà congiunta dell\textquotesingle istanza N=15, del registro a otto bit e della funzione di estrazione dei fattori.
+Per p\_g≥0.1 il successo si stabilizza intorno a 0.245, praticamente coincidente con 63/256=0.2461. Questo comportamento è coerente con la perdita della struttura quantistica utile e con il fatto che la procedura classica accetta comunque 63 dei 256 possibili valori. Il plateau non è quindi una soglia universale di Shor, né prova la presenza di informazione quantistica residua: è una proprietà congiunta dell'istanza N=15, del registro a otto bit e della funzione di estrazione dei fattori.
 
-Questa distinzione è cruciale per interpretare correttamente le metriche. Una percentuale di fattorizzazioni corrette può rimanere non nulla anche quando la distribuzione si avvicina a un fondo quasi uniforme. Per questo, nella tesi il successo per misura viene letto insieme alla struttura dell\textquotesingle istogramma e alle baseline combinatorie, non come proxy di fedeltà dello stato.
+Questa distinzione è cruciale per interpretare correttamente le metriche. Una percentuale di fattorizzazioni corrette può rimanere non nulla anche quando la distribuzione si avvicina a un fondo quasi uniforme. Per questo, nella tesi il successo per misura viene letto insieme alla struttura dell'istogramma e alle baseline combinatorie, non come proxy di fedeltà dello stato.
 
 \subsection{Ripetizioni indipendenti e robustezza di TOP-4}\label{sec:finale_5_4_3}
 
-Per tentativi indipendenti, la probabilità cumulativa di ottenere almeno un successo dopo k esecuzioni è P(k)=1-(1-P\_s)\^{}k. Il numero di tentativi richiesto cresce rapidamente quando il successo per singola misura degrada. Con P\_s=0.7489, due tentativi portano a circa 0.937; con p\_g=0.01, due tentativi danno circa 0.811; con p\_g=0.05 servono cinque tentativi per superare l\textquotesingle80\%, e con p\_g=0.2 ne servono sei.
+Per tentativi indipendenti, la probabilità cumulativa di ottenere almeno un successo dopo k esecuzioni è P(k)=1-(1-P\_s)\^{}k. Il numero di tentativi richiesto cresce rapidamente quando il successo per singola misura degrada. Con P\_s=0.7489, due tentativi portano a circa 0.937; con p\_g=0.01, due tentativi danno circa 0.811; con p\_g=0.05 servono cinque tentativi per superare l'80\%, e con p\_g=0.2 ne servono sei.
 
 \begin{figure}[H]
 \centering
@@ -1219,7 +1219,7 @@ Per tentativi indipendenti, la probabilità cumulativa di ottenere almeno un suc
 \label{fig:finale_5_8}\label{fig:qec_shor_pk}
 \end{figure}
 
-M13 verifica separatamente TOP-4 lungo lo stesso asse di rumore, usando 200 repliche da 1 024 shot. TOP-4 rimane pari a 1.000 fino a p\_g=0.05, benché la massa utile per singola misura scenda da circa 0.7512 a 0.2979. A p\_g=0.2 il successo TOP-4 scende a 0.670; l\textquotesingle intervallo identificato {[}0.535;0.860{]} riflette la gestione dei pareggi al confine del quarto candidato. Il contrasto preregistrato rispetto a p\_g=0 mostra una diminuzione di 0.330 con IC Newcombe 95\% {[}0.266;0.398{]}. Il risultato conferma che TOP-4 è operativo anche quando la distribuzione è degradata, ma proprio per questo non può essere usato come misura di fedeltà del circuito.
+M13 verifica separatamente TOP-4 lungo lo stesso asse di rumore, usando 200 repliche da 1 024 shot. TOP-4 rimane pari a 1.000 fino a p\_g=0.05, benché la massa utile per singola misura scenda da circa 0.7512 a 0.2979. A p\_g=0.2 il successo TOP-4 scende a 0.670; l'intervallo identificato {[}0.535;0.860{]} riflette la gestione dei pareggi al confine del quarto candidato. Il contrasto predefinito nel protocollo rispetto a p\_g=0 mostra una diminuzione di 0.330 con IC Newcombe 95\% {[}0.266;0.398{]}. Il risultato conferma che TOP-4 è operativo anche quando la distribuzione è degradata, ma proprio per questo non può essere usato come misura di fedeltà del circuito.
 
 \begingroup
 \small
@@ -1278,7 +1278,7 @@ M13 verifica separatamente TOP-4 lungo lo stesso asse di rumore, usando 200 repl
 
 \subsection{Controlli hardware-aware: layout e readout}\label{sec:finale_5_4_4}
 
-Due analisi esplorative usano una snapshot offline di FakeSherbrooke per verificare se parametri hardware-aware possano ordinare il successo simulato. In M11, 40 dei 60 layout richiesti rientrano nel dominio del modello. La correlazione di Spearman fra un punteggio aggregato di calibrazione e il successo holdout è ρ\_s=-0.184, con IC bootstrap 95\% {[}-0.456;0.124{]}: il campione non supporta una capacità predittiva conclusiva del punteggio aggregato. La regola che sceglie il layout con punteggio minimo ottiene P\_holdout=0.451; quella che sceglie il massimo successo sui dati di selezione ottiene 0.516, differenza descrittiva di 0.065 senza intervallo dedicato. Questi controlli restano osservazionali e non sostituiscono una validazione hardware. La scelta di valutare layout e readout come variabili di controllo è coerente con la letteratura sulla compilazione noise-adaptive e sulle politiche di mapping sensibili all\textquotesingle eterogeneità dei qubit \cite{murali2019,tannu2019}.
+Due analisi esplorative usano una snapshot offline di FakeSherbrooke per verificare se parametri hardware-aware possano ordinare il successo simulato. In M11, 40 dei 60 layout richiesti rientrano nel dominio del modello. La correlazione di Spearman fra un punteggio aggregato di calibrazione e il successo holdout è ρ\_s=-0.184, con IC bootstrap 95\% {[}-0.456;0.124{]}: il campione non supporta una capacità predittiva conclusiva del punteggio aggregato. La regola che sceglie il layout con punteggio minimo ottiene P\_holdout=0.451; quella che sceglie il massimo successo sui dati di selezione ottiene 0.516, differenza descrittiva di 0.065 senza intervallo dedicato. Questi controlli restano osservazionali e non sostituiscono una validazione hardware. La scelta di valutare layout e readout come variabili di controllo è coerente con la letteratura sulla compilazione noise-adaptive e sulle politiche di mapping sensibili all'eterogeneità dei qubit \cite{murali2019,tannu2019}.
 
 M11b analizza nove sottografi e misura il readout dei qubit effettivamente misurati dopo il routing. Condizionando per sottografo, numero di ECR e profondità, la correlazione parziale con il successo è ρ\_s=-0.605 con IC cluster bootstrap 95\% {[}-0.826;-0.190{]}. Un readout peggiore si associa quindi a un successo inferiore nel campione, ma nove cluster non consentono di trasformare questa associazione in una relazione causale né di validare una strategia generale di placement.
 
@@ -1338,11 +1338,11 @@ M11b: readout post-routing & 9 sottografi, 45 osservazioni & ρ\_s parziale=-0.6
 
 \section{DR5 --- QFT approssimata: quando meno porte producono più informazione utile}\label{sec:finale_5_5}\label{sec:qft_topologia}
 
-La quinta domanda di ricerca studia un compromesso diverso: eliminare rotazioni controllate di piccolo angolo riduce il numero di porte e la profondità, ma introduce un errore algoritmico. Il beneficio esiste soltanto se il rumore evitato compensa l\textquotesingle informazione di fase persa. Per evitare una conclusione unica su circuiti molto differenti, la campagna distingue tre casi: Shor su N=15, Shor con aritmetica Beauregard su N=21 e Quantum Phase Estimation isolata. L\textquotesingle idea di eliminare rotazioni di piccolo angolo ha una tradizione teorica consolidata nell\textquotesingle AQFT; il punto qui è verificarne il beneficio sulla metrica algoritmica effettiva \cite{barencoAQFT1996,akoramurthy2026}.
+La quinta domanda di ricerca studia un compromesso diverso: eliminare rotazioni controllate di piccolo angolo riduce il numero di porte e la profondità, ma introduce un errore algoritmico. Il beneficio esiste soltanto se il rumore evitato compensa l'informazione di fase persa. Per evitare una conclusione unica su circuiti molto differenti, la campagna distingue tre casi: Shor su N=15, Shor con aritmetica Beauregard su N=21 e Quantum Phase Estimation isolata. L'idea di eliminare rotazioni di piccolo angolo ha una tradizione teorica consolidata nell'AQFT; il punto qui è verificarne il beneficio sulla metrica algoritmica effettiva \cite{barencoAQFT1996,akoramurthy2026}.
 
 \subsection{Shor su N=15: miglioramento misurato su holdout}\label{sec:finale_5_5_1}
 
-Per N=15, a=7, il grado di troncamento k\_QPE viene scelto sui batch di selezione e valutato su holdout disgiunti. Ogni configurazione usa 8 192 shot, divisi in otto batch. La selezione sceglie k\_QPE=1. Sull\textquotesingle holdout, la probabilità di successo sale da 0.4792 con la QFT piena a 0.6279 con la variante troncata: +0.1487, con IC Newcombe 95\% {[}0.1273;0.1699{]}. Contemporaneamente, le porte ECR scendono da 362 a 279 e la profondità da 1 351 a 1 141.
+Per N=15, a=7, il grado di troncamento k\_QPE viene scelto sui batch di selezione e valutato su holdout disgiunti. Ogni configurazione usa 8 192 shot, divisi in otto batch. La selezione sceglie k\_QPE=1. Sull'holdout, la probabilità di successo sale da 0.4792 con la QFT piena a 0.6279 con la variante troncata: +0.1487, con IC Newcombe 95\% {[}0.1273;0.1699{]}. Contemporaneamente, le porte ECR scendono da 362 a 279 e la profondità da 1 351 a 1 141.
 
 \begingroup
 \small
@@ -1396,7 +1396,7 @@ Per N=15, a=7, il grado di troncamento k\_QPE viene scelto sui batch di selezion
 \label{fig:finale_5_9}
 \end{figure}
 
-Il miglioramento è rilevante sia in termini assoluti sia ingegneristici: +14.87 punti percentuali di successo, circa +31\% in termini relativi; -83 porte ECR, circa -22.9\%; profondità ridotta di circa 15.5\%. Questo è un vero risultato positivo sull\textquotesingle algoritmo di fattorizzazione, non soltanto su una subroutine isolata.
+Il miglioramento è rilevante sia in termini assoluti sia ingegneristici: +14.87 punti percentuali di successo, circa +31\% in termini relativi; -83 porte ECR, circa -22.9\%; profondità ridotta di circa 15.5\%. Nel perimetro dell'istanza N=15, il risultato è positivo anche sulla metrica finale di fattorizzazione, non soltanto su una subroutine isolata.
 
 \begingroup
 \small
@@ -1433,13 +1433,13 @@ Il miglioramento è rilevante sia in termini assoluti sia ingegneristici: +14.87
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-P\_success holdout & 0.4792 & 0.6279 & +0.1487 pp assoluti \\
+P\_success holdout & 0.4792 & 0.6279 & +14.87 punti percentuali \\
 Porte ECR & 362 & 279 & -83 (-22.9\%) \\
 Profondità & 1 351 & 1 141 & -210 (-15.5\%) \\
 \end{longtable}
 \endgroup
 
-La generalizzazione deve però essere limitata. L\textquotesingle ordine r=4 genera fasi 0, 1/4, 1/2 e 3/4, rappresentabili esattamente con due bit. Le rotazioni più fini sono quindi meno informative in questa specifica istanza e la riduzione di rumore può dominare la perdita di precisione. La stessa condizione non vale automaticamente per ordini diversi.
+La generalizzazione deve però essere limitata. L'ordine r=4 genera fasi 0, 1/4, 1/2 e 3/4, rappresentabili esattamente con due bit. Le rotazioni più fini sono quindi meno informative in questa specifica istanza e la riduzione di rumore può dominare la perdita di precisione. La stessa condizione non vale automaticamente per ordini diversi.
 
 \subsection{Shor su N=21: grande riduzione di porte, beneficio non dimostrato}\label{sec:finale_5_5_2}
 
@@ -1532,11 +1532,11 @@ QFT finale QPE & 28 rotazioni & non dominante & costo marginale rispetto all'ari
 \end{longtable}
 \endgroup
 
-Nelle prove rumorose a budget ridotto nessun confronto dimostra un vantaggio della variante troncata: gli intervalli includono sempre lo zero e, al fattore 0.003, la QFT piena è quella con successo maggiore. Un modello ausiliario a miscela stima che, in condizioni di porte molto migliori, il risparmio di operazioni potrebbe generare un margine dell\textquotesingle ordine di tre punti percentuali; la stessa stima richiede errori 2Q circa duecento volte inferiori a quelli della calibrazione considerata. È quindi un\textquotesingle ipotesi di progetto, non un risultato misurato.
+Nelle prove rumorose a budget ridotto nessun confronto dimostra un vantaggio della variante troncata: gli intervalli includono sempre lo zero e, al fattore 0.003, la QFT piena è quella con successo maggiore. Un modello ausiliario a miscela stima che, in condizioni di porte molto migliori, il risparmio di operazioni potrebbe generare un margine dell'ordine di tre punti percentuali; la stessa stima richiede errori 2Q circa duecento volte inferiori a quelli della calibrazione considerata. È quindi un'ipotesi di progetto, non un risultato misurato.
 
 \subsection{Quantum Phase Estimation isolata: evidenza favorevole ma esplorativa}\label{sec:finale_5_5_3}
 
-Per separare l\textquotesingle effetto dell\textquotesingle AQFT dal costo dell\textquotesingle aritmetica modulare, la campagna ripete il confronto sulla sola stima di fase. Vengono considerate tre dimensioni del registro, n=6,8,10, e tre fasi per dimensione. Il grado di troncamento viene scelto sui batch di selezione; la differenza viene misurata su holdout usando lo stesso layout e la stessa schedule dei seed per i due bracci.
+Per separare l'effetto dell'AQFT dal costo dell'aritmetica modulare, la campagna ripete il confronto sulla sola stima di fase. Vengono considerate tre dimensioni del registro, n=6,8,10, e tre fasi per dimensione. Il grado di troncamento viene scelto sui batch di selezione; la differenza viene misurata su holdout usando lo stesso layout e la stessa sequenza dei seed per i due bracci.
 
 \begingroup
 \small
@@ -1607,11 +1607,11 @@ Per separare l\textquotesingle effetto dell\textquotesingle AQFT dal costo dell\
 \label{fig:finale_5_10}
 \end{figure}
 
-Le stime sono positive in tutti e nove i confronti e sei intervalli individuali escludono lo zero. Il massimo incremento è +0.1255 su dieci qubit, con IC {[}0.0977;0.1530{]}. Il grado più favorevole fra quelli provati è 2 o 3, mentre la QFT piena utilizza n-1 livelli di rotazione; i risparmi di ECR crescono da 25 a n=6 a 78 a n=10. La tendenza è quindi coerente con l\textquotesingle idea che, in circuiti relativamente corti, eliminare rotazioni fini possa ridurre più rumore di quanto perda informazione.
+Le stime sono positive in tutti e nove i confronti e sei intervalli individuali escludono lo zero. Il massimo incremento è +0.1255 su dieci qubit, con IC {[}0.0977;0.1530{]}. Il grado più favorevole fra quelli provati è 2 o 3, mentre la QFT piena utilizza n-1 livelli di rotazione; i risparmi di ECR crescono da 25 a n=6 a 78 a n=10. La tendenza è quindi coerente con l'idea che, in circuiti relativamente corti, eliminare rotazioni fini possa ridurre più rumore di quanto perda informazione.
 
 \subsection{Interpretazione: il grado ottimo dipende dall'informazione di fase}\label{sec:finale_5_5_4}
 
-I tre esperimenti convergono su un criterio più utile di una semplice etichetta \textquotesingle AQFT sì/no\textquotesingle. Per N=15 il periodo r=4 produce fasi esattamente rappresentabili con pochi bit e il troncamento è favorevole. Per N=21, r=6 produce fasi j/6, non tutte rappresentabili esattamente nel registro finito: le rotazioni più fini conservano quindi informazione utile e la perdita algoritmica può superare il vantaggio circuitale. Nel benchmark QPE le fasi esattamente rappresentabili sono, in generale, quelle che beneficiano maggiormente del troncamento.
+I tre esperimenti convergono su un criterio più utile di una semplice etichetta ``AQFT sì/no''. Per N=15 il periodo r=4 produce fasi esattamente rappresentabili con pochi bit e il troncamento è favorevole. Per N=21, r=6 produce fasi j/6, non tutte rappresentabili esattamente nel registro finito: le rotazioni più fini conservano quindi informazione utile e la perdita algoritmica può superare il vantaggio circuitale. Nel benchmark QPE le fasi esattamente rappresentabili sono, in generale, quelle che beneficiano maggiormente del troncamento.
 
 Il limite teorico discusso in letteratura \cite{barencoAQFT1996,akoramurthy2026} fornisce inoltre una cautela alla scala: la distanza in variazione totale fra QPE esatta e troncata può essere limitata da un termine proporzionale a π(m-d)/2\^{}d. Per mantenere controllato tale errore, il grado di troncamento deve crescere circa logaritmicamente con la dimensione del registro. Il fatto che k=2 o 3 sia favorevole nelle taglie provate non autorizza quindi a considerare costante il grado ottimo per registri arbitrariamente grandi.
 
@@ -1631,31 +1631,31 @@ Il limite teorico discusso in letteratura \cite{barencoAQFT1996,akoramurthy2026}
 
 \section{Discussione integrata dei risultati}\label{sec:finale_5_6}
 
-Le cinque domande di ricerca descrivono interventi collocati in punti diversi della catena computazionale. La loro lettura congiunta permette di separare tre concetti che, se osservati isolatamente, possono essere facilmente confusi: utilizzare meglio l\textquotesingle informazione residua, proteggere l\textquotesingle informazione durante l\textquotesingle evoluzione e ridurre il costo fisico necessario a produrla. Le metriche non sono convertibili fra loro, ma il principio sperimentale che le governa è comune.
+Le cinque domande di ricerca descrivono interventi collocati in punti diversi della catena computazionale. La loro lettura congiunta permette di separare tre concetti che, se osservati isolatamente, possono essere facilmente confusi: utilizzare meglio l'informazione residua, proteggere l'informazione durante l'evoluzione e ridurre il costo fisico necessario a produrla. Le metriche non sono convertibili fra loro, ma il principio sperimentale che le governa è comune.
 
 \subsection{Una gerarchia delle evidenze}\label{sec:finale_5_6_1}
 
-Il primo risultato è metodologico. Una metrica intermedia elevata non basta a dimostrare un vantaggio sul compito finale. La SVM della fase NISQ raggiunge AUC superiore a 0.95, ma TOP-4 senza classificatore richiede meno iterazioni. Analogamente, un TOP-K vicino al 100\% non implica uno stato quantistico fedele, perché la verifica classica dell\textquotesingle istanza N=15 accetta 63 risultati su 256. L\textquotesingle ablazione e la baseline combinatoria impediscono quindi due conclusioni apparentemente plausibili ma scorrette.
+Il primo risultato è metodologico. Una metrica intermedia elevata non basta a dimostrare un vantaggio sul compito finale. La SVM della fase NISQ raggiunge AUC superiore a 0.95, ma TOP-4 senza classificatore richiede meno iterazioni. Analogamente, un TOP-K vicino al 100\% non implica uno stato quantistico fedele, perché la verifica classica dell'istanza N=15 accetta 63 risultati su 256. L'ablazione e la baseline combinatoria impediscono quindi due conclusioni apparentemente plausibili ma scorrette.
 
-Il secondo risultato riguarda la QEC. Qui il beneficio non è post-processing: sotto soglia la codifica modifica effettivamente l\textquotesingle ordine dell\textquotesingle errore. Il repetition code e Steane mostrano soppressione quadratica nel rispettivo modello; il surface code aggiunge la dipendenza dalla distanza e un comportamento di soglia. Il costo è l\textquotesingle overhead fisico, e le estrapolazioni mostrano quanto la qualità dei qubit influenzi direttamente il numero di risorse necessarie a proteggere una memoria.
+Il secondo risultato riguarda la QEC. Qui il beneficio non è post-processing: sotto soglia la codifica modifica effettivamente l'ordine dell'errore. Il repetition code e Steane mostrano soppressione quadratica nel rispettivo modello; il surface code aggiunge la dipendenza dalla distanza e un comportamento di soglia. Il costo è l'overhead fisico, e le estrapolazioni mostrano quanto la qualità dei qubit influenzi direttamente il numero di risorse necessarie a proteggere una memoria.
 
-Il terzo risultato riguarda l\textquotesingle apprendimento nella decodifica. La rete non è superiore per definizione. Quando il decoder analitico dispone di un modello rappresentabile e viene scelto bene, l\textquotesingle analitico rimane competitivo o migliore. Quando compaiono correlazioni che la struttura del decoder non sa rappresentare, il modello appreso può recuperare una parte del margine. Questa conclusione è più forte di un semplice \textquotesingle ML funziona/non funziona\textquotesingle{} perché identifica la condizione informativa che rende utile la complessità aggiuntiva.
+Il terzo risultato riguarda l'apprendimento nella decodifica. La rete non è superiore per definizione. Quando il decoder analitico dispone di un modello rappresentabile e viene scelto bene, l'analitico rimane competitivo o migliore. Quando compaiono correlazioni che la struttura del decoder non sa rappresentare, il modello appreso può recuperare una parte del margine. Questa conclusione è più informativa di una semplice dicotomia ``ML funziona/non funziona'', perché identifica la condizione informativa che rende utile la complessità aggiuntiva.
 
-Il quarto risultato riguarda l\textquotesingle ottimizzazione del circuito. L\textquotesingle AQFT dimostra che una trasformazione algoritmicamente approssimata può produrre un risultato finale migliore quando elimina abbastanza operazioni rumorose. Ma il vantaggio dipende dalla struttura di fase: su N=15 è misurato e statisticamente netto; su N=21 non emerge; nella QPE isolata ricompare in modo consistente. La profondità del circuito non è quindi un semplice costo accessorio: può modificare quale approssimazione sia ottimale per il compito.
+Il quarto risultato riguarda l'ottimizzazione del circuito. L'AQFT dimostra che una trasformazione algoritmicamente approssimata può produrre un risultato finale migliore quando elimina abbastanza operazioni rumorose. Ma il vantaggio dipende dalla struttura di fase: su N=15 è misurato e statisticamente netto; su N=21 non emerge; nella QPE isolata ricompare in modo consistente. La profondità del circuito non è quindi un semplice costo accessorio: può modificare quale approssimazione sia ottimale per il compito.
 
 \subsection{Il criterio unificante: la complessità deve agire sul collo di bottiglia reale}\label{sec:finale_5_6_2}
 
-I risultati suggeriscono un criterio comune. Una componente aggiuntiva è giustificata quando utilizza informazione che la baseline non sfrutta oppure quando elimina un costo fisico superiore alla perdita algoritmica introdotta. TOP-4 soddisfa il primo criterio perché prova candidati già presenti nell\textquotesingle istogramma; il classificatore a valle no, perché non aggiunge informazione utile rispetto alla stessa ricerca. Il decoder ibrido soddisfa il criterio soltanto quando la sindrome contiene correlazioni non rappresentate dal decoder analitico. BP+OSD mostra invece che, quando il modello è rappresentabile, migliorare prima la baseline analitica può essere la scelta più efficiente. L\textquotesingle AQFT soddisfa il secondo criterio quando la riduzione delle porte compensa l\textquotesingle errore di troncamento.
+I risultati suggeriscono un criterio comune. Una componente aggiuntiva è giustificata quando utilizza informazione che la baseline non sfrutta oppure quando elimina un costo fisico superiore alla perdita algoritmica introdotta. TOP-4 soddisfa il primo criterio perché prova candidati già presenti nell'istogramma; il classificatore a valle no, perché non aggiunge informazione utile rispetto alla stessa ricerca. Il decoder ibrido soddisfa il criterio soltanto quando la sindrome contiene correlazioni non rappresentate dal decoder analitico. BP+OSD mostra invece che, quando il modello è rappresentabile, migliorare prima la baseline analitica può essere la scelta più efficiente. L'AQFT soddisfa il secondo criterio quando la riduzione delle porte compensa l'errore di troncamento.
 
-Questa lettura mette sullo stesso piano anche i risultati negativi. Il mancato vantaggio del filtro ML, l\textquotesingle assenza di guadagno AQFT su N=21 e la non additività fra BP+OSD e residuo non sono esperimenti falliti: delimitano il dominio di validità delle tecniche e impediscono di attribuire il miglioramento alla causa sbagliata. In una tesi sperimentale, identificare dove una tecnica non produce valore è parte dell\textquotesingle evidenza, purché la baseline e il protocollo siano definiti prima della conclusione.
+Anche i risultati negativi sono informativi. Il mancato vantaggio del filtro ML, l'assenza di guadagno AQFT su N=21 e la non additività fra BP+OSD e residuo delimitano il dominio di validità delle tecniche e riducono il rischio di attribuire il miglioramento alla causa sbagliata. In una tesi sperimentale, stabilire dove una tecnica non produce un beneficio misurabile è parte dell'evidenza, purché baseline, metriche e protocollo siano definiti prima dell'interpretazione.
 
 \subsection{Cosa i risultati dimostrano e cosa rimane aperto}\label{sec:finale_5_6_3}
 
-La tesi dimostra, nel perimetro simulativo adottato, che la ricerca multi-candidato può ridurre il costo operativo su N=15; che codici di distanza crescente mostrano soppressione e soglia nei memory experiment; che un correttore residuale appreso può ridurre l\textquotesingle errore quando la struttura del decoder è incompleta; che il successo della specifica implementazione di Shor degrada fino al pavimento uniforme al crescere del proxy per gate; e che una QFT troncata può aumentare il successo quando il risparmio circuitale domina la perdita di precisione.
+Nel perimetro simulativo adottato, i risultati mostrano che la ricerca multi-candidato può ridurre il costo operativo su N=15; che codici di distanza crescente mostrano soppressione e comportamento di soglia nei memory experiment; che un correttore residuale appreso può ridurre l'errore quando la struttura del decoder è incompleta; che il successo della specifica implementazione di Shor degrada fino al pavimento uniforme al crescere del proxy per gate; e che una QFT troncata può aumentare il successo quando il risparmio circuitale domina la perdita di precisione.
 
-Non viene invece dimostrata un\textquotesingle esecuzione end-to-end fault-tolerant di Shor. I tassi p\_L dei memory experiment non sono errori di porte logiche e non vengono convertiti in p\_g. Le campagne principali non sono eseguite su hardware reale; FakeSherbrooke è una snapshot offline e i modelli uniformi non riproducono deriva, leakage, crosstalk e routing nello stesso esperimento. L\textquotesingle istanza rumorosa principale è N=15, che ha caratteristiche particolarmente favorevoli sia al TOP-K sia all\textquotesingle AQFT. Le estensioni a moduli maggiori devono quindi variare separatamente dimensione di N, ordine r, topologia, calibrazione e aritmetica.
+Non viene invece dimostrata un'esecuzione end-to-end fault-tolerant di Shor. I tassi p\_L dei memory experiment non sono errori di porte logiche e non vengono convertiti in p\_g. Le campagne principali non sono eseguite su hardware reale; FakeSherbrooke è una snapshot offline e i modelli uniformi non riproducono deriva, leakage, crosstalk e routing nello stesso esperimento. L'istanza rumorosa principale è N=15, che ha caratteristiche particolarmente favorevoli sia al TOP-K sia all'AQFT. Le estensioni a moduli maggiori devono quindi variare separatamente dimensione di N, ordine r, topologia, calibrazione e aritmetica.
 
-Questi limiti non riducono il valore del lavoro; ne definiscono correttamente il livello di evidenza. Il contributo non è una previsione di quando Shor diventerà crittograficamente praticabile, ma un insieme di verifiche controllate che mostrano come distinguere beneficio reale, beneficio apparente e costo nascosto quando rumore, post-processing, correzione d\textquotesingle errore, decoder e approssimazione circuitale interagiscono.
+Questi limiti non riducono il valore del lavoro; ne definiscono correttamente il livello di evidenza. Il contributo non è una previsione di quando Shor diventerà crittograficamente praticabile, ma un insieme di verifiche controllate che mostrano come distinguere beneficio reale, beneficio apparente e costo nascosto quando rumore, post-processing, correzione d'errore, decoder e approssimazione circuitale interagiscono.
 
 \subsection{Sintesi del capitolo}\label{sec:finale_5_6_4}
 
@@ -1691,10 +1691,10 @@ Questi limiti non riducono il valore del lavoro; ne definiscono correttamente il
 \endlastfoot
 DR1 -- post-processing & TOP-4: 1.00 iterazioni; M2 non migliora TOP-1 & il guadagno è multi-candidato, non del filtro ML \\
 DR2 -- QEC & Steane γ=1.94; surface p\_th≈0.86\%/0.81\% nel fit & sotto soglia la distanza sopprime l'errore nel memory experiment \\
-DR3 -- decoder & ibrido utile con correlazioni non rappresentate; BP+OSD forte a d=5 & ML come residuo, non sostituzione generale \\
+DR3 -- decoder & ibrido utile con correlazioni non rappresentate; BP+OSD competitivo a d=5 & ML come residuo, non sostituzione generale \\
 DR4 -- Shor & 0.7489→0.4518 a p\_g=0.02; plateau ≈63/256 & il successo degrada verso la baseline uniforme \\
-DR5 -- AQFT & N=15: 0.4792→0.6279; QPE: 9/9 stime positive & il troncamento conviene quando il risparmio di porte supera la perdita di fase \\
+DR5 -- AQFT & N=15: 0.4792→0.6279; QPE: 9/9 stime positive, 6/9 IC individuali \textgreater{} 0 & il troncamento conviene quando il risparmio di porte supera la perdita di fase \\
 \end{longtable}
 \endgroup
 
-Il Capitolo 6 riprende questi risultati per rispondere in forma conclusiva alle domande di ricerca, distinguendo contributi, limiti e sviluppi futuri. La conclusione generale non è che una singola tecnica risolva il problema del rumore, ma che l\textquotesingle efficacia di ogni intervento dipende dalla posizione in cui agisce e dall\textquotesingle informazione o dal costo che riesce realmente a modificare.
+Il Capitolo 6 riprende questi risultati per rispondere in forma conclusiva alle domande di ricerca, distinguendo contributi, limiti e sviluppi futuri. La conclusione generale non è che una singola tecnica risolva il problema del rumore, ma che l'efficacia di ogni intervento dipende dalla posizione in cui agisce e dall'informazione o dal costo che riesce realmente a modificare.
