@@ -1,4 +1,5 @@
 \chapter{Fase 1: la campagna classica nel dettaglio}
+\captionsetup[figure]{font=small,labelfont=bf}
 \label{app:fase1}
 
 \section{Campagna parametrica e confronto con la Zero-Noise Extrapolation}
@@ -43,23 +44,36 @@ rumore e revisione del post-processing.
 \begin{table}[H]
 \centering
 
-\begin{tabular}{lr}
+\small
+\begin{tabularx}{0.85\textwidth}{@{}>{\raggedright\arraybackslash}Xr@{}}
 \toprule
 \textbf{Grandezza} & \textbf{Valore} \\
 \midrule
 Qubit totali & 12 \\
 \addlinespace[0.3em]
-Profondità / size & $412/604$ \\
+Profondità del circuito & 412 \\
 \addlinespace[0.3em]
-RZ / SX / CX & $302/70/224$ \\
+Numero totale di operazioni & 604 \\
+\addlinespace[0.3em]
+Porte \texttt{rz} & 302 \\
+\addlinespace[0.3em]
+Porte \texttt{sx} & 70 \\
+\addlinespace[0.3em]
+Porte \texttt{cx} & 224 \\
 \addlinespace[0.3em]
 Misure & 8 \\
+\midrule
+Versione Qiskit & \texttt{2.5.0} \\
 \addlinespace[0.3em]
-SHA-256 circuito & \texttt{c7f4cf3bc1735dce9d5b56d8e09686e...} \\
-\addlinespace[0.3em]
-Qiskit / Aer & $2.5.0/0.17.2$ \\
+Versione Qiskit Aer & \texttt{0.17.2} \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{0.85\textwidth}
+\footnotesize\setstretch{1}\raggedright
+\textit{SHA-256 del circuito (prefisso):}
+\texttt{c7f4cf3bc1735dce9d5b56d8e09686e\ldots}
+\end{minipage}
 \caption[Contratto riproducibile della campagna N=15]{Invarianti del
 circuito compilato impiegato da training, baseline, sweep e ZNE.}\label{tab:correzione_seed}\label{tab:circuit_depth}
 
@@ -223,6 +237,10 @@ variato insieme a $T_1$ mantenendo $T_2=0.8T_1$.
 
 \begin{table}[H]
 \centering
+\begin{minipage}{\linewidth}
+\centering
+
+\centering
 
 \begin{tabular}{ccccc}
 \toprule
@@ -239,12 +257,15 @@ $T_1/T_2$ ($\mu$s) & $\bar M_1$ & $\bar M_{\mathrm{TOP4}}$ & $\rho$ & $p$ \\
 500/400 & 1.80 & 1.00 & 1.800 & $<0.001$ \\
 \bottomrule
 \end{tabular}
-\caption[Sweep di $T_1/T_2$]{TOP-4 ottiene $\bar M=1.00$ e successo
+\captionof{table}[Sweep di $T_1/T_2$]{TOP-4 ottiene $\bar M=1.00$ e successo
 $100\%$ in tutti i punti.}\label{tab:sweep_t1}
 
-\end{table}
 
-\begin{table}[H]
+\par\bigskip
+\begin{minipage}[t]{0.48\linewidth}
+\centering\small
+\setlength{\tabcolsep}{3pt}
+
 \centering
 
 \begin{tabular}{cccc}
@@ -264,12 +285,15 @@ $10^{-2}$ & 1.57 & 1.567 & $<0.001$ \\
 $2\times10^{-2}$ & 1.47 & 1.467 & $<0.001$ \\
 \bottomrule
 \end{tabular}
-\caption[Sweep di $\lambda_{1q}$]{TOP-4 ottiene $\bar M=1.00$ e
+\captionof{table}[Sweep di $\lambda_{1q}$]{TOP-4 ottiene $\bar M=1.00$ e
 successo $100\%$ in tutti i punti.}\label{tab:sweep_eps1q}
 
-\end{table}
 
-\begin{table}[H]
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\centering\small
+\setlength{\tabcolsep}{3pt}
+
 \centering
 
 \begin{tabular}{cccc}
@@ -289,9 +313,12 @@ $10\%$ & 1.30 & 1.300 & 0.002 \\
 $20\%$ & 1.47 & 1.467 & $<0.001$ \\
 \bottomrule
 \end{tabular}
-\caption[Sweep del readout simmetrico]{TOP-4 ottiene $\bar M=1.00$ e
+\captionof{table}[Sweep del readout simmetrico]{TOP-4 ottiene $\bar M=1.00$ e
 successo $100\%$ in tutti i punti.}\label{tab:sweep_pro}
 
+
+\end{minipage}
+\end{minipage}
 \end{table}
 
 Le oscillazioni non monotone di M1 sconsigliano inferenze causali sui
@@ -404,7 +431,7 @@ riportato nella Sezione~\ref{sec:confronto}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{fig_roc_curve.pdf}
+    \includegraphics[width=0.90\textwidth,height=0.30\textheight,keepaspectratio]{fig_roc_curve.pdf}
 
 \caption[Curve ROC dei classificatori TOP-1 selezionati]{Curve ROC
     sul test set indipendente dei due classificatori \acs{SVM} selezionati
@@ -481,7 +508,7 @@ fattori. La massa complessiva sui quattro picchi è $0.594$.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.86\textwidth]{audit_istogramma_negativo.pdf}
+    \includegraphics[width=0.76\textwidth,height=0.33\textheight,keepaspectratio]{audit_istogramma_negativo.pdf}
 
 \caption[Istogramma TOP-1 negativo ma recuperabile con TOP-4]{Esempio
     nominale UC1 in cui TOP-1 fallisce perché la moda è $y=0$, mentre i
@@ -509,16 +536,7 @@ dataset è coerente con questo limite e non autorizza a concludere che il
 segnale sia perfetto.
 
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.78\textwidth]{tetto_classe_negativa.pdf}
-
-\caption[Tetto combinatorio alla classe negativa]{Decadimento di
-    $P_{\mathrm{neg}}(K)$ al crescere del numero di candidati. La figura
-    è rigenerata dai dati schema~2 e rende visibile perché TOP-16 non
-    definisce un problema di classificazione bilanciato su questa
-    istanza.}\label{fig:tetto_classe_negativa}
-\end{figure}
+La Figura~\ref{fig:finale_5_2} visualizza la probabilità complementare $1-P_{\mathrm{neg}}(K)$.
 
 Il verdetto ha un perimetro preciso: non mostra che l'apprendimento
 automatico sia inutile in generale, ma che un filtro a valle addestrato

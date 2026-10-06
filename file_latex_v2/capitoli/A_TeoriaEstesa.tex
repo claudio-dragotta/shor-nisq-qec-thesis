@@ -1,4 +1,5 @@
 \chapter{Trattazione teorica estesa}
+\captionsetup[figure]{font=small,labelfont=bf}
 \label{app:teoria}
 
 \section{Fondamenti del calcolo quantistico}
@@ -277,25 +278,34 @@ Per capire dove nascono gli errori bisogna prima capire com'è fatta la macchina
 \node[font=\footnotesize, orange!60!black, align=center] at (11.0,2.0) {microonde:\\controllo $\downarrow$ / lettura $\uparrow$};
 \end{tikzpicture}
 
-\caption[Anatomia schematica di una QPU superconduttiva a 5 qubit]{Schema didattico di una \ac{QPU} superconduttiva a 5 qubit con topologia a catena. Nel chip criogenico risiedono qubit, risonatori e accoppiatori; le operazioni sono pilotate dall'elettronica esterna mediante linee di controllo e lettura. L'interazione a due qubit diretta è disponibile solo lungo gli accoppiamenti disegnati ($Q_1$--$Q_2$ sì, $Q_0$--$Q_2$ mediante routing). $T_0$ rappresenta un qubit di riferimento non accoppiato alla catena, ma ancora dotato delle linee necessarie a preparazione e misura: non fornisce una misura ``pura'' di $T_1$ e non elimina perdite, Purcell effect o altre sorgenti di decoerenza.}\label{fig:qpu_anatomia}
+\caption[Anatomia schematica di una QPU superconduttiva a 5 qubit]{Schema didattico di una \ac{QPU} superconduttiva: cinque qubit in catena, qubit di riferimento $T_0$ ed elettronica esterna di controllo e lettura.}\label{fig:qpu_anatomia}
 \end{figure}
+
+Schema didattico di una \ac{QPU} superconduttiva a 5 qubit con topologia a catena. Nel chip criogenico risiedono qubit, risonatori e accoppiatori; le operazioni sono pilotate dall'elettronica esterna mediante linee di controllo e lettura. L'interazione a due qubit diretta è disponibile solo lungo gli accoppiamenti disegnati ($Q_1$--$Q_2$ sì, $Q_0$--$Q_2$ mediante routing). $T_0$ rappresenta un qubit di riferimento non accoppiato alla catena, ma ancora dotato delle linee necessarie a preparazione e misura: non fornisce una misura ``pura'' di $T_1$ e non elimina perdite, Purcell effect o altre sorgenti di decoerenza.
+
 
 La Figura~\ref{fig:qpu_reale} mostra come questa architettura si presenta nella realtà: all'esterno il sistema integrato (criostato, elettronica e schermature racchiusi nella teca), all'interno della sala macchine i cilindri criogenici sospesi con il fascio di tubi e cavi coassiali che convogliano le microonde di controllo e lettura --- le ``guide d'onda'' dello schema precedente.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
-\subfloat[IBM Quantum System One (Ehningen, Germania)]{\includegraphics[height=52mm]{foto_system_one.jpg}}\hspace{3mm}
-\subfloat[Criostati IBM Q con il cablaggio di controllo]{\includegraphics[height=52mm]{foto_criostato_ibm.jpg}}
+\subfloat[IBM Quantum System One]{\begin{minipage}{0.48\textwidth}\centering\includegraphics[width=\linewidth,height=36mm,keepaspectratio]{foto_system_one.jpg}\end{minipage}}\hfill
+\subfloat[Criostati e cablaggio]{\begin{minipage}{0.48\textwidth}\centering\includegraphics[width=\linewidth,height=36mm,keepaspectratio]{foto_criostato_ibm.jpg}\end{minipage}}
 
-\caption[La QPU reale: sistema integrato e criostati con cablaggio]{La \ac{QPU} reale. (a)~Il sistema integrato IBM Quantum System One: il cilindro nero al centro è il criostato che contiene il chip, circondato dall'elettronica di controllo. (b)~Criostati IBM Q in sala macchine: dall'alto arrivano i tubi per la refrigerazione e i cavi coassiali che convogliano le microonde di controllo e lettura verso il chip, sospeso sul fondo del cilindro a $\sim$15\,mK. \emph{Crediti: (a) IBM Research, licenza CC~BY~2.0; (b) Connie Zhou per IBM, pubblico dominio; entrambe via Wikimedia Commons.}}\label{fig:qpu_reale}
+\caption[La QPU reale: sistema integrato e criostati con cablaggio]{IBM Quantum System One (a) e criostati IBM Q con cablaggio di controllo (b). Crediti: IBM Research, CC~BY~2.0 (a); Connie Zhou per IBM, pubblico dominio (b), via Wikimedia Commons.}\label{fig:qpu_reale}
 \end{figure}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.62\textwidth]{foto_chip_transmon.png}
+La \ac{QPU} reale. (a)~Il sistema integrato IBM Quantum System One: il cilindro nero al centro è il criostato che contiene il chip, circondato dall'elettronica di controllo. (b)~Criostati IBM Q in sala macchine: dall'alto arrivano i tubi per la refrigerazione e i cavi coassiali che convogliano le microonde di controllo e lettura verso il chip, sospeso sul fondo del cilindro a $\sim$15\,mK.
 
-\caption[Chip quantistico superconduttivo a 6 transmon con giunzioni di test]{Resa tridimensionale di un chip quantistico superconduttivo con 6 qubit transmon e 12 giunzioni di test. Si riconoscono gli elementi dello schema di Figura~\ref{fig:qpu_anatomia}: i qubit con i loro risonatori, le linee di accoppiamento, le piazzole dorate per il collegamento alle guide d'onda e --- ai quattro angoli --- le strutture di test isolate, l'analogo reale del qubit $T_0$. \emph{Credito: Onri Jay Benally, licenza CC~BY~4.0, via Wikimedia Commons.}}\label{fig:chip_transmon}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.48\textwidth,height=0.25\textheight,keepaspectratio]{foto_chip_transmon.png}
+
+\caption[Chip quantistico superconduttivo a 6 transmon con giunzioni di test]{Resa tridimensionale di un chip a sei transmon e dodici giunzioni di test. Credito: Onri Jay Benally, CC~BY~4.0, via Wikimedia Commons.}\label{fig:chip_transmon}
 \end{figure}
+
+Resa tridimensionale di un chip quantistico superconduttivo con 6 qubit transmon e 12 giunzioni di test. Si riconoscono gli elementi dello schema di Figura~\ref{fig:qpu_anatomia}: i qubit con i loro risonatori, le linee di accoppiamento, le piazzole dorate per il collegamento alle guide d'onda e --- ai quattro angoli --- le strutture di test isolate, l'analogo reale del qubit $T_0$.
+
 
 Questa architettura ha tre conseguenze dirette per gli errori.
 
@@ -481,7 +491,7 @@ rilassamento, readout o struttura circuitale.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{15_psuccess_vs_n.pdf}
+\includegraphics[width=0.74\textwidth,height=0.30\textheight,keepaspectratio]{15_psuccess_vs_n.pdf}
 
 \caption[Proxy di nessun evento al crescere del circuito]{Proxy illustrativo
 $(1-\epsilon)^{n^3}$ per cinque valori di $\epsilon$. La curva non deriva dai
@@ -591,7 +601,7 @@ senza aggiungere nuovamente $T_1/T_2$, evitando il doppio conteggio.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{14_bloch_channels.pdf}
+\includegraphics[width=0.78\textwidth,height=0.37\textheight,keepaspectratio]{14_bloch_channels.pdf}
 
 \caption[Effetto dei canali di rumore sulla sfera di Bloch]{Effetto dei quattro
 canali nel piano $xz$. La curva tratteggiata è la sfera ideale: bit flip e

@@ -20,7 +20,7 @@ Questo capitolo raccoglie soltanto i concetti teorici necessari a comprendere gl
 
 \subsection{Stato, misura, interferenza ed entanglement}\label{sec:finale_3_1_1}
 
-Un qubit è descritto da uno stato normalizzato $\ket{\psi}=\alpha\ket{0}+\beta\ket{1}$, con $|\alpha|^2+|\beta|^2=1$. La misura nella base computazionale restituisce 0 o 1 con probabilità $|\alpha|^2$ e $|\beta|^2$; in un circuito con più registri, le ampiezze interferiscono prima della misura e possono produrre correlazioni non separabili. Nella tesi questi principi non sono trattati come richiamo enciclopedico, ma come prerequisiti per interpretare tre quantità osservabili: la struttura periodica degli istogrammi di Shor, le sindromi della QEC e la perdita di informazione di fase introdotta dall'AQFT. La trattazione estesa, inclusa la notazione di Dirac e la sfera di Bloch, è riportata nell'Appendice~\ref{app:fondamenti} \cite{nielsenChuang2000,wootters1982}.
+Un qubit è descritto da uno stato normalizzato $\ket{\psi}=\alpha\ket{0}+\beta\ket{1}$, con $|\alpha|^2+|\beta|^2=1$. La misura nella base computazionale restituisce 0 o 1 con probabilità $|\alpha|^2$ e $|\beta|^2$; in un circuito con più registri, le ampiezze interferiscono prima della misura e possono produrre correlazioni non separabili. Nella tesi questi principi non sono trattati come richiamo enciclopedico, ma come prerequisiti per interpretare tre quantità osservabili: la struttura periodica degli istogrammi di Shor, le sindromi della QEC e la perdita di informazione di fase introdotta dall'AQFT. La trattazione estesa, inclusa la notazione di Dirac e la sfera di Bloch, è riportata nella Sezione~\ref{app:fondamenti} \cite{nielsenChuang2000,wootters1982}.
 
 \subsection{Porte, operatori di Pauli e collegamento con la QEC}\label{sec:finale_3_1_2}
 
@@ -49,7 +49,7 @@ Misura & Istogrammi di Shor, estrazione della sindrome e metriche finali. \\
 
 \subsection{Matrice densità, stati misti e descrizione del rumore}\label{sec:finale_3_1_3}
 
-Per descrivere una distribuzione statistica di stati si usa la matrice densità $\rho$; un canale rumoroso è una mappa completamente positiva e preservante la traccia. Questa rappresentazione distingue la probabilità di un evento fisico dalla probabilità di fallimento del compito. Tale distinzione è essenziale: una stessa intensità di rumore può produrre esiti differenti in funzione del circuito, della codifica e della regola di post-processing. Le derivazioni dei canali e la loro azione sul vettore di Bloch sono raccolte nell'Appendice~\ref{app:canali} \cite{nielsenChuang2000,zurek2003}.
+Per descrivere una distribuzione statistica di stati si usa la matrice densità $\rho$; un canale rumoroso è una mappa completamente positiva e preservante la traccia. Questa rappresentazione distingue la probabilità di un evento fisico dalla probabilità di fallimento del compito. Tale distinzione è essenziale: una stessa intensità di rumore può produrre esiti differenti in funzione del circuito, della codifica e della regola di post-processing. Le derivazioni dei canali e la loro azione sul vettore di Bloch sono raccolte nella Sezione~\ref{app:canali} \cite{nielsenChuang2000,zurek2003}.
 
 \section{Algoritmo di Shor e definizione operativa del successo}\label{sec:finale_3_2}
 
@@ -111,7 +111,7 @@ Il costo dipende da qubit, porte a due qubit, profondità, routing e aritmetica 
 
 \subsection{Sorgenti fisiche rilevanti}\label{sec:finale_3_3_1}\label{sec:fonti_fisiche}
 
-Le campagne distinguono preparazione, rilassamento $T_1$, perdita di coerenza $T_2$, errori di gate, crosstalk e readout. Nei dispositivi reali questi fenomeni possono dipendere da qubit, tempo e routing; il modello uniforme di Shor li separa invece deliberatamente per identificare il contributo delle singole componenti. Gli aspetti fisici e l'anatomia di una QPU sono approfonditi nell'Appendice~\ref{app:anatomia}; il mapping operativo adottato nel corpo è illustrato nella Figura~\ref{fig:finale_3_3} \cite{preskill2018,murali2019,tannu2019}.
+Le campagne distinguono preparazione, rilassamento $T_1$, perdita di coerenza $T_2$, errori di gate, crosstalk e readout. Nei dispositivi reali questi fenomeni possono dipendere da qubit, tempo e routing; il modello uniforme di Shor li separa invece deliberatamente per identificare il contributo delle singole componenti. Gli aspetti fisici e l'anatomia di una QPU sono approfonditi nella Sezione~\ref{app:anatomia}; il mapping operativo adottato nel corpo è illustrato nella Figura~\ref{fig:finale_3_3} \cite{preskill2018,murali2019,tannu2019}.
 
 \begin{figure}[H]
 \centering
@@ -147,11 +147,11 @@ Le campagne distinguono preparazione, rilassamento $T_1$, perdita di coerenza $T
 
 \subsection{Canali elementari e convenzione depolarizzante}\label{sec:finale_3_3_2}
 
-Il rilassamento e il dephasing sono parametrizzati attraverso $T_1$, $T_2$ e la durata delle operazioni; il readout è descritto da una matrice di confusione. Per i gate, Qiskit Aer usa un canale depolarizzante parametrizzato da $\lambda$, che non coincide in generale con la probabilità aggregata di applicare un Pauli non identità. La convenzione esatta e le derivazioni complete sono riportate nell'Appendice~\ref{app:canali} e devono essere mantenute quando si confrontano campagne differenti \cite{qiskit2023,nielsenChuang2000}.
+Il rilassamento e il dephasing sono parametrizzati attraverso $T_1$, $T_2$ e la durata delle operazioni; il readout è descritto da una matrice di confusione. Per i gate, Qiskit Aer usa un canale depolarizzante parametrizzato da $\lambda$, che non coincide in generale con la probabilità aggregata di applicare un Pauli non identità. La convenzione esatta e le derivazioni complete sono riportate nella Sezione~\ref{app:canali} e devono essere mantenute quando si confrontano campagne differenti \cite{qiskit2023,nielsenChuang2000}.
 
 \subsection{Modello di rumore della campagna Shor N=15}\label{sec:finale_3_3_3}
 
-La campagna principale usa preset uniformi e controllati per porte a uno e due qubit, rilassamento e readout. Non rappresenta la calibrazione di una QPU specifica: serve a confrontare strategie sugli stessi istogrammi, con seed e netlist condivisi. I preset, gli sweep e le numerosità sono dichiarati nella Sezione~\ref{sec:finale_3_5} e nelle Appendici~\ref{app:parametrica} e~\ref{app:obiettivi}; i controlli hardware-aware usano invece una snapshot offline separata.
+La campagna principale usa preset uniformi e controllati per porte a uno e due qubit, rilassamento e readout. Non rappresenta la calibrazione di una QPU specifica: serve a confrontare strategie sugli stessi istogrammi, con seed e netlist condivisi. I preset, gli sweep e le numerosità sono dichiarati nella Sezione~\ref{sec:finale_3_5} e nelle Sezioni~\ref{app:parametrica} e~\ref{app:obiettivi}; i controlli hardware-aware usano invece una snapshot offline separata.
 
 \subsection{Tre grandezze d'errore che non vanno confuse}\label{sec:finale_3_3_4}
 
@@ -180,7 +180,7 @@ $p_g$ & Proxy Pauli totale applicato dopo ciascun gate compilato. & Sensibilità
 
 \subsection{Post-processing e mitigazione a valle della misura}\label{sec:finale_3_4_1}
 
-TOP-$K$ modifica soltanto la ricerca classica sui candidati già presenti nell'istogramma; il classificatore decide quando applicarla; la ZNE varia artificialmente il rumore per estrapolare un osservabile. Queste strategie non correggono lo stato quantistico e devono essere valutate sul costo finale della fattorizzazione. Per questo DR1 include l'ablazione TOP-4 senza classificatore e una baseline combinatoria, mentre i dettagli degli sweep e della ZNE sono conservati nell'Appendice~\ref{app:parametrica} \cite{temme2017,liBenjamin2017}.
+TOP-$K$ modifica soltanto la ricerca classica sui candidati già presenti nell'istogramma; il classificatore decide quando applicarla; la ZNE varia artificialmente il rumore per estrapolare un osservabile. Queste strategie non correggono lo stato quantistico e devono essere valutate sul costo finale della fattorizzazione. Per questo DR1 include l'ablazione TOP-4 senza classificatore e una baseline combinatoria, mentre i dettagli degli sweep e della ZNE sono conservati nella Sezione~\ref{app:parametrica} \cite{temme2017,liBenjamin2017}.
 
 \subsection{Quantum Error Correction: sindrome, distanza e soglia}\label{sec:finale_3_4_2}
 
@@ -218,7 +218,7 @@ Il surface code paga la località con un costo elevato: ogni patch protegge un s
 
 \subsection{Decoder analitici, appresi e ibridi}\label{sec:finale_3_4_3}
 
-MWPM interpreta i detection events tramite un grafo; BP+OSD combina belief propagation e una ricerca ordinata; il decoder appreso può sostituire la baseline oppure correggerne residualmente gli errori. Il confronto corretto usa gli stessi campioni e lo stesso modello nominale: una rete è scientificamente utile soltanto se recupera struttura non rappresentata dalla migliore baseline analitica plausibile. Disegno completo, controlli E1--E12 e matrici di trasferimento sono nell'Appendice~\ref{app:decodifica} \cite{pymatching2021,roffe2020,panteleev2021,alphaqubit2024,torlaiMelko2017}.
+MWPM interpreta i detection events tramite un grafo; BP+OSD combina belief propagation e una ricerca ordinata; il decoder appreso può sostituire la baseline oppure correggerne residualmente gli errori. Il confronto corretto usa gli stessi campioni e lo stesso modello nominale: una rete è scientificamente utile soltanto se recupera struttura non rappresentata dalla migliore baseline analitica plausibile. Disegno completo, controlli E1--E12 e matrici di trasferimento sono nella Sezione~\ref{app:decodifica} \cite{pymatching2021,roffe2020,panteleev2021,alphaqubit2024,torlaiMelko2017}.
 
 In BP+OSD la belief propagation scambia messaggi fra qubit e controlli per stimare la probabilità d'errore di ciascun qubit; se non converge a una correzione coerente con la sindrome, l'ordered statistics decoding usa quelle stime per risolvere il sistema lineare sui qubit più sospetti. L'ordine in cui i messaggi vengono aggiornati, tutti insieme (parallelo) o uno alla volta (seriale), non cambia il codice ma può cambiare molto la qualità della decodifica: la Sezione~\ref{sec:finale_5_3_8} mostra che sul Gross code questa sola scelta sposta il fallimento logico di circa due ordini di grandezza.
 
