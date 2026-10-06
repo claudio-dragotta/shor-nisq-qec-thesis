@@ -184,24 +184,25 @@
 \input{TITLE}
 
 % Dedica: versi allineati a destra, una riga vuota fra le due strofe.
-\begin{titlepage}
-    \vspace*{5cm}
-    \begin{flushright}
-        \itshape
-        Alla mia famiglia,\\
-        che ha creduto in me\\
-        quando io stesso dubitavo,\\
-        e mi ha insegnato che la luce\\
-        si trova anche camminando nel buio.
-
-        \bigskip
-        A me stesso,\\
-        perché ho imparato che resistere\\
-        non è l'assenza di paura,\\
-        ma scegliere di restare\\
-        quando nessuno ci credeva più.
-    \end{flushright}
-\end{titlepage}
+% Sospesa momentaneamente per la versione da inviare all'università.
+% \begin{titlepage}
+%     \vspace*{5cm}
+%     \begin{flushright}
+%         \itshape
+%         Alla mia famiglia,\\
+%         che ha creduto in me\\
+%         quando io stesso dubitavo,\\
+%         e mi ha insegnato che la luce\\
+%         si trova anche camminando nel buio.
+%
+%         \bigskip
+%         A me stesso,\\
+%         perché ho imparato che resistere\\
+%         non è l'assenza di paura,\\
+%         ma scegliere di restare\\
+%         quando nessuno ci credeva più.
+%     \end{flushright}
+% \end{titlepage}
 
 \hypersetup{pageanchor=true}
 \pagenumbering{roman}
@@ -218,6 +219,9 @@
 \listoftables
 
 % -----------------------------------------------
+% Sigle scritte in chiaro nei capitoli del corpo, senza \ac{}: \glsadd le
+% inserisce nell'elenco senza stampare l'espansione nel testo.
+\glsadd{ECR}\glsadd{IC}\glsadd{ML}\glsadd{RSA}
 \printnoidxglossary[type=\acronymtype, nonumberlist, title={Elenco degli Acronimi}]
 
 % -----------------------------------------------

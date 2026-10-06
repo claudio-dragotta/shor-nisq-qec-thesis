@@ -789,7 +789,6 @@ M11b: readout post-routing & 9 sottografi, 45 osservazioni & $\rho_s$ parziale=-
 {\small\setstretch{1.15}\noindent \textbf{Risposta a DR4.} Nel modello M8, la probabilità di fattorizzazione diminuisce al crescere del proxy per gate p\_g e converge verso la baseline uniforme specifica della procedura di estrazione. Le ripetizioni indipendenti compensano probabilisticamente un singolo run meno affidabile, ma non eliminano il costo del rumore. Le metriche QEC non vengono proiettate su questa curva: trasformare p\_L di una memoria in p\_g di una computazione richiederebbe una compilazione fault-tolerant esplicita.\par}
 \nopagebreak\noindent\rule{\linewidth}{0.6pt}\par\medskip
 
-\clearpage
 \section{DR5 - QFT approssimata: quando meno porte producono più informazione utile}\label{sec:finale_5_5}\label{sec:qft_topologia}
 
 La quinta domanda di ricerca studia un compromesso diverso: eliminare rotazioni controllate di piccolo angolo riduce il numero di porte e la profondità, ma introduce un errore algoritmico. Il beneficio esiste soltanto se il rumore evitato compensa l'informazione di fase persa. Per evitare una conclusione unica su circuiti molto differenti, la campagna distingue tre casi: Shor su N=15, Shor con aritmetica Beauregard su N=21 e Quantum Phase Estimation isolata. L'idea di eliminare rotazioni di piccolo angolo ha una tradizione teorica consolidata nell'AQFT; il punto qui è verificarne il beneficio sulla metrica algoritmica effettiva \cite{barencoAQFT1996,akoramurthy2026}.
@@ -834,7 +833,7 @@ Per N=15, a=7, il grado di troncamento k\_QPE viene scelto sui batch di selezion
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_9_aqft_n15_holdout.png}
+\includegraphics[width=0.6\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_9_aqft_n15_holdout.png}
 
 \caption{Successo holdout al variare del grado di troncamento della QFT inversa finale per N=15.}\label{fig:finale_5_9}
 \end{figure}
@@ -1017,8 +1016,3 @@ Nel perimetro simulativo adottato, i risultati mostrano che la ricerca multi-can
 Non viene invece dimostrata un'esecuzione end-to-end fault-tolerant di Shor. I tassi p\_L dei memory experiment non sono errori di porte logiche e non vengono convertiti in p\_g. Le campagne principali non sono eseguite su hardware reale; FakeSherbrooke è una snapshot offline e i modelli uniformi non riproducono deriva, leakage, crosstalk e routing nello stesso esperimento. L'istanza rumorosa principale è N=15, che ha caratteristiche particolarmente favorevoli sia al TOP-K sia all'AQFT. Le estensioni a moduli maggiori devono quindi variare separatamente dimensione di N, ordine r, topologia, calibrazione e aritmetica.
 
 Questi limiti non riducono il valore del lavoro; ne definiscono correttamente il livello di evidenza. Il contributo non è una previsione di quando Shor diventerà crittograficamente praticabile, ma un insieme di verifiche controllate che mostrano come distinguere beneficio reale, beneficio apparente e costo nascosto quando rumore, post-processing, correzione d'errore, decoder e approssimazione circuitale interagiscono.
-
-\subsection{Sintesi del capitolo}\label{sec:finale_5_6_4}
-
-
-Il Capitolo 6 riprende questi risultati per rispondere in forma conclusiva alle domande di ricerca, distinguendo contributi, limiti e sviluppi futuri. La conclusione generale non è che una singola tecnica risolva il problema del rumore, ma che l'efficacia di ogni intervento dipende dalla posizione in cui agisce e dall'informazione o dal costo che riesce realmente a modificare.
