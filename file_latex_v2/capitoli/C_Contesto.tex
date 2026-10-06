@@ -1,0 +1,94 @@
+\chapter{Contesto e motivazione}
+\label{app:contesto}
+
+\section{Contesto esteso dell'introduzione}
+\label{app:introduzione}
+\begin{onehalfspace}
+
+Questa sezione approfondisce il contesto del Capitolo~\ref{chap:introduzione}: l'origine del paradigma quantistico, la vulnerabilità di RSA all'algoritmo di Shor, la risposta della crittografia post-quantistica e il divario fra i dispositivi attuali e il calcolo fault-tolerant.
+
+\subsection{Dal Limite Classico al Paradigma Quantistico}
+\label{app:intro:origini}
+\label{app:intro:algoritmi}
+
+La crescita esponenziale del numero di transistor per chip, descritta nel 1965 da Gordon Moore come previsione industriale, si avvicina a limiti fisici: i transistor moderni misurano pochi nanometri, una scala alla quale gli effetti quantistici diventano inevitabili. A questo limite se ne affianca uno matematico: per alcuni problemi, come la fattorizzazione di grandi interi, nessun aumento di potenza di calcolo compensa algoritmi la cui richiesta di risorse cresce troppo rapidamente con la dimensione dell'input.
+
+Il calcolo quantistico nasce dall'idea di usare sovrapposizione, entanglement e interferenza come risorse computazionali. Richard Feynman osservò nel 1982 che la simulazione classica di sistemi quantistici può richiedere risorse esponenziali e propose una macchina governata dalle stesse leggi dei sistemi da simulare~\cite{feynman1982}; David Deutsch formalizzò nel 1985 il primo modello di computer quantistico universale~\cite{deutsch1985}. Nel 1994 Daniel Simon individuò un problema oracle con separazione esponenziale rispetto agli algoritmi classici probabilistici, e nello stesso anno Peter Shor pubblicò algoritmi polinomiali per fattorizzazione e logaritmo discreto~\cite{shor1994}: una macchina quantistica sufficientemente grande comprometterebbe quindi RSA, Diffie--Hellman ed \ac{ECDSA}. Nel 1996 Lov Grover mostrò che la ricerca non strutturata richiede $O(\sqrt{N})$ interrogazioni anziché $O(N)$~\cite{grover1996}: uno speedup quadratico che sulla crittografia simmetrica si compensa raddoppiando la lunghezza delle chiavi, mentre per RSA non esiste un rimedio analogo.
+
+% -----------------------------------------------
+\subsection{RSA e le Implicazioni Crittografiche dell'Algoritmo di Shor}
+\label{app:intro:rsa}
+
+Il sistema \textbf{RSA}, proposto nel 1977 da Rivest, Shamir e Adleman~\cite{rsa1978}, si fonda sull'asimmetria fra moltiplicare due primi grandi $p$ e $q$, operazione elementare, e ricavarli dal prodotto $N=pq$. Si calcola $\phi(N)=(p-1)(q-1)$, si sceglie $e$ coprimo con $\phi(N)$ (di solito $e=65537$) e si ricava $d\equiv e^{-1}\pmod{\phi(N)}$. La chiave pubblica è $(N,e)$, quella privata $d$: un messaggio $m<N$ si cifra come $c=m^e\bmod N$ e si decifra come $m=c^d\bmod N$, correttezza garantita dal teorema di Eulero. Calcolare $d$ da $(N,e)$ senza conoscere la fattorizzazione di $N$ è ritenuto intrattabile.
+
+Il miglior algoritmo classico noto, il \textit{General Number Field Sieve}~\cite{lenstra1993gnfs}, ha complessità sub-esponenziale:
+\begin{equation}
+    T_{\text{GNFS}}(N) = O\!\left(\exp\!\left[c\cdot(\log N)^{1/3}(\log\log N)^{2/3}\right]\right).
+    \label{eq:gnfs_complexity_intro}
+\end{equation}
+Per $N$ a 2048 bit ciò corrisponde a circa $2^{112}$ operazioni; il record pratico, RSA-250 (829 bit), ha richiesto circa 2700 anni-CPU~\cite{rsa250_2020}. Shor porta il costo a $O(n^3)$, polinomiale: le stime più recenti indicano per RSA-2048 meno di un milione di qubit fisici e meno di una settimana di calcolo~\cite{gidney2025}, sotto ipotesi architetturali precise (Sezione~\ref{app:shor_risorse}).
+
+Le primitive vulnerabili compaiono in TLS, nei certificati X.509, in SSH e nelle firme digitali. Il rischio \textit{``harvest now, decrypt later''} consiste nel conservare oggi dati cifrati ancora sensibili in attesa di una futura macchina capace di decifrarli. Il \ac{NIST} sottolinea che non esiste una data affidabile per la comparsa di tale macchina: le scadenze 2030--2035 delle roadmap istituzionali sono obiettivi di migrazione, non previsioni~\cite{nist_pqc_explainer2026}.
+
+% -----------------------------------------------
+\subsection{Crittografia Post-Quantistica}
+\label{app:intro:pqc}
+
+Nel 2016 il \ac{NIST} ha avviato la standardizzazione della \textbf{crittografia post-quantistica} (\ac{PQC}), cioè di algoritmi eseguibili su hardware classico e resistenti agli attacchi quantistici. Nell'agosto 2024 sono stati pubblicati i primi tre standard~\cite{nist2024pqc}: \textbf{ML-KEM} (FIPS~203) per lo scambio di chiavi e \textbf{ML-DSA} (FIPS~204) per le firme, entrambi basati su reticoli, e \textbf{SLH-DSA} (FIPS~205), firma basata solo su funzioni hash. Per questi problemi non sono noti algoritmi quantistici con speedup esponenziale. La migrazione è però lenta: molti sistemi hanno cicli di vita lunghi, il materiale crittografico è più voluminoso (800 byte per la chiave ML-KEM-512 contro circa 256 per una chiave pubblica RSA-2048) e nella fase transitoria si adottano schemi ibridi, classici e post-quantistici in parallelo.
+
+% -----------------------------------------------
+\subsection{Dall'Era NISQ al Calcolo Fault-Tolerant}
+\label{app:intro:nisq}
+
+I processori attuali sono descritti come \ac{NISQ}, termine introdotto da Preskill nel 2018~\cite{preskill2018}: il numero di qubit fisici, da solo, non li rende fault-tolerant, perché decoerenza, errori di gate, readout e connettività limitano la profondità affidabile. Un qubit non può inoltre essere copiato (teorema del no-cloning~\cite{wootters1982}) né letto senza perturbarlo, per cui la protezione dagli errori non può seguire le strategie classiche di ridondanza. Anche risultati simbolici come la dimostrazione di vantaggio computazionale di Google nel 2019~\cite{arute2019}, peraltro contestata, riguardano compiti specifici e non l'esecuzione di Shor su istanze crittografiche. La ricerca procede quindi su due direzioni complementari: la \ac{QEC}, che codifica qubit logici in molti qubit fisici al costo di un overhead elevato, e la mitigazione del rumore, che riduce gli effetti degli errori senza codifica ma con costi di campionamento.
+
+\end{onehalfspace}
+
+% -----------------------------------------------
+
+\section{Dettaglio degli obiettivi e del piano sperimentale}
+\label{app:obiettivi}
+\begin{onehalfspace}
+
+Obiettivi, domande di ricerca, metriche e contributi sono definiti nel Capitolo~\ref{chap:obiettivi}. Questa sezione ne riporta i dettagli operativi: le campagne con i relativi preset e il protocollo statistico del confronto appaiato.
+
+\subsection{Campagne e Validazioni}
+\label{app:obiettivi:usecase}
+
+Il disegno separa le campagne rumorose dalle validazioni ideali:
+
+\begin{itemize}
+    \item \textbf{Campagne rumorose N15}: stesso $N=15$, stessa base $a=7$, stesso circuito e due preset, \emph{riferimento} e \emph{stress}. Sono scenari uniformi illustrativi, non calibrazioni di una \ac{QPU} reale.
+    \item \textbf{Validazioni ideali N21/N35}: i moltiplicatori modulari di Beauregard sono verificati senza rumore mediante truth table, ripristino dei registri ausiliari e prove QPE ideali. Il loro costo esclude una campagna Aer rumorosa equivalente; l'assenza di tale campagna non viene interpretata come probabilità rumorosa nulla.
+\end{itemize}
+
+\subsubsection{Preset delle campagne rumorose}
+
+La Tabella~\ref{tab:finale_3_8} riporta le sole configurazioni rumorose. I simboli $\epsilon_{1q}$ e $\epsilon_{2q}$ indicano esattamente il parametro $\lambda$ passato da Aer a \texttt{depolarizing\_error}; non sono probabilità Pauli aggregate né dati di calibrazione hardware. Il modello è uniforme su tutti i qubit.
+
+
+\subsubsection{Razionale per la scelta delle istanze}
+\label{subsec:razionale_istanze}
+
+\textbf{N15 --- riferimento e stress.} La base $a=7$ ha periodo $r=4$ e consente di estrarre i fattori 3 e 5. Il moltiplicatore controllato implementa $y\mapsto7y\bmod15$ ripetendo l'operazione elementare \texttt{power} volte. Compilazione, durate dei gate e composizione dei canali sono descritte nella Sezione~\ref{app:fase1_contratto}.
+
+\textbf{N21 e N35 --- validazione ideale.} Per $N=21$, $a=2$, e $N=35$, $a=6$, si usa l'aritmetica reversibile di Beauregard. La verifica controlla l'azione sui vettori di base validi, il ritorno a zero degli ancilla e la QPE ideale; il costo circuitale che esclude queste istanze dalla campagna rumorosa è riportato nella stessa sezione. L'esclusione dal rumore è una scelta di validità e costo, non un risultato sulla robustezza delle due istanze.
+
+\subsection{Protocollo Statistico e Test}
+\label{app:obiettivi:protocollo}
+
+\subsubsection{Appaiamento, fallimenti e pareggi}
+
+Ogni replica genera un unico calendario di istogrammi: M1, $M_{\mathrm{TOP4}}$ e M2 analizzano gli stessi conteggi nello stesso ordine. Un fallimento entro $M_{\max}=50$ è codificato con la sentinella $M_{\max}+1$, così rimane distinto dal successo all'ultima iterazione e non scompare dai vettori inferenziali. Il confronto usa il test dei ranghi con segno di Wilcoxon con \texttt{zero\_method='pratt'} e soglia $\alpha=0.05$: M1$>$TOP-4 e M1$>$M2 sono unilaterali, TOP-4--M2 è bilaterale. Quando sono riportati più confronti della stessa famiglia, i valori $p$ vengono corretti con Holm.
+
+In caso di conteggi uguali, l'ordine dei candidati non dipende né dall'ordine del dizionario né dal valore numerico della bitstring: è stabilito da una priorità SHA-256 dipendente dal seed della coppia replica--iterazione. Seed base, calendari distinti per simulatore e tie-breaking, configurazione e hash degli artefatti sono registrati nel manifest.
+
+Nelle tabelle dell'Appendice~\ref{app:fase1} il fattore $\rho$ è il rapporto fra il numero medio di iterazioni di M1 e quello della strategia confrontata: $\rho>1$ indica soltanto una media inferiore per quest'ultima, mentre la significatività è stabilita sulle differenze appaiate e non dedotta dal rapporto fra medie.
+
+\subsubsection{Mitigazione e regole decisionali}
+
+Il readout error è incorporato nel simulatore come matrice di confusione simmetrica parametrizzata da $p_{\mathrm{ro}}$; non viene applicata una correzione post-hoc. La sensibilità a $p_{\mathrm{ro}}$ è misurata nella campagna parametrica (Sezione~\ref{subsec:sweep_secondari}).
+
+M1 seleziona la sola moda dell'istogramma, senza sogliatura preliminare, e applica direttamente \texttt{extract\_factors}. TOP-4 estende il tentativo ai quattro esiti più frequenti. M2 usa l'etichetta TOP-1 per decidere se accettare l'istogramma e, in caso positivo, applica TOP-4: proprio il confronto con TOP-4 privo di filtro isola l'effetto del classificatore.
+
+\end{onehalfspace}

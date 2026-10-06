@@ -1,0 +1,35 @@
+/* Tema chiaro per le catture da slide: sfondo bianco, accenti scuriti per il contrasto. */
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --bg-soft: #ffffff;
+  --surface: #ffffff;
+  --surface-solid: #ffffff;
+  --surface-raised: #f4f6fa;
+  --line: rgba(31, 41, 51, .14);
+  --line-strong: rgba(31, 41, 51, .38);
+  --text: #1f2933;
+  --muted: #47515e;
+  --dim: #5b6573;
+  --amber: #b8670b;
+  --amber-soft: rgba(184, 103, 11, .08);
+  --violet: #5b3fd1;
+  --pink: #b8327f;
+  --cyan: #0b7a85;
+  --green: #12805a;
+  --red: #c42d4a;
+  --blue: #125c97;
+  --shadow: none;
+}
+html, body { background: #ffffff !important; }
+body::before { display: none !important; }
+.panel, .circuit-panel, .anatomy-panel { background: #ffffff !important; box-shadow: none !important; }
+.c-wire { stroke: rgba(31, 41, 51, .42) !important; }
+.c-gate { fill: #ffffff !important; stroke: rgba(31, 41, 51, .55) !important; }
+.c-sphere { fill: #ffffff !important; stroke: rgba(31, 41, 51, .5) !important; }
+.c-sphere-axis { stroke: rgba(31, 41, 51, .28) !important; }
+.ana-gate { fill: #ffffff !important; }
+.ana-wire { stroke: rgba(31, 41, 51, .42) !important; }
+.stage-chip { background: rgba(184, 103, 11, .08) !important; border-color: rgba(184, 103, 11, .45) !important; }
+.tabs, .tabs.is-stuck { background: #ffffff !important; box-shadow: none !important; }
+.c-bloch-arrow { stroke-width: 3 !important; }
