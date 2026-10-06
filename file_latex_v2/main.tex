@@ -20,8 +20,11 @@
 \ifPDFTeX\else
   % Va caricato dopo i pacchetti AMS per evitare ridefinizioni dei simboli.
   \usepackage{unicode-math}
-  \usepackage{newunicodechar}
-  % Simboli matematici esportati da Word in modalità testo.
+\fi
+% Simboli matematici esportati da Word in modalità testo. Le definizioni
+% valgono per entrambi i motori: con pdfLaTeX, senza di esse, lettere greche,
+% apici e pedici Unicode (λ, μ, 10⁻⁵, ...) sparirebbero dal PDF.
+\usepackage{newunicodechar}
   \newunicodechar{±}{\ensuremath{\pm}}
   \newunicodechar{·}{\ensuremath{\cdot}}
   \newunicodechar{×}{\ensuremath{\times}}
@@ -74,7 +77,6 @@
   \newunicodechar{⟨}{\ensuremath{\langle}}
   \newunicodechar{⟩}{\ensuremath{\rangle}}
   \newunicodechar{✓}{\ensuremath{\checkmark}}
-\fi
 \usepackage{braket}         % Notazione di Dirac: \ket{}, \bra{}, \braket{}
 \usepackage{textcomp}
 \usepackage{xcolor}
@@ -98,9 +100,19 @@
 \usepackage{tabularx}
 \usepackage{longtable}
 \usepackage{array}
+% Tabelle: interlinea singola anche dentro gli ambienti a interlinea 1,5,
+% corpo ridotto per le longtable e righe leggermente distanziate.
+\usepackage{etoolbox}
+\usepackage{needspace}  % evita titoli isolati in fondo alla pagina prima di una tabella
+\AtBeginEnvironment{longtable}{\small\setstretch{1}\renewcommand{\arraystretch}{1.2}}
+\AtBeginEnvironment{tabular}{\setstretch{1}\renewcommand{\arraystretch}{1.2}}
+\AtBeginEnvironment{tabularx}{\setstretch{1}\renewcommand{\arraystretch}{1.2}}
+% Colonne X allineate a sinistra: niente spazi dilatati fra le parole.
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
 \usepackage{calc}
 \usepackage{caption}
-\captionsetup[table]{skip=6pt}
+\captionsetup[table]{position=bottom,skip=8pt,font=small,labelfont=bf,justification=raggedright,singlelinecheck=false}
+\captionsetup[figure]{position=bottom,skip=8pt,labelfont=bf,textfont=normalfont}
 % Pandoc usa un tipo di caption neutro per le tabelle che nel Word
 % contengono formule, senza incrementare la numerazione delle tabelle.
 \newcounter{none}
@@ -132,6 +144,10 @@
 \providecommand{\acs}[1]{\acrshort{#1}}
 \input{capitoli/Acronimi}   % definizioni acronimi nel preambolo
 
+% Didascalie dei listati in italiano, come nel Word ("Listato B.13").
+\renewcommand{\lstlistingname}{Listato}
+\renewcommand{\lstlistlistingname}{Elenco dei listati}
+
 % Stile codice Python/Qiskit
 \lstset{
     language=Python,
@@ -148,21 +164,6 @@
 % Pagina bianca
 \newcommand{\blankpage}{%
     \null\thispagestyle{empty}\addtocounter{page}{-1}\newpage
-}
-
-% Inserisce un file gia' strutturato come ex capitolo sotto una nuova
-% macrosezione, abbassando localmente di un livello i suoi titoli.
-% Il testo, le etichette e la numerazione interna restano invariati.
-\newcommand{\inputdemoted}[1]{%
-    \begingroup
-    \let\savedsection\section
-    \let\savedsubsection\subsection
-    \let\savedsubsubsection\subsubsection
-    \let\section\savedsubsection
-    \let\subsection\savedsubsubsection
-    \let\subsubsection\paragraph
-    \input{#1}%
-    \endgroup
 }
 
 % Separa, nello stesso sorgente, le evidenze centrali E1--E4 stampate nel
@@ -182,13 +183,24 @@
 \hypersetup{pageanchor=false}
 \input{TITLE}
 
+% Dedica: versi allineati a destra, una riga vuota fra le due strofe.
 \begin{titlepage}
     \vspace*{5cm}
-    \begin{center}
-        \emph{Alla mia famiglia, \\
-        per il sostegno incondizionato e l'amore che non è mai venuto meno. \\
-        A me stesso, per la determinazione e la perseveranza con cui ho affrontato questo percorso.}
-    \end{center}
+    \begin{flushright}
+        \itshape
+        Alla mia famiglia,\\
+        che ha creduto in me\\
+        quando io stesso dubitavo,\\
+        e mi ha insegnato che la luce\\
+        si trova anche camminando nel buio.
+
+        \bigskip
+        A me stesso,\\
+        perché ho imparato che resistere\\
+        non è l'assenza di paura,\\
+        ma scegliere di restare\\
+        quando nessuno ci credeva più.
+    \end{flushright}
 \end{titlepage}
 
 \hypersetup{pageanchor=true}
@@ -217,126 +229,23 @@
 % La voce 33 (Kitaev) è inclusa nella bibliografia anche se non richiamata
 % direttamente nel testo dei sei capitoli.
 \nocite{shor1994,buhler1993gnfs,rsa1978,preskill2018,skosana2021,yang2026,smolin2013,nielsenChuang2000,temme2017,steane1996,fowler2012,qiskit2023,stim2021,pymatching2021,scikit_learn,beauregard2002,googleQECBelowThreshold2025,alphaqubit2024,chevignard2025,wootters1982,shorcorrection1995,googleSurfaceCode2023,torlaiMelko2017,yan2026,roffe2020,panteleev2021,sarovar2020,barencoAQFT1996,akoramurthy2026,gidney2021,aharonov1997fault,dennis2002topological,kitaev2003,liBenjamin2017,rsa250_2020,shuklaqpe2026,shukla2026,zurek2003,vandersypen2001,monz2016,calderbankShor1996,gottesman1997,murali2019,tannu2019}
-\chapter{Introduzione}
-\label{chap:introduzione}
-\input{capitoli/Capitolo1Finale}
 
-% -----------------------------------------------
-\chapter{Problema di ricerca, obiettivi e criteri di valutazione}
-\label{chap:obiettivi}
-\label{chap:specifiche}
-\input{capitoli/Capitolo2Finale}
-
-% -----------------------------------------------
-% Il quadro teorico e il metodo sono raccolti in un unico capitolo. Le etichette
-% dei precedenti capitoli restano come alias per preservare tutti i riferimenti.
-\chapter{Fondamenti teorici e metodologia sperimentale}
-\label{chap:quadro}
-\label{chap:shor}
-\label{chap:rumore}
-\label{chap:strategie}
-\label{chap:metodologia}
-\label{chap:fondamenti}
-\input{capitoli/Capitolo3Finale}
-
-% -----------------------------------------------
-\chapter{Architettura e implementazione del sistema sperimentale}
-\label{chap:implementazione}
-\label{chap:sviluppo}
-\label{chap:strumenti}
-\input{capitoli/Capitolo4Finale}
-
-% -----------------------------------------------
-% Tutte le campagne e i relativi risultati sono presentati nello stesso capitolo.
-% Le etichette storiche rimangono alias dello stesso capitolo per retro-compatibilita'.
-\chapter{Risultati e discussione sperimentale}
-\label{chap:risultati}
-\label{chap:risultati1}
-\label{chap:conclusioni1}
-\label{chap:risultati2}
-\label{chap:conclusioni2}
-\label{chap:qec}
-\label{chap:predizione}
-\label{chap:surface}
-\label{chap:integrazione}
-\input{capitoli/Capitolo5Finale}
-
-% -----------------------------------------------
-\chapter{Conclusioni e sviluppi futuri}
-\label{chap:conclusioni}
-\label{chap:sviluppi}
-\input{capitoli/Capitolo6Finale}
+% Un file per capitolo e uno per appendice: ogni file apre con il proprio
+% \chapter e con le etichette, comprese quelle storiche mantenute come alias.
+\input{capitoli/01_Introduzione}
+\input{capitoli/02_Obiettivi}
+\input{capitoli/03_FondamentiMetodologia}
+\input{capitoli/04_Implementazione}
+\input{capitoli/05_Risultati}
+\input{capitoli/06_Conclusioni}
 
 % -----------------------------------------------
 \appendix
-
-% --- A ---------------------------------------------------------------------
-\chapter{Trattazione teorica estesa}
-\label{app:teoria}
-\section{Fondamenti del calcolo quantistico}
-\label{app:fondamenti}
-\input{capitoli/AppendiceFondamenti}
-\section{L'anatomia fisica di una QPU}
-\label{app:anatomia}
-\input{capitoli/AppendiceAnatomiaQPU}
-\section{L'algoritmo di Shor --- approfondimenti e stato dell'arte}
-\label{app:shor_esteso}
-\input{capitoli/AppendiceShorEsteso}
-\section{I canali di rumore: derivazioni complete}
-\label{app:canali}
-\input{capitoli/AppendiceCanali}
-
-% --- B ---------------------------------------------------------------------
-\chapter{Strumenti, ambiente e codice}
-\label{app:strumentiecodice}
-\section{Strumenti e ambiente di simulazione --- trattazione estesa}
-\label{app:strumenti}
-\input{capitoli/AppendiceStrumenti}
-\section{Codice sorgente dei componenti implementati}
-\label{app:codice}
-\input{capitoli/AppendiceCodice}
-
-% --- C ---------------------------------------------------------------------
-\chapter{Contesto e motivazione}
-\label{app:contesto}
-\section{Contesto esteso dell'introduzione}
-\label{app:introduzione}
-\input{capitoli/AppendiceIntroduzione}
-\section{Dettaglio degli obiettivi e del piano sperimentale}
-\label{app:obiettivi}
-\input{capitoli/AppendiceObiettivi}
-
-% --- D ---------------------------------------------------------------------
-\chapter{Fase 1: la campagna classica nel dettaglio}
-\label{app:fase1}
-\section{Campagna parametrica e confronto con la Zero-Noise Extrapolation}
-\label{app:parametrica}
-\input{capitoli/AppendiceParametrica}
-\section{Il classificatore ML: architettura, addestramento e metriche}
-\label{app:classificatore}
-\input{capitoli/AppendiceClassificatore}
-
-% --- E ---------------------------------------------------------------------
-\chapter{Fase 2: la campagna QEC nel dettaglio}
-\label{app:fase2}
-\section{Laboratori preliminari QEC: codici a ripetizione e di Steane}
-\label{app:laboratori_qec}
-\input{capitoli/AppendiceLaboratoriQEC}
-\section{Surface code: protocollo e controlli sul modello}
-\label{app:surface_protocollo_generale}
-\input{capitoli/AppendiceSurfaceProtocollo}
-\section{La decodifica appresa: la campagna completa}
-\label{app:decodifica}
-\input{capitoli/AppendiceDecodificaAppresa}
-\section{Il Gross code nel modello code-capacity}
-\label{app:gross}
-\input{capitoli/AppendiceGrossCode}
-\section{Analisi di sensibilità di Shor: dettagli e verifiche}
-\label{app:shor_sensibilita}
-\input{capitoli/AppendiceShorSensibilita}
-\section[Compilazione consapevole della struttura: un'esplorazione]{Compilazione consapevole della struttura:\\ un'esplorazione}
-\label{app:compilazione}
-\inputdemoted{capitoli/AppendiceCompilazione}
+\input{capitoli/A_TeoriaEstesa}
+\input{capitoli/B_StrumentiCodice}
+\input{capitoli/C_Contesto}
+\input{capitoli/D_Fase1}
+\input{capitoli/E_Fase2}
 
 % -----------------------------------------------
 \begingroup
@@ -345,8 +254,10 @@
 \endgroup
 
 % -----------------------------------------------
-\chapter*{Ringraziamenti}
-\input{capitoli/Ringraziamenti}
+% Ringraziamenti sospesi momentaneamente: da riattivare quando il testo
+% personale (prosecuzione di quelli della triennale) sarà pronto.
+% \chapter*{Ringraziamenti}
+% \input{capitoli/Ringraziamenti}
 
 
 \end{document}

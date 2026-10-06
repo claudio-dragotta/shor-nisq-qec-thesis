@@ -1,3 +1,7 @@
+\chapter{Problema di ricerca, obiettivi e criteri di valutazione}
+\label{chap:obiettivi}
+\label{chap:specifiche}
+
 % Generato dalla versione Word revisionata e dalla bozza auditata.
 % Le citazioni numeriche originali sono state convertite in chiavi BibLaTeX.
 
@@ -39,31 +43,31 @@ Anche le grandezze d'errore vengono mantenute separate. Nei memory experiment QE
 
 Per mantenere una corrispondenza diretta con gli esperimenti del Capitolo 5, le domande di ricerca sono organizzate secondo le cinque linee sperimentali effettivamente analizzate.
 
-\textbf{DR1 --- Post-processing e machine learning.} La ricerca multi-candidato riduce il numero di iterazioni necessarie a ottenere i fattori? Un classificatore applicato all'istogramma produce un beneficio aggiuntivo rispetto alla stessa strategia TOP-K senza filtro?
+\textbf{DR1 - Post-processing e machine learning.} La ricerca multi-candidato riduce il numero di iterazioni necessarie a ottenere i fattori? Un classificatore applicato all'istogramma produce un beneficio aggiuntivo rispetto alla stessa strategia TOP-K senza filtro?
 
 \begin{quote}
 \emph{H1: TOP-K migliora TOP-1 quando l'informazione utile è ancora presente tra gli esiti più frequenti; il classificatore è utile solo se riduce ulteriormente il costo operativo rispetto alla propria ablazione.}
 \end{quote}
 
-\textbf{DR2 --- Codici di correzione.} In quale regime la codifica rende l'informazione logica più affidabile del qubit fisico e come cambia l'errore al crescere della distanza del codice?
+\textbf{DR2 - Codici di correzione.} In quale regime la codifica rende l'informazione logica più affidabile del qubit fisico e come cambia l'errore al crescere della distanza del codice?
 
 \begin{quote}
 H2: per codici di distanza 3, a piccolo errore fisico, il contributo dominante al fallimento è di ordine p²; per il surface code esiste un regime sotto soglia nel quale aumentare la distanza riduce p\_L. \cite{steane1996,fowler2012,googleQECBelowThreshold2025,googleSurfaceCode2023,dennis2002topological}
 \end{quote}
 
-\textbf{DR3 --- Decodifica analitica e appresa.} Un decoder appreso può superare un decoder analitico quando il modello di rumore contiene correlazioni che quest'ultimo non rappresenta? È più efficace sostituire il decoder o correggerne gli errori residui? Quanto pesa il decoder quando si confrontano codici diversi, come il surface code e un codice qLDPC?
+\textbf{DR3 - Decodifica analitica e appresa.} Un decoder appreso può superare un decoder analitico quando il modello di rumore contiene correlazioni che quest'ultimo non rappresenta? È più efficace sostituire il decoder o correggerne gli errori residui? Quanto pesa il decoder quando si confrontano codici diversi, come il surface code e un codice qLDPC?
 
 \begin{quote}
 H3: a modello corretto il decoder analitico resta competitivo; un vantaggio appreso può emergere in presenza di struttura informativa non rappresentata dal riferimento e può risultare più efficace in forma ibrida. Nel confronto fra codici, il vantaggio in qubit dei codici qLDPC è atteso solo con un decoder che sfrutti la loro distanza. \cite{alphaqubit2024,torlaiMelko2017,yan2026,bravyi2024}
 \end{quote}
 
-\textbf{DR4 --- Sensibilità di Shor.} Come varia la probabilità di ricavare i fattori al crescere di un proxy di errore per gate p\_g e quante esecuzioni indipendenti sono necessarie per raggiungere una probabilità cumulativa prefissata?
+\textbf{DR4 - Sensibilità di Shor.} Come varia la probabilità di ricavare i fattori al crescere di un proxy di errore per gate p\_g e quante esecuzioni indipendenti sono necessarie per raggiungere una probabilità cumulativa prefissata?
 
 \begin{quote}
 \emph{H4: il successo per singolo shot è compatibile con una funzione non crescente di p\_g e tende, per rumore elevato, verso il livello determinato dalla procedura classica di accettazione degli esiti.}
 \end{quote}
 
-\textbf{DR5 --- QFT approssimata.} Quando la riduzione del numero di porte ottenuta troncando le rotazioni della QFT compensa la perdita di precisione algoritmica?
+\textbf{DR5 - QFT approssimata.} Quando la riduzione del numero di porte ottenuta troncando le rotazioni della QFT compensa la perdita di precisione algoritmica?
 
 \begin{quote}
 H5: l'AQFT può produrre un vantaggio quando il risparmio circuitale supera l'errore di approssimazione; il beneficio dipende dalla struttura delle fasi, dalla profondità del circuito e dal regime di rumore e non è quindi atteso come universale. \cite{barencoAQFT1996,akoramurthy2026}
@@ -71,38 +75,8 @@ H5: l'AQFT può produrre un vantaggio quando il risparmio circuitale supera l'er
 
 \section{Contratto sperimentale e metriche}\label{sec:finale_2_5}\label{sec:metriche}
 
-Le domande precedenti vengono associate a metriche e criteri di decisione differenti. Le grandezze non vengono convertite fra loro quando descrivono oggetti diversi. La tabella seguente costituisce il contratto sintetico tra questo capitolo e il Capitolo 5.
+Le domande precedenti vengono associate a metriche e criteri di decisione differenti. Le grandezze non vengono convertite fra loro quando descrivono oggetti diversi. La Tabella~\ref{tab:verifica_requisiti} riunisce i confronti, le metriche e le analisi delle cinque linee sperimentali; le sezioni seguenti ne precisano i criteri di valutazione.
 
-{\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}
-  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\centering
-\textbf{Linea}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Confronto}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Metrica primaria}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Criterio di evidenza}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Risultati}
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-DR1 & TOP-1 / TOP-4 / ML+TOP-4 & Iterazioni fino ai fattori; successo entro Mmax & Confronto appaiato; Wilcoxon-Pratt; correzione di Holm; ablazione del classificatore & §5.1 \\
-DR2 & Repetition / Steane / surface code & p\_L(p,d), pendenza, break-even, p\_th & p\_L \textless{} p; soppressione con la distanza sotto soglia & §5.2--5.3 \\
-DR3 & MWPM / rete / ibrido / BP+OSD & Differenza di p\_L sugli stessi campioni & Confronti appaiati; McNemar; vantaggio nel regime dichiarato & §5.3 \\
-DR4 & Shor con p\_g crescente & P\_succ(p\_g); P cumulativa su k tentativi & Andamento non crescente; IC binomiali; nessuna conversione diretta da QEC & §5.4 \\
-DR5 & QFT piena / AQFT & P\_succ, ΔP, porte 2Q, profondità & Selezione e holdout separati; IC Newcombe; bilancio costo-precisione & §5.5 \\
-\end{longtable}
-}
 
 \section{Criteri specifici di valutazione}\label{sec:finale_2_6}
 

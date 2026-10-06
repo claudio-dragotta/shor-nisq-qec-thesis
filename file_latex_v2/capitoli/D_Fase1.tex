@@ -1,0 +1,530 @@
+\chapter{Fase 1: la campagna classica nel dettaglio}
+\label{app:fase1}
+
+\section{Campagna parametrica e confronto con la Zero-Noise Extrapolation}
+\label{app:parametrica}
+\begin{onehalfspace}
+
+Questa sezione riporta la campagna parametrica schema~2 sulla
+strategia TOP-K, di cui il Capitolo~\ref{chap:risultati} riporta la sintesi. Il protocollo usa $N=15$, $a=7$,
+$n_{\mathrm{count}}=8$, 30 repliche, budget massimo 50 e, salvo diversa
+indicazione, $1\,024$ shot. Il preset di riferimento è
+$\lambda_{1q}=10^{-3}$, $\lambda_{2q}=10^{-2}$,
+$T_1/T_2=100/80\,\mu$s e readout simmetrico $2\%$.
+
+Il materiale approfondisce le Sezioni~\ref{sec:setup_m1}--\ref{sec:parametri_mitigazione}
+con il contratto riproducibile, le validazioni accessorie e le diagnostiche. Poiché non è
+applicata una correzione globale fra le otto famiglie di sweep, i $p$ di questa sezione
+hanno finalità esplorativa.
+
+% -----------------------------------------------
+\subsection{Contratto sperimentale e perimetro delle validazioni}
+\label{app:fase1_contratto}
+
+Il percorso rumoroso è limitato a $N=15$, $a=7$ e otto qubit di
+controllo. Smolin, Smith e Vargo hanno mostrato che una versione compilata
+di Shor costruita sfruttando la conoscenza della risposta può fattorizzare
+prodotti di due primi in tempo costante e con due soli qubit coerenti;
+l'istanza non è quindi presentata come evidenza di scalabilità, ma come
+banco di prova comune per strategie di post-processing sul medesimo
+istogramma~\cite{smolin2013}.
+
+Il circuito è compilato nella base \texttt{rz/sx/x/cx} con
+\texttt{optimization\_level=2} e seed del transpiler 20260819. I gate RZ
+sono virtuali; SX/X hanno durata illustrativa di 50\,ns e CX di 300\,ns.
+Il modello uniforme combina depolarizzazione a uno e due qubit,
+rilassamento/dephasing e readout: non riproduce una calibrazione né la
+topologia di una QPU specifica. Le strategie della stessa replica ricevono il
+medesimo istogramma; pareggi, sentinella di fallimento (51) e test di Wilcoxon--Pratt,
+con correzione di Holm entro ciascuna famiglia, seguono il protocollo della
+Sezione~\ref{app:obiettivi:protocollo}. Il JSON registra seed, manifest, revisione del
+rumore e revisione del post-processing.
+
+\begin{table}[H]
+\centering
+
+\begin{tabular}{lr}
+\toprule
+\textbf{Grandezza} & \textbf{Valore} \\
+\midrule
+Qubit totali & 12 \\
+\addlinespace[0.3em]
+Profondità / size & $412/604$ \\
+\addlinespace[0.3em]
+RZ / SX / CX & $302/70/224$ \\
+\addlinespace[0.3em]
+Misure & 8 \\
+\addlinespace[0.3em]
+SHA-256 circuito & \texttt{c7f4cf3bc1735dce9d5b56d8e09686e...} \\
+\addlinespace[0.3em]
+Qiskit / Aer & $2.5.0/0.17.2$ \\
+\bottomrule
+\end{tabular}
+\caption[Contratto riproducibile della campagna N=15]{Invarianti del
+circuito compilato impiegato da training, baseline, sweep e ZNE.}\label{tab:correzione_seed}\label{tab:circuit_depth}
+
+\end{table}
+
+L'aritmetica Beauregard per $N=21$ e $N=35$ è stata verificata
+separatamente nel caso ideale mediante truth table esaustive dei
+moltiplicatori controllati, pulizia delle ancille e confronto della legge
+QPE con quella teorica. La distanza di variazione totale è
+$1.38\times10^{-9}$ per $N=21$, $a=2$, $r=6$ e
+$2.50\times10^{-13}$ per $N=35$, $a=6$, $r=2$. Per $N=21$, otto
+controlli e compilazione congiunta nella base esecutiva producono 21\,036
+CX e profondità 23\,081. Al valore diagnostico
+$\lambda_{2q}=10^{-3}$, la probabilità che nessuna CX applichi un Pauli
+non-identità è
+\[
+  \left(1-\frac{15}{16}\lambda_{2q}\right)^{21036}
+  =2.70\times10^{-9};
+\]
+non è una fedeltà né una probabilità di fattorizzazione.
+
+\begin{table}[H]
+\centering
+
+\begin{tabular}{lcc}
+\toprule
+\textbf{Istanza} & \textbf{Ideale} & \textbf{Rumorosa} \\
+\midrule
+$N=15$, $a=7$ & truth table e QPE & campagna completa \\
+\addlinespace[0.3em]
+$N=21$, $a=2$ & truth table e QPE & esclusa per costo \\
+\addlinespace[0.3em]
+$N=35$, $a=6$ & truth table e QPE & esclusa per costo \\
+\bottomrule
+\end{tabular}
+\caption[Perimetro delle validazioni]{Separazione fra validazione ideale
+e campagna rumorosa. Nel corpo è mantenuto il solo confronto centrale su
+$N=15$ e la sintesi delle verifiche ideali su $N=21/35$; qui ne resta
+il contratto esteso. Le prove AQFT rumorose su $N=21$ sono separate
+e documentate nella Sezione~\ref{sec:app_aqft}.}\label{tab:costo_simulazione}
+
+\end{table}
+
+% -----------------------------------------------
+\subsection{Variazione di K}
+\label{subsec:sweep_k}
+
+\begin{table}[H]
+\centering
+
+\begin{tabular}{cccccc}
+\toprule
+$K$ & $\bar M_1$ & $\bar M_{\mathrm{TOP}K}$ & successo & $\rho$ & $p$ \\
+\midrule
+1 & 1.37 & 1.37 & $100\%$ & 1.000 & 1.000 \\
+\addlinespace[0.3em]
+2 & 1.37 & 1.00 & $100\%$ & 1.367 & $<0.001$ \\
+\addlinespace[0.3em]
+3 & 1.37 & 1.00 & $100\%$ & 1.367 & $<0.001$ \\
+\addlinespace[0.3em]
+4 & 1.37 & 1.00 & $100\%$ & 1.367 & $<0.001$ \\
+\addlinespace[0.3em]
+6 & 1.37 & 1.00 & $100\%$ & 1.367 & $<0.001$ \\
+\addlinespace[0.3em]
+8 & 1.37 & 1.00 & $100\%$ & 1.367 & $<0.001$ \\
+\bottomrule
+\end{tabular}
+\caption[Sweep del numero di candidati]{M1 e TOP-K sui medesimi 30
+vettori di iterazioni. $K=1$ coincide con il controllo M1.}\label{tab:sweep_k}
+
+\end{table}
+
+La soglia osservata è $K=2$, non $K=r=4$. Questo risultato dipende
+dalla banda di esiti che la post-elaborazione mappa su un periodo utile e
+non costituisce una regola generale per altre istanze.
+
+% -----------------------------------------------
+\subsection{Variazione di
+\texorpdfstring{$\lambda_{2q}$}{lambda 2q}}
+\label{subsec:sweep_eps}
+
+Per il canale Aer a due qubit,
+$\mathcal E(\rho)=(1-\lambda)\rho+\lambda I/4$, la probabilità
+aggregata della componente Pauli non-identità è $15\lambda/16$. Sul
+circuito da 224 CX il proxy di nessun evento è quindi
+$(1-15\lambda_{2q}/16)^{224}$; non è una probabilità di successo.
+
+\begin{table}[H]
+\centering
+
+\begin{tabular}{cccccc}
+\toprule
+$\lambda_{2q}$ & proxy & $\bar M_1$ & $\bar M_{\mathrm{TOP4}}$ & $\rho$ & $p$ \\
+\midrule
+$10^{-3}$ & $8.11\times10^{-1}$ & 1.93 & 1.00 & 1.933 & $<0.001$ \\
+\addlinespace[0.3em]
+$5\times10^{-3}$ & $3.49\times10^{-1}$ & 1.90 & 1.00 & 1.900 & $<0.001$ \\
+\addlinespace[0.3em]
+$10^{-2}$ & $1.21\times10^{-1}$ & 1.37 & 1.00 & 1.367 & $<0.001$ \\
+\addlinespace[0.3em]
+$2\times10^{-2}$ & $1.44\times10^{-2}$ & 1.33 & 1.00 & 1.333 & 0.001 \\
+\addlinespace[0.3em]
+$5\times10^{-2}$ & $2.14\times10^{-5}$ & 1.33 & 1.00 & 1.333 & $<0.001$ \\
+\addlinespace[0.3em]
+$10^{-1}$ & $2.65\times10^{-10}$ & 1.57 & 1.07 & 1.469 & 0.001 \\
+\bottomrule
+\end{tabular}
+\caption[Sweep del parametro Aer $\lambda_{2q}$]{Il tasso di successo è
+$100\%$ per tutte le 30 repliche di ciascun punto.}\label{tab:sweep_eps}\label{tab:sweep_eps2q}
+
+\end{table}
+
+Al punto estremo TOP-4 richiede in media 1.07 iterazioni: la robustezza
+non è assoluta, pur restando il successo $30/30$ entro il budget.
+
+% -----------------------------------------------
+\subsection{Variazione degli Shot}
+\label{subsec:sweep_shots}
+
+\begin{table}[H]
+\centering
+
+\begin{tabular}{ccccc}
+\toprule
+shot & $\bar M_1$ & $\bar M_{\mathrm{TOP4}}$ & $\rho$ & $p$ \\
+\midrule
+128  & 1.37 & 1.00 & 1.367 & 0.001 \\
+\addlinespace[0.3em]
+256  & 1.57 & 1.00 & 1.567 & $<0.001$ \\
+\addlinespace[0.3em]
+512  & 1.57 & 1.00 & 1.567 & 0.001 \\
+\addlinespace[0.3em]
+1\,024 & 1.37 & 1.00 & 1.367 & $<0.001$ \\
+\addlinespace[0.3em]
+2\,048 & 1.70 & 1.00 & 1.700 & $<0.001$ \\
+\bottomrule
+\end{tabular}
+\caption[Sweep degli shot]{Risultati su 30 repliche per punto.}\label{tab:sweep_shots}
+
+\end{table}
+
+TOP-4 è stabile già a 128 shot; M1 oscilla senza andamento monotono,
+coerentemente con una competizione campionaria fra quattro picchi.
+
+% -----------------------------------------------
+\subsection{Analisi Congiunta
+\texorpdfstring{$K\times\lambda_{2q}$}{K x lambda 2q}}
+\label{subsec:sweep_joint}
+
+Sulla griglia $K\in\{2,4,6,8\}\times\lambda_{2q}\in\{5\times10^{-3},
+10^{-2},2\times10^{-2},5\times10^{-2}\}$ TOP-$K$ ottiene
+$\bar M_{\mathrm{TOP}K}=1.00$ con successo $100\%$ su 30 repliche in tutte
+le sedici celle.
+
+% -----------------------------------------------
+\subsection{Parametri Secondari}
+\label{subsec:sweep_secondari}
+
+RZ è virtuale (0\,ns), SX/X dura 50\,ns e CX 300\,ns. $T_2$ viene
+variato insieme a $T_1$ mantenendo $T_2=0.8T_1$.
+
+\begin{table}[H]
+\centering
+
+\begin{tabular}{ccccc}
+\toprule
+$T_1/T_2$ ($\mu$s) & $\bar M_1$ & $\bar M_{\mathrm{TOP4}}$ & $\rho$ & $p$ \\
+\midrule
+20/16 & 1.47 & 1.00 & 1.467 & $<0.001$ \\
+\addlinespace[0.3em]
+50/40 & 2.20 & 1.00 & 2.200 & $<0.001$ \\
+\addlinespace[0.3em]
+100/80 & 1.37 & 1.00 & 1.367 & $<0.001$ \\
+\addlinespace[0.3em]
+200/160 & 1.60 & 1.00 & 1.600 & 0.001 \\
+\addlinespace[0.3em]
+500/400 & 1.80 & 1.00 & 1.800 & $<0.001$ \\
+\bottomrule
+\end{tabular}
+\caption[Sweep di $T_1/T_2$]{TOP-4 ottiene $\bar M=1.00$ e successo
+$100\%$ in tutti i punti.}\label{tab:sweep_t1}
+
+\end{table}
+
+\begin{table}[H]
+\centering
+
+\begin{tabular}{cccc}
+\toprule
+$\lambda_{1q}$ & $\bar M_1$ & $\rho$ & $p$ \\
+\midrule
+$10^{-4}$ & 1.60 & 1.600 & $<0.001$ \\
+\addlinespace[0.3em]
+$5\times10^{-4}$ & 1.43 & 1.433 & $<0.001$ \\
+\addlinespace[0.3em]
+$10^{-3}$ & 1.37 & 1.367 & $<0.001$ \\
+\addlinespace[0.3em]
+$5\times10^{-3}$ & 1.67 & 1.667 & $<0.001$ \\
+\addlinespace[0.3em]
+$10^{-2}$ & 1.57 & 1.567 & $<0.001$ \\
+\addlinespace[0.3em]
+$2\times10^{-2}$ & 1.47 & 1.467 & $<0.001$ \\
+\bottomrule
+\end{tabular}
+\caption[Sweep di $\lambda_{1q}$]{TOP-4 ottiene $\bar M=1.00$ e
+successo $100\%$ in tutti i punti.}\label{tab:sweep_eps1q}
+
+\end{table}
+
+\begin{table}[H]
+\centering
+
+\begin{tabular}{cccc}
+\toprule
+$p_{\mathrm{ro}}$ & $\bar M_1$ & $\rho$ & $p$ \\
+\midrule
+$0\%$ & 1.33 & 1.333 & 0.004 \\
+\addlinespace[0.3em]
+$1\%$ & 1.50 & 1.500 & $<0.001$ \\
+\addlinespace[0.3em]
+$2\%$ & 1.37 & 1.367 & $<0.001$ \\
+\addlinespace[0.3em]
+$5\%$ & 1.47 & 1.467 & $<0.001$ \\
+\addlinespace[0.3em]
+$10\%$ & 1.30 & 1.300 & 0.002 \\
+\addlinespace[0.3em]
+$20\%$ & 1.47 & 1.467 & $<0.001$ \\
+\bottomrule
+\end{tabular}
+\caption[Sweep del readout simmetrico]{TOP-4 ottiene $\bar M=1.00$ e
+successo $100\%$ in tutti i punti.}\label{tab:sweep_pro}
+
+\end{table}
+
+Le oscillazioni non monotone di M1 sconsigliano inferenze causali sui
+singoli parametri con questa numerosità. Il risultato supportato è più
+limitato: TOP-4 non varia nei punti osservati.
+
+% -----------------------------------------------
+\subsection{Livello di Ottimizzazione}
+\label{subsec:sensibilita_metodo}
+
+\begin{table}[H]
+\centering
+
+\begin{tabular}{cccccc}
+\toprule
+livello & CX & profondità & $\bar M_1$ & $\bar M_{\mathrm{TOP4}}$ & $\rho$ \\
+\midrule
+0 & 242 & 427 & 1.47 & 1.00 & 1.467 \\
+\addlinespace[0.3em]
+1 & 236 & 421 & 1.50 & 1.00 & 1.500 \\
+\addlinespace[0.3em]
+2 & 224 & 412 & 1.37 & 1.00 & 1.367 \\
+\addlinespace[0.3em]
+3 & 224 & 412 & 1.37 & 1.00 & 1.367 \\
+\bottomrule
+\end{tabular}
+\caption[Sweep di \texttt{optimization\_level}]{Conteggi della
+compilazione effettiva e metriche su 30 repliche.}\label{tab:sweep_optlevel}\label{tab:sensitivity}
+
+\end{table}
+
+% -----------------------------------------------
+\subsection{Confronto con Zero-Noise Extrapolation}
+\label{sec:app_zne}
+
+La ZNE digitale scala $\lambda_{1q}$ e $\lambda_{2q}$, mantenendo fissi
+coerenza e readout. ZNE-2 usa due livelli e ZNE-3 tre livelli condivisi;
+non è gate folding su hardware.
+
+\begin{table}[H]
+\centering
+
+\begin{tabular}{lccccc}
+\toprule
+strategia & successo & $\bar M$ & shot/iter. & shot medi totali & $p_{\mathrm{Holm}}$ \\
+\midrule
+M1 & $100\%$ & 1.37 & 1\,024 & 1\,399 & --- \\
+\addlinespace[0.3em]
+ZNE-2 & $100\%$ & 1.50 & 2\,048 & 3\,072 & 1.000 \\
+\addlinespace[0.3em]
+ZNE-3 & $100\%$ & 1.57 & 3\,072 & 4\,813 & 1.000 \\
+\addlinespace[0.3em]
+TOP-4 & $100\%$ & 1.00 & 1\,024 & 1\,024 & 0.0024 \\
+\bottomrule
+\end{tabular}
+\caption[Confronto ZNE appaiato]{I $p$ sono corretti con Holm nella
+famiglia M1 contro ZNE-2, ZNE-3 e TOP-4.}\label{tab:confronto_zne}
+
+\end{table}
+
+\end{onehalfspace}
+
+% -----------------------------------------------
+
+\section{Il classificatore ML: architettura, addestramento e metriche}
+\label{app:classificatore}
+\begin{onehalfspace}
+
+Questa sezione documenta il classificatore valutato nella prima fase
+sperimentale (Capitolo~\ref{chap:risultati}) e separa due domande distinte:
+\emph{il candidato più frequente conduce ai fattori?} (TOP-1) e
+\emph{esiste un candidato utile fra i primi sedici?} (TOP-16). Tutti i
+numeri provengono dagli artefatti schema~2, con il medesimo manifest del
+circuito e seed deterministici.
+
+\subsection{L'Ipotesi alla Prova: il Classificatore ML}
+\label{sec:risultati_uc_m2}
+\label{sec:valutazione_clf}
+
+Il Metodo~2 usa un classificatore come \emph{gate di qualità}: riceve la
+distribuzione normalizzata sui $2^8=256$ esiti e, se approva
+l'istogramma, tenta l'estrazione dei fattori dai quattro candidati più
+frequenti. L'ablazione $M_{\mathrm{TOP4}}$ applica la stessa ricerca senza
+filtro e consente quindi di distinguere l'effetto del classificatore da
+quello della ricerca multi-candidato.
+
+Per ciascuno dei due scenari sono stati generati $2\,000$ istogrammi da
+$1\,024$ shot. I cinque parametri del modello uniforme
+($\lambda_{1q}$, $\lambda_{2q}$, $T_1$, $T_2$ e readout) sono stati
+campionati indipendentemente in un intervallo relativo del $\pm50\%$
+attorno al preset. Il dataset è stato separato in train, validation e
+test con proporzioni $60/20/20$: la scelta dell'architettura usa soltanto
+la validation; il test viene valutato una sola volta dopo il refit su
+train+validation.
+
+La regola TOP-1 produce $1\,262$ positivi e $738$ negativi in UC1
+($63.1\%/36.9\%$), e $1\,453$ positivi e $547$ negativi in UC2
+($72.7\%/27.3\%$). Random Forest, \ac{SVM} RBF calibrata e \ac{MLP}
+$(256,128)$ sono state confrontate mediante F1 sulla validation. La
+Tabella~\ref{tab:finale_5_2} riporta la valutazione indipendente del
+modello selezionato.
+
+
+Sulla validation l'\ac{SVM} ottiene F1 pari a $0.908$ in UC1 e $0.929$
+in UC2, contro $0.811/0.842$ della Random Forest e $0.874/0.906$
+dell'\ac{MLP}. Queste metriche mostrano che il modello riproduce bene la
+regola TOP-1; non dimostrano però che il filtro riduca il costo operativo.
+Quel confronto richiede gli stessi istogrammi per M1, TOP-4 e M2 ed è
+riportato nella Sezione~\ref{sec:confronto}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{fig_roc_curve.pdf}
+
+\caption[Curve ROC dei classificatori TOP-1 selezionati]{Curve ROC
+    sul test set indipendente dei due classificatori \acs{SVM} selezionati
+    mediante validation. Le aree sono $0.965$ (UC1) e $0.958$ (UC2); la
+    diagonale rappresenta un classificatore casuale.}\label{fig:roc_curve}
+\end{figure}
+
+% -----------------------------------------------
+\subsection[Audit delle etichette TOP-1 e TOP-16]{Audit delle Etichette: TOP-1 e TOP-16 Sono Problemi Diversi}
+\label{sec:audit_etichette}
+
+La campagna calcola entrambe le etichette sullo \emph{stesso}
+istogramma. L'esito è
+riassunto nella Tabella~\ref{tab:audit_etichette}.
+
+\begin{table}[H]
+\centering
+
+\begin{tabular}{lrr}
+\toprule
+\textbf{Regola} & \textbf{UC1: positivi/negativi} &
+\textbf{UC2: positivi/negativi} \\
+\midrule
+TOP-1  & $1\,262/738$ & $1\,453/547$ \\
+\addlinespace[0.3em]
+TOP-16 & $2\,000/0$   & $2\,000/0$ \\
+\bottomrule
+\end{tabular}
+\caption[Audit delle etichette TOP-1 e TOP-16]{Bilanciamento delle due
+regole sul dataset completo. TOP-16 è a classe unica e non consente un
+addestramento discriminante.}\label{tab:audit_etichette}
+
+\end{table}
+
+Il runner non forza un modello sul dataset TOP-16: registra
+esplicitamente \texttt{single-class-dataset} e interrompe
+l'addestramento per quella regola. M2 usa perciò soltanto i modelli TOP-1
+e conserva nel payload \texttt{label\_top\_k=1}. Questo controllo evita
+di attribuire capacità predittiva a un classificatore costante.
+
+Una diagnostica separata su 60 esecuzioni nominali UC1 chiarisce la
+struttura della classe TOP-1. La moda è $y=0$ in $30/60$ casi e conduce
+ai fattori negli altri $30/60$; i primi quattro candidati contengono
+invece almeno un esito utile in $60/60$ casi. La Tabella
+\ref{tab:struttura_negativi} riporta la distribuzione della moda.
+
+\begin{table}[H]
+\centering
+
+\begin{tabular}{lrr}
+\toprule
+\textbf{Valore della moda} & \textbf{Occorrenze} & \textbf{Frazione} \\
+\midrule
+$0$   & 30 & $50.0\%$ \\
+\addlinespace[0.3em]
+$64$  &  5 & $8.3\%$ \\
+\addlinespace[0.3em]
+$128$ & 15 & $25.0\%$ \\
+\addlinespace[0.3em]
+$192$ & 10 & $16.7\%$ \\
+\bottomrule
+\end{tabular}
+\caption[Distribuzione della moda su UC1]{Distribuzione della misura più
+frequente su 60 istogrammi nominali indipendenti.}\label{tab:struttura_negativi}
+
+\end{table}
+
+L'esito $y=0$ rappresenta la fase nulla e non fornisce il periodo, ma
+non implica che l'istogramma sia privo di segnale. Nel campione
+rappresentativo della Figura~\ref{fig:audit_istogramma_negativo}, la
+moda $y=0$ raccoglie 176 conteggi, mentre $y=64$, $192$ e $128$ ne
+raccolgono rispettivamente 160, 141 e 131: tutti e tre conducono ai
+fattori. La massa complessiva sui quattro picchi è $0.594$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{audit_istogramma_negativo.pdf}
+
+\caption[Istogramma TOP-1 negativo ma recuperabile con TOP-4]{Esempio
+    nominale UC1 in cui TOP-1 fallisce perché la moda è $y=0$, mentre i
+    successivi tre picchi conducono ai fattori. Il classificatore TOP-1
+    apprende quindi una regola sul candidato dominante, non una misura
+    generale della presenza di segnale quantistico.}\label{fig:audit_istogramma_negativo}
+\end{figure}
+
+\subsubsection{Perché TOP-16 Produce una Classe Quasi Sempre Positiva}
+\label{subsec:soglia_classe_negativa}
+
+Per $N=15$, $a=7$ e otto bit di controllo, 63 dei 256 esiti conducono ai
+fattori tramite la procedura di frazioni continue adottata. Anche per un
+istogramma uniforme, la probabilità che nessuno dei primi $K$ candidati
+sia utile è quindi
+\begin{equation}
+    P_{\mathrm{neg}}(K)=
+    \frac{\binom{256-63}{K}}{\binom{256}{K}}.
+    \label{eq:tetto_negativi}
+\end{equation}
+Per $K=16$ essa vale soltanto $0.9275\%$: la regola assegna dunque
+un'etichetta positiva a oltre il $99\%$ degli istogrammi uniformi per
+puro effetto combinatorio. Il risultato $2\,000/0$ osservato nei due
+dataset è coerente con questo limite e non autorizza a concludere che il
+segnale sia perfetto.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.78\textwidth]{tetto_classe_negativa.pdf}
+
+\caption[Tetto combinatorio alla classe negativa]{Decadimento di
+    $P_{\mathrm{neg}}(K)$ al crescere del numero di candidati. La figura
+    è rigenerata dai dati schema~2 e rende visibile perché TOP-16 non
+    definisce un problema di classificazione bilanciato su questa
+    istanza.}\label{fig:tetto_classe_negativa}
+\end{figure}
+
+Il verdetto ha un perimetro preciso: non mostra che l'apprendimento
+automatico sia inutile in generale, ma che un filtro a valle addestrato
+su TOP-1 replica una decisione già superata da TOP-4, mentre la regola
+TOP-16 è quasi sempre positiva per costruzione. Questo motiva lo
+spostamento dell'apprendimento dalla distribuzione finale alla sindrome
+di errore nelle sezioni del Capitolo~\ref{chap:risultati} dedicate alla \ac{QEC}.
+
+\end{onehalfspace}

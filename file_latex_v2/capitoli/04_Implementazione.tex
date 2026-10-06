@@ -1,3 +1,8 @@
+\chapter{Architettura e implementazione del sistema sperimentale}
+\label{chap:implementazione}
+\label{chap:sviluppo}
+\label{chap:strumenti}
+
 % Generato dalla versione Word revisionata e dalla bozza auditata.
 % Le citazioni numeriche originali sono state convertite in chiavi BibLaTeX.
 
@@ -13,42 +18,35 @@ Per i memory experiment del surface code viene invece utilizzato Stim \cite{stim
 
 \begingroup
 \small
-\begin{longtable}[]{@{}
+\begin{table}[!htbp]
+\centering
+\small
+
+\begin{tabular}{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3478}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Toolchain adottata in funzione della classe di esperimento.}\label{tab:finale_4_1}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\centering
-\textbf{Componente}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Strumento principale}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Ruolo}
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\caption[]{Toolchain adottata in funzione della classe di esperimento. (continua)}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\centering
-\textbf{Componente}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Strumento principale}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Ruolo}
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3188}}@{}}
+\toprule
+\textbf{Componente} & \textbf{Strumento principale} & \textbf{Ruolo} \\
+\midrule
 Shor N=15, sweep NISQ & Qiskit + Aer statevector & circuito generale con noise model \\
+\addlinespace[0.3em]
 Sensibilità M8/M13 & Qiskit + Aer MPS & molte repliche del circuito compilato \\
+\addlinespace[0.3em]
 Repetition e Steane & Qiskit Aer & laboratori QEC a taglia contenuta \\
+\addlinespace[0.3em]
 Surface code & Stim + PyMatching & campionamento e MWPM \\
+\addlinespace[0.3em]
 Classificatori / decoder appresi & scikit-learn & SVM, MLP e correzione residuale \\
+\addlinespace[0.3em]
 Gross code e codici BB & NumPy + ldpc (BP+OSD) & confronto code-capacity con il surface code \\
+\addlinespace[0.3em]
 AQFT / topologia & Qiskit Aer & sweep di compilazione e simulazione \\
-\end{longtable}
+\bottomrule
+\end{tabular}
+\caption{Toolchain adottata in funzione della classe di esperimento.}\label{tab:finale_4_1}
+
+\end{table}
 \endgroup
 
 \subsection{Ambiente di esecuzione e versionamento}\label{sec:finale_4_1_2}\label{sec:gpu_limit}
@@ -65,9 +63,33 @@ La separazione è applicata anche sul piano dei dati. Gli oggetti prodotti da un
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_4_1_architettura_piattaforma.png}
-\caption{Architettura a quattro livelli della piattaforma sperimentale.}
-\label{fig:finale_4_1}
+\begin{tikzpicture}[
+  every node/.style={execute at begin node=\setstretch{1}},
+  blocco/.style={draw=blue!55!black, fill=blue!8, thick,
+    rounded corners=3pt, align=center, text width=2.7cm,
+    minimum height=1.4cm, inner sep=3pt, font=\footnotesize},
+  dato/.style={blocco, draw=gray!70!black, fill=gray!10},
+  freccia/.style={-{Stealth[length=2.2mm]}, thick}
+]
+
+\node[blocco, text width=12.5cm] (costr) at (0,0)
+ {\textbf{1. Costruzione e compilazione}\\[3pt]
+ Qiskit: circuito, transpile, gate set, layout, hash della netlist};
+\node[blocco, text width=12.5cm] (camp) at (0,-2)
+ {\textbf{2. Esecuzione e campionamento}\\[3pt]
+ Aer / Stim: noise model, shot, seed, detection events};
+\node[blocco, text width=12.5cm] (analisi) at (0,-4)
+ {\textbf{3. Analisi}\\[3pt]
+ TOP-1 / TOP-4 / ML oppure decoder MWPM / rete / ibrido};
+\node[dato, text width=12.5cm] (artefatti) at (0,-6)
+ {\textbf{4. Artefatti e verifica}\\[3pt]
+ JSON schema 2, manifest, metriche, figure e tabelle rigenerate};
+\draw[freccia] (costr.south) -- (camp.north);
+\draw[freccia] (camp.south) -- (analisi.north);
+\draw[freccia] (analisi.south) -- (artefatti.north);
+\end{tikzpicture}
+
+\caption{Architettura a quattro livelli della piattaforma sperimentale.}\label{fig:finale_4_1}
 \end{figure}
 
 I sorgenti sono separati per campagna: M1-M4 per Shor e post-processing, M5 per il codice a ripetizione, M6 per Steane, M7 per surface code, M8/M13 per il proxy di Shor e TOP-K, M10 per la decodifica appresa, M11/M12 per controlli hardware-aware e coerenti, M15 per l'AQFT. Le sigle identificano campagne e milestone di sviluppo, non un livello di affidabilità del risultato. README, log e artefatti rimangono associati alla stessa cartella sperimentale, riducendo il rischio di mescolare output provenienti da revisioni differenti.
@@ -78,40 +100,31 @@ Il modulo di costruzione del circuito non conosce la strategia statistica che ve
 
 \begingroup
 \small
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Corrispondenza fra domande di ricerca, moduli e artefatti.}\label{tab:finale_4_2}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\centering
-\textbf{Domanda / campagna}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Modulo eseguibile}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Artefatto primario}
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\caption[]{Corrispondenza fra domande di ricerca, moduli e artefatti. (continua)}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\centering
-\textbf{Domanda / campagna}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Modulo eseguibile}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Artefatto primario}
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-DR1 -- TOP-1/TOP-4/M2 & campagne\_classiche\_M1-M4 & JSON schema 2 con vettori appaiati \\
-DR2 -- QEC & M5 / M6 / M7 & conteggi di fallimento e p\_L per punto \\
-DR3 -- decoder & M10\_neural\_decoder & prediction appaiate + soglie di validazione \\
-DR4 -- sensibilità Shor & M8\_shor\_logico / M13 & successo per shot + griglia p\_g \\
-DR5 -- AQFT & M15\_qft\_topologia & selection/holdout + conteggi compilati \\
-\end{longtable}
+\begin{table}[!htbp]
+\centering
+\small
+
+\begin{tabular}{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.28}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.32}}@{}}
+\toprule
+\textbf{Domanda / campagna} & \textbf{Modulo eseguibile} & \textbf{Artefatto primario} \\
+\midrule
+DR1 -- TOP-1/TOP-4/M2 & campagne\_\allowbreak{}classiche\_\allowbreak{}M1-M4 & JSON schema 2 con vettori appaiati \\
+\addlinespace[0.3em]
+DR2 -- QEC & M5 / M6 / M7 & conteggi di fallimento e $p_L$ per punto \\
+\addlinespace[0.3em]
+DR3 -- decoder & M10\_\allowbreak{}neural\_\allowbreak{}decoder & prediction appaiate + soglie di validazione \\
+\addlinespace[0.3em]
+DR4 -- sensibilità Shor & M8\_\allowbreak{}shor\_\allowbreak{}logico / M13 & successo per shot + griglia $p_g$ \\
+\addlinespace[0.3em]
+DR5 -- AQFT & M15\_\allowbreak{}qft\_\allowbreak{}topologia & selection/\allowbreak{}holdout + conteggi compilati \\
+\bottomrule
+\end{tabular}
+\caption{Corrispondenza fra domande di ricerca, moduli e artefatti.}\label{tab:finale_4_2}
+
+\end{table}
 \endgroup
 
 \section{Implementazione di Shor}\label{sec:finale_4_3}
@@ -121,25 +134,6 @@ DR5 -- AQFT & M15\_qft\_topologia & selection/holdout + conteggi compilati \\
 Per N=15 viene utilizzata una costruzione textbook a dodici qubit: otto qubit di controllo e quattro di lavoro. Il registro di controllo viene posto in sovrapposizione, quindi ogni qubit pilota una potenza della moltiplicazione modulare; segue la QFT inversa e la misura. La QFT inversa è decomposta esplicitamente in SWAP, rotazioni di fase controllate e Hadamard, così che la compilazione possa esporre tutte le operazioni al gate set e al modello di rumore.
 
 La moltiplicazione modulare specializzata per N=15 implementa realmente la trasformazione ×a mod 15 per le potenze richieste. L'implementazione corrente corregge una precedente scorciatoia basata sul solo valore power \% 4, che non rappresentava in generale U\^{}power. Gli output prodotti dalla variante precedente non alimentano le campagne correnti. Il post-processing converte il valore misurato in una fase, ne ottiene un denominatore candidato mediante frazioni continue e verifica i fattori non banali con il massimo comune divisore. Il criterio operativo è quindi ``fattori ottenuti'', non ``ordine ricostruito esattamente''.
-
-{\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0000}}@{}}
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-phase = measured\_value / 2**n\_count\\
-r = Fraction(phase).limit\_denominator(N).denominator\\
-if r \% 2: reject\\
-gcd(a**(r//2) - 1, N), gcd(a**(r//2) + 1, N)\strut
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-\end{longtable}
-}
-
-\emph{Schema 4.1 --- Passi essenziali del post-processing classico implementato.}
 
 \subsection{Istanze Beauregard e compilazione}\label{sec:finale_4_3_2}
 
@@ -157,44 +151,6 @@ Prima di utilizzare una netlist come riferimento vengono eseguiti controlli funz
 
 Il noise model della campagna principale viene costruito con qiskit\_aer.noise ed è deliberatamente uniforme. Le porte rz sono trattate come cambi di frame virtuali. Le porte sx/x hanno durata nominale di 50 ns e le CX di 300 ns. Su sx/x e cx vengono composti un canale depolarizzante e thermal\_relaxation\_error, parametrizzato da T1, T2 e durata del gate. Il readout è modellato separatamente mediante una matrice di confusione simmetrica.
 
-\begingroup
-\small
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Preset uniformi della campagna rumorosa N=15. Non rappresentano la calibrazione di una QPU reale.}\label{tab:finale_4_3}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\centering
-\textbf{Parametro}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Riferimento}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Stress}
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\caption[]{Preset uniformi della campagna rumorosa N=15. Non rappresentano la calibrazione di una QPU reale. (continua)}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\centering
-\textbf{Parametro}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Riferimento}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Stress}
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-N, a, qubit di controllo & 15, 7, 8 & 15, 7, 8 \\
-λ1q & 1×10⁻³ & 5×10⁻³ \\
-λ2q & 1×10⁻² & 5×10⁻² \\
-T1 / T2 & 100 / 80 μs & 50 / 30 μs \\
-readout & 0,02 & 0,05 \\
-shot per istogramma & 1 024 & 1 024 \\
-\end{longtable}
-\endgroup
 
 I parametri λ1q e λ2q seguono la convenzione di depolarizing\_error di Aer. Per due qubit, la probabilità totale delle componenti di Pauli non identità è 15λ/16. Per questo la quantità (1-15λ2q/16)\^{}224 viene registrata soltanto come proxy diagnostico di nessun evento Pauli sulle CX, non come probabilità di successo dell'algoritmo.
 
@@ -210,9 +166,37 @@ TOP-1, TOP-4 e M2 ricevono lo stesso istogramma prodotto dalla stessa esecuzione
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_4_2_pipeline_appaiata.png}
-\caption{Pipeline appaiata: lo stesso istogramma alimenta TOP-1, TOP-4 e M2.}
-\label{fig:finale_4_2}
+\begin{tikzpicture}[
+  every node/.style={execute at begin node=\setstretch{1}},
+  blocco/.style={draw=blue!55!black, fill=blue!8, thick,
+    rounded corners=3pt, align=center, text width=2.7cm,
+    minimum height=1.4cm, inner sep=3pt, font=\footnotesize},
+  dato/.style={blocco, draw=gray!70!black, fill=gray!10},
+  freccia/.style={-{Stealth[length=2.2mm]}, thick}
+]
+
+\node[blocco] (shor) at (0,0) {\textbf{Shor $N=15$}\\1 istogramma / seed};
+\node[blocco] (t1) at (3.7,2) {\textbf{TOP-1}\\1 candidato};
+\node[blocco] (t4) at (3.7,0) {\textbf{TOP-4}\\4 candidati};
+\node[blocco] (m2) at (3.7,-2) {\textbf{M2}\\ML + TOP-4};
+\node[dato] (post) at (7.4,0) {\textbf{Post-processing}\\frazioni continue + GCD};
+\node[dato] (metriche) at (11.1,0) {\textbf{Metriche}\\stessi campioni};
+\draw[thick] (shor.east) -- (1.85,0);
+\draw[thick] (1.85,2) -- (1.85,-2);
+\draw[freccia] (1.85,2) -- (t1.west);
+\draw[freccia] (1.85,0) -- (t4.west);
+\draw[freccia] (1.85,-2) -- (m2.west);
+\draw[thick] (t1.east) -- (5.55,2);
+\draw[thick] (t4.east) -- (5.55,0);
+\draw[thick] (m2.east) -- (5.55,-2);
+\draw[thick] (5.55,2) -- (5.55,-2);
+\draw[freccia] (5.55,0) -- (post.west);
+\draw[freccia] (post.east) -- (metriche.west);
+\fill (1.85,0) circle (1.3pt);
+\fill (5.55,0) circle (1.3pt);
+\end{tikzpicture}
+
+\caption{Pipeline appaiata: lo stesso istogramma alimenta TOP-1, TOP-4 e M2.}\label{fig:finale_4_2}
 \end{figure}
 
 L'orchestratore usa trenta repliche e un massimo di cinquanta iterazioni. Il seed del simulatore è separato tra replica e iterazione secondo seed\_simulator = rep·1 000 000 + iteration·10 000. La distanza tra i seed è stata scelta per evitare la quasi sovrapposizione degli stream osservata con semi consecutivi. La prima iterazione di successo viene registrata separatamente per ogni strategia; un fallimento entro il budget viene codificato, ai soli fini inferenziali, con la sentinella max\_iter+1.
@@ -249,9 +233,39 @@ Le campagne di decodifica mantengono separati dati di addestramento e campioni d
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_4_3_flusso_decoder.png}
-\caption{Flusso implementativo dei decoder: stessi detection event, regole decisionali differenti.}
-\label{fig:finale_4_3}
+\begin{tikzpicture}[
+  every node/.style={execute at begin node=\setstretch{1}},
+  blocco/.style={draw=blue!55!black, fill=blue!8, thick,
+    rounded corners=3pt, align=center, text width=2.1cm,
+    minimum height=1.4cm, inner sep=3pt, font=\footnotesize},
+  dato/.style={blocco, draw=gray!70!black, fill=gray!10},
+  freccia/.style={-{Stealth[length=2.2mm]}, thick}
+]
+
+\node[blocco] (circ) at (0,0) {\textbf{Circuito QEC}\\Stim / Aer};
+\node[dato] (sind) at (3.1,0) {\textbf{Sindrome}\\detection events};
+\node[blocco] (mwpm) at (6.2,2) {\textbf{MWPM}\\PyMatching};
+\node[blocco] (rete) at (6.2,0) {\textbf{Rete}\\MLP};
+\node[blocco] (ibrido) at (6.2,-2) {\textbf{Ibrido}\\MWPM + residuo};
+\node[dato] (dec) at (9.3,0) {\textbf{Decisione}\\flip logico};
+\node[dato] (err) at (12.4,0) {$\boldsymbol{p_L}$\\errore};
+\draw[freccia] (circ.east) -- (sind.west);
+\draw[thick] (sind.east) -- (4.65,0);
+\draw[thick] (4.65,2) -- (4.65,-2);
+\draw[freccia] (4.65,2) -- (mwpm.west);
+\draw[freccia] (4.65,0) -- (rete.west);
+\draw[freccia] (4.65,-2) -- (ibrido.west);
+\draw[thick] (mwpm.east) -- (7.75,2);
+\draw[thick] (rete.east) -- (7.75,0);
+\draw[thick] (ibrido.east) -- (7.75,-2);
+\draw[thick] (7.75,2) -- (7.75,-2);
+\draw[freccia] (7.75,0) -- (dec.west);
+\draw[freccia] (dec.east) -- (err.west);
+\fill (4.65,0) circle (1.3pt);
+\fill (7.75,0) circle (1.3pt);
+\end{tikzpicture}
+
+\caption{Flusso implementativo dei decoder: stessi detection event, regole decisionali differenti.}\label{fig:finale_4_3}
 \end{figure}
 
 \subsection{Gross code e codici bivariate bicycle}\label{sec:finale_4_6_3}
@@ -270,44 +284,8 @@ Il troncamento viene applicato durante la costruzione del circuito, prima della 
 
 Per i test hardware-aware il rumore viene costruito dalle infedeltà medie di gate e dagli errori di readout di una snapshot offline FakeSherbrooke. Le rotazioni RZ restano virtuali e non vengono aggiunti nuovamente T1/T2, per evitare il doppio conteggio di contributi già riassunti nell'infedeltà media. Il seed principale è 42 e gli artefatti registrano layout, sequenza dei seed, batch, versioni e hash della calibrazione.
 
-La selezione del grado e la valutazione sono separate. Nel pilota N=15 ogni configurazione usa 8 192 shot in otto batch, quattro di selezione e quattro di holdout. Nel benchmark QPE ciascun grado usa 4 096 shot con la stessa divisione 4/4 e mantiene layout e sequenza dei seed fra i bracci. I test N=21 a budget ridotto usano 256 shot per braccio nei confronti di sensibilità. Una prima variante che eliminava gli SWAP modificando soltanto l'associazione dei bit di misura era errata; i relativi output sono conservati in una cartella \_superseded\_swap\_bug ma sono esclusi dalle evidenze correnti.
+La selezione del grado e la valutazione sono separate. Nel pilota N=15 ogni configurazione usa 8 192 shot in otto batch, quattro di selezione e quattro di holdout. Nel benchmark QPE ciascun grado usa 4 096 shot con la stessa divisione 4/4 e mantiene layout e sequenza dei seed fra i bracci. I test N=21 a budget ridotto usano 256 shot per braccio nei confronti di sensibilità. I tre bracci e i relativi endpoint sono riepilogati nella Tabella~\ref{tab:finale_3_9}. Una prima variante che eliminava gli SWAP modificando soltanto l'associazione dei bit di misura era errata; i relativi output sono conservati in una cartella \_superseded\_swap\_bug ma sono esclusi dalle evidenze correnti.
 
-\begingroup
-\small
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Implementazione e separazione selection/holdout nella campagna AQFT.}\label{tab:finale_4_4}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\centering
-\textbf{Campagna AQFT}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Parametro}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Campionamento / controllo}
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\caption[]{Implementazione e separazione selection/holdout nella campagna AQFT. (continua)}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\centering
-\textbf{Campagna AQFT}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Parametro}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Campionamento / controllo}
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Shor N=15 & k\_QPE & 8192 shot; 4 batch selezione + 4 holdout \\
-Shor N=21 & k\_arith + QFT finale & ricognizione strutturale + prove rumorose a budget ridotto \\
-QPE 6/8/10 qubit & grado di troncamento & 4096 shot; 4 batch selezione + 4 holdout \\
-Controllo SWAP & con/senza permutazione corretta & output errati esplicitamente esclusi \\
-\end{longtable}
-\endgroup
 
 \section{Riproducibilità, manifest e artefatti}\label{sec:finale_4_8}
 
@@ -315,37 +293,34 @@ La riproducibilità è trattata come proprietà dell'architettura e non come doc
 
 \begingroup
 \small
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
-\caption{Informazioni minime conservate per la tracciabilità sperimentale.}\label{tab:finale_4_5}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\centering
-\textbf{Oggetto registrato}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Scopo}
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\caption[]{Informazioni minime conservate per la tracciabilità sperimentale. (continua)}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\centering
-\textbf{Oggetto registrato}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-\textbf{Scopo}
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Versioni Python/librerie/backend & ricostruire l'ambiente effettivo \\
+\begin{table}[!htbp]
+\centering
+\small
+
+\begin{tabular}{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.4983}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5017}}@{}}
+\toprule
+\textbf{Oggetto registrato} & \textbf{Scopo} \\
+\midrule
+Versioni Python/\allowbreak{}librerie/\allowbreak{}backend & ricostruire l'ambiente effettivo \\
+\addlinespace[0.3em]
 Seed simulatore / transpiler / tie-break & riprodurre campioni, compilazione e ranking \\
+\addlinespace[0.3em]
 Gate set, profondità, conteggi & identificare la netlist realmente eseguita \\
+\addlinespace[0.3em]
 SHA-256 circuito / hash calibrazione & impedire associazioni tra revisioni diverse \\
+\addlinespace[0.3em]
 Schema, revisione, preset, label & validare compatibilità dei modelli ML \\
+\addlinespace[0.3em]
 Batch selection / holdout & separare scelta del metodo e valutazione finale \\
+\addlinespace[0.3em]
 Log e stato superseded & escludere esplicitamente output non validi \\
-\end{longtable}
+\bottomrule
+\end{tabular}
+\caption{Informazioni minime conservate per la tracciabilità sperimentale.}\label{tab:finale_4_5}
+
+\end{table}
 \endgroup
 
 Questo contratto rende possibile l'audit a posteriori: dato un risultato si può risalire alla campagna, al circuito compilato, al noise model, al calendario dei seed e al codice che ha prodotto l'artefatto. La stessa disciplina permette di distinguere output correnti da artefatti superati e costituisce il collegamento operativo fra metodologia e risultati.
