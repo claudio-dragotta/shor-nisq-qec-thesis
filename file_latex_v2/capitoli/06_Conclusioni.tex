@@ -12,39 +12,7 @@ Questo capitolo risponde alle cinque domande di ricerca senza duplicare le tabel
 
 \section{Risposte alle domande di ricerca}\label{sec:finale_6_1}
 
-La Tabella~\ref{tab:finale_6_1} riporta per ogni domanda risposta, evidenza e limite. Numerosità, intervalli e controlli completi rimangono nelle rispettive sezioni del Capitolo~\ref{chap:risultati}.
-
-\begingroup
-\footnotesize
-\begin{spacing}{1.0}
-\begin{table}[!htbp]
-\centering
-\small
-
-\begin{tabular}{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.08}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.32}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3}}@{}}
-\toprule
-\textbf{DR} & \textbf{Risposta} & \textbf{Evidenza} & \textbf{Limite} \\
-\midrule
-DR1 & TOP-$K$ è utile; il filtro ML considerato non aggiunge valore operativo. & TOP-4 raggiunge 1.00 iterazioni medie nei due scenari; M2 perde contro la propria ablazione. & $N=15$ e post-processing specifico. \\
-\addlinespace[0.3em]
-DR2 & La QEC sopprime l'errore sotto soglia e il beneficio cresce con la distanza. & Steane: pendenza 1.94; surface code: $p_{th}\simeq0.86\%$ (Z) e $0.81\%$ (X). & Memory experiment, non Shor fault-tolerant. \\
-\addlinespace[0.3em]
-DR3 & Il ML è utile come correttore residuale quando il decoder è strutturalmente incompleto; il decoder conta anche nel confronto fra codici. & A $d=3$ la riduzione relativa è 15.6--17.6\% con crosstalk; BP+OSD resta una baseline forte; il Gross code batte 12 patch a $d=13$ per $p\ge0.75\%$. & MLP denso; nessun vantaggio significativo a $d=7$; Gross code solo in code-capacity. \\
-\addlinespace[0.3em]
-DR4 & Il successo di Shor decresce con $p_g$ e tende al pavimento del post-processing. & Da 0.7489 a $p_g=0$ a circa 0.245 per rumore elevato. & Proxy fenomenologico, non tasso logico QEC. \\
-\addlinespace[0.3em]
-DR5 & AQFT aiuta quando le porte evitate compensano la perdita di fase. & $N=15$: 0.4792$\to$0.6279 ed ECR 362$\to$279; QPE: 9/9 stime positive, con 6/9 IC individuali $>0$. & Beneficio non dimostrato su $N=21$. \\
-\bottomrule
-\end{tabular}
-\caption{Risposte conclusive alle cinque domande di ricerca.}\label{tab:finale_6_1}
-
-\end{table}
-\end{spacing}
-\endgroup
+Le risposte seguono l'ordine delle domande di ricerca. Numerosità, intervalli e controlli completi rimangono nelle rispettive sezioni del Capitolo~\ref{chap:risultati}.
 
 \phantomsection\label{sec:finale_6_1_1}
 \textbf{DR1 - Post-processing e machine learning.}

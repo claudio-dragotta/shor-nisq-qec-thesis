@@ -41,7 +41,7 @@ Anche le grandezze d'errore vengono mantenute separate. Nei memory experiment QE
 
 \section{Domande di ricerca e ipotesi}\label{sec:finale_2_4}
 
-Per mantenere una corrispondenza diretta con gli esperimenti del Capitolo 5, le domande di ricerca sono organizzate secondo le cinque linee sperimentali effettivamente analizzate.
+Per mantenere una corrispondenza diretta con gli esperimenti del Capitolo 5, le domande di ricerca sono organizzate secondo le cinque linee sperimentali effettivamente analizzate. La sensibilità di Shor, che motiva lo studio, è presentata come quarta domanda per mantenere contigue le campagne QEC e decoder.
 
 \textbf{DR1 - Post-processing e machine learning.} La ricerca multi-candidato riduce il numero di iterazioni necessarie a ottenere i fattori? Un classificatore applicato all'istogramma produce un beneficio aggiuntivo rispetto alla stessa strategia TOP-K senza filtro?
 
@@ -73,12 +73,9 @@ H3: a modello corretto il decoder analitico resta competitivo; un vantaggio appr
 H5: l'AQFT può produrre un vantaggio quando il risparmio circuitale supera l'errore di approssimazione; il beneficio dipende dalla struttura delle fasi, dalla profondità del circuito e dal regime di rumore e non è quindi atteso come universale. \cite{barencoAQFT1996,akoramurthy2026}
 \end{quote}
 
-\section{Contratto sperimentale e metriche}\label{sec:finale_2_5}\label{sec:metriche}
+\section{Metriche e criteri di valutazione}\label{sec:finale_2_5}\label{sec:metriche}\label{sec:finale_2_6}
 
-Le domande precedenti vengono associate a metriche e criteri di decisione differenti. Le grandezze non vengono convertite fra loro quando descrivono oggetti diversi. La Tabella~\ref{tab:verifica_requisiti} riunisce i confronti, le metriche e le analisi delle cinque linee sperimentali; le sezioni seguenti ne precisano i criteri di valutazione.
-
-
-\section{Criteri specifici di valutazione}\label{sec:finale_2_6}
+Le domande precedenti vengono associate a metriche e criteri di decisione differenti. Le grandezze non vengono convertite fra loro quando descrivono oggetti diversi. La Tabella~\ref{tab:verifica_requisiti} riunisce i confronti, le metriche e le analisi delle cinque linee sperimentali; le sottosezioni seguenti ne precisano i criteri di valutazione.
 
 \subsection{Post-processing e classificazione}\label{sec:finale_2_6_1}
 
@@ -118,7 +115,3 @@ Il contributo del lavoro è principalmente metodologico e sperimentale. In parti
 \end{itemize}
 
 Il perimetro resta deliberatamente limitato. La campagna rumorosa principale usa N = 15 e modelli simulati; N = 21 e N = 35 non partecipano allo stesso confronto statistico. I codici QEC sono studiati su circuiti di memoria separati e non viene simulato un circuito completo di Shor fault-tolerant; il Gross code è confrontato nel solo modello code-capacity. Le prove AQFT su N = 21 hanno carattere esplorativo e budget ridotto. Di conseguenza, i risultati definiscono criteri di utilità e limiti dei metodi provati, non prestazioni attese di una futura macchina crittograficamente rilevante. \cite{googleQECBelowThreshold2025,alphaqubit2024,gidney2021,aharonov1997fault}
-
-\section{Articolazione della verifica}\label{sec:finale_2_8}
-
-Il Capitolo 3 introduce i fondamenti teorici e descrive il disegno sperimentale; il Capitolo 4 traduce tale disegno nell'architettura software e nei protocolli di esecuzione. Il Capitolo 5 risponde nell'ordine alle cinque domande di ricerca definite in questo capitolo: post-processing e ablazione, codici QEC, decodifica e confronto con il Gross code, sensibilità di Shor e AQFT. La sensibilità di Shor, che motiva lo studio, è presentata come quarta domanda per mantenere contigue le campagne QEC e decoder. Il Capitolo 6 ricompone i risultati, verifica le ipotesi entro il perimetro dichiarato e ne discute i limiti e gli sviluppi futuri.

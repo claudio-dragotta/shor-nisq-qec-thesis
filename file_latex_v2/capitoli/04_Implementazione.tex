@@ -164,41 +164,6 @@ La campagna M8/M13 usa un modello diverso, già distinto metodologicamente nel C
 
 TOP-1, TOP-4 e M2 ricevono lo stesso istogramma prodotto dalla stessa esecuzione del simulatore. L'ordinamento dei candidati è deterministico: prima per frequenza decrescente, poi, in caso di pareggio, mediante una priorità SHA-256 derivata da seed e bitstring. In questo modo il risultato non dipende né dall'ordine interno di un dizionario Python né dal valore numerico della bitstring. TOP-1 prova il solo candidato dominante; TOP-4 prova fino a quattro candidati; M2 prova gli stessi quattro soltanto quando il classificatore accetta l'istogramma.
 
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[
-  every node/.style={execute at begin node=\setstretch{1}},
-  blocco/.style={draw=blue!55!black, fill=blue!8, thick,
-    rounded corners=3pt, align=center, text width=2.7cm,
-    minimum height=1.4cm, inner sep=3pt, font=\footnotesize},
-  dato/.style={blocco, draw=gray!70!black, fill=gray!10},
-  freccia/.style={-{Stealth[length=2.2mm]}, thick}
-]
-
-\node[blocco] (shor) at (0,0) {\textbf{Shor $N=15$}\\1 istogramma / seed};
-\node[blocco] (t1) at (3.7,2) {\textbf{TOP-1}\\1 candidato};
-\node[blocco] (t4) at (3.7,0) {\textbf{TOP-4}\\4 candidati};
-\node[blocco] (m2) at (3.7,-2) {\textbf{M2}\\ML + TOP-4};
-\node[dato] (post) at (7.4,0) {\textbf{Post-processing}\\frazioni continue + GCD};
-\node[dato] (metriche) at (11.1,0) {\textbf{Metriche}\\stessi campioni};
-\draw[thick] (shor.east) -- (1.85,0);
-\draw[thick] (1.85,2) -- (1.85,-2);
-\draw[freccia] (1.85,2) -- (t1.west);
-\draw[freccia] (1.85,0) -- (t4.west);
-\draw[freccia] (1.85,-2) -- (m2.west);
-\draw[thick] (t1.east) -- (5.55,2);
-\draw[thick] (t4.east) -- (5.55,0);
-\draw[thick] (m2.east) -- (5.55,-2);
-\draw[thick] (5.55,2) -- (5.55,-2);
-\draw[freccia] (5.55,0) -- (post.west);
-\draw[freccia] (post.east) -- (metriche.west);
-\fill (1.85,0) circle (1.3pt);
-\fill (5.55,0) circle (1.3pt);
-\end{tikzpicture}
-
-\caption{Pipeline appaiata: lo stesso istogramma alimenta TOP-1, TOP-4 e M2.}\label{fig:finale_4_2}
-\end{figure}
-
 L'orchestratore usa trenta repliche e un massimo di cinquanta iterazioni. Il seed del simulatore è separato tra replica e iterazione secondo seed\_simulator = rep·1 000 000 + iteration·10 000. La distanza tra i seed è stata scelta per evitare la quasi sovrapposizione degli stream osservata con semi consecutivi. La prima iterazione di successo viene registrata separatamente per ogni strategia; un fallimento entro il budget viene codificato, ai soli fini inferenziali, con la sentinella max\_iter+1.
 
 \subsection{Dataset e compatibilità del modello ML}\label{sec:finale_4_5_2}
@@ -337,8 +302,4 @@ Questa scelta consente anche controlli di consistenza semplici: conteggi di gate
 
 \section{Sintesi}\label{sec:finale_4_9}
 
-Il sistema sperimentale implementa il contratto del Capitolo 3 attraverso componenti separati e verificabili. Qiskit/Aer gestisce i circuiti generali di Shor e i noise model controllati; Stim e PyMatching gestiscono il surface code; scikit-learn implementa classificatori e decoder appresi; ldpc fornisce BP+OSD per il confronto con il Gross code. Le strategie confrontate condividono i campioni quando la domanda di ricerca lo richiede, mentre le campagne che descrivono grandezze non commensurabili --- QEC, proxy per gate e AQFT --- restano separate anche nel software. Seed, manifest, hash e artefatti JSON rendono riproducibile la catena dall'input alla metrica. Il Capitolo 5 utilizza questa infrastruttura per presentare i risultati senza introdurre ulteriori variazioni metodologiche.
-
-Restano espliciti alcuni confini implementativi. Tutti i risultati della tesi derivano da simulazioni classiche: la piattaforma non esegue job su hardware quantistico reale. I preset N=15 sono uniformi e non incorporano coupling map, routing eterogeneo, deriva o leakage; le campagne hardware-aware utilizzano snapshot offline e non una calibrazione live. Analogamente, Stim e PyMatching caratterizzano circuiti di memoria stabilizer, mentre Shor viene simulato con Aer come circuito generale. La piattaforma non sostituisce i qubit di Shor con blocchi logici codificati e non implementa una compilazione fault-tolerant end-to-end.
-
-Questi confini sono riflessi direttamente nell'organizzazione del software: le metriche dei memory experiment non vengono passate come errori per gate a Shor, gli artefatti AQFT restano distinti dalle campagne M1-M4 e le configurazioni hardware-aware conservano l'identificativo della snapshot usata. L'architettura privilegia quindi la tracciabilità rispetto all'integrazione forzata di modelli non commensurabili. È questa disciplina che permette al Capitolo 5 di attribuire ogni risultato alla campagna corretta e di discuterne la portata senza confondere il comportamento del simulatore con una previsione hardware.
+Il sistema sperimentale implementa il contratto del Capitolo 3 attraverso componenti separati e verificabili. Qiskit/Aer gestisce i circuiti di Shor e i noise model controllati, Stim e PyMatching il surface code, scikit-learn i classificatori e i decoder appresi, ldpc il BP+OSD usato nel confronto con il Gross code. Le campagne che descrivono grandezze non commensurabili --- QEC, proxy per gate e AQFT --- restano separate anche nel software, e seed, manifest, hash e artefatti JSON rendono riproducibile la catena dall'input alla metrica. La piattaforma esegue soltanto simulazioni classiche e non implementa una compilazione fault-tolerant end-to-end di Shor. Il Capitolo 5 utilizza questa infrastruttura per presentare i risultati senza introdurre ulteriori variazioni metodologiche.

@@ -617,7 +617,7 @@ DR5 & AQFT & QFT piena & successo + ECR/\allowbreak{}profondità & selection/\al
 \end{table}
 \endgroup
 
-Questo contratto è il vincolo interpretativo del Capitolo 5. I risultati delle cinque linee possono essere discussi insieme perché condividono il principio di confronto, ma le loro grandezze non vengono convertite automaticamente l'una nell'altra. In particolare, un miglioramento di TOP-K non equivale a una maggiore fedeltà quantistica, una soglia di memory experiment non determina il successo di Shor e una riduzione di porte AQFT non dimostra da sola un vantaggio sotto rumore. Il Capitolo 4 descrive come il contratto viene tradotto in codice, ambiente di esecuzione e artefatti riproducibili.
+Questo contratto è il vincolo interpretativo del Capitolo 5. I risultati delle cinque linee possono essere discussi insieme perché condividono il principio di confronto, ma le loro grandezze non vengono convertite automaticamente l'una nell'altra. In particolare, un miglioramento di TOP-K non equivale a una maggiore fedeltà quantistica, una soglia di memory experiment non determina il successo di Shor e una riduzione di porte AQFT non dimostra da sola un vantaggio sotto rumore.
 
 Un secondo vincolo interpretativo riguarda l'assenza di risultati hardware. Le snapshot di calibrazione vengono usate per costruire modelli riproducibili e confronti controllati, ma non sono misure live della QPU al momento dell'esecuzione. Deriva temporale, leakage, crosstalk reale, routing dipendente dal backend e latenza classica possono alterare il comportamento. La validazione su hardware costituisce pertanto uno sviluppo successivo e non viene anticipata come evidenza sperimentale.
 
@@ -625,8 +625,4 @@ Infine, tutte le conclusioni statistiche restano locali alla famiglia di confron
 
 \section{Sintesi metodologica}\label{sec:finale_3_6}
 
-Il capitolo ha definito un quadro unico senza rendere equivalenti esperimenti che misurano oggetti diversi. La campagna DR1 valuta l'uso dell'output già misurato; DR2 e DR3 operano sui circuiti di memoria e sulle sindromi; DR4 misura la sensibilità di una specifica implementazione di Shor a un proxy per gate; DR5 modifica il circuito attraverso il troncamento della QFT. Il denominatore comune è il confronto con una baseline esplicita e, quando possibile, l'uso degli stessi campioni.
-
-La separazione tra selezione e valutazione è il secondo principio comune. I modelli di machine learning vengono scelti senza utilizzare il test finale; i gradi AQFT vengono selezionati su batch distinti dall'holdout; le soglie del decoder ibrido sono fissate in validazione. Questa disciplina riduce il rischio che il vantaggio dichiarato sia una conseguenza della scelta a posteriori della configurazione più favorevole.
-
-Il Capitolo 4 traduce questo contratto in software, strumenti e artefatti riproducibili. Il Capitolo 5 presenta poi i risultati nello stesso ordine delle domande di ricerca. Nessun risultato successivo modifica retroattivamente la definizione delle metriche o delle baseline: quando un'analisi è esplorativa, tale natura viene dichiarata e mantenuta nell'interpretazione.
+Il capitolo ha definito un quadro unico senza rendere equivalenti esperimenti che misurano oggetti diversi. DR1 valuta l'uso dell'output già misurato, DR2 e DR3 operano sui circuiti di memoria e sulle sindromi, DR4 misura la sensibilità di Shor a un proxy per gate e DR5 modifica il circuito troncando la QFT. I principi comuni sono il confronto con una baseline esplicita, l'uso degli stessi campioni quando possibile e la separazione tra selezione e valutazione. Il Capitolo 4 traduce questo contratto in software, strumenti e artefatti riproducibili.
