@@ -1,5 +1,3 @@
-% Il quadro teorico e il metodo sono raccolti in un unico capitolo. Le etichette
-% dei precedenti capitoli restano come alias per preservare tutti i riferimenti.
 \chapter{Fondamenti teorici e metodologia sperimentale}
 \label{chap:quadro}
 \label{chap:shor}
@@ -8,13 +6,9 @@
 \label{chap:metodologia}
 \label{chap:fondamenti}
 
-% Generato dalla versione Word revisionata e dalla bozza auditata.
-% Le citazioni numeriche originali sono state convertite in chiavi BibLaTeX.
 
 Questo capitolo raccoglie soltanto i concetti teorici necessari a comprendere gli esperimenti e, soprattutto, formalizza il metodo con cui vengono valutate le cinque domande di ricerca definite nel Capitolo 2. La separazione tra teoria, modello di rumore e protocollo sperimentale è essenziale: una proprietà dell'algoritmo ideale non va confusa con una prestazione di simulazione, così come il tasso di errore logico di un memory experiment non può essere trasferito direttamente a una porta logica di Shor. L'obiettivo è quindi costruire un lessico e un contratto metodologico sufficienti a interpretare i risultati del Capitolo 5, senza trasformare il capitolo in una trattazione generale del calcolo quantistico.
 
-% Sintesi teorica per il corpo della tesi. Le derivazioni complete restano
-% nell'Appendice A; il disegno sperimentale dettagliato segue nella Sezione 3.5.
 
 \section{Fondamenti quantistici necessari all'analisi}\label{sec:finale_3_1}
 
@@ -115,7 +109,6 @@ Le campagne distinguono preparazione, rilassamento $T_1$, perdita di coerenza $T
 
 \begin{figure}[H]
 \centering
-% Schema vettoriale: riquadri identici e frecce ancorate ai bordi.
 \begin{tikzpicture}[
   every node/.style={execute at begin node=\setstretch{1}},
   blocco/.style={draw=blue!55!black, fill=blue!8, rounded corners=3pt, thick,
@@ -254,7 +247,6 @@ Il disegno complessivo segue un principio comune: baseline esplicita, appaiament
   \node[met] (m\i) at (\x mm,-68mm) {\met};
   \draw[freccia] (d\i) -- (m\i);
 }
-% linea di distribuzione dal contratto alle cinque domande
 \draw[thick] (top.south) -- ++(0,-5mm) coordinate (bus);
 \draw[thick] (d1.north |- bus) -- (d5.north |- bus);
 \foreach \i in {1,...,5} \draw[freccia] (d\i.north |- bus) -- (d\i.north);
@@ -366,7 +358,6 @@ Il confronto principale usa il circuito N=15, a=7 compilato una sola volta nella
 \node[blocco] (m2) at (5.5,-2) {\textbf{M2}: ML + TOP-4};
 \node[blocco, minimum height=1.8cm, fill=gray!10, draw=gray!70!black] (test) at (11,0)
   {Vettori appaiati\\primo successo\\Wilcoxon / Holm};
-% Due linee verticali comuni evitano diagonali e incroci.
 \coordinate (ingresso) at (2.75,0);
 \coordinate (uscita) at (8.25,0);
 \draw[linea] (sim.east) -- (ingresso);
