@@ -230,12 +230,9 @@ Le inclusioni $\mathbf{P} \subseteq \mathbf{BPP} \subseteq \mathbf{BQP} \subsete
 
 \end{onehalfspace}
 
-% -----------------------------------------------
 
 \section{L'anatomia fisica di una QPU}
 \label{app:anatomia}
-% Migrata dal Cap. 5 per il vincolo di lunghezza del corpo.
-% Nel capitolo resta il paragrafo di raccordo con i tre fatti usati nel seguito.
 
 Il Capitolo~\ref{chap:rumore} isola di questa materia i soli tre fatti che ricorrono nel
 seguito; questa sezione ne d\`a la trattazione completa.
@@ -252,28 +249,22 @@ Per capire dove nascono gli errori bisogna prima capire com'è fatta la macchina
   wave/.style={decorate, decoration={snake, amplitude=0.5mm, segment length=2.4mm}, thick, <->, >=stealth, orange!80!black},
   coupl/.style={line width=1.6pt, gray!60}
 ]
-% elettronica di controllo
 \node[rectangle, draw=black, thick, fill=orange!12, minimum width=112mm, minimum height=11mm, align=center, font=\small] (E) at (4.4, 3.1)
   {\textbf{Elettronica di controllo e lettura} (temperatura ambiente)\\[-1mm] {\footnotesize è qui che ``vivono'' i gate: impulsi a microonde sagomati}};
-% chip
 \draw[rounded corners=3mm, thick, fill=blue!3] (-1.1,-1.9) rectangle (12.2,1.0);
 \node[font=\footnotesize\itshape, anchor=south west] at (-1.0,-1.85) {chip criogenico ($\sim$15 mK) --- la QPU vera e propria};
-% qubit di calcolo
 \node[qubit] (Q0) at (0,0) {$Q_0$};
 \node[qubit] (Q1) at (2.2,0) {$Q_1$};
 \node[qubit] (Q2) at (4.4,0) {$Q_2$};
 \node[qubit] (Q3) at (6.6,0) {$Q_3$};
 \node[qubit] (Q4) at (8.8,0) {$Q_4$};
-% accoppiatori
 \draw[coupl] (Q0) -- (Q1);
 \draw[coupl] (Q1) -- (Q2);
 \draw[coupl] (Q2) -- (Q3);
 \draw[coupl] (Q3) -- (Q4);
 \node[font=\footnotesize, gray!50!black] at (4.4,-0.75) {accoppiatori fisici: entanglement diretto solo tra qubit \emph{adiacenti}};
-% qubit di test isolati
 \node[testq] (T0) at (11.2,0.2) {$T_0$};
 \node[font=\scriptsize, align=center, gray!30!black] at (11.2,-1.0) {qubit di riferimento\\non accoppiato\\ai qubit dati};
-% onde
 \foreach \q in {Q0,Q1,Q2,Q3,Q4}{ \draw[wave] (E.south -| \q) -- (\q.north); }
 \node[font=\footnotesize, orange!60!black, align=center] at (11.0,2.0) {microonde:\\controllo $\downarrow$ / lettura $\uparrow$};
 \end{tikzpicture}
@@ -422,12 +413,9 @@ rappresentate nel grafo del decoder costituiscono, nella
 Sezione~\ref{sec:decodifica_appresa}, il regime in cui il correttore residuo
 appreso mostra un guadagno rispetto al riferimento analitico.
 
-% -----------------------------------------------
 
 \section{L'algoritmo di Shor - approfondimenti e stato dell'arte}
 \label{app:shor_esteso}
-% Blocchi migrati dal Cap. 4 per il vincolo di lunghezza del corpo.
-% La rilevanza crittografica in forma estesa e' nell'Appendice C (Contesto).
 
 Questa sezione approfondisce l'algoritmo di Shor presentato nel Capitolo~\ref{chap:shor}: lo stato delle realizzazioni sperimentali, i miglioramenti algoritmici recenti, la sensibilità delle sue componenti al rumore e il perimetro delle istanze studiate.
 
@@ -521,13 +509,9 @@ all'aritmetica modulare. Il conteggio non include l'overhead fault-tolerant e
 non basta a stimare la fattibilità: connettività e routing possono aumentare
 profondità e numero di porte senza modificare il numero di qubit logici.
 
-% -----------------------------------------------
 
 \section{I canali di rumore: derivazioni complete}
 \label{app:canali}
-% Derivazioni migrate dal Cap. 5 per il vincolo di lunghezza del corpo.
-% Il capitolo mantiene il canale depolarizzante in forma completa e gli enunciati
-% compatti degli altri tre.
 
 I quattro canali quantistici che modellano il rumore sono mappe \ac{CPTP} in
 rappresentazione di Kraus, secondo il formalismo richiamato nella
@@ -545,7 +529,6 @@ Il canale \textbf{bit flip} modella un errore di tipo $X$ discreto: con probabil
 \end{equation}
 Sulla sfera di Bloch, le componenti $r_y$ e $r_z$ vengono contratte di un fattore $(1-2p)$ mentre la componente $r_x$ rimane invariata. Per $p=1/2$ il canale annulla le componenti $y$ e $z$, ma conserva $r_x$: equivale a una completa dephasing nella base degli autostati di $X$, non alla distruzione completa dello stato.
 
-% ---
 \subsection{Canale Phase Flip}
 
 Il canale \textbf{phase flip} modella la perdita di informazione di fase senza cambiamento di popolazione: la sovrapposizione decade senza che l'energia venga dissipata. Con operatori di Kraus $K_0 = \sqrt{1-p}\,I$ e $K_1 = \sqrt{p}\,Z$, il canale è:
@@ -560,7 +543,6 @@ L'effetto sulla matrice densità è immediato:
 \end{equation}
 Le popolazioni $\rho_{00}$ e $\rho_{11}$ rimangono invariate, mentre le \textbf{coerenze} $\rho_{01}$, $\rho_{10}$ vengono soppresse di un fattore $(1-2p)$. Questo è il canale che descrive il decadimento $T_2$: parametrizzando $p(t) = \frac{1}{2}(1-e^{-t/T_2})$, si ottiene $\rho_{01}(t) = \rho_{01}(0)\,e^{-t/T_2}$.
 
-% ---
 \subsection{Canale di Amplitude Damping}
 
 Il canale di \textbf{amplitude damping} modella il rilassamento energetico $T_1$: il qubit decade spontaneamente dallo stato eccitato $\ket{1}$ allo stato fondamentale $\ket{0}$ con probabilità $\gamma = 1-e^{-t/T_1}$. Gli operatori di Kraus sono:
@@ -630,8 +612,6 @@ Amplitude damping & sopprime $\rho_{01}$ & verso $\ket{0}$ & rilassamento $T_1$ 
 
 \end{table}
 
-% La sezione seguente genera intenzionalmente A.5 pur essendo collocata in
-% coda al file dei canali: evita di modificare la struttura di main.tex.
 \section{Strategie anti-rumore e richiami estesi di QEC}
 \label{app:strategie_estese}
 

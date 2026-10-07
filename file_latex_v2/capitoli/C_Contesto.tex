@@ -16,7 +16,6 @@ La crescita esponenziale del numero di transistor per chip, descritta nel 1965 d
 
 Il calcolo quantistico nasce dall'idea di usare sovrapposizione, entanglement e interferenza come risorse computazionali. Richard Feynman osservò nel 1982 che la simulazione classica di sistemi quantistici può richiedere risorse esponenziali e propose una macchina governata dalle stesse leggi dei sistemi da simulare~\cite{feynman1982}; David Deutsch formalizzò nel 1985 il primo modello di computer quantistico universale~\cite{deutsch1985}. Nel 1994 Daniel Simon individuò un problema oracle con separazione esponenziale rispetto agli algoritmi classici probabilistici, e nello stesso anno Peter Shor pubblicò algoritmi polinomiali per fattorizzazione e logaritmo discreto~\cite{shor1994}: una macchina quantistica sufficientemente grande comprometterebbe quindi RSA, Diffie--Hellman ed \ac{ECDSA}. Nel 1996 Lov Grover mostrò che la ricerca non strutturata richiede $O(\sqrt{N})$ interrogazioni anziché $O(N)$~\cite{grover1996}: uno speedup quadratico che sulla crittografia simmetrica si compensa raddoppiando la lunghezza delle chiavi, mentre per RSA non esiste un rimedio analogo.
 
-% -----------------------------------------------
 \subsection{RSA e le Implicazioni Crittografiche dell'Algoritmo di Shor}
 \label{app:intro:rsa}
 
@@ -31,13 +30,11 @@ Per $N$ a 2048 bit ciò corrisponde a circa $2^{112}$ operazioni; il record prat
 
 Le primitive vulnerabili compaiono in TLS, nei certificati X.509, in SSH e nelle firme digitali. Il rischio \textit{``harvest now, decrypt later''} consiste nel conservare oggi dati cifrati ancora sensibili in attesa di una futura macchina capace di decifrarli. Il \ac{NIST} sottolinea che non esiste una data affidabile per la comparsa di tale macchina: le scadenze 2030--2035 delle roadmap istituzionali sono obiettivi di migrazione, non previsioni~\cite{nist_pqc_explainer2026}.
 
-% -----------------------------------------------
 \subsection{Crittografia Post-Quantistica}
 \label{app:intro:pqc}
 
 Nel 2016 il \ac{NIST} ha avviato la standardizzazione della \textbf{crittografia post-quantistica} (\ac{PQC}), cioè di algoritmi eseguibili su hardware classico e resistenti agli attacchi quantistici. Nell'agosto 2024 sono stati pubblicati i primi tre standard~\cite{nist2024pqc}: \textbf{ML-KEM} (FIPS~203) per lo scambio di chiavi e \textbf{ML-DSA} (FIPS~204) per le firme, entrambi basati su reticoli, e \textbf{SLH-DSA} (FIPS~205), firma basata solo su funzioni hash. Per questi problemi non sono noti algoritmi quantistici con speedup esponenziale. La migrazione è però lenta: molti sistemi hanno cicli di vita lunghi, il materiale crittografico è più voluminoso (800 byte per la chiave ML-KEM-512 contro circa 256 per una chiave pubblica RSA-2048) e nella fase transitoria si adottano schemi ibridi, classici e post-quantistici in parallelo.
 
-% -----------------------------------------------
 \subsection{Dall'Era NISQ al Calcolo Fault-Tolerant}
 \label{app:intro:nisq}
 
@@ -45,7 +42,6 @@ I processori attuali sono descritti come \ac{NISQ}, termine introdotto da Preski
 
 \end{onehalfspace}
 
-% -----------------------------------------------
 
 \section{Dettaglio degli obiettivi e del piano sperimentale}
 \label{app:obiettivi}

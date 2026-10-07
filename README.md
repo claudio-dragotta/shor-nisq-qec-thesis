@@ -226,15 +226,16 @@ no comparison with the noisy `N=15` results.
 
 ## Building the thesis
 
-The LaTeX sources use `biblatex` with Biber:
+I file temporanei devono restare fuori dalle cartelle del progetto. Da PowerShell:
 
-```bash
-cd file_latex
-latexmk -pdf main.tex
+```powershell
+./scripts/compila_tesi.ps1 -Source file_latex_v2/main_relatore.tex
+# Copia personale:
+./scripts/compila_tesi.ps1 -Source file_latex_v2/main.tex
 ```
 
-Se MiKTeX non dispone del motore Perl richiesto da `latexmk`, la sequenza equivalente usata
-per la build finale è `pdflatex → biber → pdflatex` fino a stabilizzazione dei riferimenti.
+Lo script esegue LuaLaTeX e Biber nella cartella temporanea di Windows e copia
+soltanto il PDF finale accanto al sorgente. La ricetta di LaTeX Workshop usa lo stesso script.
 Il glossario è configurato in modalità `noidx` e non richiede `makeglossaries`.
 
 The thesis sources contain the reviewed v2 values. Before changing any reported number,

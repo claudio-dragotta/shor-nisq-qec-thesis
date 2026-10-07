@@ -203,7 +203,6 @@ del surface code affrontano precisamente questo limite.
 
 \end{onehalfspace}
 
-% -----------------------------------------------
 
 \section{Surface code: protocollo e controlli sul modello}
 \label{app:surface_protocollo_generale}
@@ -332,7 +331,6 @@ il modello Pauli; leakage e canali più ricchi sono sviluppi futuri.
 
 \end{onehalfspace}
 
-% -----------------------------------------------
 
 \section{La decodifica appresa: la campagna completa}
 \label{app:decodifica}
@@ -702,7 +700,6 @@ L'esito è netto: \textbf{tutte e dodici} le reti trasferite mantengono il vanta
 
 La regola appresa non è dunque il singolo profilo di rumore, ma qualcosa di più generale: verosimilmente la struttura delle configurazioni di sindrome che il matching interpreta male, la quale dipende dalla geometria del codice e dalla natura correlata dell'errore più che dalla sua intensità. Il risultato vale però nel perimetro provato, in cui varia soltanto l'intensità del crosstalk simulato: il trasferimento fra dispositivi reali, che differiscono anche nella struttura del rumore, resta da verificare.
 
-% -----------------------------------------------
 
 \section{Il Gross code nel modello code-capacity}
 \label{app:gross}
@@ -950,7 +947,6 @@ includendo le ancille, il Gross code usa 288 qubit e 12 patch a distanza
 
 \end{onehalfspace}
 
-% -----------------------------------------------
 
 \section{Analisi di sensibilità di Shor: dettagli e verifiche}
 \label{app:shor_sensibilita}
@@ -1073,17 +1069,13 @@ mancante.
 
 \end{onehalfspace}
 
-% -----------------------------------------------
 
-% Il testo seguente era incluso con \inputdemoted: i suoi titoli sono
-% stati abbassati di un livello direttamente nel sorgente.
 \section[Compilazione consapevole della struttura: un'esplorazione]{Compilazione consapevole della struttura:\\ un'esplorazione}
 \label{app:compilazione}
 \begin{onehalfspace}
 
 Questa sezione esamina due verifiche esterne al confronto principale M1--M2: la sensibilit\`a alla mappatura su una topologia eterogenea (M11/M11b) e il comportamento della ricerca TOP-4 nel proxy per gate (M13). Entrambe sono analisi esplorative. Il loro scopo \`e verificare se una metrica disponibile prima dell'esecuzione o una regola disponibile dopo la misura conservino potere informativo; non dimostrare prestazioni su una QPU reale. Il Capitolo~\ref{chap:integrazione} ne riporta la sintesi.
 
-% -----------------------------------------------
 \subsection{Previsione e selezione non sono la stessa domanda}
 \label{sec:app_comp_previsione}
 
@@ -1097,7 +1089,6 @@ Il punteggio di calibrazione di un circuito compilato \`e
 \end{equation}
 dove $e_g$ \`e l'errore target dell'istruzione fisica o della misura. Un punteggio minore indica una fedelt\`a nominale maggiore. La correlazione fra $s$ e successo risponde alla domanda \emph{predittiva}; scegliere il layout con $s$ minimo e valutarlo su dati non usati per la scelta risponde alla domanda \emph{decisionale}. Le due non vanno confuse.
 
-% -----------------------------------------------
 \subsection{M11: pilota sui layout}
 \label{sec:app_comp_pilota}
 
@@ -1208,7 +1199,6 @@ un punteggio \emph{appreso da esecuzioni} mostra un guadagno misurato, mentre
 qui \`e un punteggio \emph{derivato dalla sola calibrazione} a essere valutato,
 su una snapshot e su un campione di layout non uniforme.
 
-% -----------------------------------------------
 \subsection{M11b: readout effettivo dopo il routing}
 \label{sec:app_comp_ruoli}
 
@@ -1283,7 +1273,6 @@ Un'analisi indipendente ricalcola queste stime dal file dei risultati e ne
 vincola il contenuto all'hash SHA-256 \texttt{1c4b5b4fad1e2289\ldots f41c196b42152215}.
 % M11B_RESULTS_END
 
-% -----------------------------------------------
 \subsection{M13: TOP-4 sotto il proxy per gate}
 \label{sec:app_comp_topk}
 
@@ -1334,8 +1323,6 @@ Il contrasto primario preregistrato confronta il TOP-4 seeded a $p_L=0$ con quel
 Le analisi di sensibilit\`a confermano che la gestione dei pareggi \`e materiale. Se tutti i pareggi sono risolti nel senso pi\`u sfavorevole, la diminuzione stimata \`e 0,465 con IC $[0,395;0,534]$; nel senso pi\`u favorevole \`e 0,140 con IC $[0,095;0,195]$, non sufficiente per superare il margine con la stessa regola di discriminazione. L'inviluppo simultaneo Bonferroni-Wilson su tutte le risoluzioni ammissibili \`e $[0,059;0,553]$ e non supporta equivalenza per tutte le risoluzioni dei pareggi. Il risultato va quindi letto cos\`i: TOP-4 \`e estremamente efficace fino a $p_L=0,05$ su $N=15$, ma degrada in modo statisticamente visibile agli errori pi\`u alti della griglia.
 % M13_APPENDIX_RESULTS_END
 
-% -----------------------------------------------
-% Fonti: artefatti M15/M15b schema 2 elencati in coda.
 \subsection{QFT approssimata: protocolli, controlli ed esiti completi}
 \label{sec:app_aqft}
 

@@ -8,7 +8,6 @@
 
 La scelta degli strumenti di simulazione non è neutrale. In informatica quantistica, il framework adottato determina quali modelli di rumore sono disponibili, verso quale hardware è possibile traslare i circuiti e con quali risultati della letteratura è possibile confrontarsi direttamente. Questa sezione descrive gli strumenti utilizzati nella parte sperimentale di questa tesi, motivando ciascuna scelta e collocandola rispetto alle alternative disponibili.
 
-% -----------------------------------------------
 \subsection{Qiskit: il Framework Quantistico di Riferimento}
 \label{sec:qiskit}
 
@@ -62,7 +61,6 @@ Forest / PyQuil     & Rigetti               & Parziale                          
 
 \end{table}
 
-% -----------------------------------------------
 \subsection{Qiskit Aer: il Simulatore}
 \label{sec:qiskit_aer}
 
@@ -101,7 +99,6 @@ Il modello di rumore usato nella prima fase combina errori depolarizzanti, rilas
 
 Prima dell'esecuzione, la funzione \texttt{transpile} riscrive il circuito nella base esplicita \texttt{rz/sx/x/cx} e applica ottimizzazioni strutturali. La campagna usa il livello di ottimizzazione 2 e il seed del transpiler 20260819; questa coppia, insieme all'hash della sequenza compilata, è registrata in ogni artefatto. La base esplicita impedisce che porte composte restino opache e sfuggano al canale di rumore previsto.
 
-% -----------------------------------------------
 \subsection{Accelerazione GPU con Qiskit Aer}
 \label{sec:gpu}
 
@@ -113,7 +110,6 @@ this system}. \textbf{Tutti gli esperimenti riportati nella tesi sono quindi sta
 eseguiti su \ac{CPU}}, e il backend effettivo è registrato nei metadati di ogni
 artefatto (Sezione~\ref{sec:gpu_limit}).
 
-% -----------------------------------------------
 \subsection{scikit-learn: la Libreria per il Classificatore}
 \label{sec:scikit}
 
@@ -121,7 +117,6 @@ Il Metodo 2 richiede l'addestramento di un classificatore binario. La libreria s
 
 La motivazione principale è pragmatica: scikit-learn espone un'interfaccia unificata (\texttt{fit} / \texttt{predict}) per un ampio catalogo di classificatori — Random Forest, \ac{SVM}, \ac{MLP}, e altri — permettendo di confrontarli sullo stesso dataset con minime modifiche al codice. Questo facilita la selezione sperimentale del modello migliore senza dover introdurre dipendenze da framework più pesanti (TensorFlow, PyTorch) per un classificatore che, per il problema in esame, si prevede non richieda architetture profonde.
 
-% -----------------------------------------------
 \subsection{Ambiente di Esecuzione: WSL con Ubuntu}
 \label{sec:wsl}
 
@@ -144,12 +139,9 @@ campagne riportate sono state orchestrate su CPU.
 
 \end{onehalfspace}
 
-% -----------------------------------------------
 
 \section{Codice sorgente dei componenti implementati}
 \label{app:codice}
-% Listati della pipeline sperimentale. I sorgenti eseguibili restano l'autorità;
-% gli estratti mostrano il contratto versione 2 senza incorporare risultati.
 
 \begin{onehalfspace}
 
