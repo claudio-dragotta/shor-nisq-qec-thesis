@@ -70,3 +70,4 @@ figure_src/anteprime/
 # Snapshot del PDF compilato: artefatto, non sorgente. Era stato committato 42
 # volte per 359 MB di storia. Si rigenera con latexmk, o si scarica da Overleaf.
 tesi_compilata.pdf
+file_latex_v2/main_relatore.pdf

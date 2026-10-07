@@ -6,8 +6,6 @@
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
 \else
-  % I capitoli revisionati contengono simboli matematici Unicode provenienti
-  % dai documenti Word; LuaLaTeX/XeLaTeX li compongono senza traslitterazioni.
   \usepackage{fontspec}
   \defaultfontfeatures{Scale=MatchLowercase}
 \fi
@@ -18,12 +16,8 @@
 \usepackage{subfig}
 \usepackage{amsmath, amssymb, amsfonts}
 \ifPDFTeX\else
-  % Va caricato dopo i pacchetti AMS per evitare ridefinizioni dei simboli.
   \usepackage{unicode-math}
 \fi
-% Simboli matematici esportati da Word in modalità testo. Le definizioni
-% valgono per entrambi i motori: con pdfLaTeX, senza di esse, lettere greche,
-% apici e pedici Unicode (λ, μ, 10⁻⁵, ...) sparirebbero dal PDF.
 \usepackage{newunicodechar}
   \newunicodechar{±}{\ensuremath{\pm}}
   \newunicodechar{·}{\ensuremath{\cdot}}
@@ -77,7 +71,7 @@
   \newunicodechar{⟨}{\ensuremath{\langle}}
   \newunicodechar{⟩}{\ensuremath{\rangle}}
   \newunicodechar{✓}{\ensuremath{\checkmark}}
-\usepackage{braket}         % Notazione di Dirac: \ket{}, \bra{}, \braket{}
+\usepackage{braket}         %
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{afterpage}
@@ -88,9 +82,9 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 \usepackage{tikz}
-\usetikzlibrary{quantikz2}  % Circuiti quantistici
+\usetikzlibrary{quantikz2}  %
 \usetikzlibrary{positioning, arrows.meta, calc}
-\usetikzlibrary{decorations.pathmorphing, decorations.pathreplacing}  % onde microonde, graffe
+\usetikzlibrary{decorations.pathmorphing, decorations.pathreplacing}  %
 \usepackage{listings}
 \usepackage{microtype}
 \usepackage{csquotes}
@@ -100,29 +94,22 @@
 \usepackage{tabularx}
 \usepackage{longtable}
 \usepackage{array}
-% Tabelle: interlinea singola anche dentro gli ambienti a interlinea 1,5,
-% corpo ridotto per le longtable e righe leggermente distanziate.
 \usepackage{etoolbox}
-\usepackage{needspace}  % evita titoli isolati in fondo alla pagina prima di una tabella
+\usepackage{needspace}  %
 \AtBeginEnvironment{longtable}{\small\setstretch{1}\renewcommand{\arraystretch}{1.2}}
 \AtBeginEnvironment{tabular}{\setstretch{1}\renewcommand{\arraystretch}{1.2}}
 \AtBeginEnvironment{tabularx}{\setstretch{1}\renewcommand{\arraystretch}{1.2}}
-% Colonne X allineate a sinistra: niente spazi dilatati fra le parole.
 \renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
 \usepackage{calc}
 \usepackage{caption}
 \captionsetup[table]{position=bottom,skip=8pt,font=small,labelfont=bf,justification=raggedright,singlelinecheck=false}
 \captionsetup[figure]{position=bottom,skip=8pt,labelfont=bf,textfont=normalfont}
-% Pandoc usa un tipo di caption neutro per le tabelle che nel Word
-% contengono formule, senza incrementare la numerazione delle tabelle.
 \newcounter{none}
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \usepackage{setspace}
 \usepackage[bottom]{footmisc}
 \usepackage{float}
-% Lasciare a LaTeX margine per comporre figure e tabelle senza creare
-% pagine semivuote. I singoli float usano normalmente [!htbp].
 \setcounter{topnumber}{3}
 \setcounter{bottomnumber}{2}
 \setcounter{totalnumber}{5}
@@ -132,23 +119,18 @@
 \renewcommand{\floatpagefraction}{0.75}
 \setlength{\emergencystretch}{3em}
 \usepackage[backend=biber, citestyle=numeric, sorting=none]{biblatex}
-% hyperref segue footmisc e biblatex, così anche i richiami di nota ricevono
-% destinazioni PDF valide; glossaries viene caricato subito dopo per usarle.
 \usepackage[breaklinks, hidelinks]{hyperref}
 \usepackage[acronym, nopostdot, nogroupskip, toc]{glossaries}
 \makenoidxglossaries
-% Compatibilità con i comandi del vecchio pacchetto acronym
 \let\ac\gls
 \providecommand{\acf}[1]{\acrfull{#1}}
 \providecommand{\acl}[1]{\acrlong{#1}}
 \providecommand{\acs}[1]{\acrshort{#1}}
-\input{capitoli/Acronimi}   % definizioni acronimi nel preambolo
+\input{capitoli/Acronimi}   %
 
-% Didascalie dei listati in italiano, come nel Word ("Listato B.13").
 \renewcommand{\lstlistingname}{Listato}
 \renewcommand{\lstlistlistingname}{Elenco dei listati}
 
-% Stile codice Python/Qiskit
 \lstset{
     language=Python,
     basicstyle=\ttfamily\small,
@@ -161,13 +143,10 @@
     captionpos=b
 }
 
-% Pagina bianca
 \newcommand{\blankpage}{%
     \null\thispagestyle{empty}\addtocounter{page}{-1}\newpage
 }
 
-% Separa, nello stesso sorgente, le evidenze centrali E1--E4 stampate nel
-% corpo dai controlli estesi E5--E12 conservati nell'Appendice E.
 \newif\ifdecoderbody
 \decoderbodyfalse
 
@@ -177,65 +156,48 @@
 
 \begin{document}
 
-% Il frontespizio, la pagina bianca e la dedica non hanno numerazione
-% stampata: disabilita qui gli ancoraggi di pagina per evitare destinazioni
-% PDF duplicate quando la numerazione riparte nelle sezioni successive.
 \hypersetup{pageanchor=false}
 \input{TITLE}
 
-% Dedica: versi allineati a destra, una riga vuota fra le due strofe.
-% Sospesa momentaneamente per la versione da inviare all'università.
-% \begin{titlepage}
-%     \vspace*{5cm}
-%     \begin{flushright}
-%         \itshape
-%         Alla mia famiglia,\\
-%         che ha creduto in me\\
-%         quando io stesso dubitavo,\\
-%         e mi ha insegnato che la luce\\
-%         si trova anche camminando nel buio.
-%
-%         \bigskip
-%         A me stesso,\\
-%         perché ho imparato che resistere\\
-%         non è l'assenza di paura,\\
-%         ma scegliere di restare\\
-%         quando nessuno ci credeva più.
-%     \end{flushright}
-% \end{titlepage}
+\ifdefined\copiarelatore\else
+\begin{titlepage}
+    \vspace*{5cm}
+    \begin{flushright}
+        \itshape
+        Alla mia famiglia,\\
+        che ha creduto in me\\
+        quando io stesso dubitavo,\\
+        e mi ha insegnato che la luce\\
+        si trova anche camminando nel buio.
+
+        \bigskip
+        A me stesso,\\
+        perché ho imparato che resistere\\
+        non è l'assenza di paura,\\
+        ma scegliere di restare\\
+        quando nessuno ci credeva più.
+    \end{flushright}
+\end{titlepage}
+\fi
 
 \hypersetup{pageanchor=true}
 \pagenumbering{roman}
 
-% -----------------------------------------------
 \tableofcontents
 
-% -----------------------------------------------
 \addcontentsline{toc}{chapter}{\listfigurename}
 \listoffigures
 
-% -----------------------------------------------
 \addcontentsline{toc}{chapter}{\listtablename}
 \listoftables
 
-% -----------------------------------------------
-% Sigle scritte in chiaro nei capitoli del corpo, senza \ac{}: \glsadd le
-% inserisce nell'elenco senza stampare l'espansione nel testo.
 \glsadd{ECR}\glsadd{IC}\glsadd{ML}\glsadd{RSA}
 \printnoidxglossary[type=\acronymtype, nonumberlist, title={Elenco degli Acronimi}]
 
-% -----------------------------------------------
-% Chiude la seconda pagina dell'elenco degli acronimi ancora in numerazione
-% romana; la numerazione araba deve iniziare realmente con il Capitolo 1.
 \clearpage
 \pagenumbering{arabic}
-% Mantiene la stessa numerazione bibliografica della bozza Word auditata.
-% La voce 33 (Kitaev) è inclusa nella bibliografia anche se non richiamata
-% direttamente nel testo dei sei capitoli.
 \nocite{shor1994,buhler1993gnfs,rsa1978,preskill2018,skosana2021,yang2026,smolin2013,nielsenChuang2000,temme2017,steane1996,fowler2012,qiskit2023,stim2021,pymatching2021,scikit_learn,beauregard2002,googleQECBelowThreshold2025,alphaqubit2024,chevignard2025,wootters1982,shorcorrection1995,googleSurfaceCode2023,torlaiMelko2017,yan2026,roffe2020,panteleev2021,sarovar2020,barencoAQFT1996,akoramurthy2026,gidney2021,aharonov1997fault,dennis2002topological,kitaev2003,liBenjamin2017,rsa250_2020,shuklaqpe2026,shukla2026,zurek2003,vandersypen2001,monz2016,calderbankShor1996,gottesman1997,murali2019,tannu2019}
 
-% Un file per capitolo e uno per appendice: ogni file apre con il proprio
-% \chapter e con le etichette, comprese quelle storiche mantenute come alias.
 \input{capitoli/01_Introduzione}
 \input{capitoli/02_Obiettivi}
 \input{capitoli/03_FondamentiMetodologia}
@@ -243,7 +205,6 @@
 \input{capitoli/05_Risultati}
 \input{capitoli/06_Conclusioni}
 
-% -----------------------------------------------
 \appendix
 \input{capitoli/A_TeoriaEstesa}
 \input{capitoli/B_StrumentiCodice}
@@ -251,17 +212,24 @@
 \input{capitoli/D_Fase1}
 \input{capitoli/E_Fase2}
 
-% -----------------------------------------------
 \begingroup
 \setlength{\emergencystretch}{2em}
 \printbibliography[heading=bibintoc, title={Bibliografia}]
 \endgroup
 
-% -----------------------------------------------
-% Ringraziamenti sospesi momentaneamente: da riattivare quando il testo
-% personale (prosecuzione di quelli della triennale) sarà pronto.
-% \chapter*{Ringraziamenti}
-% \input{capitoli/Ringraziamenti}
+\chapter*{Ringraziamenti}
+\begin{onehalfspace}
+\ifdefined\copiarelatore\else
+  \input{capitoli/Ringraziamenti}
+\fi
+\input{capitoli/Ringraziamenti_relatore}
+
+\vspace{1cm}
+\begin{flushright}
+\textit{Claudio Dragotta} \\
+\textit{Roma, \the\year}
+\end{flushright}
+\end{onehalfspace}
 
 
 \end{document}
