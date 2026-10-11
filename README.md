@@ -226,17 +226,17 @@ no comparison with the noisy `N=15` results.
 
 ## Building the thesis
 
-I file temporanei devono restare fuori dalle cartelle del progetto. Da PowerShell:
+The thesis compiles with LuaLaTeX and Biber:
 
-```powershell
-./scripts/compila_tesi.ps1 -Source file_latex_v2/main_relatore.tex
-# Copia personale:
-./scripts/compila_tesi.ps1 -Source file_latex_v2/main.tex
+```bash
+cd file_latex_v2
+latexmk -lualatex main.tex
 ```
 
-Lo script esegue LuaLaTeX e Biber nella cartella temporanea di Windows e copia
-soltanto il PDF finale accanto al sorgente. La ricetta di LaTeX Workshop usa lo stesso script.
-Il glossario è configurato in modalità `noidx` e non richiede `makeglossaries`.
+`main_relatore.tex` builds the copy for the advisor, which differs only in the
+acknowledgements. latexmk writes its auxiliary files next to the sources: pass
+`-outdir=<dir>` to keep them elsewhere, or run `latexmk -c` afterwards. The glossary
+uses `noidx` mode and needs no `makeglossaries`.
 
 The thesis sources contain the reviewed v2 values. Before changing any reported number,
 check `schema_version`, the circuit hash, model revision, seeds and software versions in its
