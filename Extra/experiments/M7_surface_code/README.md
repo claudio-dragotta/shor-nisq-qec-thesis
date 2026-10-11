@@ -37,7 +37,7 @@ python qec_surface.py --basis z --shots 200000    # base Z (default)
 python qec_surface.py --basis x --shots 200000    # base X
 # opzioni: --distances 3 5 7   --shots N   --seed S
 ```
-Figura per la tesi: `../../../figure_src/gen_qec_surface.py` → `file_latex/figure/qec_surface_curve.pdf`.
+Figura per la tesi: `../../../figure_src/gen_qec_surface.py` → `file_latex_v2/figure/qec_surface_curve.pdf`.
 
 ## Cosa aspettarsi (flag)
 

@@ -36,7 +36,7 @@ python qec_steane.py --mode curve --shots 200000   # 3. curva p vs p_L
 # --mode both = check + verify (non la curva); --seed S (default 42)
 ```
 La figura per la tesi: `../../../figure_src/gen_qec_steane.py`
-(legge i JSON di questa cartella → `file_latex/figure/qec_steane_curve.pdf`).
+(legge i JSON di questa cartella → `file_latex_v2/figure/qec_steane_curve.pdf`).
 
 ## Cosa aspettarsi (tre controlli in ordine)
 

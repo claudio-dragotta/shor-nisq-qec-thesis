@@ -1,14 +1,17 @@
 # Shor's Algorithm on NISQ Hardware & Quantum Error Correction
 
-**Master's thesis — Claudio Dragotta · Advisor: Ing. Floriano Caprio · Università Campus
-Bio-Medico di Roma**
+**Master's thesis — Claudio Dragotta · Advisor: Prof. Paolo Soda · Co-advisor: Prof. Floriano
+Caprio · Università Campus Bio-Medico di Roma**
 
-This repository contains the thesis sources, experimental code, versioned JSON artifacts
-and figure generators; the interactive demo is kept in its own repository. Scientific
-outputs are considered current only when their circuit/model revision and provenance are
-recorded in the artifact.
+This repository contains the thesis sources, experimental code, versioned JSON artifacts and
+the figure generators; the interactive demo is kept in its own repository. Scientific outputs are considered current
+only when their circuit/model revision and provenance are recorded in the artifact.
 
-## Scientific status — 27 August 2026
+**Where to start:** the compiled thesis is `Tesi magistrale per prof.pdf`, the abstract is
+`Abstract_Tesi_Dragotta.pdf`, and the bilingual five-page summary is
+`output/pdf/Sommario_tesi_bilingue.pdf`.
+
+## Scientific status
 
 The historical Phase-1 circuit for `N=15, a=7` had the correct order but implemented the
 wrong modular permutation. Its ideal peak positions were unchanged, so the bug was invisible
@@ -27,6 +30,8 @@ The following boundary is therefore mandatory:
 | M10 learned decoding, including M14 transfer tests | **Current.** Decoder results do not use the faulty modular multiplier. |
 | M11/M11b layout studies | **Current v2 as exploratory/observational studies.** Regenerated on an offline FakeSherbrooke snapshot; they are not hardware benchmarks and do not support causal claims. |
 | M12 coherent-noise study | Current within its documented surface-code scope. |
+| M15 approximate QFT | **Current.** Built on the corrected circuit; noisy `N=15` campaign with selection/holdout split, structural and noisy runs on `N=21`, and a nine-case QPE benchmark. |
+| M16 Gross code (qLDPC) | **Current, exploratory.** Code-capacity model only: data-qubit X errors and perfect syndromes. |
 
 Only the schema-2 Phase-1, M8, M13, M11 and M11b artifacts under
 `artifacts/v2_20260819/` are current; older outputs remain historical audit material.
@@ -70,6 +75,25 @@ provide a gate-by-gate equivalent noise channel for Shor.
 The supported conclusion is deliberately narrow: learning can complement an analytic
 decoder when its error model is structurally incomplete; it does not automatically replace
 the best available analytic method.
+
+### M15: approximate QFT
+
+Truncating small-angle controlled rotations removes gates but adds algorithmic error. On
+`N=15` the configuration chosen on the selection split (`k_QPE = 1`) raises holdout success
+from `0.4792` to `0.6279` (+14.87 percentage points), with 22.9% fewer ECR gates and 15.5%
+lower depth. On `N=21` no noisy gain is demonstrated: the arithmetic is much deeper and the
+phases `j/6` need finer rotations. The result is a design criterion that depends on the
+instance, the phase and the noise regime, not a universal replacement of the full QFT.
+
+### M16: Gross code against surface-code patches (code-capacity)
+
+The Gross code `[[144,12,12]]` is compared with 12 surface-code patches using a serial
+min-sum BP+OSD decoder (scaling factor 0.625, 100 iterations, OSD-CS order 10). It beats 12
+patches at `d=11` at every studied `q` and 12 patches at `d=13` for `q ≥ 0.75%`; at `q = 1%`
+the logical failure rate is `1.01e-6` against `1.63e-6` for `d=13`, with the crossing
+near `q ≈ 0.5%`. The serial decoder corrects all 498,685,189 configurations of weight at
+most 5. These numbers count data qubits only and are not comparable with the circuit-level
+M7 results or with published hardware figures.
 
 ## M8 is a phenomenological proxy, not an M6/M7 equivalence
 
@@ -194,9 +218,10 @@ causal ML claim.
 ## Repository map
 
 ```text
-file_latex/           thesis sources and included figures
+file_latex_v2/        thesis sources (6 chapters, 5 appendices) and included figures
 file_latex_sommario/  5+5 page summary for the LM ISI template
-figure_src/           deterministic figure generators
+figure_src/           figure generators, reading explicit JSON artifacts
+output/pdf/           compiled summary and revised-tables PDF
 Extra/experiments/    code and versioned artifacts, grouped by milestone
 Extra/experiments/AVVIO_WSL.md   environment and experimental pipeline walkthrough
 ```
@@ -211,6 +236,8 @@ Extra/experiments/AVVIO_WSL.md   environment and experimental pipeline walkthrou
 | M10/M14 | `Extra/experiments/M10_neural_decoder/` |
 | M11/M11b | `Extra/experiments/M11_layout/` |
 | M12 | `Extra/experiments/M12_coerenti/` and `Extra/experiments/extra_rumore_coerente/` |
+| M15 | `Extra/experiments/M15_qft_topologia/` |
+| M16 | `Extra/experiments/M16_qldpc_gross/` |
 
 ## Interactive demo
 

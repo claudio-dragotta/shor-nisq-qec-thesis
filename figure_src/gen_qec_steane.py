@@ -1,7 +1,7 @@
 """
 gen_qec_steane.py — figura M6: curva p vs p_L del codice di Steane [[7,1,3]].
 Legge il JSON prodotto da experiments/qec_steane.py (--mode curve) e produce
-qec_steane_curve.pdf/png in file_latex/figure/ (log-log: dati pendenza ~2 vs
+qec_steane_curve.pdf/png in file_latex_v2/figure/ (log-log: dati pendenza ~2 vs
 bisettrice p_L=p; la loro intersezione è la pseudo-soglia).
 
 Uso: python gen_qec_steane.py
@@ -64,7 +64,7 @@ def main():
     ax.grid(alpha=0.3, which='both')
     fig.tight_layout()
 
-    out = os.path.join(os.path.dirname(__file__), '..', 'file_latex', 'figure', 'qec_steane_curve')
+    out = os.path.join(os.path.dirname(__file__), '..', 'file_latex_v2', 'figure', 'qec_steane_curve')
     fig.savefig(out + '.pdf')
     fig.savefig(out + '.png', dpi=150)
     print(f"Figura salvata: {out}.pdf / .png  (pseudo-soglia log-log, A={A:.1f})")

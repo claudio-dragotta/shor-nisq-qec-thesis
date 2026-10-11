@@ -7,8 +7,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import os as _os
-# le figure vanno scritte in file_latex/figure/ (questo script vive in figure_src/)
-_os.chdir(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..', 'file_latex', 'figure'))
+# le figure vanno scritte in file_latex_v2/figure/ (questo script vive in figure_src/)
+_os.chdir(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..', 'file_latex_v2', 'figure'))
 
 fig, ax = plt.subplots(figsize=(8, 5.5))
 ax.set_xlim(0, 8)

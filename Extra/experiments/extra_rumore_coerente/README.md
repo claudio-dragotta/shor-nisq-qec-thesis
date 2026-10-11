@@ -30,7 +30,7 @@ python qec_coherent.py                 # p=0.01, N=1..20, 20000 shot
 # opzioni: --p --Nmax --shots --seed
 ```
 
-Figura: `../../../figure_src/gen_coherent.py` → `file_latex/figure/qec_coherent.pdf`.
+Figura: `../../../figure_src/gen_coherent.py` → `file_latex_v2/figure/qec_coherent.pdf`.
 
 ## Risultato
 

@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 EXP_DIR = os.path.join(os.path.dirname(__file__), '..', 'Extra', 'experiments',
                        'M10_neural_decoder')
-OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'file_latex', 'figure')
+OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'file_latex_v2', 'figure')
 
 C_MWPM, C_NN, C_ORA, C_TRIV = 'C0', 'C3', 'C1', '0.6'
 MK = {3: 'o', 5: 's', 7: '^'}

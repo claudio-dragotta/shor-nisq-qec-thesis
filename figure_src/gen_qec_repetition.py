@@ -72,7 +72,7 @@ def main():
     ax.grid(alpha=0.3)
     fig.tight_layout()
 
-    out = os.path.join(os.path.dirname(__file__), '..', 'file_latex', 'figure', 'qec_repetition_curve')
+    out = os.path.join(os.path.dirname(__file__), '..', 'file_latex_v2', 'figure', 'qec_repetition_curve')
     fig.savefig(out + '.pdf')
     fig.savefig(out + '.png', dpi=150)
     print(f"Figura salvata: {out}.pdf / .png")

@@ -21,7 +21,7 @@ ARTIFACT = os.path.join(
     "Extra/experiments/M11_layout/artifacts/v2_20260819",
     "results_M11_pilota_v2_20260826_222137.json",
 )
-OUT_DIR = os.path.join(_ROOT, "file_latex", "figure")
+OUT_DIR = os.path.join(_ROOT, "file_latex_v2", "figure")
 PNG_DIR = os.path.join(_HERE, "anteprime")
 
 with open(ARTIFACT) as f:

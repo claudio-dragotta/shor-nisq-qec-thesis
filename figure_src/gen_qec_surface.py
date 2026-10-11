@@ -1,7 +1,7 @@
 """
 gen_qec_surface.py — figura M7: curve p vs p_L del surface code in base Z.
 Legge un JSON esplicito di experiments/M7_surface_code/ e produce
-qec_surface_curve.pdf in file_latex/figure, con anteprima .png in
+qec_surface_curve.pdf in file_latex_v2/figure, con anteprima .png in
 figure_src/anteprime: la firma della soglia è l'incrocio delle curve a
 distanza crescente.
 
@@ -85,7 +85,7 @@ def main():
     ax.grid(alpha=0.3, which='both')
     fig.tight_layout()
 
-    out = os.path.join(_HERE, '..', 'file_latex', 'figure', 'qec_surface_curve')
+    out = os.path.join(_HERE, '..', 'file_latex_v2', 'figure', 'qec_surface_curve')
     fig.savefig(out + '.pdf')
     os.makedirs(PNG_DIR, exist_ok=True)
     png = os.path.join(PNG_DIR, 'qec_surface_curve.png')

@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 
 EXP = os.path.join(os.path.dirname(__file__), '..', 'Extra', 'experiments',
                    'M10_neural_decoder')
-OUT = os.path.join(os.path.dirname(__file__), '..', 'file_latex', 'figure')
+OUT = os.path.join(os.path.dirname(__file__), '..', 'file_latex_v2', 'figure')
 
 
 def _tutti_i_punti(pattern):

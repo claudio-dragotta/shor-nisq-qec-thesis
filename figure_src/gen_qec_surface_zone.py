@@ -6,7 +6,7 @@ QEC sopprime gli errori) e rosso (sopra soglia, QEC li amplifica), rendendo
 visivamente esplicita la transizione di fase che il codice a superficie attraversa.
 
 Non modifica gen_qec_surface.py esistente: produce 'gen_qec_surface_zone.pdf'
-in file_latex/figure e l'anteprima .png in figure_src/anteprime.
+in file_latex_v2/figure e l'anteprima .png in figure_src/anteprime.
 
 Usa entrambe le basi (Z e X) per mostrare la robustezza della soglia.
 
@@ -32,7 +32,7 @@ import numpy as np
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _ROOT = os.path.join(_HERE, "..")
 EXP_DIR = os.path.join(_ROOT, "Extra", "experiments", "M7_surface_code")
-OUT_DIR = os.path.join(_ROOT, "file_latex", "figure")
+OUT_DIR = os.path.join(_ROOT, "file_latex_v2", "figure")
 PNG_DIR = os.path.join(_HERE, "anteprime")
 
 # JSON M7 canonici, indicati per nome esatto: la regola sui generatori vieta di

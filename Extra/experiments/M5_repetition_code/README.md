@@ -30,7 +30,7 @@ python qec_repetition.py --mode both --basis X    # phase-flip
 # opzioni: --mode {verify,curve,both}  --shots N (default 20000)  --seed S (default 42)
 ```
 La figura per la tesi si rigenera con `../../../figure_src/gen_qec_repetition.py`
-(legge i JSON di questa cartella → `file_latex/figure/qec_repetition_curve.pdf`).
+(legge i JSON di questa cartella → `file_latex_v2/figure/qec_repetition_curve.pdf`).
 
 ## Cosa aspettarsi (i due esperimenti)
 

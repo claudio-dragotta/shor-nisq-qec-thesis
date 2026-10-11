@@ -26,13 +26,21 @@ Riusa il circuito di Shor da `../campagne_classiche_M1-M4/shor_core.py` (via `sy
 ## Come si esegue
 
 ```bash
-source ~/quantum-env/bin/activate
-python shor_logico.py                 # N=15, curva per-misura (16384 shot/punto)
-# opzioni: --N --a --n_count --shots --seed
+PY=/home/claudio/quantum-env/bin/python
+RUN=artifacts/v2_20260819
+$PY shor_logico.py --N 15 --a 7 --n-count 8 --shots 4096 \
+  --replicates 20 --seed 42 --output-dir "$RUN"
+$PY topk_logico.py --K 4 --shots 1024 --replicates 200 --seed 42 \
+  --equivalence-margin 0.10 --output-dir "$RUN"
 ```
 
-Figura conclusiva: `../../../figure_src/gen_shor_logico.py`
-→ `file_latex/figure/qec_shor_logico_curve.pdf`.
+Figura conclusiva, dalla radice del repository, con il JSON v2 esplicito:
+
+```bash
+$PY figure_src/gen_shor_logico.py \
+  --input Extra/experiments/M8_shor_logico/artifacts/v2_20260819/results_M8_shor_logico_v2_20260826_123421.json \
+  --output-base file_latex_v2/figure/qec_shor_logico_curve
+```
 
 ## Metrica: perché "per singola misura" e non TOP-4
 
