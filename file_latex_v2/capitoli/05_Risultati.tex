@@ -203,6 +203,7 @@ Per evitare di confondere il successo della procedura classica con la qualità d
 \end{table}
 \endgroup
 
+\clearpage
 La Zero-Noise Extrapolation digitale, usata come confronto aggiuntivo nello scenario UC1, non riduce il numero di iterazioni e aumenta il costo di campionamento. ZNE-2 richiede in media 3 072 shot complessivi e ZNE-3 4 813, rispetto a 1 399 di TOP-1 e 1 024 di TOP-4. Poiché il protocollo scala i parametri depolarizzanti nel simulatore e non implementa gate folding su hardware, questo esito è locale al modello adottato e non costituisce una valutazione generale della ZNE. Il confronto è volutamente locale: la ZNE ha fondamenti generali consolidati, ma la sua efficacia dipende dalla realizzazione del noise scaling e dall'osservabile considerato \cite{temme2017,liBenjamin2017}. La tabella appaiata completa e il contratto della campagna sono conservati nella Sezione~\ref{app:parametrica}.
 
 Gli sweep su K, numero di shot, T1/T2, errore 1Q/2Q, readout e livello di ottimizzazione confermano che TOP-4 rimane molto efficace nell'istanza N=15 lungo gli intervalli esplorati. Tale robustezza non va però generalizzata: con 63 esiti accettabili su 256 e soli quattro picchi ideali, l'istanza offre condizioni combinatorie particolarmente favorevoli. Intervalli, griglie ed esiti per ciascuna famiglia sono riportati nelle Tabelle~\ref{tab:sweep_k}--\ref{tab:sweep_optlevel} della Sezione~\ref{app:parametrica}.
@@ -213,6 +214,7 @@ La tabella va letta come mappa di stabilità locale, non come prova di insensibi
 {\small\setstretch{1.15}\noindent \textbf{Risposta a DR1.} La ricerca multi-candidato riduce in modo significativo il costo della fattorizzazione rispetto a TOP-1. Il classificatore considerato non aggiunge un beneficio rispetto alla stessa TOP-4 senza filtro, nonostante F1 e AUC elevate. Nel perimetro studiato, la complessità appresa è quindi non necessaria a valle dell'istogramma; il risultato utile è l'ablazione che identifica la vera sorgente del guadagno.\par}
 \nopagebreak\noindent\rule{\linewidth}{0.6pt}\par\medskip
 
+\clearpage
 \section{DR2 - Correzione quantistica: dalla soppressione elementare alla soglia del surface code}\label{sec:finale_5_2}
 
 La seconda domanda di ricerca riguarda un problema diverso: non come utilizzare meglio gli esiti già misurati, ma se la codifica possa ridurre la probabilità di errore dell'informazione logica durante la conservazione dello stato. La progressione sperimentale usa il codice a ripetizione come controllo elementare, il codice di Steane come primo codice capace di correggere un errore arbitrario su un qubit e il surface code per studiare il ruolo della distanza e della soglia.
@@ -357,6 +359,13 @@ Il dato più informativo non è quindi che la rete ``fallisca'', ma il costo per
 
 La situazione cambia introducendo un errore correlato fra qubit dati adiacenti, usato come modello elementare di crosstalk. L'errore fisico di base rimane p=3×10⁻³. A d=3, la rete appresa dai campioni supera MWPM in tutte e quattro le intensità considerate; a d=5 il quadro si inverte. Nel modello simulato, il risultato indica che una buona stima dei parametri del rumore non è sufficiente quando la struttura del decoder non rappresenta adeguatamente la classe di correlazioni osservata.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.65\textwidth,height=0.60\textheight,keepaspectratio]{finale_fig_5_5_decoder_crosstalk.png}
+
+\caption{A distanza 3 la rete supera il matching nel regime di crosstalk simulato; il vantaggio non si trasferisce automaticamente a distanza 5.}\label{fig:finale_5_5}
+\end{figure}
+
 \begingroup
 \small
 \begin{table}[!htbp]
@@ -394,12 +403,6 @@ La situazione cambia introducendo un errore correlato fra qubit dati adiacenti, 
 \end{table}
 \endgroup
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.85\textwidth,height=0.68\textheight,keepaspectratio]{finale_fig_5_5_decoder_crosstalk.png}
-
-\caption{A distanza 3 la rete supera il matching nel regime di crosstalk simulato; il vantaggio non si trasferisce automaticamente a distanza 5.}\label{fig:finale_5_5}
-\end{figure}
 
 Un esito controintuitivo è che fornire a MWPM un modello che include il crosstalk non migliora sempre la decodifica. A d=3 e crosstalk 0.005, l'errore passa da 0.03097 con modello nominale a 0.05656 con il modello che tenta di includere il crosstalk. Nel modello adottato, questo comportamento è coerente con un limite di rappresentazione: l'errore correlato può attivare più detection event e la decomposizione richiesta dal grafo del matching può diventare inadeguata. A d=5, invece, il modello che include il crosstalk torna a essere il migliore dei due matching. Il dato richiede quindi di distinguere fra accuratezza della stima del canale e rappresentabilità del canale nel decoder.
 
@@ -785,6 +788,8 @@ M11b: readout post-routing & 9 sottografi, 45 osservazioni & $\rho_s$ parziale=-
 {\small\setstretch{1.15}\noindent \textbf{Risposta a DR4.} Nel modello M8, la probabilità di fattorizzazione diminuisce al crescere del proxy per gate p\_g e converge verso la baseline uniforme specifica della procedura di estrazione. Le ripetizioni indipendenti compensano probabilisticamente un singolo run meno affidabile, ma non eliminano il costo del rumore. Le metriche QEC non vengono proiettate su questa curva: trasformare p\_L di una memoria in p\_g di una computazione richiederebbe una compilazione fault-tolerant esplicita.\par}
 \nopagebreak\noindent\rule{\linewidth}{0.6pt}\par\medskip
 
+\clearpage
+
 \section{DR5 - QFT approssimata: quando meno porte producono più informazione utile}\label{sec:finale_5_5}\label{sec:qft_topologia}
 
 La quinta domanda di ricerca studia un compromesso diverso: eliminare rotazioni controllate di piccolo angolo riduce il numero di porte e la profondità, ma introduce un errore algoritmico. Il beneficio esiste soltanto se il rumore evitato compensa l'informazione di fase persa. Per evitare una conclusione unica su circuiti molto differenti, la campagna distingue tre casi: Shor su N=15, Shor con aritmetica Beauregard su N=21 e Quantum Phase Estimation isolata. L'idea di eliminare rotazioni di piccolo angolo ha una tradizione teorica consolidata nell'AQFT; il punto qui è verificarne il beneficio sulla metrica algoritmica effettiva \cite{barencoAQFT1996,akoramurthy2026}.
@@ -984,6 +989,8 @@ Il limite teorico discusso in letteratura \cite{barencoAQFT1996,akoramurthy2026}
 \par\medskip\noindent\rule{\linewidth}{0.6pt}\par\nopagebreak
 {\small\setstretch{1.15}\noindent \textbf{Risposta a DR5.} L'AQFT è efficace quando il risparmio di porte supera la perdita di precisione di fase. Questo avviene in modo netto su Shor N=15 e in diversi benchmark di QPE; non è invece dimostrato nelle prove rumorose su N=21, dove l'aritmetica è molto più profonda e le fasi richiedono maggiore precisione. Il risultato scientifico è quindi un criterio di progetto dipendente da istanza, fase e regime di rumore, non una sostituzione universale della QFT completa.\par}
 \nopagebreak\noindent\rule{\linewidth}{0.6pt}\par\medskip
+
+\clearpage
 
 \section{Discussione integrata dei risultati}\label{sec:finale_5_6}
 
